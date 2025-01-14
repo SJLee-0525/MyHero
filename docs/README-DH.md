@@ -8,3 +8,13 @@
 
 ## 예정 작업
 1. OpenAI API 요청 및 TTS 기능 구현 
+
+
+# 2025-01-14
+## 투데이 작업
+1. azure MariaDB Extension 설치 및 연결
+2. Anthropic API 연결
+3. 기본 프롬포트 엔지니어링
+
+## 예정 작업
+1. API 응답 TTS 모델 적용

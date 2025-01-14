@@ -1,0 +1,90 @@
+#home {
+  display: flex;
+  flex-direction: column;
+  /* background-color: red; */
+  width: 90%;
+}
+
+#icon-box {
+  display: flex;
+  height: 75%;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#icon-box #icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 50%;
+  height: 80%;
+  margin: 5rem;
+  padding: 2rem;
+  border-radius: 8px;
+  background: #282617ad;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#icon-box #icon img {
+  width: 80%;
+}
+
+#icon-box #icon button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: all 0.2s ease-in-out;
+}
+
+#icon-box #icon:hover {
+  filter: brightness(75%);
+  transition: all 0.3s ease;
+}
+
+#icon-box #icon .icon-name {
+  font-weight: bold;
+  font-size: x-large;
+  color: white;
+  margin-top: 3rem;
+}
+
+#dock {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 25%;
+  /* background-color: blue; */
+}
+
+#dock #dock-icon {
+  width: 200px;
+  height: 100%;
+  border-radius: 6px;
+  /* background: #282617ad; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#dock #dock-icon:hover {
+  filter: brightness(50%);
+  transition: all 0.3s ease;
+}
+
+#dock #dock-icon .enable-img {
+  width: 80%;
+}
+
+#dock #dock-icon .disable-img {
+  width: 80%;
+  filter: brightness(50%);
+}
+
+#dock #dock-icon button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  transition: all 0.2s ease-in-out;
+}

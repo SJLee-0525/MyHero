@@ -1,6 +1,10 @@
-# 노규헌 250113(월)
+# 노규헌 
 
-## Setup Jetson orin nano
+---
+
+## 250113(월)
+
+### Setup Jetson orin nano
 - OS 설치 완료
 - 네트워크 설정 완료
 - 원격 접속 설정 완료

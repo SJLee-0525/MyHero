@@ -5,7 +5,7 @@ import ModalPage from "./components/modal/ModalPage.jsx";
 import NavBar from "./components/nav/NavBar.jsx";
 import Home from "./components/home/Home.jsx";
 
-import screenProtector from "./assets/screen-protector.jpg";
+import screenProtector from "./assets/screen-protector.png";
 
 function ScreenSaver({ onDismiss }) {
   return (

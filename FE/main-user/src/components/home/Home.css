@@ -60,8 +60,7 @@
 
 #dock #dock-icon {
   width: 200px;
-  height: 100%;
-  border-radius: 6px;
+  height: 200px;
   /* background: #282617ad; */
   display: flex;
   flex-direction: row;
@@ -73,13 +72,27 @@
   transition: all 0.3s ease;
 }
 
-#dock #dock-icon .enable-img {
+#dock #dock-icon .enabled {
   width: 80%;
+  height: 80%;
+  background-color: #b4cf66;
+  border-radius: 100%;
 }
 
-#dock #dock-icon .disable-img {
+#dock #dock-icon .disabled {
   width: 80%;
-  filter: brightness(50%);
+  height: 80%;
+  background-color: #ff5a33;
+  border-radius: 100%;
+}
+
+#dock #dock-icon img {
+  width: 100%;
+}
+
+#dock #dock-icon img {
+  width: 100%;
+  /* filter: brightness(50%); */
 }
 
 #dock #dock-icon button {

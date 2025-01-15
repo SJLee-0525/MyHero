@@ -1,0 +1,9 @@
+# Python virtual environment files
+.venv
+__pycache__
+
+# Git files
+.idea
+
+# API Request Test
+test_main.http

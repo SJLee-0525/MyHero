@@ -16,3 +16,10 @@
 2. Back-end Server 구축을 위한 FastAPI 리마인드
 3. Back-end Server (User & AI) 기본 구조 구축 완료!
 4. 기본적인 User API 요구사항 확인 후 End-Point 설계 중...
+
+### 2025년 1월 16일
+1. 기본적인 User API의 End-Point 설계 완료!
+2. Back-end DB ORM (sqlalchemy.orm) 기능 공부 완료!
+3. User API Email 중복 확인 기능 구현
+4. User API 새로운 Account 추가 기능 구현
+5. User API Account 삭제 및 편집, Login, Logout 기능 구현 준비 중...

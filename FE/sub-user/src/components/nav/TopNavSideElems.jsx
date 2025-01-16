@@ -1,23 +1,12 @@
-export default function TopNavSideNavElems({
-  imgSrc,
-  altSrc,
-  identifier,
-  activeIdentifier,
-  onClickElem,
-}) {
+export default function TopNavSideElems({ imgSrc, altSrc, identifier, activeIdentifier, onClickElem }) {
   return (
-    <li className="sidebar-nav-li">
-      <button
-        className={`sidebar-nav-elem ${
-          activeIdentifier === identifier ? "active" : ""
-        }`}
-        onClick={() => onClickElem(identifier)}
-      >
-        <div className="sidebar-nav-icon">
+    <li className="top-side-bar-nav-li">
+      <button className={activeIdentifier === identifier ? "top-side-bar-nav-elem-active" : "top-side-bar-nav-elem"} onClick={() => onClickElem(identifier)}>
+        <div className="top-side-bar-nav-icon">
           <img src={imgSrc} alt={altSrc} />
         </div>
-        <div className="sidebar-nav-text">{identifier}</div>
+        <div className="top-side-bar-nav-text">{identifier}</div>
       </button>
     </li>
-  );
+  )
 }

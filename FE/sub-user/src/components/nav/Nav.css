@@ -1,11 +1,17 @@
+h5 {
+  text-align: center;
+}
+
 #side-bar {
-  height: 100%;
-  width: 65px;
-  transition: all 0.3s ease;
-  overflow: hidden; /* 확장 전 텍스트 숨김 */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  height: 100%;
+  width: 65px;
+
+  overflow: hidden; /* 확장 전 텍스트 숨김 */
+  transition: all 0.3s ease;
 }
 
 #side-bar:hover {
@@ -34,23 +40,28 @@
   display: flex;
   justify-content: start;
   align-items: center;
+
+  margin: 4px 0px;
+  padding: 4px 4px;
+
   border: 0;
   border-radius: 12px;
   background: transparent;
-  margin: 4px 0px;
-  padding: 4px 4px;
 }
 
 #side-bar:hover .side-nav-elem {
   display: flex;
   justify-content: start;
   align-items: center;
+
+  width: 188px;
+  margin: 4px 0px;
+  padding: 4px 4px;
+
   border: 0;
   border-radius: 12px;
   background: transparent;
-  margin: 4px 0px;
-  padding: 4px 4px;
-  width: 188px;
+
   transition: all 0.3s ease;
 }
 
@@ -58,49 +69,66 @@
   display: flex;
   justify-content: start;
   align-items: center;
-  border: 0;
-  border-radius: 12px;
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  width: 188px;
   margin: 4px 0px;
   padding: 4px 4px;
-  width: 188px;
+
+  border: 0;
+  border-radius: 12px;
+
+  /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  backdrop-filter: blur(30px); /* 블러 효과 */
+  -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+
+  font-weight: bold;
 }
 
 #side-bar .side-nav-elem-active {
   display: flex;
   justify-content: start;
   align-items: center;
+
+  margin: 4px 0px;
+  padding: 4px 4px;
+
   border: 0;
   border-radius: 12px;
   background: #ff9500;
-  margin: 4px 0px;
-  padding: 4px 4px;
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+
+  font-weight: bold;
+
+  transition: all 0.3s ease;
 }
 
 #side-bar:hover .side-nav-elem-active {
   display: flex;
   justify-content: start;
   align-items: center;
-  border: 0;
-  border-radius: 12px;
-  background: #ff9500;
+
   margin: 4px 0px;
   padding: 4px 4px;
   width: 188px;
+
+  border: 0;
+  border-radius: 12px;
+  background: #ff9500;
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+
+  transition: all 0.3s ease;
 }
 
 #side-bar .side-nav-icon {
   display: flex;
   justify-content: center;
   align-items: center;
+
   width: 45px;
   height: 45px;
+
   transition: none; /* 아이콘에 애니메이션 없음 */
   flex-shrink: 0; /* 사이드바 크기가 변해도 아이콘 크기 고정 */
 }
@@ -108,13 +136,16 @@
 #side-bar:hover .side-nav-icon {
   justify-content: center;
   align-items: center;
+
   width: 45px;
   height: 45px;
+
   transition: none;
 }
 
 #side-bar img {
   width: 80%;
+
   transition: none;
   z-index: 123;
 }
@@ -124,137 +155,185 @@
 }
 
 #side-bar:hover .side-nav-text {
-  margin-left: 10px;
   display: block;
+
+  margin-left: 10px;
+
   color: white;
 }
 
-h3 {
-  text-align: center;
-}
-
-#top-bar {
-  height: 65px;
+#mobile-bar .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  height: 65px;
   padding: 0 20px;
-  background: #333;
+
+  /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(49, 49, 49, 0.363);
+
   color: white;
 }
 
-#top-bar-toggle-menu button {
+#mobile-bar .top-bar-toggle-menu button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   background: none;
   border: none;
   cursor: pointer;
 }
 
-#top-bar-toggle-menu img {
+#mobile-bar .top-bar-toggle-menu img {
   width: 30px;
   height: 30px;
 }
 
 /* Sidebar Styles */
-.sidebar {
+#mobile-bar .top-side-bar {
   position: fixed;
   top: 0;
   left: 0;
+
   height: 100%;
   width: 300px;
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  transform: translateX(-100%);
-  transition: transform 0.3s ease-in-out;
+
+  /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  backdrop-filter: blur(30px); /* 블러 효과 */
+  -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
+
   z-index: 1000;
   overflow-y: auto;
+
+  transform: translateX(-100%);
+  transition: all 0.3s ease-in-out;
 }
 
-.sidebar.open {
+#mobile-bar .top-side-bar.open {
+  box-shadow: 4px 0px 50px 1000px rgba(0, 0, 0, 0.25);
+
   transform: translateX(0);
+  transition: all 0.3s ease-;
 }
 
-.sidebar-header {
+#mobile-bar .top-side-bar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: 10px 20px;
-  background: #555;
+
+  background: rgba(198, 198, 198, 0.149);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30%);
+
   color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-header button {
+#mobile-bar .top-side-bar-header button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 0;
   background: none;
   border: none;
   color: white;
-  cursor: pointer;
+
   font-size: 20px;
+  cursor: pointer;
 }
 
-.sidebar-nav {
-  list-style: none;
+#mobile-bar .top-side-bar-header button img {
+  width: 80%;
+}
+
+#mobile-bar .top-side-bar-nav {
   padding: 0;
   margin: 20px 0;
+
+  list-style: none;
 }
 
-.sidebar-nav button {
+#mobile-bar .top-side-bar-nav-li {
   display: flex;
   justify-content: start;
   align-items: center;
+
+  height: 45px;
+
+  margin: 10px 0px;
+  padding: 0px 15px;
+  z-index: 2000;
+}
+
+#mobile-bar .top-side-bar-nav-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#mobile-bar .top-side-bar-nav-li button img {
+  height: 40px;
+}
+
+#mobile-bar .top-side-bar-nav-li button:active {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  margin: 4px 0px;
+  padding: 4px 4px;
+  width: 288px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+}
+
+#mobile-bar .top-side-bar-nav-elem {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 288px;
+  margin: 4px 0px;
+  padding: 4px 4px;
+  gap: 10px;
+
   border: 0;
   border-radius: 12px;
   background: transparent;
-  margin: 4px 0px;
-  padding: 4px 4px;
-  width: 288px;
+
   transition: all 0.3s;
 }
 
-.sidebar-nav button img {
-  width: 45px;
-}
-
-.sidebar-nav button:hover {
+#mobile-bar .top-side-bar-nav-elem-active {
   display: flex;
   justify-content: start;
   align-items: center;
   border: 0;
-  border-radius: 12px;
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  width: 288px;
   margin: 4px 0px;
   padding: 4px 4px;
-  width: 288px;
-}
+  gap: 10px;
 
-.sidebar-nav button.active {
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  border: 0;
   border-radius: 12px;
   background: #ff9500;
-  margin: 4px 0px;
-  padding: 4px 4px;
-  width: 288px;
+  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+
+  font-weight: bold;
 }
 
-.sidebar-nav .side-nav-text {
-  display: none;
-}
-
-.sidebar-navr:hover .side-nav-text {
-  margin-left: 10px;
-  display: block;
+#mobile-bar .top-side-bar-nav-text {
+  padding-left: 3px;
+  font-size: 15px;
   color: white;
 }

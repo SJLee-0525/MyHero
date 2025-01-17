@@ -11,7 +11,7 @@ import personIcon from "../../assets/icons/person.svg";
 import closeIcon from "../../assets/icons/close.svg";
 
 import homeIcon from "../../assets/icons/home.svg";
-import calanderIcon from "../../assets/icons/calander.svg";
+import calendarIcon from "../../assets/icons/calendar.svg";
 import smsIcon from "../../assets/icons/sms.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import vitalSignIcon from "../../assets/icons/vital_sign.svg";
@@ -85,9 +85,9 @@ export default function TopNav() {
             onClickElem={mainStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
-            imgSrc={calanderIcon}
-            altSrc="calander"
-            identifier="CALANDER"
+            imgSrc={calendarIcon}
+            altSrc="calendar"
+            identifier="CALENDAR"
             activeIdentifier={mainStore.isActiveSideBarElem}
             onClickElem={mainStore.handleActiveSideBarElem}
           />

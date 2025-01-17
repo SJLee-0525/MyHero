@@ -10,7 +10,7 @@ import Home from "./components/main/home/Home.jsx";
 import Notification from "./components/main/notification/Notification.jsx";
 import Message from "./components/main/message/Message.jsx";
 import Emergency from "./components/main/emergency/Emergency.jsx";
-import Calander from "./components/main/calander/Calander.jsx";
+import Calendar from "./components/main/calendar/Calendar.jsx";
 import Activity from "./components/main/activity/Activity.jsx";
 import Health from "./components/main/health/Health.jsx";
 import Mind from "./components/main/mind/Mind.jsx";
@@ -36,7 +36,7 @@ function App() {
             <Route path="/notification" element={<Notification />} />
             <Route path="/message" element={<Message />} />
             <Route path="/emergency" element={<Emergency />} />
-            <Route path="/calander" element={<Calander />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="/activity" element={<Activity />} />
             <Route path="/health" element={<Health />} />
             <Route path="/mind" element={<Mind />} />

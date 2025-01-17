@@ -50,14 +50,44 @@ class Database:
     def get_all_email(self) -> list[dict]:
         """
         등록된 사용자 계정 이메일을 모두 불러오는 기능
-        :return: 등록된 사용자의 모든 이메일 list
+        :return: 등록된 사용자의 모든 이메일 list[dict]
         """
         try:
-            account_list = self.session.query(Account.email).all()
+            account_list = self.session.query(AccountTable.email).all()
             return [{"email": data[0]} for data in account_list]
-
         except SQLAlchemyError as error:
             print(f"[DB] Error getting all email: {str(error)}")
             return []
         finally:
             self.session.close()
+
+    # 모든 사용자의 ID 불러오기
+    def get_all_account_id(self) -> list[dict]:
+        """
+        등록된 사용자 계정 ID를 모두 불러오는 기능
+        :return: 등록된 사용자의 모든 ID list[dict]
+        """
+        try:
+            id_list = self.session.query(AccountTable.id).all()
+            return [{"id": data[0]} for data in id_list]
+        except SQLAlchemyError as error:
+            print(f"[DB] Error getting all account id: {str(error)}")
+            return []
+        finally:
+            self.session.close()
+
+    # 새로운 사용자 계정 추가하기
+    def create_account(self, account_data: AccountTable) -> bool:
+        try:
+            self.session.add(account_data)
+            self.session.commit()
+            print(f"[DB] New account created: {account_data}")
+            return True
+        except SQLAlchemyError as error:
+            self.session.rollback()
+            print(f"[DB] Error creating new account: {str(error)}")
+            return False
+        finally:
+            self.session.close()
+
+

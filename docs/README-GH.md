@@ -47,3 +47,17 @@
 ### 자율주행 기능 개발
 - 자율주행 기능 개발을 위한 기획 완료
 - ROS1 noetic 사용 예정
+
+---
+
+## 250117(금)
+
+### 음성 인식 기능 개발
+- silverVAD + Whisper 모델 테스트
+    -> 성능 이슈로 인한 API 사용 결정
+- Google Cloud Platform Speech-To-Text API 테스트 완료
+    -> `EM/dev` 브랜치에 README와 코드 업로드 완료
+
+### 자율주행 기능 개발
+- Orin nano에 ROS1 noetic 환경 설정 완료
+- LiDAR센서 도착 시 SLAM 기능 개발 예정

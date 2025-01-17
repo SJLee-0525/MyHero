@@ -8,7 +8,6 @@ version : 0.0.3
 # Libraries
 from fastapi import FastAPI, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.orm import defer
 
 from Database.connector import Database
 from Database.models import *
@@ -67,7 +66,7 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-    elif account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+    elif account.gender is not None and account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -117,7 +116,7 @@ async def create_account(account: Account):
         role=account.role.upper(),
         user_name=account.user_name,
         birth_date=converted_birth_date,
-        gender=account.gender.upper(),
+        gender=account.gender.upper() if account.gender is not None else "OTHER",
         address=account.address
     )
 

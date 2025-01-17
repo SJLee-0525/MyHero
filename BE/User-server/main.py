@@ -42,7 +42,7 @@ async def create_account(account: Account):
                 "type": "no data",
                 "loc": ["body", "role"],
                 "message": "Role is required",
-                "input": jsonable_encoder(account)
+                "input": jsonable_encoder(account, exclude={"password"})
             }
         )
     elif account.email == "":
@@ -52,7 +52,7 @@ async def create_account(account: Account):
                 "type": "no data",
                 "loc": ["body", "email"],
                 "message": "Email is required",
-                "input": jsonable_encoder(account)
+                "input": jsonable_encoder(account, exclude={"password"})
             }
         )
 
@@ -65,7 +65,7 @@ async def create_account(account: Account):
             detail={
                 "type": "already exists",
                 "message": "Email is already in use",
-                "input": jsonable_encoder(account)
+                "input": jsonable_encoder(account, exclude={"password"})
             }
         )
 
@@ -115,7 +115,7 @@ async def create_account(account: Account):
                 detail={
                     "type": "server error",
                     "message": "Failed to create new account",
-                    "input": jsonable_encoder(account)
+                    "input": jsonable_encoder(account, exclude={"password"})
                 }
             )
     except LookupError as error:
@@ -125,12 +125,9 @@ async def create_account(account: Account):
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (role or gender)",
-                "input": jsonable_encoder(account)
+                "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-
-
-
 
 
 # 가입 가능한 이메일인지 확인하는 기능

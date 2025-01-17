@@ -3,7 +3,7 @@ import "./Calendar.css";
 import { useContext } from "react";
 import { CalendarStoreContext } from "../../../store/calendarStore";
 
-import arrowBackIcon from "../../../assets/icons/arrow_back.svg";
+import arrowBackIcon from "../../../assets/icons/arrow_back (2).svg";
 import arrowForwardIcon from "../../../assets/icons/arrow_forward.svg";
 
 export default function CalendarHeader() {

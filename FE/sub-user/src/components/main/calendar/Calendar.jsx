@@ -1,19 +1,24 @@
 import "./Calendar.css";
 
-import CalendarStoreContextProvider from "../../../store/calendarStore";
+import CalendarStoreContextProvider from "../../../store/calendarStore.jsx";
 
-import CalendarHeader from "./CalendarHeader";
-import CalendarBody from "./CalendarBody";
-import SelectedDate from "./SelectedDate";
+import PageContainer from "../container/PageContainer";
+
+import CalendarHeader from "./CalendarHeader.jsx";
+import CalendarBody from "./CalendarBody.jsx";
+import SelectedDate from "./SelectedDate.jsx";
+import CalendarSchedules from "./CalendarSchedules.jsx";
 
 export default function Calendar() {
   return (
-    <CalendarStoreContextProvider>
-      <div id="calendar">
-        <CalendarHeader />
-        <CalendarBody />
-        <SelectedDate />
-      </div>
-    </CalendarStoreContextProvider>
+    <PageContainer title="캘린더">
+      <CalendarStoreContextProvider>
+        <div id="calendar">
+          <CalendarHeader />
+          <CalendarBody />
+          <CalendarSchedules />
+        </div>
+      </CalendarStoreContextProvider>
+    </PageContainer>
   );
 }

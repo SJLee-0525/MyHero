@@ -23,6 +23,7 @@ export default function useCalendar() {
   const [selectedDate, setSelectedDate] = useState(
     format(new Date(), "yyyy-MM-dd")
   );
+  const [schedules, setSchedules] = useState({});
 
   const startCurrentMonth = startOfMonth(currentDate);
   const endCurrentMonth = endOfMonth(currentDate);
@@ -60,6 +61,7 @@ export default function useCalendar() {
 
   function handleSelectDate(date) {
     setSelectedDate(date);
+    console.log(date);
   }
 
   const daysInMonth = days.map((day) => ({
@@ -69,6 +71,19 @@ export default function useCalendar() {
     day: format(day, "dd"),
     dayIndexOfWeek: getDay(day),
   }));
+
+  function handleAddSchedule(date, schedule) {
+    setSchedules((prevSchedules) => {
+      let newSchedule;
+
+      if (prevSchedules[date]) {
+        newSchedule = [...prevSchedules[date], schedule];
+      } else {
+        newSchedule = [schedule];
+      }
+      return { ...prevSchedules, [date]: newSchedule };
+    });
+  }
 
   return {
     currentDate: {
@@ -86,6 +101,10 @@ export default function useCalendar() {
     selectedDate: {
       date: selectedDate,
       selectDate: handleSelectDate,
+    },
+    schedules: {
+      schedules: schedules,
+      addSchedule: handleAddSchedule,
     },
   };
 }

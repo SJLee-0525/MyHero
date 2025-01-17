@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.0.2
+version : 0.0.3
 """
 
 # Libraries
@@ -56,6 +56,25 @@ async def create_account(account: Account):
             }
         )
 
+    # 잘못된 옵션을 선택했는지 점검
+    if account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "Invalid value provided for account details (role)",
+                "input": jsonable_encoder(account, exclude={"password"})
+            }
+        )
+    elif account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "Invalid value provided for account details (gender)",
+            }
+        )
+
     # 중복 이메일 점검
     email_list = [data["email"] for data in database.get_all_email()]
 
@@ -90,41 +109,30 @@ async def create_account(account: Account):
             day=account.birth_date.day
         )
 
-    try:
-        new_account = AccountTable(
-            id=new_id,
-            email=account.email,
-            password=hashed_password,
-            role=account.role.upper(),
-            user_name=account.user_name,
-            birth_date=converted_birth_date,
-            gender=account.gender.upper(),
-            address=account.address
-        )
+    new_account = AccountTable(
+        id=new_id,
+        email=account.email,
+        password=hashed_password,
+        role=account.role.upper(),
+        user_name=account.user_name,
+        birth_date=converted_birth_date,
+        gender=account.gender.upper(),
+        address=account.address
+    )
 
-        # 계정 업로드
-        result = database.create_account(new_account)
-        if result:
-            return {
-                "message": "New account created successfully",
-                "id": new_id
-            }
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail={
-                    "type": "server error",
-                    "message": "Failed to create new account",
-                    "input": jsonable_encoder(account, exclude={"password"})
-                }
-            )
-    except LookupError as error:
-        database.session.rollback()
+    # 계정 업로드
+    result = database.create_account(new_account)
+    if result:
+        return {
+            "message": "New account created successfully",
+            "id": new_id
+        }
+    else:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
-                "type": "invalid value",
-                "message": "Invalid value provided for account details (role or gender)",
+                "type": "server error",
+                "message": "Failed to create new account",
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
@@ -157,4 +165,20 @@ async def check_email(email_check: EmailCheck):
     else:
         return {
             "message": "Email is available"
+        }
+
+
+# 다중 계정의 정보를 불러오는 기능
+@app.get("/accounts", status_code=status.HTTP_200_OK)
+async def get_all_accounts():
+    account_list = []
+    if account_list:
+        return {
+            "message": "All accounts retrieved successfully",
+            "result": jsonable_encoder(account_list)
+        }
+    else:
+        return {
+            "message": "No accounts found",
+            "result": jsonable_encoder(account_list)
         }

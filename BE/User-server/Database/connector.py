@@ -80,13 +80,43 @@ class Database:
     def create_account(self, account_data: AccountTable) -> bool:
         try:
             self.session.add(account_data)
-            self.session.commit()
             print(f"[DB] New account created: {account_data}")
             return True
         except SQLAlchemyError as error:
             self.session.rollback()
             print(f"[DB] Error creating new account: {str(error)}")
             return False
+        finally:
+            self.session.commit()
+            self.session.close()
+
+
+    # 모든 사용자 계정 정보 불러오기
+    def get_all_account(self) -> list[dict]:
+        try:
+            account_list = self.session.query(
+                AccountTable.id,
+                AccountTable.email,
+                AccountTable.role,
+                AccountTable.user_name,
+                AccountTable.birth_date,
+                AccountTable.gender,
+                AccountTable.address
+            ).all()
+            print(f"[DB] All account data retrieved: {account_list}")
+            serialized_data = [{
+                "id": data[0],
+                "email": data[1],
+                "role": data[2],
+                "user_name": data[3],
+                "birth_date": data[4],
+                "gender": data[5],
+                "address": data[6]
+            } for data in account_list]
+            return serialized_data
+        except SQLAlchemyError as error:
+            print(f"[DB] Error getting all account data: {str(error)}")
+            return []
         finally:
             self.session.close()
 

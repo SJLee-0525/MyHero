@@ -78,6 +78,11 @@ class Database:
 
     # 새로운 사용자 계정 추가하기
     def create_account(self, account_data: AccountTable) -> bool:
+        """
+        새로운 사용자 계정을 만드는 기능
+        :param account_data: 미리 Mapping된 사용자 정보
+        :return: 계정이 정상적으로 등록 됬는지 여부 bool
+        """
         try:
             self.session.add(account_data)
             print(f"[DB] New account created: {account_data}")
@@ -93,6 +98,10 @@ class Database:
 
     # 모든 사용자 계정 정보 불러오기
     def get_all_account(self) -> list[dict]:
+        """
+        모든 사용자의 계정 정보를 불러오는 기능
+        :return: 사용자 계정 단위로 묶은 데이터 list[dict]
+        """
         try:
             account_list = self.session.query(
                 AccountTable.id,

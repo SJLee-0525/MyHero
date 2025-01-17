@@ -17,6 +17,9 @@ class EmailCheck(BaseModel):
     email: str  # 중복을 검증할 이메일 주소
 
 class Date(BaseModel):
+    """
+    날짜 데이터
+    """
     year: int
     month: int
     day: int

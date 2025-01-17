@@ -201,3 +201,91 @@ async def get_account(user_id: str):
                 "input": {"user_id": user_id}
             }
         )
+
+
+@app.patch("/accounts/{user_id}", status_code=status.HTTP_200_OK)
+async def update_account(user_id: str, updated_account: Account):
+    previous_account: dict = database.get_one_account(user_id)
+
+    # 없는 계정을 변경하려는지 확인
+    if not previous_account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Account not found",
+                "input": {"user_id": user_id}
+            }
+        )
+
+    # 잘못된 옵션을 선택했는지 점검
+    if updated_account.role and updated_account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "Invalid value provided for account details (role)",
+                "input": jsonable_encoder(updated_account)
+            }
+        )
+    elif updated_account.gender is not None and updated_account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "Invalid value provided for account details (gender)",
+                "input": jsonable_encoder(updated_account)
+            }
+        )
+
+    # 중복된 이메일로 변경하려는지 점검
+    if updated_account.email:
+        email_list: list = [data["email"] for data in database.get_all_email()]
+        if updated_account.email in email_list:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "type": "already exists",
+                    "message": "Email is already in use",
+                    "input": jsonable_encoder(updated_account)
+                }
+            )
+
+    # 입력받은 생년월일을 date 타입으로 변환
+    if updated_account.birth_date is None:
+        converted_birth_date = None
+    else:
+        converted_birth_date = date(
+            year=updated_account.birth_date.year,
+            month=updated_account.birth_date.month,
+            day=updated_account.birth_date.day
+        )
+
+    total_updated_account: AccountTable = AccountTable(
+        id=user_id,
+        email=updated_account.email if updated_account.email is not None else previous_account["email"],
+        role=updated_account.role.upper() if updated_account.role is not None else previous_account["role"],
+        user_name=updated_account.user_name if updated_account.user_name is not None else previous_account["user_name"],
+        birth_date=converted_birth_date if converted_birth_date is not None else previous_account["birth_date"],
+        gender=updated_account.gender.upper() if updated_account.gender is not None else previous_account["gender"],
+        address=updated_account.address if updated_account.address is not None else previous_account["address"]
+    )
+
+    result: bool = database.update_one_account(user_id, total_updated_account)
+
+    if result:
+        return {
+            "message": "Account updated successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to update account",
+                "input": jsonable_encoder(updated_account)
+            }
+        )
+
+
+

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 export default function SideNavElems({
   imgSrc,
   altSrc,
@@ -5,15 +7,22 @@ export default function SideNavElems({
   activeIdentifier,
   onClickElem,
 }) {
+  const navigate = useNavigate();
+
   return (
     <li className="side-nav-li">
       <button
         className={
-          activeIdentifier === identifier
-            ? "side-nav-elem-active"
-            : "side-nav-elem"
+          activeIdentifier === altSrc ? "side-nav-elem-active" : "side-nav-elem"
         }
-        onClick={() => onClickElem(identifier)}
+        onClick={() => {
+          onClickElem(altSrc);
+          if (altSrc === "home") {
+            navigate("/");
+          } else {
+            navigate(`/${altSrc}`);
+          }
+        }}
       >
         <div className="side-nav-icon">
           <img src={imgSrc} alt={altSrc} />

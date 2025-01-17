@@ -97,7 +97,7 @@ class Database:
 
 
     # 모든 사용자 계정 정보 불러오기
-    def get_all_account(self) -> list[dict]:
+    def get_all_accounts(self) -> list[dict]:
         """
         모든 사용자의 계정 정보를 불러오는 기능
         :return: 사용자 계정 단위로 묶은 데이터 list[dict]
@@ -112,7 +112,7 @@ class Database:
                 AccountTable.gender,
                 AccountTable.address
             ).all()
-            print(f"[DB] All account data retrieved: {account_list}")
+
             serialized_data = [{
                 "id": data[0],
                 "email": data[1],
@@ -123,6 +123,7 @@ class Database:
                 "address": data[6]
             } for data in account_list]
             return serialized_data
+
         except SQLAlchemyError as error:
             print(f"[DB] Error getting all account data: {str(error)}")
             return []
@@ -130,3 +131,35 @@ class Database:
             self.session.close()
 
 
+    # 특정 사용자 계정 정보 불러오기
+    def get_one_account(self, account_id: str) -> dict:
+        try:
+            account_data = self.session.query(
+                AccountTable.id,
+                AccountTable.email,
+                AccountTable.role,
+                AccountTable.user_name,
+                AccountTable.birth_date,
+                AccountTable.gender,
+                AccountTable.address
+            ).filter(AccountTable.id == account_id).first()
+
+            if account_data is not None:
+                serialized_data = {
+                    "id": account_data[0],
+                    "email": account_data[1],
+                    "role": account_data[2],
+                    "user_name": account_data[3],
+                    "birth_date": account_data[4],
+                    "gender": account_data[5],
+                    "address": account_data[6]
+                }
+                return serialized_data
+            else:
+                return {}
+
+        except SQLAlchemyError as error:
+            print(f"[DB] Error getting one account data: {str(error)}")
+            return {}
+        finally:
+            self.session.close()

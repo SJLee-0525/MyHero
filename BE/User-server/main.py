@@ -8,6 +8,7 @@ version : 0.0.3
 # Libraries
 from fastapi import FastAPI, HTTPException, status
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import defer
 
 from Database.connector import Database
 from Database.models import *
@@ -76,7 +77,7 @@ async def create_account(account: Account):
         )
 
     # 중복 이메일 점검
-    email_list = [data["email"] for data in database.get_all_email()]
+    email_list: list = [data["email"] for data in database.get_all_email()]
 
     if account.email in email_list:
         raise HTTPException(
@@ -89,8 +90,8 @@ async def create_account(account: Account):
         )
 
     # ID 생성 및 중복 점검
-    new_id = ""
-    id_verified = False
+    new_id: str = ""
+    id_verified: bool = False
 
     while not id_verified:
         new_id = random_id(16, Identify.USER)
@@ -109,7 +110,7 @@ async def create_account(account: Account):
             day=account.birth_date.day
         )
 
-    new_account = AccountTable(
+    new_account: AccountTable = AccountTable(
         id=new_id,
         email=account.email,
         password=hashed_password,
@@ -121,7 +122,7 @@ async def create_account(account: Account):
     )
 
     # 계정 업로드
-    result = database.create_account(new_account)
+    result: bool = database.create_account(new_account)
     if result:
         return {
             "message": "New account created successfully",
@@ -141,8 +142,8 @@ async def create_account(account: Account):
 # 가입 가능한 이메일인지 확인하는 기능
 @app.post("/accounts/check-email", status_code=status.HTTP_200_OK)
 async def check_email(email_check: EmailCheck):
-    target_email = email_check.email
-    email_list = [data["email"] for data in database.get_all_email()]
+    target_email: str = email_check.email
+    email_list: list = [data["email"] for data in database.get_all_email()]
 
     if target_email == "":
         raise HTTPException(
@@ -171,7 +172,7 @@ async def check_email(email_check: EmailCheck):
 # 다중 계정의 정보를 불러오는 기능
 @app.get("/accounts", status_code=status.HTTP_200_OK)
 async def get_all_accounts():
-    account_list = []
+    account_list: list = database.get_all_accounts()
     if account_list:
         return {
             "message": "All accounts retrieved successfully",
@@ -182,3 +183,22 @@ async def get_all_accounts():
             "message": "No accounts found",
             "result": jsonable_encoder(account_list)
         }
+
+
+@app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
+async def get_account(user_id: str):
+    account_data: dict = database.get_one_account(user_id)
+    if account_data:
+        return {
+            "message": "Account retrieved successfully",
+            "result": jsonable_encoder(account_data)
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Account not found",
+                "input": {"user_id": user_id}
+            }
+        )

@@ -1,0 +1,78 @@
+#calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* HEADER */
+.calendar-header-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar-header-change-button {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+  font-size: 20px;
+  line-height: 25.6px;
+}
+
+.calendar-header-change-button img {
+  width: 19px;
+  height: 19px;
+}
+/* BODY */
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: white;
+  padding: 25px 0;
+  border-radius: 20px;
+}
+
+/* Day Wrapper */
+.calendar-day-wrapper {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(50px, 1fr));
+  grid-row-gap: 15px;
+}
+
+/* Calendar Items */
+.calendar-item {
+  display: flex;
+  justify-content: center;
+}
+
+.calendar-item.sunday {
+  color: red; /* Sunday color */
+}
+
+.calendar-item.weekday {
+  color: #333; /* Default weekday color */
+}
+
+/* Day Styles */
+.calendar-day {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #000; /* Default day color for current month */
+}
+
+.calendar-day.sunday {
+  color: red; /* Sunday day color */
+}
+
+.calendar-day.not-current-month {
+  color: #aaa; /* Not current month days */
+}
+
+.calendar-day.selected-date {
+  color: white; /* Text color for selected date */
+  background-color: blue; /* Background color for selected date */
+}

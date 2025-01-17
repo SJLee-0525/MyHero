@@ -6,7 +6,7 @@ import CalendarHeader from "./CalendarHeader";
 import CalendarBody from "./CalendarBody";
 import SelectedDate from "./SelectedDate";
 
-export default function Calendar() {
+export default function CalendarWidget() {
   return (
     <CalendarStoreContextProvider>
       <div id="calendar">

@@ -5,6 +5,8 @@ import { useContext } from "react";
 import Widget from "../../widget/Widget.jsx";
 import Toggle from "../../toggle/Toggle.jsx";
 
+import CalendarWidget from "../calendar/CalendarWidget.jsx";
+
 import notificationOnImage from "../../../assets/icons/notification.svg";
 import notificationOffImage from "../../../assets/icons/notification_off.svg";
 import carImage from "../../../assets/icons/car.svg";
@@ -81,6 +83,9 @@ export default function Main() {
             </span>
           );
         })}
+      </Widget>
+      <Widget title="캘린더" type="calendar">
+        <CalendarWidget />
       </Widget>
     </div>
   );

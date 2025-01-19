@@ -79,3 +79,88 @@
 #emergency-alert-box .button-container .close {
   background-color: #aaa;
 }
+
+#emergency-log {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  margin: 20px 10px;
+}
+
+#emergency-log .log-button {
+  width: 100%;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+}
+
+.emergency-log-modal h2 {
+  margin-top: 0;
+}
+
+#emergency-alert-modal-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 100%;
+}
+
+#emergency-alert-modal-box .title-container {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+}
+
+#emergency-alert-modal-box .check {
+  margin: 0;
+  color: #44803f;
+}
+
+#emergency-alert-modal-box .common {
+  margin: 0;
+  color: black;
+}
+
+#emergency-alert-modal-box .answer {
+  margin: 0;
+  color: #ffec5c;
+}
+
+#emergency-alert-modal-box .no-answer {
+  margin: 0;
+  color: #ff5a33;
+}
+
+.emergency-alert-modal-actions {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+.emergency-alert-modal-actions button {
+  width: 150px;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: black;
+  font-weight: bold;
+
+  background: white;
+}
+
+hr {
+  border: 1px solid white;
+}

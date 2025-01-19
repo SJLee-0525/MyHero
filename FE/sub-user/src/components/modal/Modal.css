@@ -1,0 +1,32 @@
+/* 모달 애니메이션 */
+@keyframes slideUp {
+  0% {
+    transform: translateY(100%); /* 모달이 화면 아래에서 시작 */
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0); /* 모달이 정상 위치로 올라옴 */
+    opacity: 1;
+  }
+}
+
+.modal {
+  min-width: 400px;
+  width: 50vw;
+  margin: auto;
+  padding: 20px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background: linear-gradient(55deg, rgba(255, 255, 255, 0.19) 2.82%, rgba(255, 255, 255, 0.308) 97.65%), rgba(255, 255, 255, 0.505);
+
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  animation: slideUp 0.2s ease-out;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(30px);
+}

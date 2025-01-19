@@ -6,7 +6,6 @@ import { CalendarStoreContext } from "../../../store/calendarStore"
 export default function CalendarBody() {
   const { daysInMonth, selectedDate, currentDate, schedules } = useContext(CalendarStoreContext)
 
-  console.log(schedules)
   const weeks = ["일", "월", "화", "수", "목", "금", "토"]
 
   return (
@@ -36,15 +35,7 @@ export default function CalendarBody() {
               <span>{date.day}</span>
             </div>
             {/* 캘린더에 일정을 간략하게 표시 */}
-            {schedules.schedules[date.date] && (
-              <li className="calendar-day-schedules">
-                {schedules.schedules[date.date].slice(0, 2).map((schedule, index) => (
-                  <ul key={index} className="calendar-day-schedule">
-                    {schedule}
-                  </ul>
-                ))}
-              </li>
-            )}
+            {schedules.schedules[date.date] && <div className="calendar-day-schedules-widget">{schedules.schedules[date.date].length}</div>}
           </div>
         ))}
       </div>

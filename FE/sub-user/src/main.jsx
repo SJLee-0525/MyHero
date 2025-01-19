@@ -1,14 +1,14 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.jsx";
+import { StrictMode } from "react"
+import { createRoot } from "react-dom/client"
+import "./index.css"
+import App from "./App.jsx"
 
-import MainStoreContextProvider from "./store/mainStore.jsx";
+import UserProgressContextProvider from "./store/userProgressStore.jsx"
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <MainStoreContextProvider>
+    <UserProgressContextProvider>
       <App />
-    </MainStoreContextProvider>
+    </UserProgressContextProvider>
   </StrictMode>
-);
+)

@@ -1,6 +1,6 @@
-import { useState, createContext } from "react";
+import { useState, createContext } from "react"
 
-export const MainStoreContext = createContext({
+export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
   toggleStatus: {},
   sidebarIsOpened: false,
@@ -10,33 +10,33 @@ export const MainStoreContext = createContext({
   handleActiveSideBarElem: () => {},
   handleToggleStatus: () => {},
   handleSidebarToggle: () => {},
-});
+})
 
-export default function MainStoreContextProvider({ children }) {
-  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState(undefined);
+export default function UserProgressContextProvider({ children }) {
+  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState(undefined)
 
   const [toggleStatus, setToggleStatus] = useState({
     notification: false,
     camera: true,
     microphone: true,
     car: false,
-  });
+  })
 
-  const [sidebarIsOpened, setSidebarIsOpened] = useState(false);
+  const [sidebarIsOpened, setSidebarIsOpened] = useState(false)
 
   function handleActiveSideBarElem(identifier) {
-    setIsActiveSideBarElem(identifier);
-    setSidebarIsOpened(false);
+    setIsActiveSideBarElem(identifier)
+    setSidebarIsOpened(false)
   }
 
   function handleToggleStatus(toggle) {
     setToggleStatus((prevStatus) => {
-      return { ...prevStatus, [toggle]: !prevStatus[toggle] };
-    });
+      return { ...prevStatus, [toggle]: !prevStatus[toggle] }
+    })
   }
 
   function handleSidebarToggle() {
-    setSidebarIsOpened((prev) => !prev);
+    setSidebarIsOpened((prev) => !prev)
   }
 
   const ctxValue = {
@@ -49,11 +49,7 @@ export default function MainStoreContextProvider({ children }) {
     handleActiveSideBarElem,
     handleToggleStatus,
     handleSidebarToggle,
-  };
+  }
 
-  return (
-    <MainStoreContext.Provider value={ctxValue}>
-      {children}
-    </MainStoreContext.Provider>
-  );
+  return <UserProgressContext.Provider value={ctxValue}>{children}</UserProgressContext.Provider>
 }

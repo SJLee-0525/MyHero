@@ -14,10 +14,10 @@ import cameraImage from "../../../assets/icons/camera.svg";
 import micOnImage from "../../../assets/icons/mic_on.svg";
 import micOffImage from "../../../assets/icons/mic_off.svg";
 
-import { MainStoreContext } from "../../../store/mainStore.jsx";
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function Main() {
-  const mainStore = useContext(MainStoreContext);
+  const userProgressStore = useContext(UserProgressContext);
 
   const contents = ["임영웅", "김치찌개", "두부", "여행", "병원"];
   const colors = [
@@ -34,10 +34,10 @@ export default function Main() {
         <div id="toggle-group">
           <Toggle
             name="notification"
-            status={mainStore.toggleStatus.notification}
-            onClickToggle={mainStore.handleToggleStatus}
+            status={userProgressStore.toggleStatus.notification}
+            onClickToggle={userProgressStore.handleToggleStatus}
             imgSrc={
-              mainStore.toggleStatus.notification
+              userProgressStore.toggleStatus.notification
                 ? notificationOnImage
                 : notificationOffImage
             }
@@ -45,24 +45,24 @@ export default function Main() {
           ></Toggle>
           <Toggle
             name="camera"
-            status={mainStore.toggleStatus.camera}
-            onClickToggle={mainStore.handleToggleStatus}
+            status={userProgressStore.toggleStatus.camera}
+            onClickToggle={userProgressStore.handleToggleStatus}
             imgSrc={cameraImage}
             altSrc="camera"
           ></Toggle>
           <Toggle
             name="microphone"
-            status={mainStore.toggleStatus.microphone}
-            onClickToggle={mainStore.handleToggleStatus}
+            status={userProgressStore.toggleStatus.microphone}
+            onClickToggle={userProgressStore.handleToggleStatus}
             imgSrc={
-              mainStore.toggleStatus.microphone ? micOnImage : micOffImage
+              userProgressStore.toggleStatus.microphone ? micOnImage : micOffImage
             }
             altSrc="microphone"
           ></Toggle>
           <Toggle
             name="car"
-            status={mainStore.toggleStatus.car}
-            onClickToggle={mainStore.handleToggleStatus}
+            status={userProgressStore.toggleStatus.car}
+            onClickToggle={userProgressStore.handleToggleStatus}
             imgSrc={carImage}
             altSrc="car"
           ></Toggle>

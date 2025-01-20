@@ -25,9 +25,9 @@ database = Database()
 @app.post("/accounts", status_code=status.HTTP_201_CREATED)
 async def create_account(account: Account):
     # 필수 입력 정보 점검 (비밀번호, 역할, 이메일)
-    if account.password == "":
+    if account.password is None or account.password == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "password"],
@@ -35,9 +35,9 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account)
             }
         )
-    elif account.role == "":
+    elif account.role is None or account.role == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "role"],
@@ -45,9 +45,9 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-    elif account.email == "":
+    elif account.email is None or account.email == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "email"],
@@ -57,7 +57,7 @@ async def create_account(account: Account):
         )
 
     # 잘못된 옵션을 선택했는지 점검
-    if account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+    if account.role is not None and account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -103,6 +103,17 @@ async def create_account(account: Account):
     if account.birth_date is None:  # 입력받은 생년월일을 date 타입으로 변환
         converted_birth_date = None
     else:
+        if account.birth_date.year < 1900 or account.birth_date.year > 2022 or \
+            account.birth_date.day < 1 or account.birth_date.day > 31 or \
+            account.birth_date.month < 1 or account.birth_date.month > 12:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "type": "invalid value",
+                    "message": "Invalid value provided for account details (birth date)",
+                    "input": jsonable_encoder(account, exclude={"password"})
+                }
+            )
         converted_birth_date = date(
             year=account.birth_date.year,
             month=account.birth_date.month,
@@ -113,7 +124,7 @@ async def create_account(account: Account):
         id=new_id,
         email=account.email,
         password=hashed_password,
-        role=account.role.upper(),
+        role=account.role.upper() if account.role is not None else "TEST",
         user_name=account.user_name,
         birth_date=converted_birth_date,
         gender=account.gender.upper() if account.gender is not None else "OTHER",
@@ -144,9 +155,9 @@ async def check_email(email_check: EmailCheck):
     target_email: str = email_check.email
     email_list: list = [data["email"] for data in database.get_all_email()]
 
-    if target_email == "":
+    if target_email is None or target_email == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "message": "Email is required",
@@ -255,6 +266,17 @@ async def update_account(user_id: str, updated_account: Account):
     if updated_account.birth_date is None:
         converted_birth_date = None
     else:
+        if updated_account.birth_date.year < 1900 or updated_account.birth_date.year > 2022 or \
+            updated_account.birth_date.day < 1 or updated_account.birth_date.day > 31 or \
+            updated_account.birth_date.month < 1 or updated_account.birth_date.month > 12:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "type": "invalid value",
+                    "message": "Invalid value provided for account details (birth date)",
+                    "input": jsonable_encoder(updated_account)
+                }
+            )
         converted_birth_date = date(
             year=updated_account.birth_date.year,
             month=updated_account.birth_date.month,

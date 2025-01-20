@@ -6,6 +6,7 @@ export default function SelectedDate() {
 
   return (
     <div className="calender-schedule-widget">
+      {/* 위젯 내 일정 표시 */}
       <div>
         <a className="calender-schedule-date">{selectedDate.date}</a>
       </div>

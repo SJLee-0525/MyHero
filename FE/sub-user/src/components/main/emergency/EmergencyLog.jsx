@@ -57,6 +57,8 @@ export default function EmergencyLog() {
                   </span>
                 </p>
               </div>
+
+              {/* 이미지 출력단 */}
               <div>
                 <img src={emergencyAlert.imgSrc} alt="temp" />
               </div>

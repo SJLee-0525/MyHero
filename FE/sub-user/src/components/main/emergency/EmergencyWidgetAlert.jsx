@@ -36,11 +36,14 @@ export default function EmergencyWidgetAlert({ emergencyAlert, onCheckAlert }) {
           )}
           {res && <p>안전 보장을 위해, 보호자의 확인을 권고드립니다.</p>}
         </div>
+
+        {/* 이미지 출력단 */}
         <div>
           <img src={emergencyAlert.imgSrc} alt="temp" />
         </div>
       </div>
 
+      {/* 버튼 조작부 */}
       {!res && (
         <div className="widget-button-container">
           <button className="report" onClick={handleReport}>

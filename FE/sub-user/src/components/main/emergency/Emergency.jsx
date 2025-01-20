@@ -34,6 +34,8 @@ export default function Emergency() {
           })()}
         </div>
       </PageContainer>
+
+      {/* 긴급 상황 알림 기록 확인 버튼 */}
       <div id="emergency-log">
         <button
           className="log-button"

@@ -20,6 +20,7 @@ from datetime import date
 app = FastAPI()
 database = Database()
 
+# ========== Account 부분 ==========
 
 # 새로운 계정을 생성하는 기능
 @app.post("/accounts", status_code=status.HTTP_201_CREATED)
@@ -148,7 +149,6 @@ async def create_account(account: Account):
             }
         )
 
-
 # 가입 가능한 이메일인지 확인하는 기능
 @app.post("/accounts/check-email", status_code=status.HTTP_200_OK)
 async def check_email(email_check: EmailCheck):
@@ -177,7 +177,6 @@ async def check_email(email_check: EmailCheck):
         return {
             "message": "Email is available"
         }
-
 
 # 모든 사용자 계정의 정보를 불러오는 기능
 @app.get("/accounts", status_code=status.HTTP_200_OK)
@@ -370,3 +369,6 @@ async def delete_account(user_id: str, checker: PasswordCheck):
                 "input": {"user_id": user_id, "password": "<PASSWORD>"}
             }
         )
+
+# ========== Family 부분 ==========
+

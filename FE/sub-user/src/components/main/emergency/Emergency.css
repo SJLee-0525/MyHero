@@ -111,6 +111,38 @@
   background-color: #aaa;
 }
 
+#emergency-alert-box .widget-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 20px;
+  gap: 5%;
+}
+
+#emergency-alert-box .widget-button-container button {
+  width: 100%;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  font-weight: bold;
+  color: white;
+}
+
+#emergency-alert-box .widget-button-container .report {
+  background-color: #ff5a33;
+}
+
+#emergency-alert-box .widget-button-container .call {
+  background-color: #44803f;
+}
+
+#emergency-alert-box .widget-button-container .close {
+  background-color: #aaa;
+}
+
 #emergency-log {
   display: flex;
   justify-content: end;
@@ -119,7 +151,36 @@
   margin: 20px 10px;
 }
 
+#emergency-widget-log {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  margin: 20px 10px;
+
+  width: 100%;
+}
+
 #emergency-log .log-button {
+  width: 100%;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+}
+
+#emergency-widget-log .log-widget-button {
   width: 100%;
   height: 55px;
 

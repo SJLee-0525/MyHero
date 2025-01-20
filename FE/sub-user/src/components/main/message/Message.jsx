@@ -1,7 +1,5 @@
+import PageContainer from "../container/PageContainer.jsx";
+
 export default function Message() {
-  return (
-    <div>
-      <h3>This is Message</h3>
-    </div>
-  );
+  return <PageContainer title="메시지"></PageContainer>;
 }

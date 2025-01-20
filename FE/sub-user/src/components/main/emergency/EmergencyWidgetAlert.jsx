@@ -1,4 +1,4 @@
-export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
+export default function EmergencyWidgetAlert({ emergencyAlert, onCheckAlert }) {
   const res = emergencyAlert.response;
 
   function handleCheck() {
@@ -22,8 +22,8 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
           <h1 className={res ? "answer-title" : "no-answer-title"}>
             {emergencyAlert.location} 근처에서 낙상 감지
           </h1>
-          <p className="date">{emergencyAlert.date}</p>
         </div>
+        <p className="date">{emergencyAlert.date}</p>
         <div>
           <p>
             <strong>낙상 확인 여부 : </strong>
@@ -42,7 +42,7 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
       </div>
 
       {!res && (
-        <div className="button-container">
+        <div className="widget-button-container">
           <button className="report" onClick={handleReport}>
             신고 요청 보내기
           </button>
@@ -52,7 +52,7 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
         </div>
       )}
       {res && (
-        <div className="button-container">
+        <div className="widget-button-container">
           <button className="call" onClick={handleCall}>
             전화 연결
           </button>

@@ -6,6 +6,7 @@ import Widget from "../../widget/Widget.jsx";
 import Toggle from "../../toggle/Toggle.jsx";
 
 import CalendarWidget from "../calendar/CalendarWidget.jsx";
+import EmergencyWidget from "../emergency/EmergencyWidget.jsx";
 
 import notificationOnImage from "../../../assets/icons/notification.svg";
 import notificationOffImage from "../../../assets/icons/notification_off.svg";
@@ -30,6 +31,12 @@ export default function Main() {
 
   return (
     <div id="page-container">
+      <Widget title="긴급 상황 알림" type="emergency">
+        <EmergencyWidget />
+      </Widget>
+      <Widget title="캘린더" type="calendar">
+        <CalendarWidget />
+      </Widget>
       <Widget title="박순자님의 집">
         <div id="toggle-group">
           <Toggle
@@ -55,7 +62,9 @@ export default function Main() {
             status={userProgressStore.toggleStatus.microphone}
             onClickToggle={userProgressStore.handleToggleStatus}
             imgSrc={
-              userProgressStore.toggleStatus.microphone ? micOnImage : micOffImage
+              userProgressStore.toggleStatus.microphone
+                ? micOnImage
+                : micOffImage
             }
             altSrc="microphone"
           ></Toggle>
@@ -83,9 +92,6 @@ export default function Main() {
             </span>
           );
         })}
-      </Widget>
-      <Widget title="캘린더" type="calendar">
-        <CalendarWidget />
       </Widget>
     </div>
   );

@@ -179,7 +179,7 @@ async def check_email(email_check: EmailCheck):
         }
 
 
-# 다중 계정의 정보를 불러오는 기능
+# 모든 사용자 계정의 정보를 불러오는 기능
 @app.get("/accounts", status_code=status.HTTP_200_OK)
 async def get_all_accounts():
     account_list: list = database.get_all_accounts()
@@ -194,7 +194,7 @@ async def get_all_accounts():
             "result": jsonable_encoder(account_list)
         }
 
-
+# 한 사용자 계정 정보를 불러오는 기능
 @app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def get_account(user_id: str):
     account_data: dict = database.get_one_account(user_id)
@@ -213,7 +213,7 @@ async def get_account(user_id: str):
             }
         )
 
-
+# 한 사용자 계정 정보를 수정하는 기능
 @app.patch("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def update_account(user_id: str, updated_account: Account):
     previous_account: dict = database.get_one_account(user_id)
@@ -293,11 +293,14 @@ async def update_account(user_id: str, updated_account: Account):
         address=updated_account.address if updated_account.address is not None else previous_account["address"]
     )
 
+    # 사용자 계정 정보 변경
     result: bool = database.update_one_account(user_id, total_updated_account)
 
     if result:
+        final_updated_account: dict = database.get_one_account(user_id)
         return {
-            "message": "Account updated successfully"
+            "message": "Account updated successfully",
+            "result": jsonable_encoder(final_updated_account, exclude={"password"})
         }
     else:
         raise HTTPException(
@@ -309,5 +312,61 @@ async def update_account(user_id: str, updated_account: Account):
             }
         )
 
+# 한 사용자 계정을 삭제하는 기능
+@app.delete("/accounts/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_account(user_id: str, checker: PasswordCheck):
+    previous_account: dict = database.get_one_account(user_id)
 
+    # 없는 계정을 삭제하려는지 확인
+    if not previous_account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Account not found",
+                "input": {"user_id": user_id}
+            }
+        )
 
+    # 비밀번호 입력이 없이 요청한 경우
+    if checker.password is None or checker.password == "":
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": ["body", "password"],
+                "message": "Password is required",
+                "input": {"user_id": user_id}
+            }
+        )
+
+    # 비밀번호 검증
+    input_password: str = checker.password
+    hashed_password: str = database.get_hashed_password(user_id)
+    is_verified: bool = verify_password(input_password, hashed_password)
+    if not is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid password",
+                "input": {"user_id": user_id, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자 계정 삭제 진행
+    result: bool = database.delete_one_account(user_id)
+
+    if result:
+        return {
+            "message": "Account deleted successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to delete account",
+                "input": {"user_id": user_id, "password": "<PASSWORD>"}
+            }
+        )

@@ -223,6 +223,24 @@
   background-color: rgb(240, 239, 239);
 }
 
+/* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
+#emergency-alert-modal-box::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#emergency-alert-modal-box::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#emergency-alert-modal-box::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#emergency-alert-modal-box::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+}
+
 #emergency-alert-modal-box .alert-box {
   padding: 15px;
   background-color: rgb(204, 204, 204);

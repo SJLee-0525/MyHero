@@ -1,0 +1,160 @@
+#message {
+  width: 100%;
+}
+
+#message h2 {
+  margin: 5px 10px 15px;
+}
+
+#no-chat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 600px;
+  max-height: 600px;
+}
+
+#chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+  width: 100%;
+  height: 600px;
+  max-height: 600px;
+
+  padding: 15px;
+  gap: 18px;
+
+  border-radius: 15px;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+
+  background-color: rgba(0, 0, 0, 0.253);
+}
+
+/* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
+#chat::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#chat::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#chat::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#chat::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+}
+
+#chat .main {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+
+#chat .sub {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#chat .chat-date {
+  margin: 0px 10px;
+
+  font-size: small;
+}
+
+#chat .main-chat,
+#chat .sub-chat {
+  padding: 8px;
+  border-radius: 10px;
+  color: black;
+  font-size: large;
+  opacity: 0; /* 초기 상태에서 메시지가 보이지 않도록 설정 */
+  animation: slideUp 0.5s ease-out forwards; /* 애니메이션 적용 */
+}
+
+#chat .main-chat {
+  background-color: #b4cf66;
+  border-radius: 10px 10px 10px 0px;
+}
+
+#chat .sub-chat {
+  background-color: #ffec5c;
+  border-radius: 10px 10px 0px 10px;
+}
+
+/* 애니메이션 정의 */
+@keyframes slideUp {
+  0% {
+    transform: translateY(20px); /* 처음에는 20px 아래에서 시작 */
+    opacity: 0; /* 처음에는 보이지 않도록 */
+  }
+  100% {
+    transform: translateY(0); /* 최종 위치는 원래 위치 */
+    opacity: 1; /* 끝날 때는 완전히 보이도록 */
+  }
+}
+
+#message-form-group {
+  margin-top: 15px;
+
+  width: 100%;
+}
+
+#message-form-group form {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  width: 100%;
+  gap: 10px;
+}
+
+#message-form-group #message-role {
+  width: 20%;
+  height: 50px;
+  padding-left: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px;
+}
+
+#message-input-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+}
+
+#message-input-group input {
+  width: 80%;
+  height: 50px;
+  padding-left: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px 0px 0px 8px;
+}
+
+#message-input-group button {
+  width: 20%;
+  height: 50px;
+
+  background-color: #ffec5c;
+
+  border: 0;
+  border-radius: 0px 8px 8px 0px;
+}

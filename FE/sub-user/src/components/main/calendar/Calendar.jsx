@@ -1,6 +1,6 @@
 import "./Calendar.css";
 
-import CalendarStoreContextProvider from "../../../store/calendarStore.jsx";
+// import CalendarStoreContextProvider from "../../../store/calendarStore.jsx";
 
 import PageContainer from "../container/PageContainer";
 
@@ -12,13 +12,13 @@ import CalendarSchedules from "./CalendarSchedules.jsx";
 export default function Calendar() {
   return (
     <PageContainer title="캘린더">
-      <CalendarStoreContextProvider>
-        <div id="calendar">
-          <CalendarHeader />
-          <CalendarBody />
-          <CalendarSchedules />
-        </div>
-      </CalendarStoreContextProvider>
+      {/* <CalendarStoreContextProvider> */}
+      <div id="calendar">
+        <CalendarHeader />
+        <CalendarBody />
+        <CalendarSchedules />
+      </div>
+      {/* </CalendarStoreContextProvider> */}
     </PageContainer>
   );
 }

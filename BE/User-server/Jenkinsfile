@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        ENV_FILE = "./.env"
+
+        DB_HOST = credentials('DB_HOST')
+        DB_PORT = credentials('DB_PORT')
+        DB_USER = credentials('DB_USER')
+        DB_PASSWORD = credentials('DB_PASSWORD')
+        DB_SCHEMA = credentials('DB_SCHEMA')
+        DB_CHARSET = credentials('DB_CHARSET')
+    }
+
+    stages {
+        stage('set/environment') {
+            steps {
+                script {
+                    writeFile file: "${ENV_FILE}", text: """
+                    DB_HOST=${DB_HOST}
+                    DB_PORT=${DB_PORT}
+                    DB_USER=${DB_USER}
+                    DB_PASSWORD=${DB_PASSWORD}
+                    DB_SCHEMA=${DB_SCHEMA}
+                    DB_CHARSET=${DB_CHARSET}
+                    """
+                    echo ".env file create with credentials"
+                }
+                script {
+
+                }
+            }
+        }
+    }
+}

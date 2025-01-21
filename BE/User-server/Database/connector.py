@@ -123,7 +123,7 @@ class Database:
                 AccountTable.address
             ).all()
 
-            serialized_data = [{
+            serialized_data: list[dict] = [{
                 "id": data[0],
                 "email": data[1],
                 "role": data[2],
@@ -162,7 +162,7 @@ class Database:
             ).filter(AccountTable.id == account_id).first()
 
             if account_data is not None:
-                serialized_data = {
+                serialized_data: dict = {
                     "id": account_data[0],
                     "email": account_data[1],
                     "role": account_data[2],

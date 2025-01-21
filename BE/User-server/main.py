@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.0.3
+version : 0.0.4
 """
 
 # Libraries
@@ -14,7 +14,7 @@ from Database.models import *
 
 from Endpoint.data_blocks import *
 
-from utilities import *
+from Utilities.basic import *
 from datetime import date
 
 app = FastAPI()
@@ -58,7 +58,7 @@ async def create_account(account: Account):
         )
 
     # 잘못된 옵션을 선택했는지 점검
-    if account.role is not None and account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+    if account.role is not None and account.role.lower() not in Role._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -67,7 +67,7 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-    elif account.gender is not None and account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+    elif account.gender is not None and account.gender.lower() not in Gender._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -182,6 +182,7 @@ async def check_email(email_check: EmailCheck):
 @app.get("/accounts", status_code=status.HTTP_200_OK)
 async def get_all_accounts():
     account_list: list = database.get_all_accounts()
+
     if account_list:
         return {
             "message": "All accounts retrieved successfully",
@@ -197,6 +198,7 @@ async def get_all_accounts():
 @app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def get_account(user_id: str):
     account_data: dict = database.get_one_account(user_id)
+
     if account_data:
         return {
             "message": "Account retrieved successfully",
@@ -229,7 +231,7 @@ async def update_account(user_id: str, updated_account: Account):
         )
 
     # 잘못된 옵션을 선택했는지 점검
-    if updated_account.role and updated_account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+    if updated_account.role and updated_account.role.lower() not in Role._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -238,7 +240,7 @@ async def update_account(user_id: str, updated_account: Account):
                 "input": jsonable_encoder(updated_account)
             }
         )
-    elif updated_account.gender is not None and updated_account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+    elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={

@@ -80,6 +80,7 @@ export default function UserProgressContextProvider({ children }) {
     });
   }
 
+  // 로그아웃
   function handleLogout() {
     setLoginUserInfo({
       login: false,

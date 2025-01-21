@@ -9,6 +9,7 @@ import PageContainer from "../container/PageContainer.jsx";
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
 
+  // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     password: false,
@@ -20,6 +21,7 @@ export default function Login() {
   function handleLogin(event) {
     event.preventDefault();
 
+    // 이메일 유효성 검사
     const emailIsInvalid = !emailInput.current.value.includes("@");
     if (emailIsInvalid) {
       setFormIsInvalid((prevForm) => {
@@ -32,6 +34,7 @@ export default function Login() {
       });
     }
 
+    // 비밀번호 유효성 검사
     const passwordIsInvalid = passwordInput.current.value.length < 8;
     if (passwordIsInvalid) {
       setFormIsInvalid((prevForm) => {
@@ -44,6 +47,7 @@ export default function Login() {
       });
     }
 
+    // 입력받은 데이터 객체화
     const userInfo = {
       email: emailInput.current.value,
       password: passwordInput.current.value,

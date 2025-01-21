@@ -91,6 +91,7 @@ export default function EmergencyContextProvider({ children }) {
     });
   }
 
+  // 긴급 상황 알림 기록 모달 호출
   function handleShowAlertLog() {
     userProgressStore.handleOpenModal("emergency-alert-log");
   }

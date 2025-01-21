@@ -6,7 +6,7 @@ import PageContainer from "../container/PageContainer.jsx";
 
 const regions = [
   {
-    name: "서울",
+    name: "서울특별시",
     cities: [
       "강남구",
       "강동구",
@@ -36,7 +36,7 @@ const regions = [
     ],
   },
   {
-    name: "경기",
+    name: "경기도",
     cities: [
       "수원시",
       "성남시",
@@ -67,7 +67,7 @@ const regions = [
     ],
   },
   {
-    name: "인천",
+    name: "인천광역시",
     cities: [
       "계양구",
       "미추홀구",
@@ -82,7 +82,7 @@ const regions = [
     ],
   },
   {
-    name: "경북",
+    name: "경상북도",
     cities: [
       "포항시",
       "경주시",
@@ -110,7 +110,7 @@ const regions = [
     ],
   },
   {
-    name: "부산",
+    name: "부산광역시",
     cities: [
       "강서구",
       "금정구",
@@ -131,7 +131,7 @@ const regions = [
     ],
   },
   {
-    name: "대구",
+    name: "대구광역시",
     cities: [
       "남구",
       "달서구",
@@ -144,19 +144,19 @@ const regions = [
     ],
   },
   {
-    name: "광주",
+    name: "광주광역시",
     cities: ["광산구", "남구", "동구", "북구", "서구"],
   },
   {
-    name: "대전",
+    name: "대전광역시",
     cities: ["대덕구", "동구", "서구", "유성구", "중구"],
   },
   {
-    name: "울산",
+    name: "울산광역시",
     cities: ["남구", "동구", "북구", "울주군", "중구"],
   },
   {
-    name: "강원",
+    name: "강원도",
     cities: [
       "춘천시",
       "원주시",
@@ -179,7 +179,7 @@ const regions = [
     ],
   },
   {
-    name: "충북",
+    name: "충청북도",
     cities: [
       "청주시",
       "충주시",
@@ -195,7 +195,7 @@ const regions = [
     ],
   },
   {
-    name: "충남",
+    name: "충청남도",
     cities: [
       "천안시",
       "공주시",
@@ -215,7 +215,7 @@ const regions = [
     ],
   },
   {
-    name: "전북",
+    name: "전라북도",
     cities: [
       "전주시",
       "군산시",
@@ -234,7 +234,7 @@ const regions = [
     ],
   },
   {
-    name: "전남",
+    name: "전라남도",
     cities: [
       "목포시",
       "여수시",
@@ -261,12 +261,13 @@ const regions = [
     ],
   },
   {
-    name: "제주",
+    name: "제주특별자치도",
     cities: ["제주시", "서귀포시"],
   },
 ];
 
 export default function Signup() {
+  // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     emailCheck: "",
@@ -280,11 +281,12 @@ export default function Signup() {
   const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
 
+  // 이메일 중복 확인
   function handleEmailCheck() {
     const enteredEmail = emailInput.current.value;
     console.log("enteredEmail: " + enteredEmail);
 
-    // 이메일 중복 확인 성공공
+    // 이메일 중복 확인 성공
     setFormIsInvalid((prevForm) => {
       return { ...prevForm, emailCheck: "verified" };
     });
@@ -325,7 +327,7 @@ export default function Signup() {
       });
     }
 
-    // 이메일 중복확인 여부 검사
+    // 이메일 중복 확인여부 검사
     if (formIsInvalid.emailCheck !== "verified") {
       setFormIsInvalid((prevForm) => {
         return { ...prevForm, emailCheck: "not-verified" };

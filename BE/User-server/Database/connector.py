@@ -86,7 +86,7 @@ class Database:
     def create_account(self, account_data: AccountTable) -> bool:
         """
         새로운 사용자 계정을 만드는 기능
-        :param account_data: 미리 Mapping된 사용자 정보
+        :param account_data: AccountTable 형식으로 미리 Mapping된 사용자 정보
         :return: 계정이 정상적으로 등록 됬는지 여부 bool
         """
         result: bool = False
@@ -103,7 +103,6 @@ class Database:
             self.session.commit()
             self.session.close()
             return result
-
 
     # 모든 사용자 계정 정보 불러오기
     def get_all_accounts(self) -> list[dict]:
@@ -124,7 +123,7 @@ class Database:
                 AccountTable.address
             ).all()
 
-            serialized_data = [{
+            serialized_data: list[dict] = [{
                 "id": data[0],
                 "email": data[1],
                 "role": data[2],
@@ -142,9 +141,13 @@ class Database:
             self.session.close()
             return result
 
-
-    # 특정 사용자 계정 정보 불러오기
+    # 한 사용자 계정 정보 불러오기
     def get_one_account(self, account_id: str) -> dict:
+        """
+        ID를 이용해 하나의 사용자 계정 정보를 불러오는 기능
+        :param account_id: 사용자의 ID
+        :return: 하나의 사용자 데이터 dict
+        """
         result: dict = {}
 
         try:
@@ -159,7 +162,7 @@ class Database:
             ).filter(AccountTable.id == account_id).first()
 
             if account_data is not None:
-                serialized_data = {
+                serialized_data: dict = {
                     "id": account_data[0],
                     "email": account_data[1],
                     "role": account_data[2],
@@ -179,9 +182,33 @@ class Database:
             self.session.close()
             return result
 
+    # 한 사용자 비밀번호 Hash 정보 불러오기
+    def get_hashed_password(self, account_id: str) -> str:
+        """
+        한 사용자의 Hashed 비밀번호를 불러오는 기능
+        :param account_id: 사용자 ID
+        :return: Hashed 비밀번호 str
+        """
+        result: str = ""
 
-    # 특정 사용자 계정 정보 변경하기
+        try:
+            hashed_password = self.session.query(AccountTable.password).filter(AccountTable.id == account_id).first()[0]
+            result = hashed_password.__str__()
+        except SQLAlchemyError as error:
+            print(f"[DB] Error getting hashed password: {str(error)}")
+            result = ""
+        finally:
+            self.session.close()
+            return result
+
+    # 한 사용자 계정 정보 변경하기
     def update_one_account(self, account_id: str, updated_account: AccountTable) -> bool:
+        """
+        아이디와 최종으로 변경할 데이터를 이용해 계정의 정보를 변경하는 기능
+        :param account_id: 사용자의 ID
+        :param updated_account: 변경할 정보가 포함된 AccountTable Mapping 정보
+        :return: 정보가 성공적으로 변경되었는지 여부 bool
+        """
         result: bool = False
 
         try:
@@ -211,3 +238,29 @@ class Database:
             self.session.commit()
             self.session.close()
             return result
+
+    # 한 사용자 계정을 삭제하는 기능
+    def delete_one_account(self, account_id: str) -> bool:
+        """
+        사용자 계정 자체를 삭제하는 기능
+        :param account_id: 사용자의 ID
+        :return: 삭제가 성공적으로 이뤄졌는지 여부 bool
+        """
+        result: bool = False
+
+        try:
+            account_data = self.session.query(AccountTable).filter(AccountTable.id == account_id).first()
+            if account_data is not None:
+                self.session.delete(account_data)
+                result = True
+            else:
+                result = False
+        except SQLAlchemyError as error:
+            self.session.rollback()
+            print(f"[DB] Error deleting one account data: {str(error)}")
+            result = False
+        finally:
+            self.session.commit()
+            self.session.close()
+            return result
+

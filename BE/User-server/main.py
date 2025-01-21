@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.0.3
+version : 0.0.4
 """
 
 # Libraries
@@ -14,20 +14,21 @@ from Database.models import *
 
 from Endpoint.data_blocks import *
 
-from utilities import *
+from Utilities.basic import *
 from datetime import date
 
 app = FastAPI()
 database = Database()
 
+# ========== Account 부분 ==========
 
 # 새로운 계정을 생성하는 기능
 @app.post("/accounts", status_code=status.HTTP_201_CREATED)
 async def create_account(account: Account):
     # 필수 입력 정보 점검 (비밀번호, 역할, 이메일)
-    if account.password == "":
+    if account.password is None or account.password == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "password"],
@@ -35,9 +36,9 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account)
             }
         )
-    elif account.role == "":
+    elif account.role is None or account.role == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "role"],
@@ -45,9 +46,9 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-    elif account.email == "":
+    elif account.email is None or account.email == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "loc": ["body", "email"],
@@ -57,7 +58,7 @@ async def create_account(account: Account):
         )
 
     # 잘못된 옵션을 선택했는지 점검
-    if account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+    if account.role is not None and account.role.lower() not in Role._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -66,7 +67,7 @@ async def create_account(account: Account):
                 "input": jsonable_encoder(account, exclude={"password"})
             }
         )
-    elif account.gender is not None and account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+    elif account.gender is not None and account.gender.lower() not in Gender._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -103,6 +104,17 @@ async def create_account(account: Account):
     if account.birth_date is None:  # 입력받은 생년월일을 date 타입으로 변환
         converted_birth_date = None
     else:
+        if account.birth_date.year < 1900 or account.birth_date.year > 2022 or \
+            account.birth_date.day < 1 or account.birth_date.day > 31 or \
+            account.birth_date.month < 1 or account.birth_date.month > 12:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "type": "invalid value",
+                    "message": "Invalid value provided for account details (birth date)",
+                    "input": jsonable_encoder(account, exclude={"password"})
+                }
+            )
         converted_birth_date = date(
             year=account.birth_date.year,
             month=account.birth_date.month,
@@ -113,7 +125,7 @@ async def create_account(account: Account):
         id=new_id,
         email=account.email,
         password=hashed_password,
-        role=account.role.upper(),
+        role=account.role.upper() if account.role is not None else "TEST",
         user_name=account.user_name,
         birth_date=converted_birth_date,
         gender=account.gender.upper() if account.gender is not None else "OTHER",
@@ -137,16 +149,15 @@ async def create_account(account: Account):
             }
         )
 
-
 # 가입 가능한 이메일인지 확인하는 기능
 @app.post("/accounts/check-email", status_code=status.HTTP_200_OK)
 async def check_email(email_check: EmailCheck):
     target_email: str = email_check.email
     email_list: list = [data["email"] for data in database.get_all_email()]
 
-    if target_email == "":
+    if target_email is None or target_email == "":
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
                 "message": "Email is required",
@@ -167,11 +178,11 @@ async def check_email(email_check: EmailCheck):
             "message": "Email is available"
         }
 
-
-# 다중 계정의 정보를 불러오는 기능
+# 모든 사용자 계정의 정보를 불러오는 기능
 @app.get("/accounts", status_code=status.HTTP_200_OK)
 async def get_all_accounts():
     account_list: list = database.get_all_accounts()
+
     if account_list:
         return {
             "message": "All accounts retrieved successfully",
@@ -183,10 +194,11 @@ async def get_all_accounts():
             "result": jsonable_encoder(account_list)
         }
 
-
+# 한 사용자 계정 정보를 불러오는 기능
 @app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def get_account(user_id: str):
     account_data: dict = database.get_one_account(user_id)
+
     if account_data:
         return {
             "message": "Account retrieved successfully",
@@ -202,7 +214,7 @@ async def get_account(user_id: str):
             }
         )
 
-
+# 한 사용자 계정 정보를 수정하는 기능
 @app.patch("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def update_account(user_id: str, updated_account: Account):
     previous_account: dict = database.get_one_account(user_id)
@@ -219,7 +231,7 @@ async def update_account(user_id: str, updated_account: Account):
         )
 
     # 잘못된 옵션을 선택했는지 점검
-    if updated_account.role and updated_account.role.upper() not in ["TEST", "MAIN", "SUB", "SYSTEM"]:
+    if updated_account.role and updated_account.role.lower() not in Role._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -228,7 +240,7 @@ async def update_account(user_id: str, updated_account: Account):
                 "input": jsonable_encoder(updated_account)
             }
         )
-    elif updated_account.gender is not None and updated_account.gender.upper() not in ["MALE", "FEMALE", "OTHER"]:
+    elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -255,6 +267,17 @@ async def update_account(user_id: str, updated_account: Account):
     if updated_account.birth_date is None:
         converted_birth_date = None
     else:
+        if updated_account.birth_date.year < 1900 or updated_account.birth_date.year > 2022 or \
+            updated_account.birth_date.day < 1 or updated_account.birth_date.day > 31 or \
+            updated_account.birth_date.month < 1 or updated_account.birth_date.month > 12:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "type": "invalid value",
+                    "message": "Invalid value provided for account details (birth date)",
+                    "input": jsonable_encoder(updated_account)
+                }
+            )
         converted_birth_date = date(
             year=updated_account.birth_date.year,
             month=updated_account.birth_date.month,
@@ -271,11 +294,14 @@ async def update_account(user_id: str, updated_account: Account):
         address=updated_account.address if updated_account.address is not None else previous_account["address"]
     )
 
+    # 사용자 계정 정보 변경
     result: bool = database.update_one_account(user_id, total_updated_account)
 
     if result:
+        final_updated_account: dict = database.get_one_account(user_id)
         return {
-            "message": "Account updated successfully"
+            "message": "Account updated successfully",
+            "result": jsonable_encoder(final_updated_account, exclude={"password"})
         }
     else:
         raise HTTPException(
@@ -287,5 +313,64 @@ async def update_account(user_id: str, updated_account: Account):
             }
         )
 
+# 한 사용자 계정을 삭제하는 기능
+@app.delete("/accounts/{user_id}", status_code=status.HTTP_200_OK)
+async def delete_account(user_id: str, checker: PasswordCheck):
+    previous_account: dict = database.get_one_account(user_id)
 
+    # 없는 계정을 삭제하려는지 확인
+    if not previous_account:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Account not found",
+                "input": {"user_id": user_id}
+            }
+        )
+
+    # 비밀번호 입력이 없이 요청한 경우
+    if checker.password is None or checker.password == "":
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": ["body", "password"],
+                "message": "Password is required",
+                "input": {"user_id": user_id}
+            }
+        )
+
+    # 비밀번호 검증
+    input_password: str = checker.password
+    hashed_password: str = database.get_hashed_password(user_id)
+    is_verified: bool = verify_password(input_password, hashed_password)
+    if not is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid password",
+                "input": {"user_id": user_id, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자 계정 삭제 진행
+    result: bool = database.delete_one_account(user_id)
+
+    if result:
+        return {
+            "message": "Account deleted successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to delete account",
+                "input": {"user_id": user_id, "password": "<PASSWORD>"}
+            }
+        )
+
+# ========== Family 부분 ==========
 

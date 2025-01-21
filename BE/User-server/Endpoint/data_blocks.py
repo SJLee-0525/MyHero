@@ -16,6 +16,12 @@ class EmailCheck(BaseModel):
     """
     email: str  # 중복을 검증할 이메일 주소
 
+class PasswordCheck(BaseModel):
+    """
+    계정 삭제를 위해 Client가 보내는 데이터
+    """
+    password: str  # 계정 삭제를 위해 검증할 비밀번호
+
 class Date(BaseModel):
     """
     날짜 데이터

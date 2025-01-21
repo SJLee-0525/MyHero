@@ -1,0 +1,70 @@
+#activity-chart-container {
+  width: 100%;
+
+  padding: 15px;
+
+  border-radius: 15px;
+
+  background-color: #b4b4b4;
+}
+
+#activity-chart {
+  width: 100%;
+  height: 400px;
+
+  padding: 10px 0px 0px;
+
+  border-radius: 13px;
+
+  background-color: rgba(255, 255, 255, 0.719);
+}
+
+#activity-chart .custom-tooltip {
+  min-width: 150px;
+
+  padding: 10px;
+
+  background-color: rgba(226, 226, 226, 0.5);
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  border-radius: 10px;
+}
+
+#activity-chart .custom-tooltip h3 {
+  margin: 0;
+
+  color: rgb(77, 77, 77);
+}
+
+#activity-chart .custom-tooltip p {
+  margin: 0;
+
+  color: rgb(77, 77, 77);
+}
+
+#activity-chart .custom-tooltip .date {
+  margin-bottom: 5px;
+  font-size: larger;
+  font-weight: bold;
+}
+
+#activity-chart .custom-tooltip .health {
+  color: #44803f;
+  font-size: smaller;
+}
+
+#activity-chart .custom-tooltip .mental {
+  color: #ff5a33;
+  font-size: smaller;
+}
+
+#activity-chart .custom-tooltip .desc {
+  margin: 5px 0px 0px;
+
+  color: black;
+  font-size: smaller;
+}
+
+hr {
+  border: solid rgb(77, 77, 77) 1px;
+}

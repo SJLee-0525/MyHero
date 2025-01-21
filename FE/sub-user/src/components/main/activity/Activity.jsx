@@ -1,7 +1,12 @@
+import PageContainer from "../container/PageContainer";
+
+import ActivityChartContainer from "./ActiviyChartContainer";
+
 export default function Activity() {
   return (
-    <div>
+    <PageContainer>
       <h3>This is Activity</h3>
-    </div>
+      <ActivityChartContainer />
+    </PageContainer>
   );
 }

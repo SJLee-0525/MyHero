@@ -11,14 +11,17 @@ import CalendarSchedules from "./CalendarSchedules.jsx";
 
 export default function Calendar() {
   return (
-    <PageContainer title="캘린더">
-      {/* <CalendarStoreContextProvider> */}
-      <div id="calendar">
-        <CalendarHeader />
-        <CalendarBody />
-        <CalendarSchedules />
-      </div>
-      {/* </CalendarStoreContextProvider> */}
-    </PageContainer>
+    <div>
+      <h2 id="main-container-title">CALENDAR</h2>
+      <PageContainer title="캘린더">
+        {/* <CalendarStoreContextProvider> */}
+        <div id="calendar">
+          <CalendarHeader />
+          <CalendarBody />
+          <CalendarSchedules />
+        </div>
+        {/* </CalendarStoreContextProvider> */}
+      </PageContainer>
+    </div>
   );
 }

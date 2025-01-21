@@ -1,7 +1,11 @@
+import Login from "./Login.jsx";
+import Signup from "./Signup.jsx";
+
 export default function Accounts() {
   return (
     <div>
-      <h3>This is Accounts</h3>
+      {/* <Login /> */}
+      <Signup />
     </div>
   );
 }

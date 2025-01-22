@@ -1,0 +1,2 @@
+import "./Notice.css";
+

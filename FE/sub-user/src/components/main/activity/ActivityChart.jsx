@@ -1,6 +1,7 @@
 import "./Activity.css";
 
-import React from "react";
+import { useContext } from "react";
+
 import {
   LineChart,
   Line,
@@ -12,43 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    date: "01-15",
-    health: 77,
-    mental: 65,
-  },
-  {
-    date: "01-16",
-    health: 72,
-    mental: 90,
-  },
-  {
-    date: "01-17",
-    health: 85,
-    mental: 88,
-  },
-  {
-    date: "01-18",
-    health: 68,
-    mental: 72,
-  },
-  {
-    date: "01-19",
-    health: 72,
-    mental: 82,
-  },
-  {
-    date: "01-20",
-    health: 59,
-    mental: 67,
-  },
-  {
-    date: "01-21",
-    health: 79,
-    mental: 70,
-  },
-];
+import { HealthContext } from "../../../store/healthStore";
 
 function CustomTooltip({ payload, label, active }) {
   if (active) {
@@ -66,6 +31,8 @@ function CustomTooltip({ payload, label, active }) {
 }
 
 export default function ActivityChart() {
+  const healthStore = useContext(HealthContext);
+
   return (
     <div id="activity-chart">
       <ResponsiveContainer
@@ -76,7 +43,7 @@ export default function ActivityChart() {
         <LineChart
           width={300}
           height={100}
-          data={data}
+          data={healthStore.healthLog}
           margin={{
             top: 10,
             right: 50,

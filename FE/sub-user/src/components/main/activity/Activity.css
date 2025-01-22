@@ -1,3 +1,9 @@
+#activity-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
 #activity-chart-container {
   width: 100%;
 
@@ -67,4 +73,148 @@
 
 hr {
   border: solid rgb(77, 77, 77) 1px;
+}
+
+#activity-toggle-group {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+  gap: 10px;
+}
+
+#activity-toggle {
+  box-sizing: border-box;
+
+  display: flex;
+
+  min-width: 48%;
+  max-width: 150px;
+  height: 80px;
+  padding: 15px;
+
+  border-radius: 10px;
+
+  background: #d9d9d9ac;
+}
+
+#activity-toggle-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  gap: 12px;
+
+  color: black;
+  text-align: end;
+}
+
+.toggle-activity {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 60px;
+  height: 60px;
+  padding: 2px;
+
+  border-radius: 100%;
+
+  background-color: #44803f;
+
+  transition: all 0.3s ease;
+}
+
+.toggle-activity:hover {
+  padding: 0;
+
+  background-color: #4d9346;
+
+  transition: all 0.3s ease;
+}
+
+.toggle-mental {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 60px;
+  height: 60px;
+  padding: 2px;
+
+  border-radius: 100%;
+
+  background-color: #ff5a33;
+
+  transition: all 0.3s ease;
+}
+
+.toggle-mental:hover {
+  padding: 0;
+
+  background-color: #da4f30;
+
+  transition: all 0.3s ease;
+}
+
+#activity-toggle-box img {
+  width: 70%;
+}
+
+#activity-toggle-box .toggle-name {
+  margin: 0 5px;
+}
+
+#activity-toggle-box .toggle-status-bad {
+  margin: 0 5px;
+
+  font-size: x-large;
+  font-weight: bold;
+  color: #ff5a33;
+}
+
+#activity-toggle-box .toggle-status-good {
+  margin: 0 5px;
+
+  font-size: x-large;
+  font-weight: bold;
+  color: #44803f;
+}
+
+#weekly-stats-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#weekly-chart-container {
+  width: 50%;
+
+  padding: 15px;
+
+  border-radius: 15px;
+
+  background-color: #b4b4b4;
+}
+
+#summary-container {
+  width: 50%;
+
+  padding: 20px;
+}
+
+#summary-container .summary-title {
+  color: #ffec5c;
+  margin: 0;
+}
+
+/* #summary-container .summary-content {
+} */
+
+@media screen and (max-width: 600px) {
+  #activity-container {
+    display: flex;
+    flex-direction: column;
+  }
 }

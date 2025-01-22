@@ -6,4 +6,4 @@
 | 250114 | - 주 사용자 Mock-up 페이지 [#25]                                                                                                                                 |
 | 250115 | - FE 기본 구조 작성 [#65] <br> &nbsp;&nbsp;&nbsp;&nbsp;- 컬러 팔레트 제작 [#112] <br> &nbsp;&nbsp;&nbsp;&nbsp;- 보조 사용자 Mock-up 페이지 제작 [#108] (진행 중) |
 | 250116 | - FE 기본 구조 작성 [#65] <br> &nbsp;&nbsp;&nbsp;&nbsp;- 보조 사용자 Mock-up 페이지 제작 [#108]                                                                  |
-| 250117 |                                                                                                                                                                  |
+| 250117 | - FE 기본 구조 작성 [#65] <br> &nbsp;&nbsp;&nbsp;&nbsp;- 캘린더 제작 [#150]                                                                                      |

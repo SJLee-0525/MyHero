@@ -23,3 +23,10 @@
 3. User API Email 중복 확인 기능 구현
 4. User API 새로운 Account 추가 기능 구현
 5. User API Account 삭제 및 편집, Login, Logout 기능 구현 준비 중...
+
+### 2025년 1월 17일
+1. 문서 작업을 위한 팀 Notion 템플릿 구축 완료!
+2. API 문서를 위한 Postman 작업 중...
+3. User API Account 부분 개발 완료 및 버그 수정 중...
+4. User API Family/Member/Status 부분 개발 준비
+5. LLM 연동 Chat 기능 이식 준비

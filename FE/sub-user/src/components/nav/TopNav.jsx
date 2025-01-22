@@ -1,7 +1,8 @@
 import "./Nav.css";
 import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { MainStoreContext } from "../../store/mainStore";
+import { UserProgressContext } from "../../store/userProgressStore";
 
 import TopNavSideNavElems from "./TopNavSideElems";
 
@@ -22,23 +23,29 @@ import runIcon from "../../assets/icons/run.svg";
 import settingIcon from "../../assets/icons/settings.svg";
 
 export default function TopNav() {
-  const mainStore = useContext(MainStoreContext);
+  const userProgressStore = useContext(UserProgressContext);
+
+  const navigate = useNavigate();
 
   return (
     <div id="mobile-bar">
       <nav className="top-bar">
         <div className="top-bar-toggle-menu">
-          <button onClick={mainStore.handleSidebarToggle}>
+          <button onClick={userProgressStore.handleSidebarToggle}>
             <img src={menuIcon} alt="menu" />
           </button>
         </div>
         <h3>
-          {!mainStore.isActiveSideBarElem
+          {!userProgressStore.isActiveSideBarElem
             ? "SUNGJOONKING"
-            : mainStore.isActiveSideBarElem.toUpperCase()}
+            : userProgressStore.isActiveSideBarElem.toUpperCase()}
         </h3>
         <div className="top-bar-toggle-menu">
-          <button>
+          <button
+            onClick={() => {
+              navigate("/accounts");
+            }}
+          >
             <img src={personIcon} alt="userinfo" />
           </button>
         </div>
@@ -46,12 +53,12 @@ export default function TopNav() {
 
       <aside
         className={`top-side-bar ${
-          mainStore.sidebarIsOpened ? "open" : "closed"
+          userProgressStore.sidebarIsOpened ? "open" : "closed"
         }`}
       >
         <div className="top-side-bar-header">
           <h3>Log in to continue ...</h3>
-          <button onClick={mainStore.handleSidebarToggle}>
+          <button onClick={userProgressStore.handleSidebarToggle}>
             <img src={closeIcon} alt="close" />
           </button>
         </div>
@@ -60,64 +67,64 @@ export default function TopNav() {
             imgSrc={homeIcon}
             altSrc="home"
             identifier="HOME"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={notificationIcon}
             altSrc="notification"
             identifier="NOTIFICATION"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={smsIcon}
             altSrc="message"
             identifier="MESSAGE"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
             identifier="EMERGENCY"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={calendarIcon}
             altSrc="calendar"
             identifier="CALENDAR"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={runIcon}
             altSrc="activity"
             identifier="ACTIVITY"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
             imgSrc={vitalSignIcon}
             altSrc="health"
             identifier="HEALTH"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems
+          {/* <TopNavSideNavElems
             imgSrc={mindfulnessIcon}
             altSrc="mind"
             identifier="MIND"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
-          />
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          /> */}
           <TopNavSideNavElems
             imgSrc={settingIcon}
             altSrc="settings"
             identifier="SETTINGS"
-            activeIdentifier={mainStore.isActiveSideBarElem}
-            onClickElem={mainStore.handleActiveSideBarElem}
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
           />
         </ul>
       </aside>

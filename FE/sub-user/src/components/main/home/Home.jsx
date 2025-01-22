@@ -6,6 +6,7 @@ import Widget from "../../widget/Widget.jsx";
 import Toggle from "../../toggle/Toggle.jsx";
 
 import CalendarWidget from "../calendar/CalendarWidget.jsx";
+import EmergencyWidget from "../emergency/EmergencyWidget.jsx";
 
 import notificationOnImage from "../../../assets/icons/notification.svg";
 import notificationOffImage from "../../../assets/icons/notification_off.svg";
@@ -14,10 +15,10 @@ import cameraImage from "../../../assets/icons/camera.svg";
 import micOnImage from "../../../assets/icons/mic_on.svg";
 import micOffImage from "../../../assets/icons/mic_off.svg";
 
-import { MainStoreContext } from "../../../store/mainStore.jsx";
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function Main() {
-  const mainStore = useContext(MainStoreContext);
+  const userProgressStore = useContext(UserProgressContext);
 
   const contents = ["임영웅", "김치찌개", "두부", "여행", "병원"];
   const colors = [
@@ -29,64 +30,73 @@ export default function Main() {
   ];
 
   return (
-    <div id="page-container">
-      <Widget title="박순자님의 집">
-        <div id="toggle-group">
-          <Toggle
-            name="notification"
-            status={mainStore.toggleStatus.notification}
-            onClickToggle={mainStore.handleToggleStatus}
-            imgSrc={
-              mainStore.toggleStatus.notification
-                ? notificationOnImage
-                : notificationOffImage
-            }
-            altSrc="notification"
-          ></Toggle>
-          <Toggle
-            name="camera"
-            status={mainStore.toggleStatus.camera}
-            onClickToggle={mainStore.handleToggleStatus}
-            imgSrc={cameraImage}
-            altSrc="camera"
-          ></Toggle>
-          <Toggle
-            name="microphone"
-            status={mainStore.toggleStatus.microphone}
-            onClickToggle={mainStore.handleToggleStatus}
-            imgSrc={
-              mainStore.toggleStatus.microphone ? micOnImage : micOffImage
-            }
-            altSrc="microphone"
-          ></Toggle>
-          <Toggle
-            name="car"
-            status={mainStore.toggleStatus.car}
-            onClickToggle={mainStore.handleToggleStatus}
-            imgSrc={carImage}
-            altSrc="car"
-          ></Toggle>
-        </div>
-      </Widget>
-      <Widget title="오늘 박순자님의 대화 키워드" type="keyword">
-        {contents.map((content, index) => {
-          return (
-            <span
-              key={index}
-              id="content-box"
-              style={{
-                backgroundColor: colors[index % colors.length][0],
-                color: colors[index % colors.length][1],
-              }}
-            >
-              {content}
-            </span>
-          );
-        })}
-      </Widget>
-      <Widget title="캘린더" type="calendar">
-        <CalendarWidget />
-      </Widget>
+    <div>
+      <h2 id="main-container-title">HOME</h2>
+
+      <div id="page-container">
+        <Widget title="긴급 상황 알림" type="emergency">
+          <EmergencyWidget />
+        </Widget>
+        <Widget title="캘린더" type="calendar">
+          <CalendarWidget />
+        </Widget>
+        <Widget title="박순자님의 집">
+          <div id="toggle-group">
+            <Toggle
+              name="notification"
+              status={userProgressStore.toggleStatus.notification}
+              onClickToggle={userProgressStore.handleToggleStatus}
+              imgSrc={
+                userProgressStore.toggleStatus.notification
+                  ? notificationOnImage
+                  : notificationOffImage
+              }
+              altSrc="notification"
+            ></Toggle>
+            <Toggle
+              name="camera"
+              status={userProgressStore.toggleStatus.camera}
+              onClickToggle={userProgressStore.handleToggleStatus}
+              imgSrc={cameraImage}
+              altSrc="camera"
+            ></Toggle>
+            <Toggle
+              name="microphone"
+              status={userProgressStore.toggleStatus.microphone}
+              onClickToggle={userProgressStore.handleToggleStatus}
+              imgSrc={
+                userProgressStore.toggleStatus.microphone
+                  ? micOnImage
+                  : micOffImage
+              }
+              altSrc="microphone"
+            ></Toggle>
+            <Toggle
+              name="car"
+              status={userProgressStore.toggleStatus.car}
+              onClickToggle={userProgressStore.handleToggleStatus}
+              imgSrc={carImage}
+              altSrc="car"
+            ></Toggle>
+          </div>
+        </Widget>
+        <Widget title="오늘 박순자님의 대화 키워드" type="keyword">
+          {contents.map((content, index) => {
+            return (
+              <span
+                key={index}
+                id="content-box"
+                style={{
+                  backgroundColor: colors[index % colors.length][0],
+                  color: colors[index % colors.length][1],
+                }}
+              >
+                {content}
+              </span>
+            );
+          })}
+        </Widget>
+      </div>
     </div>
   );
 }

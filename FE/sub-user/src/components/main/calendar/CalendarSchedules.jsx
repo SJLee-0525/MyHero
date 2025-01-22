@@ -19,6 +19,7 @@ export default function CalendarSchedules() {
   return (
     <>
       <div className="calender-schedule">
+        {/* 해당 날짜 일정 출력력 */}
         <ul>
           {schedules.schedules[selectedDate.date] ? (
             schedules.schedules[selectedDate.date].map((schedule, index) => (
@@ -32,6 +33,8 @@ export default function CalendarSchedules() {
           <a className="calender-schedule-date">{selectedDate.date}</a>
         </div>
       </div>
+
+      {/* 일정 추가 input 그룹 */}
       <form onSubmit={handleSubmitSchedule} className="calendar-form">
         <input
           type="text"

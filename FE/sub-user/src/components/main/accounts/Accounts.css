@@ -1,0 +1,271 @@
+#login-form {
+  margin: 3rem auto;
+  padding: 2rem;
+
+  width: 100%;
+  max-width: 40rem;
+
+  border-radius: 8px;
+}
+
+#login-form .login-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+#login-form .login-control {
+  width: 100%;
+}
+
+#login-form .login-control input {
+  display: block;
+
+  width: 100%;
+  height: 50px;
+  padding-left: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px;
+}
+
+#login-form .login-control label {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+.login-control-error {
+  color: #ffca99;
+  font-size: 0.8rem;
+}
+
+.login-control-error p {
+  margin: 0;
+}
+
+#login-form .login-form-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+#login-form .login-form-action button {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #44803f;
+
+  color: white;
+  font-weight: bold;
+}
+
+#signup-form {
+  margin: 0 auto;
+  padding: 2rem;
+
+  width: 100%;
+  max-width: 40rem;
+
+  border-radius: 8px;
+}
+
+#signup-form .signup-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+#signup-form .signup-control {
+  width: 100%;
+
+  margin: 10px 0px;
+}
+
+#signup-form .signup-wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+#signup-form .signup-control input {
+  width: 100%;
+  height: 50px;
+  padding-left: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px;
+}
+
+#signup-form .email-input {
+  width: 80%;
+  height: 50px;
+  padding-left: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px;
+}
+
+#signup-form .signup-control label {
+  display: block;
+
+  margin-bottom: 0.2rem;
+
+  color: white;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
+
+#signup-form .signup-control select {
+  display: block;
+
+  width: 100%;
+  height: 50px;
+
+  padding: 0.5rem;
+
+  border: 0;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.568);
+
+  font-size: 1rem;
+  color: #142020;
+}
+
+#signup-form .signup-form-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+#signup-form .signup-form-action .login-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #44803f;
+
+  color: white;
+  font-weight: bold;
+}
+
+.signup-control-error {
+  color: #ffca99;
+  font-size: 0.8rem;
+  height: 2rem;
+  padding: 0.5rem 0;
+}
+
+.signup-control-error p {
+  margin: 0;
+}
+
+#signup-form .email-check {
+  width: 20%;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  color: black;
+  font-weight: bold;
+}
+
+#signup-form .email-verified {
+  width: 20%;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #44803f;
+
+  color: white;
+  font-weight: bold;
+}
+
+#signup-form .email-not-verified {
+  width: 20%;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+
+  color: white;
+  font-weight: bold;
+}
+
+#signup-form .reset-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: transparent;
+
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+#signup-form .signup-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #44803f;
+
+  color: white;
+  font-weight: bold;
+}
+
+.logout-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+
+  color: white;
+  font-weight: bold;
+}
+
+hr {
+  border: 1px rgba(255, 255, 255, 0.568) solid;
+}

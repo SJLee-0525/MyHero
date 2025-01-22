@@ -11,6 +11,7 @@ export default function CalendarHeader() {
 
   return (
     <div className="calendar-header-container">
+      {/* 연도 전환 리모컨 */}
       <div className="calendar-header-change-button">
         <button onClick={dispatch.handlePrevYear}>
           <img src={arrowBackIcon} alt="prev-year" />
@@ -20,6 +21,8 @@ export default function CalendarHeader() {
           <img src={arrowForwardIcon} alt="next-year" />
         </button>
       </div>
+
+      {/* 월 전환 리모컨 */}
       <div className="calendar-header-change-button">
         <button onClick={dispatch.handlePrevMonth}>
           <img src={arrowBackIcon} alt="prev-month" />

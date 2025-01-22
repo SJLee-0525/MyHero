@@ -86,22 +86,21 @@
 .calendar-day {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
 
-  padding: 10px;
+  padding: 4px;
   aspect-ratio: 1; /* 너비와 높이를 동일하게 설정 */
 
   cursor: pointer;
 
   color: #000; /* Default day color for current month */
+  font-weight: bold;
 }
 
 .calendar-day:hover {
-  border-radius: 100%;
+  border-radius: 10px;
   background-color: rgba(255, 170, 0, 0.562);
-
-  font-weight: bold;
 
   transition: all 0.4s ease;
 }
@@ -117,11 +116,54 @@
 .calendar-day.selected-date {
   color: white;
   background-color: #ff9500;
-  border-radius: 100%;
+  border-radius: 12px;
 
   font-weight: bold;
 
   transition: all 0.3s ease;
+}
+
+.calendar-day-schedules {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  gap: 3px;
+  margin: 0;
+  padding: 5px 0px;
+
+  list-style: none;
+
+  font-size: small;
+  font-weight: normal;
+  color: white;
+}
+
+.calendar-day-schedule {
+  display: block; /* 블록 요소 설정 */
+
+  margin: 0;
+  padding: 0 5px;
+  max-width: 100%; /* 부모 요소에 맞춤 */
+
+  border-radius: 6px;
+  background-color: #0e0e0e7d;
+
+  white-space: nowrap; /* 줄 바꿈 방지 */
+  overflow: hidden; /* 넘치는 글자 숨김 */
+  text-overflow: ellipsis; /* ...으로 표시 */
+}
+
+.calendar-day-schedules-widget {
+  background-color: rgba(206, 5, 5, 0.79);
+  color: white;
+
+  border-radius: 100%;
+
+  aspect-ratio: 1; /* 너비와 높이를 동일하게 설정 */
+
+  text-align: center;
+  font-size: x-small;
 }
 
 .calender-schedule {
@@ -142,7 +184,7 @@
   background-color: #ff9500;
   border-radius: 10px;
 
-  font-size: large;
+  font-size: small;
   font-weight: bold;
 }
 

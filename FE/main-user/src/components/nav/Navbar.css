@@ -1,12 +1,18 @@
 #nav-bar {
-  padding: 2rem;
+  /* padding: 2rem; */
   /* border-radius: 6px; */
-  background: #282617ad;
+  background: #ffffff50;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   width: 10%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+ 
+#nav-bar p {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
 }
 
 #nav-bar #status-bar {
@@ -19,8 +25,10 @@
   background: transparent;
   border: transparent 2px solid;
   border-radius: 8px;
-  padding: 4px;
+  height: 40%;
+  padding: 8px;
   margin: 4px;
+  margin-bottom: 1rem;
   transition: all 0.2s ease-in-out;
 }
 

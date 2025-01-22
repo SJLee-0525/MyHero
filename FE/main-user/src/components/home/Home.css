@@ -23,7 +23,7 @@
   margin: 5rem;
   padding: 2rem;
   border-radius: 8px;
-  background: #282617ad;
+  background: #ffffff50;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
@@ -67,22 +67,28 @@
   align-items: center;
 }
 
-#dock #dock-icon:hover {
-  filter: brightness(50%);
+#dock #dock-icon .enable-img:hover {
+  filter: brightness(60%);
   transition: all 0.3s ease;
 }
 
-#dock #dock-icon .enabled {
+#dock #dock-icon .disable-img:hover {
+  filter: brightness(60%);
+  transition: all 0.3s ease;
+}
+
+#dock #dock-icon .enable-img {
   width: 80%;
   height: 80%;
-  background-color: #b4cf66;
+  /* background-color: #b4cf66; */
   border-radius: 100%;
 }
 
-#dock #dock-icon .disabled {
+#dock #dock-icon .disable-img {
   width: 80%;
+  filter: brightness(50%);
   height: 80%;
-  background-color: #ff5a33;
+  /* background-color: #ff5a33; */
   border-radius: 100%;
 }
 

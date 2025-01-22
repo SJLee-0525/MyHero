@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "stg-yswa-kr-practice-db-master.mariadb.database.azure.com",
+            "port": 3306,
+            "driver": "MariaDB",
+            "name": "TestBotDB",
+            "database": "S12P11A102",
+            "username": "S12P11A102@stg-yswa-kr-practice-db-master.mariadb.database.azure.com"
+        }
+    ]
+}

@@ -9,7 +9,7 @@ import screenProtector from "./assets/screen-protector.png";
 
 function ScreenSaver({ onDismiss }) {
   return (
-    <div>
+    <div className="screensaver-container">
       <img
         src={screenProtector}
         alt="screenprotector"
@@ -22,7 +22,7 @@ function ScreenSaver({ onDismiss }) {
 export default function App() {
   const [isScreensaverActive, setIsScreensaverActive] = useState(false);
 
-  const SCREENSAVER_TIMEOUT = 35000;
+  const SCREENSAVER_TIMEOUT = 500000000;
   let timeoutId = null;
 
   const resetTimer = () => {

@@ -3,11 +3,19 @@
   flex-direction: column;
   /* background-color: red; */
   width: 90%;
+  transition: width 0.3s ease-in-out;
+}
+
+@media screen and (max-width: 768px) {
+  #home {
+    width: 100%;
+  }
 }
 
 #icon-box {
   display: flex;
   height: 75%;
+  width: 100%;
   justify-content: space-around;
   align-items: center;
 }
@@ -28,7 +36,7 @@
 }
 
 #icon-box #icon img {
-  width: 80%;
+  width: 70%;
 }
 
 #icon-box #icon button {
@@ -56,15 +64,18 @@
   align-items: center;
   height: 25%;
   /* background-color: blue; */
+  padding: 0 2rem;
+  gap: 2rem;
 }
 
 #dock #dock-icon {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   /* background: #282617ad; */
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-shrink: 0;
 }
 
 #dock #dock-icon .enable-img:hover {
@@ -106,4 +117,11 @@
   border: none;
   padding: 0;
   transition: all 0.2s ease-in-out;
+}
+
+@media screen and (max-width: 768px) {
+  #dock {
+    padding: 0 1rem;
+    gap: 1rem;
+  }
 }

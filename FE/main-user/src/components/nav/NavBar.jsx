@@ -5,7 +5,7 @@ import Status from "./Status.jsx";
 export default function NavBar() {
   return (
     <aside id="nav-bar">
-      <p>nav123</p>
+      <p>SH</p>
       <Status />
     </aside>
   );

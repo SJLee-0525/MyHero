@@ -7,7 +7,6 @@ import StatusIcon from "./StatusIcon.jsx";
 import batteryIconCharge from "../../assets/aside/side-battery-charge.png";
 import notificationIcon from "../../assets/aside/side-notification.png";
 import settingIcon from "../../assets/aside/side-setting.png";
-import wifiIcon from "../../assets/aside/side-wifi-100.png";
 import heartIcon from "../../assets/aside/side-heart.png";
 
 export default function Status() {

@@ -20,7 +20,7 @@ export default function IconBox() {
         altSrc="message-icon"
         onClickIcon={store.handleMessageState}
       >
-        Message
+        메시지
       </Icon>
       <Icon
         type="icon"
@@ -28,7 +28,7 @@ export default function IconBox() {
         altSrc="emergency-alert"
         onClickIcon={store.handleEmergencyState}
       >
-        Emergency Alert
+        긴급 알림
       </Icon>
     </div>
   );

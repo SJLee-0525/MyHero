@@ -10,12 +10,14 @@ export default function Icon({
 }) {
   return (
     <div id={type}>
-      <div className={!state ? "disabled" : "enabled"}>
-        <button onClick={onClickIcon}>
-          <img src={imgSrc} alt={altSrc} />
-          {type === "icon" && <p className="icon-name">{children}</p>}
-        </button>
-      </div>
+      <button onClick={onClickIcon}>
+        <img
+          src={imgSrc}
+          alt={altSrc}
+          className={!state ? "disable-img" : "enable-img"}
+        />
+        {type === "icon" && <p className="icon-name">{children}</p>}
+      </button>
     </div>
   );
 }

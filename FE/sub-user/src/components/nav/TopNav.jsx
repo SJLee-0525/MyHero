@@ -1,33 +1,48 @@
+import { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 import "./Nav.css";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../store/userProgressStore";
-
 import TopNavSideNavElems from "./TopNavSideElems";
 
 import menuIcon from "../../assets/icons/menu.svg";
 import personIcon from "../../assets/icons/person.svg";
-
 import closeIcon from "../../assets/icons/close.svg";
-
 import homeIcon from "../../assets/icons/home.svg";
 import calendarIcon from "../../assets/icons/calendar.svg";
 import smsIcon from "../../assets/icons/sms.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import vitalSignIcon from "../../assets/icons/vital_sign.svg";
-import mindfulnessIcon from "../../assets/icons/mindfulness.svg";
 import sirenIcon from "../../assets/icons/siren.svg";
 import runIcon from "../../assets/icons/run.svg";
-
 import settingIcon from "../../assets/icons/settings.svg";
 
 export default function TopNav() {
   const userProgressStore = useContext(UserProgressContext);
-
   const navigate = useNavigate();
 
-  return (
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+
+    // 이벤트 리스너 등록
+    window.addEventListener("resize", handleResize);
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // 화면 너비가 600px 이하일 때만 렌더링
+  if (!isMobile) return null;
+
+  return ReactDOM.createPortal(
     <div id="mobile-bar">
       <nav className="top-bar">
         <div className="top-bar-toggle-menu">
@@ -112,13 +127,6 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          {/* <TopNavSideNavElems
-            imgSrc={mindfulnessIcon}
-            altSrc="mind"
-            identifier="MIND"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          /> */}
           <TopNavSideNavElems
             imgSrc={settingIcon}
             altSrc="settings"
@@ -128,6 +136,7 @@ export default function TopNav() {
           />
         </ul>
       </aside>
-    </div>
+    </div>,
+    document.getElementById("nav")
   );
 }

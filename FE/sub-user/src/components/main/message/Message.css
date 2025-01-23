@@ -12,8 +12,8 @@
   align-items: center;
 
   width: 100%;
-  height: 600px;
-  max-height: 600px;
+  height: 500px;
+  max-height: 500px;
 }
 
 #chat {
@@ -22,8 +22,8 @@
   justify-content: start;
 
   width: 100%;
-  height: 600px;
-  max-height: 600px;
+  height: 500px;
+  max-height: 500px;
 
   padding: 15px;
   gap: 18px;
@@ -74,10 +74,6 @@
 
 #chat .main-chat,
 #chat .sub-chat {
-  /* 모바일 페이지 사이드 바가 fixed 요소라, 애니메이션이 뚫고 나오는 문제를 억지로 임시 해결 */
-  position: relative;
-  z-index: -1;
-
   padding: 8px;
   border-radius: 10px;
   color: black;
@@ -87,14 +83,14 @@
 }
 
 #chat .main-chat {
-  /* background-color: #b4cf66; */
-  background-color: #bfff00;
+  background-color: #b4cf66;
+  /* background-color: #bfff00; */
   border-radius: 10px 10px 10px 0px;
 }
 
 #chat .sub-chat {
-  /* background-color: #ffec5c; */
-  background-color: #ffe100;
+  background-color: #ffec5c;
+  /* background-color: #ffe100; */
   border-radius: 10px 10px 0px 10px;
 }
 

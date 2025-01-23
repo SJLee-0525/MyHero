@@ -82,8 +82,9 @@
 
   #main-page {
     width: 100vw;
-    min-height: 60rem;
+    height: 100%;
 
+    padding: 0px 10px;
     margin-top: 0;
   }
 }

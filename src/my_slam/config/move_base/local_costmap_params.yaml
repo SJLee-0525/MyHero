@@ -11,9 +11,9 @@ local_costmap:
   transform_tolerance: 0.5
 
   obstacle_layer:
-	observation_persistence: 0.2
-	mark_threshold: 0.3
-	clearing_threshold: 0.7
+    observation_persistence: 0.2
+    mark_threshold: 0.3
+    clearing_threshold: 0.7
 
   plugins:
     - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}

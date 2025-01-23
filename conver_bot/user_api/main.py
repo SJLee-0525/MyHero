@@ -7,7 +7,6 @@ import mariadb
 import os
 import sys
 import traceback
-from datetime import datetime, timedelta
 import uuid
 from fastapi.staticfiles import StaticFiles
 import requests
@@ -299,9 +298,11 @@ async def chat_with_bot(request: ChatRequest):
         try:
             logger.info("OpenAI API 호출")
             response = client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-3.5-turbo",
                 messages=messages,
-                timeout=25.0
+                max_tokens=150,
+                temperature=0.7,
+                timeout=10.0
             )
             bot_message = response.choices[0].message.content.strip()
             logger.info(f"OpenAI API 응답 수신: {bot_message[:100]}...")

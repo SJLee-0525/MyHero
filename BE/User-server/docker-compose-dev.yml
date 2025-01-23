@@ -1,10 +1,10 @@
 version: "3.8"
 
 services:
-  userAPI-dev:
-    image: api-dev:latest
-    container_name: api-dev
-    hostname: api-dev
+  dev-api:
+    image: dev-api:latest
+    container_name: dev-api
+    hostname: dev-api
     networks:
       - bridge
     ports:

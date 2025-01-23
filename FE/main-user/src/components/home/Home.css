@@ -1,7 +1,6 @@
 #home {
   display: flex;
   flex-direction: column;
-  /* background-color: red; */
   width: 90%;
   transition: width 0.3s ease-in-out;
 }

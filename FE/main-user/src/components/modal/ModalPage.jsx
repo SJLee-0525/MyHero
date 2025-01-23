@@ -4,6 +4,8 @@ import { StoreContext } from "../../store/store.jsx";
 
 import Modal from "./Modal.jsx";
 import MessageModal from "./MessageModal.jsx";
+import ModalSettingBox from "./ModalSettingBox.jsx";
+import SettingModal from "./SettingModal.jsx";
 
 export default function ModalPage() {
   const store = useContext(StoreContext);
@@ -13,7 +15,7 @@ export default function ModalPage() {
       <Modal open={store.openMessageState} onClose={store.handleModalClose}>
         {store.openMessageState && (
           <MessageModal
-            title="Message"
+            title="메세지"
             message="message"
             onCloseConfirm={store.handleModalClose}
           />
@@ -22,7 +24,7 @@ export default function ModalPage() {
       <Modal open={store.openEmergencyState} onClose={store.handleModalClose}>
         {store.openEmergencyState && (
           <MessageModal
-            title="Emergency Alert"
+            title="긴급 알림"
             message="alert"
             onCloseConfirm={store.handleModalClose}
           />
@@ -34,7 +36,7 @@ export default function ModalPage() {
       >
         {store.openNotificationState && (
           <MessageModal
-            title="Notification"
+            title="알림"
             message="Check notifications"
             onCloseConfirm={store.handleModalClose}
           />
@@ -43,7 +45,7 @@ export default function ModalPage() {
       <Modal open={store.openHealthState} onClose={store.handleModalClose}>
         {store.openHealthState && (
           <MessageModal
-            title="Health"
+            title="건강"
             message="Check your health"
             onCloseConfirm={store.handleModalClose}
           />
@@ -51,11 +53,11 @@ export default function ModalPage() {
       </Modal>
       <Modal open={store.openSettingState} onClose={store.handleModalClose}>
         {store.openSettingState && (
-          <MessageModal
-            title="Setting"
-            message="This is setting"
-            onCloseConfirm={store.handleModalClose}
-          />
+          <SettingModal
+            title="설정"
+            onCloseConfirm={store.handleModalClose}>
+              <ModalSettingBox />
+          </SettingModal>
         )}
       </Modal>
     </>

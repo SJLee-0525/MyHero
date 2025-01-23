@@ -37,6 +37,9 @@ from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial
 
+import json
+from fastapi import Body
+
 # 환경 변수 로드
 load_dotenv()
 
@@ -282,6 +285,7 @@ async def chat_with_bot(request: ChatRequest):
                 노인분들의 외로움을 달래주고 편안한 대화를 나누며, 
                 존댓말을 사용하고 너무 어렵지 않은 쉬운 말로 대화하세요. 
                 노인분들의 감정을 이해하고 공감하는 대화를 하세요.
+                이모티콘은 넣지 마세요.
                 """
             }
         ]
@@ -301,7 +305,7 @@ async def chat_with_bot(request: ChatRequest):
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=messages,
-                max_tokens=150,
+                max_tokens=120,
                 temperature=0.7,
                 timeout=10.0
             )
@@ -346,7 +350,23 @@ async def chat_with_bot(request: ChatRequest):
     except Exception as e:
         logger.error(f"처리 중 오류: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
-
+    
+# 감정 리포트 DB 저장
+@app.post("/emotion-report")
+async def save_emotion_report(user_id: str, emotion: dict = Body(...)):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO emotion_reports (user_id, report_content) VALUES (%s, %s)",
+            (user_id, json.dumps(emotion, indent=4, ensure_ascii=False))
+        )
+        conn.commit()
+        conn.close()
+        return {"success": True}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 # 재난문자 캐시 저장소
 disaster_cache = {}
 

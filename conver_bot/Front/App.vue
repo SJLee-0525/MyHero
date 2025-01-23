@@ -101,6 +101,23 @@
               <h3 class="font-semibold text-green-800">감정 통찰</h3>
               <p class="mt-2">{{ emotionalReport.emotional_insights }}</p>
             </div>
+            <div class="bg-yellow-50 p-4 rounded-lg">
+              <h3 class="font-semibold text-yellow-800">시간별 감정 변화</h3>
+              <div v-for="(emotions, time) in emotionalReport.time_based_emotions" 
+                  :key="time" 
+                  class="mt-2 border-b pb-2">
+                <div class="flex justify-between items-center">
+                  <span class="font-medium">{{ time }}</span>
+                  <span :class="[
+                    'px-2 py-1 rounded text-sm',
+                    emotions[0] === '긍정적' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                  ]">
+                    {{ emotions[0] }} ({{ emotions[1] }}%)
+                  </span>
+                </div>
+                <p class="text-gray-600 text-sm mt-1">{{ emotions[2] }}</p>
+              </div>
+            </div>
             <div class="bg-purple-50 p-4 rounded-lg">
               <h3 class="font-semibold text-purple-800">권고사항</h3>
               <ul class="mt-2 space-y-2">

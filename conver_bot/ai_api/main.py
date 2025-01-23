@@ -10,6 +10,8 @@ import httpx
 import asyncio
 import json
 import logging
+from typing import List, Union, Dict
+
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
@@ -53,7 +55,8 @@ class EmotionalReport(BaseModel):
     date: str
     overall_emotional_state: str
     emotional_insights: str
-    recommendations: list[str]
+    time_based_emotions: Dict[str, List[Union[str, int, str]]]
+    recommendations: List[str]
 
 # User API로부터 대화 기록을 가져오는 함수
 async def fetch_daily_conversations(user_id: str, date: str):
@@ -73,46 +76,79 @@ async def generate_emotional_report(user_id: str, date: str = None):
     try:
         if not date:
             date = datetime.now().strftime("%Y-%m-%d")
-
-        # User API에서 대화 기록 가져오기
+            
+        logger.info(f"Fetching conversations for user {user_id} on {date}")
         conversations = await fetch_daily_conversations(user_id, date)
-
-        # OpenAI API로 감정 분석
-        messages = [
-            {
-                "role": "system",
-                "content": """
-                당신은 전문 심리 상담사입니다. 제공된 대화 기록을 바탕으로 
-                독거노인의 감정 상태를 시간별, 종합적으로 분석하고, 전문적인
-                감정 보고서를 보고서 형태로 작성하세요. 보고서에는 전반적인 감정 상태, 
-                심층적인 감정 통찰과 추세, 그리고 구체적인 권고사항을 포함하세요.
-                """
-            },
-            {
-                "role": "user",
-                "content": f"다음은 {date}의 대화 기록입니다: {conversations}"
-            }
-        ]
-
-        response = client.chat.completions.create(
-            model="gpt-4",
-            messages=messages
-        )
-
-        report_text = response.choices[0].message.content.strip()
-        report_lines = report_text.split('\n')
+        logger.info(f"Fetched conversations: {conversations}")
         
-        return EmotionalReport(
-            user_id=user_id,
-            date=date,
-            overall_emotional_state=report_lines[0] if report_lines else "분석 불가",
-            emotional_insights='\n'.join(report_lines[1:3]) if len(report_lines) > 2 else "추가 정보 없음",
-            recommendations=report_lines[3:] if len(report_lines) > 3 else []
-        )
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        if not conversations:
+            logger.warning("No conversations found")
+            raise HTTPException(status_code=404, detail="대화 내용이 없습니다")
+            
+        prompt = """독거노인의 감정 상태를 분석하여 정확히 다음 JSON 형식으로만 응답하세요:
+        {
+            "overall_emotional_state": "전반적인 감정 상태를 한 문장으로",
+            "emotional_insights": "감정 통찰 내용을 2-3문장으로",
+            "time_based_emotions": {
+                "09:00": ["긍정적", 80, "상세 설명"],
+                "12:00": ["부정적", 30, "상세 설명"]
+            },
+            "recommendations": ["권장사항1", "권장사항2"]
+        }"""
+        
+        try:
+            logger.info("Calling GPT API")
+            gpt_response = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {"role": "user", "content": f"대화 기록: {conversations}"}
+                ]
+            )
+            
+            response_content = gpt_response.choices[0].message.content
+            logger.info(f"GPT Response: {response_content}")
+            
+            try:
+                response_data = json.loads(response_content)
+                logger.info(f"Parsed response data: {response_data}")
+            except json.JSONDecodeError as e:
+                logger.error(f"JSON parsing error: {e}")
+                raise HTTPException(status_code=500, detail=f"GPT 응답 파싱 오류: {str(e)}")
+            
+            report = EmotionalReport(
+                user_id=user_id,
+                date=date,
+                **response_data
+            )
 
+            #report 저장
+            try:
+                logger.info(f"Saving report to DB for user {user_id}")
+                logger.info(f"Report data: {response_data}")
+                
+                async with httpx.AsyncClient() as http_client:
+                    response = await http_client.post(
+                        f"{USER_API_BASE_URL}/emotion-report",
+                        params={"user_id": user_id},
+                        json=response_data
+                    )
+                    logger.info(f"Save response: {response.status_code}")
+                    if response.status_code != 200:
+                        logger.error(f"Save failed with status {response.status_code}: {response.text}")
+            except Exception as e:
+                logger.error(f"Failed to save report: {str(e)}", exc_info=True)
+
+            return report
+            
+        except Exception as e:
+            logger.error(f"Error in GPT processing: {str(e)}", exc_info=True)
+            raise HTTPException(status_code=500, detail=f"GPT 처리 오류: {str(e)}")
+            
+    except Exception as e:
+        logger.error(f"General error: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=str(e))
+    
 class BestKeywords(BaseModel):
     keywords: list[str]
 

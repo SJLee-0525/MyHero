@@ -1,120 +1,140 @@
 <?xml version="1.0"?>
 <robot name="my_robot">
-    <!-- base_footprint는 바닥에 투영된 로봇의 중심점 -->
-    <link name="base_footprint"/>
+   <link name="base_footprint"/>
 
-    <!-- 메인 바디 링크 -->
-    <link name="base_link">
-        <visual>
-            <geometry>
-                <box size="0.30 0.12 0.15"/>
-            </geometry>
-            <material name="blue">
-                <color rgba="0 0.5 1.0 1.0"/>
-            </material>
-        </visual>
-    </link>
+   <link name="base_link">
+       <visual>
+           <geometry>
+               <box size="0.30 0.12 0.15"/>
+           </geometry>
+           <material name="blue">
+               <color rgba="0 0.5 1.0 1.0"/>
+           </material>
+       </visual>
+   </link>
 
-    <!-- base_footprint와 base_link 연결 -->
-    <joint name="base_joint" type="fixed">
-        <parent link="base_footprint"/>
-        <child link="base_link"/>
-        <origin xyz="0 0 0.075" rpy="0 0 0"/>
-    </joint>
+   <joint name="base_joint" type="fixed">
+       <parent link="base_footprint"/>
+       <child link="base_link"/>
+       <origin xyz="0 0 0.075" rpy="0 0 0"/>
+   </joint>
 
-    <!-- 전방 좌측 바퀴 -->
-    <link name="front_left_wheel">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.02"/>
-            </geometry>
-            <material name="red">
-                <color rgba="0.8 0 0 1"/>
-            </material>
-        </visual>
-    </link>
+   <!-- LiDAR -->
+   <link name="laser_frame">
+       <visual>
+           <geometry>
+               <cylinder radius="0.03" length="0.03"/>
+           </geometry>
+           <material name="black">
+               <color rgba="0 0 0 1"/>
+           </material>
+       </visual>
+   </link>
 
-    <!-- 전방 우측 바퀴 -->
-    <link name="front_right_wheel">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.02"/>
-            </geometry>
-            <material name="red">
-                <color rgba="0.8 0 0 1"/>
-            </material>
-        </visual>
-    </link>
+   <joint name="laser_joint" type="fixed">
+       <parent link="base_link"/>
+       <child link="laser_frame"/>
+       <origin xyz="0 0 0.125" rpy="0 0 0"/>
+   </joint>
 
-    <!-- 후방 좌측 바퀴 -->
-    <link name="rear_left_wheel">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.02"/>
-            </geometry>
-            <material name="black">
-                <color rgba="0.2 0.2 0.2 1"/>
-            </material>
-        </visual>
-    </link>
+   <!-- Steering Joint -->
+   <link name="steering_link">
+       <visual>
+           <geometry>
+               <box size="0.02 0.12 0.02"/>
+           </geometry>
+           <material name="red">
+               <color rgba="1 0 0 1"/>
+           </material>
+       </visual>
+   </link>
 
-    <!-- 후방 우측 바퀴 -->
-    <link name="rear_right_wheel">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.02"/>
-            </geometry>
-            <material name="black">
-                <color rgba="0.2 0.2 0.2 1"/>
-            </material>
-        </visual>
-    </link>
+   <joint name="steering_joint" type="revolute">
+       <parent link="base_link"/>
+       <child link="steering_link"/>
+       <origin xyz="0.12 0 0"/>
+       <axis xyz="0 0 1"/>
+       <limit lower="-0.785" upper="0.785" effort="10" velocity="1"/>
+   </joint>
 
-    <!-- 바퀴 조인트 -->
-    <!-- 전방 좌측 바퀴 조인트 -->
-    <joint name="front_left_wheel_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="front_left_wheel"/>
-        <origin xyz="0.12 0.07 -0.045" rpy="-1.5708 0 0"/>
-    </joint>
+   <!-- Front Wheels -->
+   <link name="front_left_wheel">
+       <visual>
+           <geometry>
+               <cylinder radius="0.035" length="0.02"/>
+           </geometry>
+           <material name="black"/>
+       </visual>
+   </link>
 
-    <!-- 전방 우측 바퀴 조인트 -->
-    <joint name="front_right_wheel_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="front_right_wheel"/>
-        <origin xyz="0.12 -0.07 -0.045" rpy="-1.5708 0 0"/>
-    </joint>
+   <joint name="front_left_wheel_joint" type="continuous">
+       <parent link="steering_link"/>
+       <child link="front_left_wheel"/>
+       <origin xyz="0 0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <axis xyz="0 0 1"/>
+   </joint>
 
-    <!-- 후방 좌측 바퀴 조인트 -->
-    <joint name="rear_left_wheel_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="rear_left_wheel"/>
-        <origin xyz="-0.12 0.07 -0.045" rpy="-1.5708 0 0"/>
-    </joint>
+   <link name="front_right_wheel">
+       <visual>
+           <geometry>
+               <cylinder radius="0.035" length="0.02"/>
+           </geometry>
+           <material name="black"/>
+       </visual>
+   </link>
 
-    <!-- 후방 우측 바퀴 조인트 -->
-    <joint name="rear_right_wheel_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="rear_right_wheel"/>
-        <origin xyz="-0.12 -0.07 -0.045" rpy="-1.5708 0 0"/>
-    </joint>
+   <joint name="front_right_wheel_joint" type="continuous">
+       <parent link="steering_link"/>
+       <child link="front_right_wheel"/>
+       <origin xyz="0 -0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <axis xyz="0 0 1"/>
+   </joint>
 
-    <!-- LiDAR 링크 -->
-    <link name="laser_frame">
-        <visual>
-            <geometry>
-                <cylinder radius="0.03" length="0.03"/>
-            </geometry>
-            <material name="black">
-                <color rgba="0 0 0 1"/>
-            </material>
-        </visual>
-    </link>
+   <!-- Rear Wheels -->
+   <link name="rear_wheel_axis">
+       <visual>
+           <geometry>
+               <box size="0.02 0.12 0.02"/>
+           </geometry>
+           <material name="red"/>
+       </visual>
+   </link>
 
-    <!-- LiDAR 조인트 -->
-    <joint name="laser_joint" type="fixed">
-        <parent link="base_link"/>
-        <child link="laser_frame"/>
-        <origin xyz="0 0 0.125" rpy="0 0 0"/>
-    </joint>
+   <joint name="rear_axis_joint" type="fixed">
+       <parent link="base_link"/>
+       <child link="rear_wheel_axis"/>
+       <origin xyz="-0.12 0 0"/>
+   </joint>
+
+   <link name="rear_left_wheel">
+       <visual>
+           <geometry>
+               <cylinder radius="0.035" length="0.02"/>
+           </geometry>
+           <material name="black"/>
+       </visual>
+   </link>
+
+   <joint name="rear_left_wheel_joint" type="continuous">
+       <parent link="rear_wheel_axis"/>
+       <child link="rear_left_wheel"/>
+       <origin xyz="0 0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <axis xyz="0 0 1"/>
+   </joint>
+
+   <link name="rear_right_wheel">
+       <visual>
+           <geometry>
+               <cylinder radius="0.035" length="0.02"/>
+           </geometry>
+           <material name="black"/>
+       </visual>
+   </link>
+
+   <joint name="rear_right_wheel_joint" type="continuous">
+       <parent link="rear_wheel_axis"/>
+       <child link="rear_right_wheel"/>
+       <origin xyz="0 -0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <axis xyz="0 0 1"/>
+   </joint>
 </robot>

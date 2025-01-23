@@ -1,28 +1,49 @@
-TrajectoryPlannerROS:
-  max_vel_x: 1.0
-  min_vel_x: -1.0
-  max_vel_theta: 0.8
-  min_vel_theta: -0.8
-  min_in_place_vel_theta: 0.4
-
-  acc_lim_theta: 0.6
-  acc_lim_x: 0.2
-  acc_lim_y: 0.0
-
-  holonomic_robot: false
+DWAPlannerROS:
+  # 속도 제한
+  max_vel_x: 1.0          # 최대 전진 속도 유지
+  min_vel_x: -1.0         # 최대 후진 속도 유지
+  max_vel_trans: 1.0      # 최대 이동 속도
+  min_vel_trans: 0.1      # 최소 이동 속도 (정밀 제어용)
+  
+  # 회전 및 조향 제한
+  max_rot_vel: 1.2        # 최대 회전 속도 증가
+  min_rot_vel: 0.1        # 최소 회전 속도
+  max_vel_theta: 1.2      # 조향 속도 증가
+  min_vel_theta: 0.1      # 최소 조향 속도
+  
+  # 가속도 제한
+  acc_lim_x: 0.5          # 가속도 증가
+  acc_lim_theta: 1.0      # 조향 가속도 증가
+  acc_lim_y: 0.0          # 측면 이동 불가
   
   # 목표 도달 허용 오차
-  xy_goal_tolerance: 0.10
-  yaw_goal_tolerance: 0.05
-
-  # Forward Simulation Parameters
-  sim_time: 1.0
-  vx_samples: 10
-  vtheta_samples: 20
-
-  # Trajectory Scoring Parameters
-  meter_scoring: true
-  path_distance_bias: 0.8
-  goal_distance_bias: 0.6
-  occdist_scale: 0.02
-  heading_lookahead: 0.325
+  xy_goal_tolerance: 0.10  # 위치 허용 오차
+  yaw_goal_tolerance: 0.05 # 방향 허용 오차
+  latch_xy_goal_tolerance: false
+  
+  # 경로 계획 파라미터
+  sim_time: 0.3           # 시뮬레이션 시간 감소로 응답성 향상
+  sim_granularity: 0.025  # 시뮬레이션 정밀도
+  vx_samples: 10          # 샘플 수 감소로 계산 속도 향상
+  vy_samples: 0           # 측면 이동 없음
+  vtheta_samples: 20      # 조향 샘플 수 감소
+  
+  # 궤적 평가 파라미터
+  forward_point_distance: 0.25  # 전륜 위치 기준
+  path_distance_bias: 32.0      # 경로 추종 가중치
+  goal_distance_bias: 24.0      # 목표 도달 가중치
+  scaling_speed: 0.25           # 저속 주행 기준
+  max_scaling_factor: 0.2       # 최대 스케일링 팩터
+  
+  # 장애물 회피 파라미터
+  occdist_scale: 0.02     # 장애물 회피 가중치
+  
+  # 정지 및 회피 파라미터
+  stop_time_buffer: 0.2             # 정지 버퍼 시간
+  oscillation_reset_dist: 0.05      # 진동 리셋 거리
+  oscillation_reset_angle: 0.2      # 진동 리셋 각도
+  
+  # 기타 설정
+  publish_traj_pc: true       # 궤적 시각화
+  publish_cost_grid_pc: true  # 비용 맵 시각화
+  holonomic_robot: false      # 비홀로노믹 로봇

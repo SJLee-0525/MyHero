@@ -283,6 +283,18 @@ export default function Signup() {
 
   // 이메일 중복 확인
   function handleEmailCheck() {
+    const emailIsInvalid = !emailInput.current.value.includes("@");
+    if (emailIsInvalid) {
+      setFormIsInvalid((prevForm) => {
+        return { ...prevForm, email: true };
+      });
+      return;
+    } else {
+      setFormIsInvalid((prevForm) => {
+        return { ...prevForm, email: false };
+      });
+    }
+
     const enteredEmail = emailInput.current.value;
     console.log("enteredEmail: " + enteredEmail);
 
@@ -399,6 +411,7 @@ export default function Signup() {
               type="email"
               name="email"
               ref={emailInput}
+              required
             />
             {formIsInvalid.emailCheck === "" && (
               <button

@@ -1,4 +1,4 @@
-import "./Activity.css";
+import "./Mental.css";
 
 import { useContext } from "react";
 
@@ -20,8 +20,7 @@ function CustomTooltip({ payload, label, active }) {
     return (
       <div className="custom-tooltip">
         <p className="date">{label}</p>
-        <p className="health">{`health : ${payload[0].value}`}</p>
-        <p className="mental">{`mental : ${payload[1].value}`}</p>
+        <p className="mental">{`mental : ${payload[0].value}`}</p>
         <p className="desc">건강함</p>
       </div>
     );
@@ -34,7 +33,7 @@ export default function ActivityChart() {
   const healthStore = useContext(HealthContext);
 
   return (
-    <div id="activity-chart">
+    <div id="mental-chart">
       <ResponsiveContainer
         width="100%"
         height="100%"
@@ -54,12 +53,6 @@ export default function ActivityChart() {
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
-          <Line
-            type="monotone"
-            dataKey="health"
-            stroke="#44803F"
-            strokeWidth={2}
-          />
           <Line
             type="monotone"
             dataKey="mental"

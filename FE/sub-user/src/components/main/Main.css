@@ -1,28 +1,15 @@
 #page-container {
   display: flex;
-  justify-content: center;
-  flex-direction: row;
-
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* 줄 바꿈 허용 */
+  gap: 10px; /* 요소 간격 */
 }
 
-#content-box {
-  text-align: center;
-
-  margin: 2px;
-  padding: 4px 4px;
-
-  border-radius: 5px;
-  background: #ff9500;
-}
-
-#toggle-group {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-
-  gap: 10px;
-  justify-content: space-between; /* 공간 균등 분배 */
+#page-container > * {
+  flex: 1 1 calc(33.333% - 10px); /* 3개의 열 */
+  box-sizing: border-box; /* padding 포함한 크기 계산 */
+  max-width: calc(33.333% - 10px); /* 최대 너비 */
+  height: 0px; /* 고정 높이 (원하는 대로 조정 가능) */
+  background: lightblue; /* 임시 배경색 */
 }
 
 @media screen and (max-width: 600px) {

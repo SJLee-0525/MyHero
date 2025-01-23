@@ -68,20 +68,20 @@ export default function SideNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <SideNavElems
+          {/* <SideNavElems
             imgSrc={vitalSignIcon}
             altSrc="health"
             identifier="HEALTH"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
-          {/* <SideNavElems
+          /> */}
+          <SideNavElems
             imgSrc={mindfulnessIcon}
-            altSrc="mind"
-            identifier="MIND"
+            altSrc="mental"
+            identifier="MENTAL"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          /> */}
+          />
         </ul>
       </div>
       <div>

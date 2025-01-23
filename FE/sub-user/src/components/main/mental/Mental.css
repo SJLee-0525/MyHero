@@ -1,0 +1,253 @@
+#keyword-box {
+  text-align: center;
+
+  margin: 2px;
+  padding: 4px 4px;
+
+  border-radius: 5px;
+  background: #ff9500;
+}
+
+#mental-container {
+  display: flex;
+  justify-content: space-between;
+
+  width: 100%;
+}
+
+#mental-elem-left {
+  width: 38%;
+}
+
+#mental-elem-right {
+  width: 62%;
+}
+
+#mental-chart-container {
+  width: 100%;
+
+  padding: 15px;
+
+  border-radius: 15px;
+
+  background-color: #b4b4b4;
+}
+
+#mental-chart {
+  width: 100%;
+  height: 400px;
+
+  padding: 10px 0px 0px;
+
+  border-radius: 13px;
+
+  background-color: rgba(255, 255, 255, 0.719);
+}
+
+#mental-chart .custom-tooltip {
+  min-width: 150px;
+
+  padding: 10px;
+
+  background-color: rgba(226, 226, 226, 0.5);
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  border-radius: 10px;
+}
+
+#mental-chart .custom-tooltip h3 {
+  margin: 0;
+
+  color: rgb(77, 77, 77);
+}
+
+#mental-chart .custom-tooltip p {
+  margin: 0;
+
+  color: rgb(77, 77, 77);
+}
+
+#mental-chart .custom-tooltip .date {
+  margin-bottom: 5px;
+  font-size: larger;
+  font-weight: bold;
+}
+
+#mental-chart .custom-tooltip .health {
+  color: #44803f;
+  font-size: smaller;
+}
+
+#mental-chart .custom-tooltip .mental {
+  color: #ff5a33;
+  font-size: smaller;
+}
+
+#mental-chart .custom-tooltip .desc {
+  margin: 5px 0px 0px;
+
+  color: black;
+  font-size: smaller;
+}
+
+#mental-report {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#mental-report .mental-report-overall {
+  padding: 10px;
+
+  background-color: #b4cf66;
+
+  border-radius: 8px;
+}
+
+#mental-report .mental-report-subtitle {
+  margin: 0;
+
+  color: #44803f;
+}
+
+#mental-report .mental-report-overall p {
+  margin: 0;
+
+  font-weight: bold;
+}
+
+#mental-report .mental-report-recommendation {
+  padding: 10px;
+
+  background-color: #d9d9d9;
+
+  border-radius: 8px;
+}
+
+#mental-report .mental-report-recommendation ol {
+  list-style: circle;
+
+  margin: 0;
+  padding: 10px 10px 10px 30px;
+
+  color: black;
+}
+
+#mental-report .detail-report-btn {
+  width: 100%;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+}
+
+.detail-report-title {
+  text-align: center;
+  margin: 10px 0px 0px;
+}
+
+.detail-report-date {
+  text-align: end;
+}
+
+.detail-report-overall {
+  margin: 0;
+
+  color: #44803f;
+
+  text-align: center;
+}
+
+.detail-report-subtitle {
+  text-align: center;
+}
+
+.emotion-detail-table {
+  border: 2px solid rgb(124, 124, 124);
+  border-collapse: collapse;
+
+  padding: 0;
+
+  text-align: center;
+}
+
+.emotion-detail-table th,
+td {
+  border: 1px solid rgb(124, 124, 124);
+  padding: 5px;
+}
+
+.emotion-detail-table th {
+  background-color: rgb(189, 189, 189);
+}
+
+.emotion-detail-table span {
+  padding: 3px;
+
+  border-radius: 5px;
+}
+
+.emotion-detail-table .very-positive {
+  background-color: #146152;
+
+  color: white;
+}
+
+.emotion-detail-table .positive {
+  background-color: #44803f;
+
+  color: white;
+}
+
+.emotion-detail-table .neutral {
+  background-color: #b4cf66;
+
+  color: black;
+}
+
+.emotion-detail-table .negative {
+  background-color: #ffec5c;
+
+  color: black;
+}
+
+.emotion-detail-table .very-negative {
+  background-color: #ff5a33;
+
+  color: black;
+}
+
+.report-recommendations-ul {
+  list-style: circle;
+  padding-left: 30px;
+}
+
+.report-recommendations-ul li {
+  margin-bottom: 10px;
+}
+@media screen and (max-width: 600px) {
+  #mental-container {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+  #mental-elem-left {
+    width: 100%;
+  }
+
+  #mental-elem-right {
+    width: 100%;
+  }
+}

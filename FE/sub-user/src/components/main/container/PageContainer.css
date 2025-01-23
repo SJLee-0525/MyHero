@@ -1,6 +1,5 @@
 #main-page-container {
-  min-width: 400px;
-  width: 50vw;
+  /* width: 100%; */
 
   margin: 10px;
   padding: 10px;
@@ -39,7 +38,7 @@
 @media screen and (max-width: 600px) {
   #main-page-container {
     height: auto;
-    width: 80%;
+    width: 100%;
     margin: 15px auto;
     padding: 10px;
 

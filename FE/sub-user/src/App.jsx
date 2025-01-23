@@ -12,8 +12,7 @@ import Message from "./components/main/message/Message.jsx";
 import Emergency from "./components/main/emergency/Emergency.jsx";
 import Calendar from "./components/main/calendar/Calendar.jsx";
 import Activity from "./components/main/activity/Activity.jsx";
-import Health from "./components/main/health/Health.jsx";
-import Mind from "./components/main/mind/Mind.jsx";
+import Mental from "./components/main/mental/Mental.jsx";
 
 import Accounts from "./components/main/accounts/Accounts.jsx";
 import Settings from "./components/main/settings/Settings.jsx";
@@ -38,8 +37,7 @@ function App() {
             <Route path="/emergency" element={<Emergency />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/activity" element={<Activity />} />
-            <Route path="/health" element={<Health />} />
-            <Route path="/mind" element={<Mind />} />
+            <Route path="/mental" element={<Mental />} />
             <Route path="/accounts" element={<Accounts />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

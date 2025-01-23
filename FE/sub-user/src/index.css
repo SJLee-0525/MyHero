@@ -20,7 +20,7 @@ html {
 body {
   box-sizing: border-box;
 
-  background: url("./assets/wallpaper/wallpaper-white.png");
+  background: url("./assets/wallpaper/wallpaper.png");
 
   /* background: radial-gradient(
       circle at top,
@@ -42,5 +42,10 @@ body {
   body {
     display: flex;
     flex-direction: column;
+
+    height: 100vh;
+
+    margin: 0; /* 기본 여백 제거 */
+    padding: 0; /* 기본 패딩 제거 */
   }
 }

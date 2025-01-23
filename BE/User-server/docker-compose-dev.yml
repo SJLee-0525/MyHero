@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  dev-api:
+    image: dev-api:latest
+    container_name: dev-api
+    hostname: dev-api
+    networks:
+      - bridge
+    ports:
+      - "4180:8000"
+networks:
+  bridge:
+    external: true

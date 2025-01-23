@@ -9,15 +9,21 @@ import ActivityChartContainer from "./ActiviyChartContainer";
 import WeeklyStats from "./WeeklyStats.jsx";
 
 export default function Activity() {
+  const mainUserName = "박순자123";
+
   return (
     <div id="activity-container">
-      <PageContainer title="박순자님의 건강 상태">
-        <ActivityToggles />
-        <ActivityChartContainer />
-      </PageContainer>
-      <PageContainer title="주간 건강 리포트">
-        <WeeklyStats />
-      </PageContainer>
+      <div id="activity-elem-left">
+        <PageContainer title={`${mainUserName}님의 건강 상태`}>
+          <ActivityToggles />
+          <ActivityChartContainer />
+        </PageContainer>
+      </div>
+      <div id="activity-elem-right">
+        <PageContainer title="주간 건강 리포트">
+          <WeeklyStats />
+        </PageContainer>
+      </div>
     </div>
   );
 }

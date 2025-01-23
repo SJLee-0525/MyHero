@@ -4,6 +4,14 @@
   justify-content: space-between;
 }
 
+#activity-elem-left {
+  width: 40%;
+}
+
+#activity-elem-right {
+  width: 60%;
+}
+
 #activity-chart-container {
   width: 100%;
 
@@ -216,5 +224,13 @@ hr {
   #activity-container {
     display: flex;
     flex-direction: column;
+  }
+
+  #activity-elem-left {
+    width: 100%;
+  }
+
+  #activity-elem-right {
+    width: 100%;
   }
 }

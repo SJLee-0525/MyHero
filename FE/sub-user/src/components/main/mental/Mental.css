@@ -15,8 +15,12 @@
   width: 100%;
 }
 
-#mental-elem {
-  width: 50%;
+#mental-elem-left {
+  width: 38%;
+}
+
+#mental-elem-right {
+  width: 62%;
 }
 
 #mental-chart-container {
@@ -239,7 +243,11 @@ td {
     width: 100%;
   }
 
-  #mental-elem {
+  #mental-elem-left {
+    width: 100%;
+  }
+
+  #mental-elem-right {
     width: 100%;
   }
 }

@@ -11,9 +11,13 @@ export default function MentalReport() {
 
   const report = healthStore.mentalReport.data[0];
 
+  const mainUserName = "박순자123";
+
   return (
     <div id="mental-report">
-      <h3>{report.created_at.slice(0, 10)} 박순자씨 감정 상태 보고서</h3>
+      <h3>
+        {report.created_at.slice(0, 10)} {mainUserName}씨 감정 상태 보고서
+      </h3>
       <div className="mental-report-overall">
         <h3 className="mental-report-subtitle">전반적 통찰 상태</h3>
         <p>{report.report_content.overall_emotional_state}</p>

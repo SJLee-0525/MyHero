@@ -9,8 +9,10 @@ import Widget from "../../widget/Widget";
 export default function KeywordsWidget() {
   const healthStore = useContext(HealthContext);
 
+  const mainUserName = "박순자123";
+
   return (
-    <Widget title="오늘 박순자님의 대화 키워드" type="keyword">
+    <Widget title={`${mainUserName}님의 대화 키워드`} type="keyword">
       {healthStore.keywords.map((content, index) => {
         return (
           <span

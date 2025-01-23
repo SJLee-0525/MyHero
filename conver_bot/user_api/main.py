@@ -466,10 +466,9 @@ async def fetch_weather_data(x: int, y: int) -> dict | None:
         if not weather_api_key:
             raise ValueError("Weather API key is not configured")
         
-        base_date = datetime.now().strftime("%Y%m%d")
-        base_time = datetime.now().strftime("%H00")  # 현재 시각의 정시
+        base_date, base_time = await get_base_time()  # 기존 현재시간 대신 계산된 base_time 사용
         
-        url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst"
+        url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtFcst"
         params = {
             'serviceKey': weather_api_key,
             'pageNo': '1',
@@ -504,7 +503,9 @@ async def fetch_weather_data(x: int, y: int) -> dict | None:
 
 def format_weather_data(data: dict, address: str) -> dict:
     try:
+        logger.info(f"Raw API response: {data}")
         items = data.get('response', {}).get('body', {}).get('items', {}).get('item', [])
+        logger.info(f"Items from response: {items}")
         
         # 기본값 설정
         result = {
@@ -521,7 +522,7 @@ def format_weather_data(data: dict, address: str) -> dict:
         # 각 관측 항목을 임시 저장
         for item in items:
             category = item.get('category')
-            value = item.get('obsrValue')  # getUltraSrtNcst API는 'obsrValue'를 사용
+            value = item.get('fcstValue')  
             temp_values[category] = value
         
         # 저장된 값을 기반으로 결과 생성

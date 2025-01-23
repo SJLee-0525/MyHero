@@ -357,43 +357,20 @@ def get_precipitation_status(code):
 def format_weather_data(weather_data):
     try:
         logger.info(f"날씨 데이터 포맷팅 시도: {weather_data}")
+        weather = weather_data.get('weather', weather_data)  # weather 객체가 없으면 직접 사용
         
-        # weather가 중첩 객체가 아닐 경우
-        if 'weather' not in weather_data:
-            # 이미 텍스트로 된 데이터가 오는 경우
-            if isinstance(weather_data.get('sky'), str) and not weather_data['sky'].isdigit():
-                formatted = {
-                    'address': weather_data.get('address', '위치 정보 없음'),
-                    'temperature': weather_data.get('temperature', 'N/A'),
-                    'sky': weather_data.get('sky', '알 수 없음'),
-                    'precipitation': weather_data.get('precipitation', '없음'),
-                    'humidity': weather_data.get('humidity', 'N/A')
-                }
-            else:
-                # 코드로 온 경우
-                formatted = {
-                    'address': weather_data.get('address', '위치 정보 없음'),
-                    'temperature': f"{weather_data.get('temperature', 'N/A')}°C",
-                    'sky': get_sky_status(weather_data.get('sky', '1')),
-                    'precipitation': get_precipitation_status(weather_data.get('precipitation', '0')),
-                    'humidity': f"{weather_data.get('humidity', 'N/A')}%"
-                }
-        else:
-            # weather 객체가 있는 경우 (이전 코드 유지)
-            weather = weather_data.get('weather', {})
-            formatted = {
-                'address': weather_data.get('address', '위치 정보 없음'),
-                'temperature': f"{weather.get('temperature', 'N/A')}°C",
-                'sky': get_sky_status(weather.get('sky', '1')),
-                'precipitation': get_precipitation_status(weather.get('precipitation', '0')),
-                'humidity': f"{weather.get('humidity', 'N/A')}%"
-            }
+        formatted = {
+            'address': weather_data.get('address', '위치 정보 없음'),
+            'temperature': weather.get('temperature', 'N/A'),
+            'sky': weather.get('sky', '알 수 없음'),
+            'precipitation': weather.get('precipitation', '없음'),
+            'humidity': weather.get('humidity', 'N/A')
+        }
         
-        logger.info(f"포맷팅된 날씨 데이터: {formatted}")
         return formatted
         
     except Exception as e:
-        logger.error(f"날씨 데이터 가공 중 오류: {str(e)}", exc_info=True)
+        logger.error(f"날씨 데이터 가공 중 오류: {str(e)}")
         return {
             'address': '알 수 없음',
             'temperature': 'N/A',

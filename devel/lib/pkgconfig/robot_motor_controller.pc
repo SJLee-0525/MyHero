@@ -1,0 +1,8 @@
+prefix=/home/hero/catkin_ws/devel
+
+Name: robot_motor_controller
+Description: Description of robot_motor_controller
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -11,13 +11,11 @@ import WeeklyStats from "./WeeklyStats.jsx";
 export default function Activity() {
   return (
     <div id="activity-container">
-      <PageContainer>
-        <h3>박순자님의 건강 상태</h3>
+      <PageContainer title="박순자님의 건강 상태">
         <ActivityToggles />
         <ActivityChartContainer />
       </PageContainer>
-      <PageContainer>
-        <h3>주간 건강 리포트</h3>
+      <PageContainer title="주간 건강 리포트">
         <WeeklyStats />
       </PageContainer>
     </div>

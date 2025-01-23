@@ -45,6 +45,10 @@
   background-color: transparent;
 }
 
+#main-wrapper {
+  width: 100%;
+}
+
 #main-container-title {
   margin-left: 10px;
 }

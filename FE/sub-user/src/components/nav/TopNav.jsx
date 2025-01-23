@@ -122,8 +122,8 @@ export default function TopNav() {
           />
           <TopNavSideNavElems
             imgSrc={vitalSignIcon}
-            altSrc="health"
-            identifier="HEALTH"
+            altSrc="mental"
+            identifier="MENTAL"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />

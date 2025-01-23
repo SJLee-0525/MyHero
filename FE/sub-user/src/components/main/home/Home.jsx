@@ -7,6 +7,7 @@ import Toggle from "../../toggle/Toggle.jsx";
 
 import CalendarWidget from "../calendar/CalendarWidget.jsx";
 import EmergencyWidget from "../emergency/EmergencyWidget.jsx";
+import KeywordsWidget from "../mental/KeywordsWidget.jsx";
 
 import notificationOnImage from "../../../assets/icons/notification.svg";
 import notificationOffImage from "../../../assets/icons/notification_off.svg";
@@ -80,22 +81,7 @@ export default function Main() {
             ></Toggle>
           </div>
         </Widget>
-        <Widget title="오늘 박순자님의 대화 키워드" type="keyword">
-          {contents.map((content, index) => {
-            return (
-              <span
-                key={index}
-                id="content-box"
-                style={{
-                  backgroundColor: colors[index % colors.length][0],
-                  color: colors[index % colors.length][1],
-                }}
-              >
-                {content}
-              </span>
-            );
-          })}
-        </Widget>
+        <KeywordsWidget />
       </div>
     </div>
   );

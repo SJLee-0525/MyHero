@@ -18,6 +18,12 @@ MotorController::MotorController(ros::NodeHandle& nh) :
     ROS_INFO("Motor Controller initialized");
 }
 
+MotorController::~MotorController(){
+    motor_.setThrottle(0.0);
+    servo_.setAngle(servo_channel_, 0.0);
+    ROS_INFO("Motor Stopped safely");
+}
+
 void MotorController::cmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg)
 {
     // linear.x를 throttle로 변환 (-1.0 ~ 1.0)

@@ -30,6 +30,7 @@ private:
 
 public:
     MotorController(ros::NodeHandle& nh);
+    ~MotorController(); // 소멸자 추가
     void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg);
 };
 

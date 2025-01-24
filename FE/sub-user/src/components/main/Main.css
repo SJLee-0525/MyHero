@@ -11,7 +11,7 @@
   min-width: 400px;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 720px) {
   #page-container {
     display: inline-block;
   }

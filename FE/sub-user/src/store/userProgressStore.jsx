@@ -150,11 +150,11 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.ok) {
         if (resData.message === "New account created successfully") {
-          console.log("회원 가입 성공", resData.id);
+          console.log("회원 가입 성공", resData.result.id);
           setLoginUserInfo({
             login: true,
             userInfo: {
-              id: resData.id,
+              id: resData.result.id,
             },
           });
           return { success: true, data: resData };

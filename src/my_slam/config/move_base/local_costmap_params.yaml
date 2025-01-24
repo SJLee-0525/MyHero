@@ -1,20 +1,14 @@
+# local_costmap_params.yaml
+
 local_costmap:
-  global_frame: odom
-  robot_base_frame: base_footprint
+  global_frame: "map"             # 또는 "odom"을 쓰지만, Hector SLAM은 odom 없음
+  robot_base_frame: "base_footprint"
   update_frequency: 5.0
-  publish_frequency: 2.0
-  static_map: false
-  rolling_window: true
-  width: 3.0
-  height: 3.0
+  publish_frequency: 5.0
+  width: 3.0                      # 로컬 맵 가로 3m
+  height: 3.0                     # 로컬 맵 세로 3m
   resolution: 0.05
   transform_tolerance: 0.5
 
-  obstacle_layer:
-    observation_persistence: 0.2
-    mark_threshold: 0.3
-    clearing_threshold: 0.7
-
-  plugins:
-    - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
-    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  static_map: false
+  rolling_window: true            # 로봇을 중심으로 로컬 윈도우가 움직이는 방식

@@ -1,0 +1,48 @@
+DWAPlannerROS:
+  # 로봇 최대 선속도 (m/s)
+  # throttle=1.0일 때 1.0 m/s 로 가정
+  max_vel_trans: 1.0
+  min_vel_trans: 0.2        # |velocity|가 0.1 m/s 이하로 내려가지 않도록
+
+  max_vel_x: 1.0
+  min_vel_x: -1.0
+  
+  max_vel_y: 0.0
+  min_vel_y: 0.0
+
+  # 회전(제자리 turn) 속도
+  max_rot_vel: 2.0        # rad/s
+  min_rot_vel: 0.4
+
+  # 가속도
+  acc_lim_x: 1.0          # m/s^2
+  dec_lim_x: 1.0
+  acc_lim_theta: 2.0      # rad/s^2
+  dec_lim_theta: 2.0
+
+  acc_lim_y: 0.0
+
+  # 시뮬레이션 시간 (DWA가 여러 시뮬레이션 트젝터리를 평가)
+  sim_time: 1.0
+  vx_samples: 10
+  vtheta_samples: 20
+
+  # 목표 도달시 오차 허용 범위
+  xy_goal_tolerance: 0.15
+  yaw_goal_tolerance: 0.2
+  latch_xy_goal_tolerance: false
+
+  # 로컬 경로 평가
+  path_distance_bias: 32.0
+  goal_distance_bias: 24.0
+  occdist_scale: 0.01
+  forward_point_distance: 0.2
+  stop_time_buffer: 0.2
+
+  # 장애물 앞에서 감속할 것인지
+  scaling_speed: 0.25
+  max_scaling_factor: 0.2
+
+  # differential_drive처럼 y축 이동(측면이동)은 불가능
+  # ackerman형이라도 move_base 상에서는 diff drive 비슷하게 취급
+  holonomic_robot: false

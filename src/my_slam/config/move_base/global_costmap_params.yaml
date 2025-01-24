@@ -1,11 +1,21 @@
+# global_costmap_params.yaml
+
 global_costmap:
-  global_frame: map
-  robot_base_frame: base_footprint
-  update_frequency: 5.0
+  global_frame: "map"
+  robot_base_frame: "base_footprint"
+  update_frequency: 2.0
   publish_frequency: 2.0
-  static_map: true
   transform_tolerance: 0.5
-  plugins:
-    - {name: static_layer, type: "costmap_2d::StaticLayer"}
-    - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
-    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+
+  # Hector SLAM이 계속 /map 을 업데이트하므로 static_map=false
+  # (SLAM-based exploration)
+  static_map: false
+  rolling_window: true # 일단  추가함. 
+
+  width: 10.0
+  height: 10.0
+  resolution: 0.05
+  # costmap_common_params.yaml 포함
+  # => YAML 병합이 이뤄져서, 공통 파라미터를 global_costmap에도 적용
+  # 보통 navigation에서 이렇게 include(merge)함
+  # 하지만 ROS 1에서는 <rosparam command="load" ...>로 합치는 경우가 일반적

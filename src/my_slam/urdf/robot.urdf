@@ -1,5 +1,16 @@
 <?xml version="1.0"?>
 <robot name="my_robot">
+   <!-- Materials -->
+   <material name="blue">
+       <color rgba="0 0.5 1.0 1.0"/>
+   </material>
+   <material name="black">
+       <color rgba="0 0 0 1"/>
+   </material>
+   <material name="red">
+       <color rgba="1 0 0 1"/>
+   </material>
+   
    <link name="base_footprint"/>
 
    <link name="base_link">

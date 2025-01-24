@@ -22,7 +22,7 @@ function ScreenSaver({ onDismiss }) {
 export default function App() {
   const [isScreensaverActive, setIsScreensaverActive] = useState(false);
 
-  const SCREENSAVER_TIMEOUT = 500000000;
+  const SCREENSAVER_TIMEOUT = 50000;
   let timeoutId = null;
 
   const resetTimer = () => {

@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { StoreContext } from "../../store/store.jsx";
 
 import Modal from "./Modal.jsx";
+import Alert from "../alert/Alert.jsx";
+import EmergencyModal from "./EmergencyModal.jsx";
 import MessageModal from "./MessageModal.jsx";
 import ModalSettingBox from "./ModalSettingBox.jsx";
 import SettingModal from "./SettingModal.jsx";
@@ -23,11 +25,11 @@ export default function ModalPage() {
       </Modal>
       <Modal open={store.openEmergencyState} onClose={store.handleModalClose}>
         {store.openEmergencyState && (
-          <MessageModal
-            title="긴급 알림"
-            message="alert"
-            onCloseConfirm={store.handleModalClose}
-          />
+          <EmergencyModal
+            title="긴급"
+            onCloseConfirm={store.handleModalClose}>
+              <Alert />
+          </EmergencyModal>
         )}
       </Modal>
       <Modal

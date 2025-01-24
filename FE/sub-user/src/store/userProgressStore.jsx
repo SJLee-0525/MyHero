@@ -48,6 +48,7 @@ export default function UserProgressContextProvider({ children }) {
     userInfo: undefined,
   });
 
+  // env 관련련
   const DEV_API_URL = import.meta.env.VITE_DEV_API;
   const MAIN_API_URL = import.meta.env.VITE_MAIN_API;
   const DEV_KEY = import.meta.env.VITE_DEV_KEY;

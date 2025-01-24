@@ -22,6 +22,9 @@ export const UserProgressContext = createContext({
   handleCloseModal: () => {},
   handleLogin: (userInfo) => {},
   handleLogout: () => {},
+  handleCheckEmail: (email) => {},
+  handleSignUp: (payload) => {},
+  handleSignOut: (password) => {},
 });
 
 export default function UserProgressContextProvider({ children }) {
@@ -98,25 +101,134 @@ export default function UserProgressContextProvider({ children }) {
     });
   }
 
-  // 이메일 중복확인
-  // async function handleCheckEmail() {
-  //   try {
-  //     const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
-  //       method: "POST",
-  //       body: JSON.stringify({ email: email }),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
+  // 이메일 중복 확인
+  async function handleCheckEmail(email) {
+    try {
+      const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
+        method: "POST",
+        body: JSON.stringify({ email: email }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  //     const resData = await response.json()
+      const resData = await response.json();
 
-  //     if (!response.ok) {
-  //       throw new Error()
-  //     }
-  //   } catch {}
-  //   return none;
-  // }
+      if (response.ok) {
+        // 이메일 사용 가능
+        if (resData.message === "Email is available") {
+          console.log("이메일 사용 가능:", email);
+          return true;
+        }
+      } else {
+        // 이메일 이미 사용 중
+        if (resData.detail?.type === "already exists") {
+          console.error("이메일 이미 존재:", resData.detail.input.email);
+          return false;
+        }
+      }
+    } catch (error) {
+      // 네트워크 오류 등 기타 예외 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      throw new Error("요청을 처리하는 동안 오류가 발생했습니다.");
+    }
+    return null; // 처리 결과 없음
+  }
+
+  // 회원 가입
+  async function handleSignUp(payload) {
+    try {
+      const response = await fetch(`${DEV_API_URL}/accounts`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "New account created successfully") {
+          console.log("회원 가입 성공", resData.id);
+          setLoginUserInfo({
+            login: true,
+            userInfo: {
+              id: resData.id,
+            },
+          });
+          return { success: true, data: resData };
+        }
+      } else {
+        // 서버에서 반환된 에러 정보 처리
+        console.error("에러 유형:", resData.detail.type);
+        console.error("에러 메시지:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+            input: resData.detail.input,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  async function handleSignOut(password) {
+    console.log(password);
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        // 회원 탈퇴 성공
+        if (resData.message === "Account deleted successfully") {
+          handleLogout(); // 로그아웃 처리
+          return { success: true };
+        }
+      } else {
+        // 잘못된 비밀번호 입력
+        if (resData.detail.type === "unauthorized") {
+          console.error("잘못된 비밀번호 입력");
+        } else if (resData.detail.type === "Password is required") {
+          console.error("비밀번호 입력은 필수입니다");
+        }
+        console.log(resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 등 기타 예외 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      throw new Error("요청을 처리하는 동안 오류가 발생했습니다.");
+    }
+  }
 
   const ctxValue = {
     isActiveSideBarElem,
@@ -140,6 +252,9 @@ export default function UserProgressContextProvider({ children }) {
     handleCloseModal,
     handleLogin,
     handleLogout,
+    handleCheckEmail,
+    handleSignUp,
+    handleSignOut,
   };
 
   return (

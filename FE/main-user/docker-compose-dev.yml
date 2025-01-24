@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  dev-main:
+    image: dev-main:latest
+    container_name: dev-main
+    hostname: dev-main
+    ports:
+      - "4580:3000"

@@ -1,15 +1,29 @@
+#activity-main {
+  width: 80vw;
+  min-width: 400px;
+}
+
 #activity-container {
   display: flex;
+  justify-content: space-between; /* 요소 간 좌우 정렬 */
+  align-items: flex-start; /* 상하 정렬 */
   width: 100%;
-  justify-content: space-between;
+  gap: 5%;
+}
+
+#activity-elem-left,
+#activity-elem-right {
+  flex: 1 1 auto; /* 필요 시 크기 조정 가능 */
 }
 
 #activity-elem-left {
-  width: 40%;
+  width: 35%; /* 고정 폭 */
+  min-width: 300px; /* 최소 폭 */
 }
 
 #activity-elem-right {
-  width: 60%;
+  width: 60%; /* 고정 폭 */
+  min-width: 300px; /* 최소 폭 */
 }
 
 #activity-chart-container {
@@ -220,7 +234,7 @@ hr {
 /* #summary-container .summary-content {
 } */
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1200px) {
   #activity-container {
     display: flex;
     flex-direction: column;

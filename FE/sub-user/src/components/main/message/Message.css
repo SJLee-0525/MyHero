@@ -1,3 +1,8 @@
+#message-main {
+  width: 800px;
+  min-width: 400px;
+}
+
 #message {
   width: 100%;
 }

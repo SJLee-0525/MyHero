@@ -1,9 +1,6 @@
-#calendar {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin: 0 auto 10px auto;
-  gap: 8px;
+#calendar-main {
+  width: 80vw;
+  min-width: 400px;
 }
 
 /* HEADER */

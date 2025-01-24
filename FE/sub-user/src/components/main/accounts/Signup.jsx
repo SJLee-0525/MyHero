@@ -1,6 +1,9 @@
 import "./Accounts.css";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import PageContainer from "../container/PageContainer.jsx";
 
@@ -267,6 +270,9 @@ const regions = [
 ];
 
 export default function Signup() {
+  const userProgressStore = useContext(UserProgressContext);
+  const navigate = useNavigate();
+
   // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
@@ -281,32 +287,56 @@ export default function Signup() {
   const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
 
-  // 이메일 중복 확인
-  function handleEmailCheck() {
-    const emailIsInvalid = !emailInput.current.value.includes("@");
+  async function handleEmailCheck() {
+    const enteredEmail = emailInput.current.value;
+
+    // 이메일 형식 유효성 검사
+    const emailIsInvalid = !enteredEmail.includes("@");
+    // const emailCheckState = emailIsInvalid ? "email" : null; // 이메일이 유효하지 않으면 email 필드만 처리
+
+    // 이메일 상태 업데이트
+    setFormIsInvalid((prevForm) => ({
+      ...prevForm,
+      email: emailIsInvalid,
+      emailCheck: emailIsInvalid ? null : prevForm.emailCheck, // email 형식이 올바르면 이전 emailCheck 상태 유지
+    }));
+
     if (emailIsInvalid) {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: true };
-      });
-      return;
-    } else {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: false };
-      });
+      return; // 이메일 형식이 잘못되면 중단
     }
 
-    const enteredEmail = emailInput.current.value;
-    console.log("enteredEmail: " + enteredEmail);
+    try {
+      // 이메일 사용 가능 여부 확인
+      const isEmailAvailable = await userProgressStore.handleCheckEmail(
+        enteredEmail
+      );
 
-    // 이메일 중복 확인 성공
-    setFormIsInvalid((prevForm) => {
-      return { ...prevForm, emailCheck: "verified" };
-    });
-
-    // 이메일 중복 확인 실패
-    // setFormIsInvalid((prevForm) => {
-    //   return { ...prevForm, emailCheck: "not-verified" };
-    // });
+      if (isEmailAvailable === true) {
+        setFormIsInvalid((prevForm) => ({
+          ...prevForm,
+          emailCheck: "verified", // 이메일 사용 가능
+        }));
+      } else if (isEmailAvailable === false) {
+        setFormIsInvalid((prevForm) => ({
+          ...prevForm,
+          emailCheck: "not-available", // 이메일 사용 불가능
+        }));
+      } else {
+        // 예상치 못한 값이 반환된 경우 처리
+        console.error("Email check result is null. Unable to verify.");
+        setFormIsInvalid((prevForm) => ({
+          ...prevForm,
+          emailCheck: "not-verified", // 이메일 확인 결과가 없을 때
+        }));
+      }
+    } catch (error) {
+      // 오류 발생 시 처리
+      console.error("Email check error:", error?.message || error);
+      setFormIsInvalid((prevForm) => ({
+        ...prevForm,
+        emailCheck: "not-verified", // 이메일 확인 실패
+      }));
+    }
   }
 
   function handleStateChange(event) {
@@ -317,63 +347,51 @@ export default function Signup() {
     setCities(region ? region.cities : []);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const fd = new FormData(event.target);
-
-    // 입력된 모든 값들을 그룹화
     const data = Object.fromEntries(fd.entries());
-    console.log(data);
+
+    let isValid = true;
+    let newFormState = { ...formIsInvalid };
 
     // 이메일 유효성 검사
-    const emailIsInvalid = !emailInput.current.value.includes("@");
-    if (emailIsInvalid) {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: true };
-      });
-      return;
+    if (!data.email.includes("@")) {
+      newFormState.email = true;
+      isValid = false;
     } else {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: false };
-      });
+      newFormState.email = false;
     }
 
-    // 이메일 중복 확인여부 검사
+    // 이메일 중복 확인 여부 검사
     if (formIsInvalid.emailCheck !== "verified") {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, emailCheck: "not-verified" };
-      });
-      return;
+      newFormState.emailCheck = "not-verified";
+      isValid = false;
     } else {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, emailCheck: "verified" };
-      });
+      newFormState.emailCheck = "verified";
     }
 
-    // 비밀번호 유효성 검사 (8자 이상)
-    const passwordIsInvalid = passwordInput.current.value.length < 8;
-    if (passwordIsInvalid) {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, password: true };
-      });
-      return;
+    // 비밀번호 유효성 검사
+    if (data.password.length < 8) {
+      newFormState.password = true;
+      isValid = false;
     } else {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, password: false };
-      });
+      newFormState.password = false;
     }
 
     // 비밀번호 확인 유효성 검사
     if (data.password !== data["confirm-password"]) {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, passwordCheck: true };
-      });
-      return;
+      newFormState.passwordCheck = true;
+      isValid = false;
     } else {
-      setFormIsInvalid((prevForm) => {
-        return { ...prevForm, passwordCheck: false };
-      });
+      newFormState.passwordCheck = false;
+    }
+
+    // 유효성 검사 실패 시 중단
+    if (!isValid) {
+      setFormIsInvalid(newFormState);
+      return;
     }
 
     // 입력받은 데이터 객체화
@@ -391,8 +409,24 @@ export default function Signup() {
       address: data.state + " " + data.city,
     };
 
-    // 회원 가입 요청 액션..
-    console.log(payload);
+    // 백 요청 전송
+    try {
+      const result = await userProgressStore.handleSignUp(payload);
+
+      if (result.success) {
+        console.log("회원 가입 성공:", result.data);
+        alert("회원가입이 완료되었습니다.");
+        navigate("/"); // 메인 페이지 이동
+      } else {
+        console.error("회원 가입 실패:", result.error);
+        alert(
+          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
+        );
+      }
+    } catch (error) {
+      console.error("요청 처리 중 오류 발생:", error);
+      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
+    }
   }
 
   return (
@@ -427,7 +461,8 @@ export default function Signup() {
                 확인됨
               </button>
             )}
-            {formIsInvalid.emailCheck === "not-verified" && (
+            {(formIsInvalid.emailCheck === "not-verified" ||
+              formIsInvalid.emailCheck === "not-available") && (
               <button
                 type="button"
                 onClick={handleEmailCheck}
@@ -445,6 +480,11 @@ export default function Signup() {
           {formIsInvalid.emailCheck === "not-verified" && (
             <div className="signup-control-error">
               <p>이메일 중복 확인을 해 주세요.</p>
+            </div>
+          )}
+          {formIsInvalid.emailCheck === "not-available" && (
+            <div className="signup-control-error">
+              <p>이미 사용 중인 이메일입니다.</p>
             </div>
           )}
         </div>

@@ -9,7 +9,7 @@ import SelectedDate from "./SelectedDate";
 export default function CalendarWidget() {
   return (
     // <CalendarStoreContextProvider>
-    <div id="calendar">
+    <div id="calendar-widget">
       <CalendarHeader />
       <CalendarWidgetBody />
       <SelectedDate />

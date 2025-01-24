@@ -11,8 +11,8 @@ import CalendarSchedules from "./CalendarSchedules.jsx";
 
 export default function Calendar() {
   return (
-    <div>
-      <h2 id="main-container-title">CALENDAR</h2>
+    <div id="calendar">
+      {/* <h2 id="main-container-title">CALENDAR</h2> */}
       <PageContainer title="캘린더">
         {/* <CalendarStoreContextProvider> */}
         <div id="calendar">

@@ -98,6 +98,26 @@ export default function UserProgressContextProvider({ children }) {
     });
   }
 
+  // 이메일 중복확인
+  // async function handleCheckEmail() {
+  //   try {
+  //     const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
+  //       method: "POST",
+  //       body: JSON.stringify({ email: email }),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     const resData = await response.json()
+
+  //     if (!response.ok) {
+  //       throw new Error()
+  //     }
+  //   } catch {}
+  //   return none;
+  // }
+
   const ctxValue = {
     isActiveSideBarElem,
     toggleStatus,

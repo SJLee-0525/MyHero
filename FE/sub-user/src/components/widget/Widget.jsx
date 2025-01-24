@@ -1,4 +1,4 @@
-import "./widget.css";
+import "./Widget.css";
 
 export default function Widget({ title, content, children }) {
   return (

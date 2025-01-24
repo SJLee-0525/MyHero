@@ -70,7 +70,7 @@
    <joint name="front_left_wheel_joint" type="continuous">
        <parent link="steering_link"/>
        <child link="front_left_wheel"/>
-       <origin xyz="0 0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <origin xyz="0 0.06 -0.035" rpy="1.5708 0 0"/>
        <axis xyz="0 0 1"/>
    </joint>
 
@@ -86,7 +86,7 @@
    <joint name="front_right_wheel_joint" type="continuous">
        <parent link="steering_link"/>
        <child link="front_right_wheel"/>
-       <origin xyz="0 -0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <origin xyz="0 -0.06 -0.035" rpy="1.5708 0 0"/>
        <axis xyz="0 0 1"/>
    </joint>
 
@@ -118,7 +118,7 @@
    <joint name="rear_left_wheel_joint" type="continuous">
        <parent link="rear_wheel_axis"/>
        <child link="rear_left_wheel"/>
-       <origin xyz="0 0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <origin xyz="0 0.06 -0.035" rpy="1.5708 0 0"/>
        <axis xyz="0 0 1"/>
    </joint>
 
@@ -134,7 +134,7 @@
    <joint name="rear_right_wheel_joint" type="continuous">
        <parent link="rear_wheel_axis"/>
        <child link="rear_right_wheel"/>
-       <origin xyz="0 -0.06 -0.035" rpy="${pi/2} 0 0"/>
+       <origin xyz="0 -0.06 -0.035" rpy="1.5708 0 0"/>
        <axis xyz="0 0 1"/>
    </joint>
 </robot>

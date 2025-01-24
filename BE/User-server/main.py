@@ -160,7 +160,9 @@ async def create_account(account: Account):
     if result:
         return {
             "message": "New account created successfully",
-            "id": new_id
+            "result": {
+                "id": new_id
+            }
         }
     else:
         raise HTTPException(

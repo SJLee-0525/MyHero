@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  dev-sub:
+    image: dev-sub:latest
+    container_name: dev-sub
+    hostname: dev-sub
+    ports:
+      - "4680:3000"

@@ -56,7 +56,7 @@ class Database:
 
         with self.pre_session() as session:
             try:
-                account_list = session.query(AccountTable.email).all()
+                account_list = session.query(AccountsTable.email).all()
                 result = [{"email": data[0]} for data in account_list]
             except SQLAlchemyError as error:
                 print(f"[DB] Error getting all email: {str(error)}")
@@ -74,7 +74,7 @@ class Database:
 
         with self.pre_session() as session:
             try:
-                id_list = session.query(AccountTable.id).all()
+                id_list = session.query(AccountsTable.id).all()
                 result = [{"id": data[0]} for data in id_list]
             except SQLAlchemyError as error:
                 print(f"[DB] Error getting all account id: {str(error)}")
@@ -83,7 +83,7 @@ class Database:
                 return result
 
     # 새로운 사용자 계정 추가하기
-    def create_account(self, account_data: AccountTable) -> bool:
+    def create_account(self, account_data: AccountsTable) -> bool:
         """
         새로운 사용자 계정을 만드는 기능
         :param account_data: AccountTable 형식으로 미리 Mapping된 사용자 정보
@@ -115,13 +115,13 @@ class Database:
         with self.pre_session() as session:
             try:
                 account_list = session.query(
-                    AccountTable.id,
-                    AccountTable.email,
-                    AccountTable.role,
-                    AccountTable.user_name,
-                    AccountTable.birth_date,
-                    AccountTable.gender,
-                    AccountTable.address
+                    AccountsTable.id,
+                    AccountsTable.email,
+                    AccountsTable.role,
+                    AccountsTable.user_name,
+                    AccountsTable.birth_date,
+                    AccountsTable.gender,
+                    AccountsTable.address
                 ).all()
 
                 serialized_data: list[dict] = [{
@@ -153,14 +153,14 @@ class Database:
         with self.pre_session() as session:
             try:
                 account_data = session.query(
-                    AccountTable.id,
-                    AccountTable.email,
-                    AccountTable.role,
-                    AccountTable.user_name,
-                    AccountTable.birth_date,
-                    AccountTable.gender,
-                    AccountTable.address
-                ).filter(AccountTable.id == account_id).first()
+                    AccountsTable.id,
+                    AccountsTable.email,
+                    AccountsTable.role,
+                    AccountsTable.user_name,
+                    AccountsTable.birth_date,
+                    AccountsTable.gender,
+                    AccountsTable.address
+                ).filter(AccountsTable.id == account_id).first()
 
                 if account_data is not None:
                     serialized_data: dict = {
@@ -193,7 +193,7 @@ class Database:
         with self.pre_session() as session:
             try:
                 hashed_password = \
-                session.query(AccountTable.password).filter(AccountTable.id == account_id).first()[0]
+                session.query(AccountsTable.password).filter(AccountsTable.id == account_id).first()[0]
                 result = hashed_password.__str__()
             except SQLAlchemyError as error:
                 print(f"[DB] Error getting hashed password: {str(error)}")
@@ -202,7 +202,7 @@ class Database:
                 return result
 
     # 한 사용자 계정 정보 변경하기
-    def update_one_account(self, account_id: str, updated_account: AccountTable) -> bool:
+    def update_one_account(self, account_id: str, updated_account: AccountsTable) -> bool:
         """
         아이디와 최종으로 변경할 데이터를 이용해 계정의 정보를 변경하는 기능
         :param account_id: 사용자의 ID
@@ -213,7 +213,7 @@ class Database:
 
         with self.pre_session() as session:
             try:
-                previous_account = session.query(AccountTable).filter(AccountTable.id == account_id).first()
+                previous_account = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
 
                 if previous_account is not None:
                     if updated_account.email is not None:
@@ -250,7 +250,7 @@ class Database:
 
         with self.pre_session() as session:
             try:
-                account_data = session.query(AccountTable).filter(AccountTable.id == account_id).first()
+                account_data = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
                 if account_data is not None:
                     session.delete(account_data)
                     result = True

@@ -27,8 +27,8 @@ class Gender(BaseEnum):
     OTHER = "other"
 
 
-class AccountTable(Base):
-    __tablename__ = "account"
+class AccountsTable(Base):
+    __tablename__ = "accounts"
 
     id = Column(String(16), primary_key=True, nullable=False)
     email = Column(String(128), nullable=False, unique=True)

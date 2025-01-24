@@ -144,7 +144,7 @@ async def create_account(account: Account):
             day=account.birth_date.day
         )
 
-    new_account: AccountTable = AccountTable(
+    new_account: AccountsTable = AccountsTable(
         id=new_id,
         email=account.email,
         password=hashed_password,
@@ -309,7 +309,7 @@ async def update_account(user_id: str, updated_account: Account):
             day=updated_account.birth_date.day
         )
 
-    total_updated_account: AccountTable = AccountTable(
+    total_updated_account: AccountsTable = AccountsTable(
         id=user_id,
         email=updated_account.email if updated_account.email is not None else previous_account["email"],
         role=updated_account.role.upper() if updated_account.role is not None else previous_account["role"],

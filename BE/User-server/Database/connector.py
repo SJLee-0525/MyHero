@@ -30,9 +30,9 @@ class Database:
             f"mysql+pymysql://{self.user}:"+
             f"{self.password}@{self.host}:{self.port}/"+
             f"{self.schema}?charset={self.charset}",
-            pool_size=5,
-            max_overflow=10,
-            pool_recycle=3600,
+            pool_size=10,
+            max_overflow=20,
+            pool_recycle=7200,
             echo=False
         )
 
@@ -54,15 +54,15 @@ class Database:
         """
         result: list[dict] = []
 
-        try:
-            account_list = self.session.query(AccountTable.email).all()
-            result =  [{"email": data[0]} for data in account_list]
-        except SQLAlchemyError as error:
-            print(f"[DB] Error getting all email: {str(error)}")
-            result =  []
-        finally:
-            self.session.close()
-            return result
+        with self.pre_session() as session:
+            try:
+                account_list = session.query(AccountsTable.email).all()
+                result = [{"email": data[0]} for data in account_list]
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting all email: {str(error)}")
+                result = []
+            finally:
+                return result
 
     # 모든 사용자의 ID 불러오기
     def get_all_account_id(self) -> list[dict]:
@@ -72,18 +72,18 @@ class Database:
         """
         result: list[dict] = []
 
-        try:
-            id_list = self.session.query(AccountTable.id).all()
-            result = [{"id": data[0]} for data in id_list]
-        except SQLAlchemyError as error:
-            print(f"[DB] Error getting all account id: {str(error)}")
-            result = []
-        finally:
-            self.session.close()
-            return result
+        with self.pre_session() as session:
+            try:
+                id_list = session.query(AccountsTable.id).all()
+                result = [{"id": data[0]} for data in id_list]
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting all account id: {str(error)}")
+                result = []
+            finally:
+                return result
 
     # 새로운 사용자 계정 추가하기
-    def create_account(self, account_data: AccountTable) -> bool:
+    def create_account(self, account_data: AccountsTable) -> bool:
         """
         새로운 사용자 계정을 만드는 기능
         :param account_data: AccountTable 형식으로 미리 Mapping된 사용자 정보
@@ -91,18 +91,18 @@ class Database:
         """
         result: bool = False
 
-        try:
-            self.session.add(account_data)
-            print(f"[DB] New account created: {account_data}")
-            result = True
-        except SQLAlchemyError as error:
-            self.session.rollback()
-            print(f"[DB] Error creating new account: {str(error)}")
-            result = False
-        finally:
-            self.session.commit()
-            self.session.close()
-            return result
+        with self.pre_session() as session:
+            try:
+                session.add(account_data)
+                print(f"[DB] New account created: {account_data}")
+                result = True
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error creating new account: {str(error)}")
+                result = False
+            finally:
+                session.commit()
+                return result
 
     # 모든 사용자 계정 정보 불러오기
     def get_all_accounts(self) -> list[dict]:
@@ -112,34 +112,34 @@ class Database:
         """
         result: list[dict] = []
 
-        try:
-            account_list = self.session.query(
-                AccountTable.id,
-                AccountTable.email,
-                AccountTable.role,
-                AccountTable.user_name,
-                AccountTable.birth_date,
-                AccountTable.gender,
-                AccountTable.address
-            ).all()
+        with self.pre_session() as session:
+            try:
+                account_list = session.query(
+                    AccountsTable.id,
+                    AccountsTable.email,
+                    AccountsTable.role,
+                    AccountsTable.user_name,
+                    AccountsTable.birth_date,
+                    AccountsTable.gender,
+                    AccountsTable.address
+                ).all()
 
-            serialized_data: list[dict] = [{
-                "id": data[0],
-                "email": data[1],
-                "role": data[2],
-                "user_name": data[3],
-                "birth_date": data[4],
-                "gender": data[5],
-                "address": data[6]
-            } for data in account_list]
-            result = serialized_data
+                serialized_data: list[dict] = [{
+                    "id": data[0],
+                    "email": data[1],
+                    "role": data[2],
+                    "user_name": data[3],
+                    "birth_date": data[4],
+                    "gender": data[5],
+                    "address": data[6]
+                } for data in account_list]
+                result = serialized_data
 
-        except SQLAlchemyError as error:
-            print(f"[DB] Error getting all account data: {str(error)}")
-            result = []
-        finally:
-            self.session.close()
-            return result
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting all account data: {str(error)}")
+                result = []
+            finally:
+                return result
 
     # 한 사용자 계정 정보 불러오기
     def get_one_account(self, account_id: str) -> dict:
@@ -150,37 +150,36 @@ class Database:
         """
         result: dict = {}
 
-        try:
-            account_data = self.session.query(
-                AccountTable.id,
-                AccountTable.email,
-                AccountTable.role,
-                AccountTable.user_name,
-                AccountTable.birth_date,
-                AccountTable.gender,
-                AccountTable.address
-            ).filter(AccountTable.id == account_id).first()
+        with self.pre_session() as session:
+            try:
+                account_data = session.query(
+                    AccountsTable.id,
+                    AccountsTable.email,
+                    AccountsTable.role,
+                    AccountsTable.user_name,
+                    AccountsTable.birth_date,
+                    AccountsTable.gender,
+                    AccountsTable.address
+                ).filter(AccountsTable.id == account_id).first()
 
-            if account_data is not None:
-                serialized_data: dict = {
-                    "id": account_data[0],
-                    "email": account_data[1],
-                    "role": account_data[2],
-                    "user_name": account_data[3],
-                    "birth_date": account_data[4],
-                    "gender": account_data[5],
-                    "address": account_data[6]
-                }
-                result = serialized_data
-            else:
+                if account_data is not None:
+                    serialized_data: dict = {
+                        "id": account_data[0],
+                        "email": account_data[1],
+                        "role": account_data[2],
+                        "user_name": account_data[3],
+                        "birth_date": account_data[4],
+                        "gender": account_data[5],
+                        "address": account_data[6]
+                    }
+                    result = serialized_data
+                else:
+                    result = {}
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting one account data: {str(error)}")
                 result = {}
-
-        except SQLAlchemyError as error:
-            print(f"[DB] Error getting one account data: {str(error)}")
-            result = {}
-        finally:
-            self.session.close()
-            return result
+            finally:
+                return result
 
     # 한 사용자 비밀번호 Hash 정보 불러오기
     def get_hashed_password(self, account_id: str) -> str:
@@ -191,18 +190,19 @@ class Database:
         """
         result: str = ""
 
-        try:
-            hashed_password = self.session.query(AccountTable.password).filter(AccountTable.id == account_id).first()[0]
-            result = hashed_password.__str__()
-        except SQLAlchemyError as error:
-            print(f"[DB] Error getting hashed password: {str(error)}")
-            result = ""
-        finally:
-            self.session.close()
-            return result
+        with self.pre_session() as session:
+            try:
+                hashed_password = \
+                session.query(AccountsTable.password).filter(AccountsTable.id == account_id).first()[0]
+                result = hashed_password.__str__()
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting hashed password: {str(error)}")
+                result = ""
+            finally:
+                return result
 
     # 한 사용자 계정 정보 변경하기
-    def update_one_account(self, account_id: str, updated_account: AccountTable) -> bool:
+    def update_one_account(self, account_id: str, updated_account: AccountsTable) -> bool:
         """
         아이디와 최종으로 변경할 데이터를 이용해 계정의 정보를 변경하는 기능
         :param account_id: 사용자의 ID
@@ -211,33 +211,33 @@ class Database:
         """
         result: bool = False
 
-        try:
-            previous_account = self.session.query(AccountTable).filter(AccountTable.id == account_id).first()
+        with self.pre_session() as session:
+            try:
+                previous_account = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
 
-            if previous_account is not None:
-                if updated_account.email is not None:
-                    previous_account.email = updated_account.email
-                if updated_account.role is not None:
-                    previous_account.role = updated_account.role
-                if updated_account.user_name is not None:
-                    previous_account.user_name = updated_account.user_name
-                if updated_account.birth_date is not None:
-                    previous_account.birth_date = updated_account.birth_date
-                if updated_account.gender is not None:
-                    previous_account.gender = updated_account.gender
-                if updated_account.address is not None:
-                    previous_account.address = updated_account.address
-                result = True
-            else:
+                if previous_account is not None:
+                    if updated_account.email is not None:
+                        previous_account.email = updated_account.email
+                    if updated_account.role is not None:
+                        previous_account.role = updated_account.role
+                    if updated_account.user_name is not None:
+                        previous_account.user_name = updated_account.user_name
+                    if updated_account.birth_date is not None:
+                        previous_account.birth_date = updated_account.birth_date
+                    if updated_account.gender is not None:
+                        previous_account.gender = updated_account.gender
+                    if updated_account.address is not None:
+                        previous_account.address = updated_account.address
+                    result = True
+                else:
+                    result = False
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error updating one account data: {str(error)}")
                 result = False
-        except SQLAlchemyError as error:
-            self.session.rollback()
-            print(f"[DB] Error updating one account data: {str(error)}")
-            result = False
-        finally:
-            self.session.commit()
-            self.session.close()
-            return result
+            finally:
+                session.commit()
+                return result
 
     # 한 사용자 계정을 삭제하는 기능
     def delete_one_account(self, account_id: str) -> bool:
@@ -248,19 +248,19 @@ class Database:
         """
         result: bool = False
 
-        try:
-            account_data = self.session.query(AccountTable).filter(AccountTable.id == account_id).first()
-            if account_data is not None:
-                self.session.delete(account_data)
-                result = True
-            else:
+        with self.pre_session() as session:
+            try:
+                account_data = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
+                if account_data is not None:
+                    session.delete(account_data)
+                    result = True
+                else:
+                    result = False
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error deleting one account data: {str(error)}")
                 result = False
-        except SQLAlchemyError as error:
-            self.session.rollback()
-            print(f"[DB] Error deleting one account data: {str(error)}")
-            result = False
-        finally:
-            self.session.commit()
-            self.session.close()
-            return result
+            finally:
+                session.commit()
+                return result
 

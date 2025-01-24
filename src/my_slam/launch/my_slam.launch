@@ -1,42 +1,49 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- URDF 로드 -->
+    <!-- 1) URDF 로드 (robot_description 파라미터에 저장) -->
+    <!--  textfile 대신 command="cat ..." 로도 가능하나 textfile 사용도 OK -->
     <param name="robot_description" textfile="$(find my_slam)/urdf/robot.urdf" />
-    
-    <!-- Robot State Publisher -->
+
+    <!-- 2) Robot State Publisher -->
     <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
         <param name="publish_frequency" type="double" value="50.0" />
     </node>
 
-    <!-- YDLidar 구동 -->
+    <!-- 3) YDLidar X4 실행: 이미 static transform은 주석 처리했다고 가정 -->
     <include file="$(find ydlidar_ros_driver)/launch/X4.launch" />
 
-    <!-- Hector SLAM -->
+    <!-- 4) Hector SLAM 노드 -->
     <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
-        <!-- Frame 설정 -->
+        <!-- 프레임 설정: map -> base_footprint -->
         <param name="map_frame" value="map" />
         <param name="base_frame" value="base_footprint" />
-        <param name="odom_frame" value="odom" /> <!-- base_footprint에서 odom으로 수정-->
-        
-        <!-- Tf 사용 설정 -->
+        <!-- odom을 사용하지 않으므로 odom_frame = base_footprint or "" 로 설정 -->
+        <param name="odom_frame" value="base_footprint" />
+        <param name="pub_map_odom_transform" value="true" />
+
+        <!-- use_tf_scan_transformation: 라이다를 TF로 변환할지 여부 -->
         <param name="use_tf_scan_transformation" value="true"/>
+        <!-- 초기 Pose는 별도 TF로 추정 false (필요하면 true) -->
         <param name="use_tf_pose_start_estimate" value="false"/>
-        <param name="pub_map_odom_transform" value="true"/>
-        
-        <!-- Map 설정 -->
+
+        <!-- 맵 해상도/크기 -->
         <param name="map_resolution" value="0.050"/>
         <param name="map_size" value="2048"/>
         <param name="map_start_x" value="0.5"/>
         <param name="map_start_y" value="0.5"/>
-        
-        <!-- Scan 설정 -->
-        <param name="scan_topic" value="scan"/>
+
+        <!-- 라이다 Scan 토픽 이름: 드라이버가 퍼블리시하는 실제 토픽명으로 맞추세요 -->
+        <!-- 기본적으로 ydlidar_ros_driver_node는 /scan 을 퍼블리시할 가능성이 큼 -->
+        <!-- rostopic list 또는 소스 확인하여 정확한 이름으로 설정 -->
+        <param name="scan_topic" value="/scan"/>
     </node>
 
-	<node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100"/>
-    <!-- RViz -->
-    <!--<node pkg="rviz" type="rviz" name="rviz" 
-          args="-d $(find my_slam)/rviz/slam.rviz" respawn="true"/>
-		  -->
+    <!-- 5) (선택) map->odom/nav TF 퍼블리셔 (오도메트리 미사용 시 주석 처리)
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom"
+        args="0 0 0 0 0 0 map nav 100"/>
+    -->
 
+    <!-- 6) RViz 실행 (slam.rviz는 예시 config) -->
+    <node pkg="rviz" type="rviz" name="rviz"
+          args="-d $(find my_slam)/rviz/slam.rviz" respawn="true"/>
 </launch>

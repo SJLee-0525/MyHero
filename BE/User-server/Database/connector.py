@@ -32,7 +32,7 @@ class Database:
             f"{self.schema}?charset={self.charset}",
             pool_size=10,
             max_overflow=20,
-            pool_recycle=7200,
+            pool_recycle=3600,
             echo=False
         )
 

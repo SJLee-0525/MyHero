@@ -27,7 +27,7 @@ export default function TopNav() {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 600);
+      setIsMobile(window.innerWidth <= 720);
     };
 
     // 이벤트 리스너 등록

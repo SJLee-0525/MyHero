@@ -6,7 +6,7 @@ Database Table Models
 """
 
 # Library
-from sqlalchemy import Column, Date, String, Enum
+from sqlalchemy import Column, Date, String, Enum, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as BaseEnum
 
@@ -26,6 +26,7 @@ class Gender(BaseEnum):
     FEMALE = "female"
     OTHER = "other"
 
+# ========== DB Tables ==========
 
 class AccountsTable(Base):
     __tablename__ = "accounts"
@@ -49,4 +50,18 @@ class AccountsTable(Base):
                 f"birth_date='{self.birth_date}', " +
                 f"gender='{self.gender}', " +
                 f"address='{self.address}')>"
+                )
+
+class FamiliesTable(Base):
+    __tablename__ = "families"
+
+    id = Column(String(16), primary_key=True, nullable=False)
+    main_user = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    family_name = Column(String(128), nullable=True)
+
+    def __repr__(self):
+        return (f"" +
+                f"<Family(id='{self.id}', " +
+                f"main_user='{self.main_user}', " +
+                f"family_name='{self.family_name}')>"
                 )

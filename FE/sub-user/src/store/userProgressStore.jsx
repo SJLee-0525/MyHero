@@ -6,6 +6,10 @@ export const UserProgressContext = createContext({
   sidebarIsOpened: false,
   modalProgress: "",
   loginUserInfo: false,
+  DEV_API_URL: "",
+  MAIN_API_URL: "",
+  DEV_KEY: "",
+  MAIN_KEY: "",
   setIsActiveSideBarElem: () => {},
   setToggleStatus: () => {},
   setSidebarIsOpened: () => {},
@@ -43,6 +47,11 @@ export default function UserProgressContextProvider({ children }) {
     login: false,
     userInfo: undefined,
   });
+
+  const DEV_API_URL = import.meta.env.VITE_DEV_API;
+  const MAIN_API_URL = import.meta.env.VITE_MAIN_API;
+  const DEV_KEY = import.meta.env.VITE_DEV_KEY;
+  const MAIN_KEY = import.meta.env.VITE_MAIN_KEY;
 
   // 사이드 바 요소 활성화
   function handleActiveSideBarElem(identifier) {
@@ -94,6 +103,10 @@ export default function UserProgressContextProvider({ children }) {
     sidebarIsOpened,
     modalProgress,
     loginUserInfo,
+    DEV_API_URL,
+    MAIN_API_URL,
+    DEV_KEY,
+    MAIN_KEY,
     setIsActiveSideBarElem,
     setToggleStatus,
     setSidebarIsOpened,

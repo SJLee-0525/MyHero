@@ -1,9 +1,15 @@
+#accounts-main {
+  width: 800px;
+  min-width: 400px;
+}
+
 #login-form {
   margin: 3rem auto;
   padding: 2rem;
 
   width: 100%;
-  max-width: 40rem;
+  /* min-width: 400px; */
+  max-width: 600px;
 
   border-radius: 8px;
 }
@@ -78,7 +84,8 @@
   padding: 2rem;
 
   width: 100%;
-  max-width: 40rem;
+  /* min-width: 400px; */
+  max-width: 600px;
 
   border-radius: 8px;
 }
@@ -232,7 +239,7 @@
 
   background-color: transparent;
 
-  color: rgb(255, 255, 255);
+  color: #ff5a33;
   font-weight: bold;
 }
 
@@ -269,3 +276,10 @@
 hr {
   border: 1px rgba(255, 255, 255, 0.568) solid;
 }
+
+/* @media screen and (max-width: 720px) {
+  #accounts-main {
+    min-width: 400px;
+    margin: 20px 20px;
+  }
+} */

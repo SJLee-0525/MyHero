@@ -19,6 +19,7 @@ RUN npm install
 
 # Build Webpages
 RUN npm run build
+RUN mkdir ./express-server/public
 RUN cp -r ./dist/* ./express-server/public
 
 # Set Express Working Path

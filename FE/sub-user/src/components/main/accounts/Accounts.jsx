@@ -10,7 +10,7 @@ export default function Accounts() {
   const userProgressStore = useContext(UserProgressContext);
 
   return (
-    <div>
+    <div id="accounts-main">
       {userProgressStore.loginUserInfo.login ? <UserInfo /> : <Login />}
       {/* */}
       {/* <Signup /> */}

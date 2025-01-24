@@ -6,6 +6,10 @@ export const UserProgressContext = createContext({
   sidebarIsOpened: false,
   modalProgress: "",
   loginUserInfo: false,
+  DEV_API_URL: "",
+  MAIN_API_URL: "",
+  DEV_KEY: "",
+  MAIN_KEY: "",
   setIsActiveSideBarElem: () => {},
   setToggleStatus: () => {},
   setSidebarIsOpened: () => {},
@@ -43,6 +47,12 @@ export default function UserProgressContextProvider({ children }) {
     login: false,
     userInfo: undefined,
   });
+
+  // env 관련련
+  const DEV_API_URL = import.meta.env.VITE_DEV_API;
+  const MAIN_API_URL = import.meta.env.VITE_MAIN_API;
+  const DEV_KEY = import.meta.env.VITE_DEV_KEY;
+  const MAIN_KEY = import.meta.env.VITE_MAIN_KEY;
 
   // 사이드 바 요소 활성화
   function handleActiveSideBarElem(identifier) {
@@ -88,12 +98,36 @@ export default function UserProgressContextProvider({ children }) {
     });
   }
 
+  // 이메일 중복확인
+  // async function handleCheckEmail() {
+  //   try {
+  //     const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
+  //       method: "POST",
+  //       body: JSON.stringify({ email: email }),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+
+  //     const resData = await response.json()
+
+  //     if (!response.ok) {
+  //       throw new Error()
+  //     }
+  //   } catch {}
+  //   return none;
+  // }
+
   const ctxValue = {
     isActiveSideBarElem,
     toggleStatus,
     sidebarIsOpened,
     modalProgress,
     loginUserInfo,
+    DEV_API_URL,
+    MAIN_API_URL,
+    DEV_KEY,
+    MAIN_KEY,
     setIsActiveSideBarElem,
     setToggleStatus,
     setSidebarIsOpened,

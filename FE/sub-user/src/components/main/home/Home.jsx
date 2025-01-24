@@ -16,6 +16,11 @@ export default function Main() {
 
   const mainUserName = "박순자123";
 
+  console.log(userProgressStore.DEV_API_URL);
+  console.log(userProgressStore.MAIN_API_URL);
+  console.log(userProgressStore.DEV_KEY);
+  console.log(userProgressStore.MAIN_KEY);
+
   return (
     <div>
       <h2 id="main-container-title">HOME</h2>

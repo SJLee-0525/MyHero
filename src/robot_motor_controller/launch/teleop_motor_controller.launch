@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="robot_motor_controller"
+        type="motor_controller_node"
+        name="motor_controller_node"
+        output="screen" />
+
+  <!-- teleop 노드 -->
+  <node pkg="robot_motor_controller"
+        type="teleop_wasd.py"
+        name="teleop_wasd"
+        output="screen" />
+</launch>
+

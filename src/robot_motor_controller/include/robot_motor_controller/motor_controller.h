@@ -14,6 +14,7 @@ class MotorController
 private:
     ros::NodeHandle nh_;
     ros::Subscriber cmd_vel_sub_;
+    ros::Publisher joint_state_pub_;
 
     // I2C 디바이스
     I2CDevice i2c_dc_;
@@ -29,9 +30,8 @@ private:
 
     // ROS 파라미터
     int servo_channel_;
-    ros::Publisher joint_state_pub_;
-    void publishJointStates(float steering_angle);
     sensor_msgs::JointState joint_state_msg_;
+
     // 차량 축간거리
     static constexpr float WHEELBASE = 0.20; // 20cm = 0.20m로 설정
 
@@ -39,6 +39,7 @@ public:
     MotorController(ros::NodeHandle &nh);
     ~MotorController(); // 소멸자 추가
     void cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg);
+    void publishJointStates(float steering_angle, float throttle);
 };
 
 #endif // MOTOR_CONTROLLER_H

@@ -22,8 +22,8 @@ export default function Main() {
   // console.log(userProgressStore.MAIN_KEY);
 
   return (
-    <div>
-      <h2 id="main-container-title">HOME</h2>
+    <div id="home-main">
+      {/* <h2 id="main-container-title">HOME</h2> */}
 
       <div id="page-container">
         <Widget title="긴급 상황 알림" type="emergency">

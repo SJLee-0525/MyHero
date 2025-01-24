@@ -1,15 +1,14 @@
 #page-container {
   display: flex;
-  flex-wrap: wrap; /* 줄 바꿈 허용 */
-  gap: 10px; /* 요소 간격 */
+  justify-content: start;
+  flex-direction: row;
+
+  flex-wrap: wrap;
 }
 
-#page-container > * {
-  flex: 1 1 calc(33.333% - 10px); /* 3개의 열 */
-  box-sizing: border-box; /* padding 포함한 크기 계산 */
-  max-width: calc(33.333% - 10px); /* 최대 너비 */
-  height: 0px; /* 고정 높이 (원하는 대로 조정 가능) */
-  background: lightblue; /* 임시 배경색 */
+#home-main {
+  width: 80vw;
+  min-width: 400px;
 }
 
 @media screen and (max-width: 600px) {

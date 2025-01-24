@@ -1,7 +1,8 @@
 #main-page-container {
-  /* width: 100%; */
+  width: 100%;
+  min-width: 400px;
 
-  margin: 10px;
+  margin: 10px auto;
   padding: 10px;
 
   border-radius: 12px;

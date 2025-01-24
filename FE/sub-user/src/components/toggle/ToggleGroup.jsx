@@ -86,7 +86,7 @@ export default function ToggleGroup() {
       />
       <StatusToggle
         name="미세 먼지"
-        imgSrc={humidityImage}
+        imgSrc={airImage}
         altSrc="heart"
         statusLevel={
           homeStatusStore.homeStatus.data.dust_level < 40 ? "good" : "bad"

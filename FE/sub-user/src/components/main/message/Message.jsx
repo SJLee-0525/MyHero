@@ -8,19 +8,21 @@ import MessageInput from "./MessageInput";
 
 export default function Message() {
   return (
-    <div id="main-wrapper">
-      <h2 id="main-container-title">MESSAGE</h2>
-      <PageContainer title="어머니😎">
-        {/* <MessageContextProvider> */}
-        <div id="message">
-          {/* 메시지 출력 */}
-          <MessageChat />
+    <div id="message-main">
+      <div>
+        {/* <h2 id="main-container-title">MESSAGE</h2> */}
+        <PageContainer title="어머니😎">
+          {/* <MessageContextProvider> */}
+          <div id="message">
+            {/* 메시지 출력 */}
+            <MessageChat />
 
-          {/* 메시지 입력 */}
-          <MessageInput />
-        </div>
-        {/* </MessageContextProvider> */}
-      </PageContainer>
+            {/* 메시지 입력 */}
+            <MessageInput />
+          </div>
+          {/* </MessageContextProvider> */}
+        </PageContainer>
+      </div>
     </div>
   );
 }

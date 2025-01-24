@@ -1,0 +1,11 @@
+#emergency-alert-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    color: #FF5858;
+}
+
+#content {
+    color: #FF5858;
+}

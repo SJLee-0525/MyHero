@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.0.5
+version : 0.1.0
 """
 
 # Libraries
@@ -117,13 +117,15 @@ async def create_account(account: Account):
     id_verified: bool = False
 
     while not id_verified:
-        new_id = random_id(16, Identify.USER)
-        id_list = [data["id"] for data in database.get_all_account_id()]
+        new_id: str = random_id(16, Identify.USER)
+        account_data: dict = database.get_one_account(new_id)
+        id_list = [data["id"] for data in account_data]
         if new_id not in id_list:
             id_verified = True
 
     # 새로운 Account 정보 생성
     hashed_password = hash_password(account.password)  # 암호화된 비밀번호
+
     if account.birth_date is None:  # 입력받은 생년월일을 date 타입으로 변환
         converted_birth_date = None
     else:
@@ -157,6 +159,7 @@ async def create_account(account: Account):
 
     # 계정 업로드
     result: bool = database.create_account(new_account)
+
     if result:
         return {
             "message": "New account created successfully",
@@ -370,6 +373,7 @@ async def delete_account(user_id: str, checker: PasswordCheck):
     input_password: str = checker.password
     hashed_password: str = database.get_hashed_password(user_id)
     is_verified: bool = verify_password(input_password, hashed_password)
+
     if not is_verified:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -399,3 +403,65 @@ async def delete_account(user_id: str, checker: PasswordCheck):
 
 # ========== Family 부분 ==========
 
+@app.post("/families", status_code=status.HTTP_201_CREATED)
+async def create_family(family: Family):
+    # 필수 입력 정보 점검 (Main User)
+    if family.main_user is None or family.main_user == "":
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": ["body", "main_user"],
+                "message": "Main user is required",
+                "input": jsonable_encoder(family)
+            }
+        )
+
+    # 가족이 이미 생성되었는지 점검
+    exist_family: str = database.main_to_family_id(family.main_user)
+
+    if exist_family == "":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "type": "already exists",
+                "message": "Main user already has a family",
+            }
+        )
+
+    # ID 생성 및 중복 점검
+    new_id: str = ""
+    id_verified: bool = False
+
+    while not id_verified:
+        new_id: str = random_id(16, Identify.FAMILY)
+        family_data: dict = database.get_one_family(new_id)
+        id_list = [data["id"] for data in family_data]
+        if new_id not in id_list:
+            id_verified = True
+
+    # 새로운 가족 정보 생성
+    new_family: FamiliesTable = FamiliesTable(
+        id=new_id,
+        main_user=family.main_user,
+        family_name=family.family_name
+    )
+
+    result: bool = database.create_family(new_family)
+
+    if result:
+        return {
+            "message": "New family created successfully",
+            "result": {
+                "id": new_id
+            }
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create new family",
+                "input": jsonable_encoder(family)
+            }
+        )

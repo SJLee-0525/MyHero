@@ -274,6 +274,24 @@ class Database:
 
     # ========== Families ==========
 
+    # 모든 가족의 ID 불러오기
+    def get_all_family_id(self) -> list[dict]:
+        """
+        등록된 모든 가족의 ID를 불러오는 기능
+        :return: 등록된 모든 가족의 ID list[dict]
+        """
+        result: list[dict] = []
+
+        with self.pre_session() as session:
+            try:
+                id_list = session.query(FamiliesTable.id).all()
+                result = [{"id": data[0]} for data in id_list]
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting all family id: {str(error)}")
+                result = []
+            finally:
+                return result
+
     # 모든 가족의 Main User ID 불러오기
     def get_all_family_main(self) -> list[dict]:
         """
@@ -291,6 +309,24 @@ class Database:
                 result = []
             finally:
                 return result
+
+    def main_to_family_id(self, main_id: str) -> str:
+        result: str = ""
+
+        with self.pre_session() as session:
+            try:
+                family_id = session.query(FamiliesTable.id).filter(FamiliesTable.main_user == main_id).first()
+
+                if family_id is not None:
+                    result = family_id[0].__str__()
+                else:
+                    result = ""
+            except SQLAlchemyError as error:
+                print(f"[DB] Error getting family id from main id: {str(error)}")
+                result = ""
+            finally:
+                return result
+
 
     # 새로운 가족을 생성하는 기능
     def create_family(self, family_data: FamiliesTable) -> bool:

@@ -198,3 +198,8 @@
   font-weight: bold;
   color: #44803f;
 }
+
+hr {
+  width: 100%;
+  background-color: #d9d9d9ac;
+}

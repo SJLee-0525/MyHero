@@ -1,0 +1,125 @@
+#notification-main {
+  width: 80vw;
+  min-width: 400px;
+}
+
+#notification-container {
+  display: flex;
+  justify-content: space-between; /* 요소 간 좌우 정렬 */
+  align-items: flex-start; /* 상하 정렬 */
+  width: 100%;
+  gap: 10px;
+}
+
+#notification-elem-left,
+#notification-elem-right {
+  flex: 1 1 auto; /* 필요 시 크기 조정 가능 */
+}
+
+#notification-elem-left {
+  width: 40%; /* 고정 폭 */
+  min-width: 300px; /* 최소 폭 */
+}
+
+#notification-elem-right {
+  width: 60%; /* 고정 폭 */
+  min-width: 300px; /* 최소 폭 */
+}
+
+#home-notifications {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  gap: 10px;
+}
+
+#home-notifications .home-notification {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  border-radius: 8px;
+  padding: 10px;
+
+  width: 100%;
+  gap: 15px;
+
+  background-color: #d9d9d9;
+  color: black;
+}
+
+#home-notifications .home-notification-checked {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  border-radius: 8px;
+  padding: 10px;
+
+  width: 100%;
+  gap: 15px;
+
+  background-color: #d9d9d9;
+  color: black;
+  filter: contrast(40%);
+}
+
+#home-notifications .home-notification-icon-1 {
+  background-color: #44803f;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#home-notifications .home-notification-icon-2 {
+  background-color: #ffec5c;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#home-notifications .home-notification-icon-3 {
+  background-color: #ff5a33;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#home-notifications .home-notification-description {
+  font-weight: bold;
+}
+
+#home-notifications .home-notification-btn {
+  display: flex;
+  justify-content: end;
+
+  margin: 5px 0px;
+}
+
+#home-notifications .home-notification-btn button {
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+
+  font-weight: bold;
+  color: white;
+
+  padding: 5px;
+
+  transition: all 0.3s ease;
+}
+
+#home-notifications .home-notification-btn button:hover {
+  background-color: white;
+
+  color: black;
+
+  transition: all 0.3s ease;
+}

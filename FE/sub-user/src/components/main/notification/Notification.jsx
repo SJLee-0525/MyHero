@@ -1,30 +1,23 @@
-export default function Notification() {
-  const emergencyAlerts = [
-    {
-      SN: 205163,
-      CRT_DT: "2023/09/16 11:09:49",
-      MSG_CN: "[행정안전부] 오늘 11시10분 부산 호우경보 산사태ㆍ상습침수 등 위험지역 대피 외출자제 등 안전에 주의바랍니다",
-      RCPTN_RGN_NM: "부산광역시 전체",
-      EMRG_STEP_NM: "안전안내",
-      DST_SE_NM: "호우",
-      REG_YMD: "2023-09-16",
-      MDFCN_TMD: "2023-09-16",
-    },
-    {
-      SN: 205265,
-      CRT_DT: "2023/09/17 06:05:36",
-      MSG_CN: "[기장군] 호우경보 발효중. 하천산책로 해안가 급경사지 등 위험지역 접근금지 및 노약자 외출자제 등 안전에 유의하여 주시기 바랍니다.",
-      RCPTN_RGN_NM: "부산광역시 기장군",
-      EMRG_STEP_NM: "안전안내",
-      DST_SE_NM: "한파",
-      REG_YMD: "2023-09-17",
-      MDFCN_TMD: "2023-09-17",
-    },
-  ]
+import "./Notification.css"
 
+import PageContainer from "..//container/PageContainer.jsx"
+
+import AllNotifications from "./AllNotifications.jsx"
+
+export default function Notification() {
   return (
-    <div>
-      <h3>This is Notification</h3>
+    <div id="notification-main">
+      <div id="main-container">
+        {/* <h2 id="main-container-title">notification</h2> */}
+        <div id="notification-container">
+          <div id="notification-elem-left">
+            <PageContainer title="알림">
+              <AllNotifications />
+            </PageContainer>
+          </div>
+          <div id="notification-elem-right"></div>
+        </div>
+      </div>
     </div>
   )
 }

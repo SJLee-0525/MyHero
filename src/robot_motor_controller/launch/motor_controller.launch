@@ -1,4 +1,17 @@
 <launch>
+    <arg name="i2c_device" default="/dev/i2c-7"/>
+    <arg name="dc_addr" default="0x40"/>
+    <arg name="servo_addr" default="0x60"/>
+    <arg name="max_linear_vel" default="1.0"/>
+    <arg name="max_angular_vel" default="0.785"/>
+    <arg name="control_rate" default="50.0"/>
+    
     <node pkg="robot_motor_controller" type="motor_controller_node" name="motor_controller" output="screen">
+        <param name="i2c_device" value="$(arg i2c_device)"/>
+        <param name="dc_addr" value="$(arg dc_addr)"/>
+        <param name="servo_addr" value="$(arg servo_addr)"/>
+        <param name="max_linear_vel" value="$(arg max_linear_vel)"/>
+        <param name="max_angular_vel" value="$(arg max_angular_vel)"/>
+        <param name="control_rate" value="$(arg control_rate)"/>
     </node>
 </launch>

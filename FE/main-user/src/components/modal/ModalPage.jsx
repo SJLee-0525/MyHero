@@ -1,11 +1,12 @@
 import { useContext } from "react";
-
 import { StoreContext } from "../../store/store.jsx";
 
 import Modal from "./Modal.jsx";
-import Alert from "../alert/Alert.jsx";
+import Emergency from "../emergency/Emergency.jsx";
 import EmergencyModal from "./EmergencyModal.jsx";
 import MessageModal from "./MessageModal.jsx";
+import NoticeModal from "./NoticeModal.jsx";
+import HealthModal from "./HealthModal.jsx";
 import ModalSettingBox from "./ModalSettingBox.jsx";
 import SettingModal from "./SettingModal.jsx";
 
@@ -28,8 +29,8 @@ export default function ModalPage() {
           <EmergencyModal
             title="긴급"
             onCloseConfirm={store.handleModalClose}>
-              <Alert />
-          </EmergencyModal>
+              <Emergency />
+          `</EmergencyModal>
         )}
       </Modal>
       <Modal
@@ -37,7 +38,7 @@ export default function ModalPage() {
         onClose={store.handleModalClose}
       >
         {store.openNotificationState && (
-          <MessageModal
+          <NoticeModal
             title="알림"
             message="Check notifications"
             onCloseConfirm={store.handleModalClose}
@@ -46,7 +47,7 @@ export default function ModalPage() {
       </Modal>
       <Modal open={store.openHealthState} onClose={store.handleModalClose}>
         {store.openHealthState && (
-          <MessageModal
+          <HealthModal
             title="건강"
             message="Check your health"
             onCloseConfirm={store.handleModalClose}

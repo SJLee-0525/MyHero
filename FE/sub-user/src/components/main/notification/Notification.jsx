@@ -3,6 +3,7 @@ import "./Notification.css"
 import PageContainer from "..//container/PageContainer.jsx"
 
 import AllNotifications from "./AllNotifications.jsx"
+import PublicEmergencyNotifications from "./PublicEmergencyNotifications.jsx"
 
 export default function Notification() {
   return (
@@ -15,7 +16,11 @@ export default function Notification() {
               <AllNotifications />
             </PageContainer>
           </div>
-          <div id="notification-elem-right"></div>
+          <div id="notification-elem-right">
+            <PageContainer title="긴급 재난 문자">
+              <PublicEmergencyNotifications />
+            </PageContainer>
+          </div>
         </div>
       </div>
     </div>

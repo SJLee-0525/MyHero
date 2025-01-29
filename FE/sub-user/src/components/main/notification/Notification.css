@@ -166,6 +166,8 @@
 
 #public-emergency-notifications .public-emergency-notification-header p {
   margin: 0;
+
+  font-weight: bold;
 }
 
 #public-emergency-notifications .public-emergency-notification-content {
@@ -187,4 +189,19 @@
 
 #public-emergency-notifications .public-emergency-notification-footer .public-emergency-notification-date {
   margin: 0;
+}
+
+@media screen and (max-width: 1200px) {
+  #notification-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #notification-elem-left {
+    width: 100%;
+  }
+
+  #notification-elem-right {
+    width: 100%;
+  }
 }

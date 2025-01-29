@@ -1,18 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- 1) URDF 로드 (robot_description 파라미터에 저장) -->
-    <!--  textfile 대신 command="cat ..." 로도 가능하나 textfile 사용도 OK -->
-    <param name="robot_description" textfile="$(find my_slam)/urdf/robot.urdf" />
+    <!-- 1) Static Transform Publisher for robot frames -->
+    <node pkg="tf" type="static_transform_publisher" name="base_to_laser"
+        args="0 0 0 0 0 0 base_link laser_frame 100" />
+    
+    <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base"
+        args="0 0 0 0 0 0 base_footprint base_link 100" />
 
-    <!-- 2) Robot State Publisher -->
-    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
-        <param name="publish_frequency" type="double" value="50.0" />
-    </node>
-
-    <!-- 3) YDLidar X4 실행: 이미 static transform은 주석 처리했다고 가정 -->
+    <!-- 2) YDLidar X4 실행 -->
     <include file="$(find ydlidar_ros_driver)/launch/X4.launch" />
 
-    <!-- 4) Hector SLAM 노드 -->
+    <!-- 3) Hector SLAM 노드 -->
     <node pkg="hector_mapping" type="hector_mapping" name="hector_mapping" output="screen">
         <!-- 프레임 설정: map -> base_footprint -->
         <param name="map_frame" value="map" />
@@ -32,18 +30,11 @@
         <param name="map_start_x" value="0.5"/>
         <param name="map_start_y" value="0.5"/>
 
-        <!-- 라이다 Scan 토픽 이름: 드라이버가 퍼블리시하는 실제 토픽명으로 맞추세요 -->
-        <!-- 기본적으로 ydlidar_ros_driver_node는 /scan 을 퍼블리시할 가능성이 큼 -->
-        <!-- rostopic list 또는 소스 확인하여 정확한 이름으로 설정 -->
+        <!-- 라이다 Scan 토픽 -->
         <param name="scan_topic" value="/scan"/>
     </node>
 
-    <!-- 5) (선택) map->odom/nav TF 퍼블리셔 (오도메트리 미사용 시 주석 처리)
-    <node pkg="tf" type="static_transform_publisher" name="map_to_odom"
-        args="0 0 0 0 0 0 map nav 100"/>
-    -->
-
-    <!-- 6) RViz 실행 (slam.rviz는 예시 config) -->
+    <!-- 4) RViz 실행 (선택적) -->
     <!-- <node pkg="rviz" type="rviz" name="rviz"
           args="-d $(find my_slam)/rviz/slam.rviz" respawn="true"/> -->
 </launch>

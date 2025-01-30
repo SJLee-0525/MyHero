@@ -1,0 +1,34 @@
+Panels:
+  - Class: rviz/Displays
+    Name: Displays
+    
+Displays:
+  - Class: rviz/Map
+    Name: Map
+    Topic: /map
+    
+  - Class: rviz/TF
+    Name: TF
+    
+  - Class: rviz/LaserScan
+    Name: LaserScan
+    Topic: /scan
+    
+  - Class: rviz/Path
+    Name: Global Plan
+    Topic: /move_base/NavfnROS/plan
+    Color: 255; 0; 0
+    
+  - Class: rviz/Path
+    Name: Local Plan
+    Topic: /move_base/DWAPlannerROS/local_plan
+    Color: 0; 255; 0
+    
+  - Class: rviz/Pose
+    Name: Goal
+    Topic: /move_base_simple/goal
+    Color: 255; 25; 0
+
+Global Options:
+  Fixed Frame: map
+  Background Color: 48; 48; 48

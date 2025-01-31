@@ -14,7 +14,7 @@ DWAPlannerROS:
 
   # 회전(제자리 turn) 속도
   max_rot_theta: 1.0        # 회전 속도 제한
-  min_rot_theta: 0.2
+  min_rot_theta: -1.0
 
   # 가속도
   acc_lim_x: 1.0          # m/s^2

@@ -29,16 +29,14 @@ CTRL-C to quit
 LIN_SPD_STEP = 0.05
 ANG_SPD_STEP = 0.45
 
+# teleop_wasd.py의 getKey() 함수 수정
 def getKey():
-    # 터미널 설정을 비차단 모드로 전환
-    tty.setraw(sys.stdin.fileno())
-    rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
-    
-    if rlist:
+    old_settings = termios.tcgetattr(sys.stdin)
+    try:
+        tty.setraw(sys.stdin.fileno())
         key = sys.stdin.read(1)
-    else:
-        key = ''
-    termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+    finally:
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
     return key
 
 if __name__ == "__main__":

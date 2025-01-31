@@ -3,11 +3,11 @@
 local_costmap:
   global_frame: "map"             # odom 없으므로 map 사용
   robot_base_frame: "base_footprint"
-  update_frequency: 5.0
-  publish_frequency: 5.0
-  width: 4.0                      # 로컬 맵 가로 3m
-  height: 4.0                     # 로컬 맵 세로 3m
-  resolution: 0.05
+  update_frequency: 3.0
+  publish_frequency: 3.0
+  width: 5.0                      # 로컬 맵 가로 3m
+  height: 5.0                     # 로컬 맵 세로 3m
+  resolution: 0.1
   transform_tolerance: 0.5
 
   # 중요: clearing 관련 파라미터 추가

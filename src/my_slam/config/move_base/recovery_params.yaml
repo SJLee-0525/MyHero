@@ -7,7 +7,7 @@ recovery_behaviors:
 
 # recovery 세부 설정
 conservative_reset:
-  reset_distance: 2.5            
+  reset_distance: 4.0
   layer_names: ["laser_scan"]
 
 aggressive_reset:

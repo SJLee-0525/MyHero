@@ -34,7 +34,7 @@ DWAPlannerROS:
   latch_xy_goal_tolerance: false
   
   # 복구 동작 조정
-  oscillation_reset_dist: 0.05  # 진동 감지 거리
+  oscillation_reset_dist: 0.1  # 진동 감지 거리
   oscillation_timeout: 5.0      # 진동 감지 시간
 
   # 로컬 경로 평가
@@ -46,7 +46,7 @@ DWAPlannerROS:
 
   # 장애물 앞에서 감속할 것인지
   scaling_speed: 0.25
-  max_scaling_factor: 0.5
+  max_scaling_factor: 0.8
 
   # differential_drive처럼 y축 이동(측면이동)은 불가능
   # ackerman형이라도 move_base 상에서는 diff drive 비슷하게 취급

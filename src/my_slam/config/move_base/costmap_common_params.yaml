@@ -35,7 +35,7 @@ laser_scan:
   inf_is_valid: false # 실내에서는 false 권장
   min_obstacle_height: 0.0
   max_obstacle_height: 0.5
-  obstacle_range: 3.5
+  obstacle_range: 4.0
   raytrace_range: 7.0
   min_range: 0.3
   max_range: 12.0
@@ -43,6 +43,6 @@ laser_scan:
 # Inflation 설정
 inflation_layer:
   enabled: true
-  cost_scaling_factor: 5.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
-  inflation_radius: 0.3      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
+  cost_scaling_factor: 6.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
+  inflation_radius: 0.1      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
   inflation_unkown: false

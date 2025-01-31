@@ -11,9 +11,7 @@ import Signout from "./Signout.jsx";
 
 export default function UserInfo() {
   const userProgressStore = useContext(UserProgressContext);
-  const navigate = useNavigate();
-
-  const inputPassword = useRef("");
+  // const navigate = useNavigate();
 
   function handleLogout(event) {
     event.preventDefault();

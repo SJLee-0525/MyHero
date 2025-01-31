@@ -6,7 +6,7 @@ Database Connector
 """
 
 # Library
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, and_
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from Database.models import *
@@ -32,7 +32,8 @@ class Database:
             f"{self.schema}?charset={self.charset}",
             pool_size=10,
             max_overflow=20,
-            pool_recycle=1800,
+            pool_recycle=120,
+            pool_pre_ping=True,
             echo=False
         )
 
@@ -538,8 +539,8 @@ class Database:
                         MemberRelationsTable.family_id,
                         MemberRelationsTable.user_id,
                         MemberRelationsTable.nickname
-                    ).filter(MemberRelationsTable.family_id == family_id and
-                             MemberRelationsTable.user_id == user_id).all()
+                    ).filter(and_(MemberRelationsTable.family_id == family_id,
+                             MemberRelationsTable.user_id == user_id)).all()
                 else:
                     member_list = session.query(
                         MemberRelationsTable.id,

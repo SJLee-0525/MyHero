@@ -13,9 +13,9 @@ class JoyTeleop:
         rospy.init_node('joy_teleop')
         
         # 왼쪽 스틱만 사용
-        self.axis_forward = rospy.get_param('~axis_linear', 1)   # Y축
-        self.axis_turn = rospy.get_param('~axis_angular', 0)     # X축
-        self.scale_linear = rospy.get_param('~scale_linear', 0.5) * 0.6
+        self.axis_forward = rospy.get_param('~axis_linear', 1)   # 왼쪽 스틱 Y축
+        self.axis_turn = rospy.get_param('~axis_angular', 3)     # 오른쪽 스틱 X축
+        self.scale_linear = rospy.get_param('~scale_linear', 0.5)
         self.scale_angular = rospy.get_param('~scale_angular', 1.0)
         self.deadzone = 0.1  # 데드존 추가
         
@@ -56,8 +56,23 @@ class JoyTeleop:
         # 수동 모드일 때만 조이스틱 입력 처리
         if self.manual_mode:
             twist = Twist()
-            twist.linear.x = self.scale_linear * joy_msg.axes[self.axis_forward]
-            twist.angular.z = joy_msg.axes[self.axis_turn] * (M_PI / 4.0)
+            
+            # 전진/후진 (왼쪽 스틱 Y축)
+            forward = joy_msg.axes[self.axis_forward]
+            if abs(forward) > self.deadzone:
+                self.forward = forward
+            else:
+                self.forward = 0.0
+            twist.linear.x = self.scale_linear * self.forward
+            
+            # 조향 (오른쪽 스틱 X축)
+            turn = joy_msg.axes[self.axis_turn]
+            if abs(turn) > self.deadzone:
+                self.last_steering = turn
+            else:
+                self.last_steering = 0.0
+                
+            twist.angular.z = self.last_steering * (M_PI / 4.0)
             self.cmd_vel_pub.publish(twist)
         else:
             twist = Twist()

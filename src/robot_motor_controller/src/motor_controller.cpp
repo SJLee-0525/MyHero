@@ -76,11 +76,6 @@ void MotorController::controlTimerCallback(const ros::TimerEvent &event)
     float throttle = current_linear_vel_ / MAX_LINEAR_VEL; // -1.0 ~ 1.0
     float angle = (-current_angular_vel_) * 180.0 / M_PI;  // rad to degree
 
-    // throttle *= 1.5f;
-    throttle = std::max(-1.0f, std::min(1.0f, throttle));
-    // angle = 2.0f;
-    angle = std::max(-45.0f, std::min(45.0f, angle));
-
     // 실제 모터 제어
     motor_.setThrottle(throttle);
     servo_.setAngle(servo_channel_, angle);

@@ -20,7 +20,7 @@
 
         <!-- Recovery Behaviors -->
         <rosparam file="$(find my_slam)/config/move_base/recovery_params.yaml" command="load" />
-        <param name="recovery_behavior_enabled" value="false" />
+        <param name="recovery_behavior_enabled" value="true" />
         <param name="clearing_rotation_allowed" value="false" />
         
         <!-- Move Base 파라미터 -->

@@ -5,14 +5,16 @@ DWAPlannerROS:
   min_vel_trans: 0.05        # |velocity|가 0.1 m/s 이하로 내려가지 않도록
 
   max_vel_x: 0.5
-  min_vel_x: -0.3
+  min_vel_x: 0.0
+  
+  escape_vel: -0.3 # 로봇이 장애물 걸렸다고 생각할 때 탈출하는 속도
   
   max_vel_y: 0.0
   min_vel_y: 0.0
 
   # 회전(제자리 turn) 속도
-  max_rot_theta: 1.5        # 회전 속도 제한
-  min_rot_theta: 0.3
+  max_rot_theta: 1.0        # 회전 속도 제한
+  min_rot_theta: 0.2
 
   # 가속도
   acc_lim_x: 1.0          # m/s^2
@@ -38,9 +40,9 @@ DWAPlannerROS:
   oscillation_timeout: 5.0      # 진동 감지 시간
 
   # 로컬 경로 평가
-  path_distance_bias: 40.0
-  goal_distance_bias: 20.0
-  occdist_scale: 0.5
+  path_distance_bias: 60.0 # 경로 추종 가중치
+  goal_distance_bias: 15.0 # 목표 도달 가중치
+  occdist_scale: 0.8 # 장애물 회피 가중치
   forward_point_distance: 0.325
   stop_time_buffer: 0.1
 

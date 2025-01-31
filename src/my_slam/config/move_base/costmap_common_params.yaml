@@ -4,16 +4,10 @@ robot_base_frame: "base_footprint"   # Hector SLAM에서 사용하는 로봇 베
 # (base_link로 쓰고 있다면 "base_link"로 통일)
 
 global_frame: "map"                  # SLAM에서 제공하는 최상위 프레임
-
 transform_tolerance: 0.5             # TF 지연 허용치 (초)
 
 # 로봇의 실제 크기가 30cm x 16cm
-# => 여유를 두어 footprint를 설정 (단위: m)
 footprint: [[-0.2, -0.15], [-0.2, 0.15], [0.2, 0.15], [0.2, -0.15]]  # 로봇 실제 크기
-
-# 만약 원형 로봇처럼 처리하고 싶다면 대신
-# robot_radius: 0.12
-# (위 footprint와 robot_radius는 동시에 쓰지 않음)
 
 footprint_padding: 0.01             # 장애물과의 최소 여유(패딩)
 obstacle_range: 4.0                 # 장애물로 인식할 최대거리 (LiDAR 12m라도 실제 2.5m까지만 costmap 처리)

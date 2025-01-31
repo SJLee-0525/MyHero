@@ -180,6 +180,9 @@ export default function UserProgressContextProvider({ children }) {
 
   // 이메일 중복 확인
   async function handleCheckEmail(email) {
+    ///디버깅
+    console.log("Email value before sending request:", email);
+
     try {
       const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
         method: "POST",

@@ -32,7 +32,7 @@ class Database:
             f"{self.schema}?charset={self.charset}",
             pool_size=10,
             max_overflow=20,
-            pool_recycle=3600,
+            pool_recycle=1800,
             echo=False
         )
 
@@ -42,7 +42,6 @@ class Database:
             autoflush=False,
             bind=self.engine
         )
-        self.session = self.pre_session()
 
         print("[DB] DB Engine created and ready to use!")
 
@@ -61,6 +60,7 @@ class Database:
                 account_list = session.query(AccountsTable.email).all()
                 result = [{"email": data[0]} for data in account_list]
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all email: {str(error)}")
                 result = []
             finally:
@@ -79,6 +79,7 @@ class Database:
                 id_list = session.query(AccountsTable.id).all()
                 result = [{"id": data[0]} for data in id_list]
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all account id: {str(error)}")
                 result = []
             finally:
@@ -138,6 +139,7 @@ class Database:
 
                 result = serialized_data
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all account data: {str(error)}")
                 result = []
             finally:
@@ -178,6 +180,7 @@ class Database:
                 else:
                     result = {}
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting one account data: {str(error)}")
                 result = {}
             finally:
@@ -198,6 +201,7 @@ class Database:
                 session.query(AccountsTable.password).filter(AccountsTable.id == account_id).first()[0]
                 result = hashed_password.__str__()
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting hashed password: {str(error)}")
                 result = ""
             finally:
@@ -287,6 +291,7 @@ class Database:
                 id_list = session.query(FamiliesTable.id).all()
                 result = [{"id": data[0]} for data in id_list]
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all family id: {str(error)}")
                 result = []
             finally:
@@ -305,12 +310,14 @@ class Database:
                 main_id_list = session.query(FamiliesTable.main_user).all()
                 result = [{"main_id": data[0]} for data in main_id_list]
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all family main id: {str(error)}")
                 result = []
             finally:
                 return result
 
-    def main_to_family_id(self, main_id: str) -> str:
+    #
+    def main_id_to_family_id(self, main_id: str) -> str:
         result: str = ""
 
         with self.pre_session() as session:
@@ -322,6 +329,7 @@ class Database:
                 else:
                     result = ""
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting family id from main id: {str(error)}")
                 result = ""
             finally:
@@ -373,6 +381,7 @@ class Database:
 
                 result = serialized_data
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting all family data: {str(error)}")
                 result = []
             finally:
@@ -403,6 +412,7 @@ class Database:
 
                 result = serialized_data
             except SQLAlchemyError as error:
+                session.rollback()
                 print(f"[DB] Error getting one family data: {str(error)}")
                 result = {}
             finally:
@@ -423,6 +433,9 @@ class Database:
                 previous_family = session.query(FamiliesTable).filter(FamiliesTable.id == family_id).first()
 
                 if previous_family is not None:
+                    # 주 사용자 정보가 있는 경우
+                    if updated_family.main_user is not None:
+                        previous_family.main_user = updated_family.main_user
                     # 가족 별명 정보가 있는 경우
                     if updated_family.family_name is not None:
                         previous_family.family_name = updated_family.family_name

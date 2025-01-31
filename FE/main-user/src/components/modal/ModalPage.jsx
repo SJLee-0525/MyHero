@@ -33,10 +33,7 @@ export default function ModalPage() {
           `</EmergencyModal>
         )}
       </Modal>
-      <Modal
-        open={store.openNotificationState}
-        onClose={store.handleModalClose}
-      >
+      <Modal open={store.openNotificationState} onClose={store.handleModalClose}>
         {store.openNotificationState && (
           <NoticeModal
             title="알림"

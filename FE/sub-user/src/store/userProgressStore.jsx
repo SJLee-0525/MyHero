@@ -21,6 +21,7 @@ export const UserProgressContext = createContext({
   handleOpenModal: () => {},
   handleCloseModal: () => {},
   handleLogin: (userInfo) => {},
+  handleUpdateUserInfo: (payload) => {},
   handleLogout: () => {},
   handleCheckEmail: (email) => {},
   handleSignUp: (payload) => {},
@@ -211,7 +212,39 @@ export default function UserProgressContextProvider({ children }) {
           },
         }
       );
-    } catch {}
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Account updated successfully") {
+          console.log("회원 정보 수정 성공");
+          handleLogin({ id: resData.result.id });
+          return { success: true, data: resData };
+        }
+      } else {
+        // 서버에서 반환된 에러 정보 처리
+        console.error("에러 유형:", resData.detail.type);
+        console.error("에러 메시지:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+            input: resData.detail.input,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
   }
 
   async function handleSignOut(password) {
@@ -280,6 +313,7 @@ export default function UserProgressContextProvider({ children }) {
     handleOpenModal,
     handleCloseModal,
     handleLogin,
+    handleUpdateUserInfo,
     handleLogout,
     handleCheckEmail,
     handleSignUp,

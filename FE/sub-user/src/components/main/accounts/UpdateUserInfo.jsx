@@ -392,14 +392,15 @@ export default function UpdateUserInfo() {
 
     // 백 요청 전송
     try {
-      const result = await userProgressStore.handleSignUp(payload);
+      const result = await userProgressStore.handleUpdateUserInfo(payload);
 
       if (result.success) {
-        console.log("회원 가입 성공:", result.data);
-        alert("회원가입이 완료되었습니다.");
-        navigate("/"); // 메인 페이지 이동
+        console.log("회원 정보 수정 성공:", result.data);
+        alert("회원 정보 수정이 완료되었습니다.");
+        navigate("/accounts"); // 유저 정보 페이지 이동
+        userProgressStore.handleCloseModal();
       } else {
-        console.error("회원 가입 실패:", result.error);
+        console.error("회원 정보 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -556,7 +557,7 @@ export default function UpdateUserInfo() {
         </div>
 
         <button type="submit" className="signup-btn">
-          Sign up
+          Update User Info
         </button>
         <button type="reset" className="reset-btn">
           Reset

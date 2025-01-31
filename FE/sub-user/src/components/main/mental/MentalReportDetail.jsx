@@ -12,43 +12,49 @@ function TimeBasedEmotions({ emotions }) {
     <div>
       <h3 className="detail-report-subtitle">주요 시간대별 감정 상태</h3>
       <table className="emotion-detail-table">
-        <th width="8%">시간</th>
-        <th width="15%">상태</th>
-        <th width="8%">점수</th>
-        <th>설명</th>
-        {Object.entries(emotions).map(
-          ([time, [emotion, percentage, description]]) => {
-            let emotionClass = "";
-            if (emotion === "매우 긍정적") {
-              emotionClass = "very-positive";
-            } else if (emotion === "긍정적") {
-              emotionClass = "positive";
-            } else if (emotion === "중립적") {
-              emotionClass = "neutral";
-            } else if (emotion === "부정적") {
-              emotionClass = "negative";
-            } else if (emotion === "매우 부정적") {
-              emotionClass = "very-negative";
-            }
+        <thead>
+          <tr>
+            <th width="8%">시간</th>
+            <th width="15%">상태</th>
+            <th width="8%">점수</th>
+            <th>설명</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.entries(emotions).map(
+            ([time, [emotion, percentage, description]]) => {
+              let emotionClass = "";
+              if (emotion === "매우 긍정적") {
+                emotionClass = "very-positive";
+              } else if (emotion === "긍정적") {
+                emotionClass = "positive";
+              } else if (emotion === "중립적") {
+                emotionClass = "neutral";
+              } else if (emotion === "부정적") {
+                emotionClass = "negative";
+              } else if (emotion === "매우 부정적") {
+                emotionClass = "very-negative";
+              }
 
-            return (
-              <tr key={time}>
-                <td>
-                  <strong>{time}</strong>
-                </td>
-                <td>
-                  <span className={emotionClass}>
-                    <strong>{emotion}</strong>
-                  </span>
-                </td>
-                <td>{percentage}%</td>
-                <td>
-                  <em>{description}</em>
-                </td>
-              </tr>
-            );
-          }
-        )}
+              return (
+                <tr key={time}>
+                  <td>
+                    <strong>{time}</strong>
+                  </td>
+                  <td>
+                    <span className={emotionClass}>
+                      <strong>{emotion}</strong>
+                    </span>
+                  </td>
+                  <td>{percentage}%</td>
+                  <td>
+                    <em>{description}</em>
+                  </td>
+                </tr>
+              );
+            }
+          )}
+        </tbody>
       </table>
     </div>
   );
@@ -60,7 +66,7 @@ function Recommendations({ recommendations }) {
       <h3 className="detail-report-subtitle">추천</h3>
       <ul className="report-recommendations-ul">
         {recommendations.map((recommendation) => {
-          return <li>{recommendation}</li>;
+          return <li key={recommendation}>{recommendation}</li>;
         })}
       </ul>
     </div>

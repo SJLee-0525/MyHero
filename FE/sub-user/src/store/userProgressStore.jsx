@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 
 export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
@@ -21,9 +21,11 @@ export const UserProgressContext = createContext({
   handleOpenModal: () => {},
   handleCloseModal: () => {},
   handleLogin: (userInfo) => {},
+  handleGetUserInfo: (id) => {},
   handleLogout: () => {},
   handleCheckEmail: (email) => {},
   handleSignUp: (payload) => {},
+  handleUpdateUserInfo: (payload) => {},
   handleSignOut: (password) => {},
 });
 
@@ -51,7 +53,24 @@ export default function UserProgressContextProvider({ children }) {
     userInfo: undefined,
   });
 
-  // env 관련련
+  // 페이지 로드 시 로그인 상태 확인
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem("loginUserInfo");
+
+    try {
+      if (storedUserInfo) {
+        setLoginUserInfo({
+          login: true,
+          userInfo: JSON.parse(storedUserInfo),
+        });
+      }
+    } catch (error) {
+      console.error("Error parsing loginUserInfo from localStorage:", error);
+      localStorage.removeItem("loginUserInfo"); // 데이터 손상 시 제거
+    }
+  }, []);
+
+  // env 관련
   const DEV_API_URL = import.meta.env.VITE_DEV_API;
   const MAIN_API_URL = import.meta.env.VITE_MAIN_API;
   const DEV_KEY = import.meta.env.VITE_DEV_KEY;
@@ -91,6 +110,61 @@ export default function UserProgressContextProvider({ children }) {
       login: true,
       userInfo,
     });
+
+    // loginUserInfo가 아직 업데이트되지 않은 상태이므로 userInfo를 직접 저장
+    localStorage.setItem("loginUserInfo", JSON.stringify(userInfo));
+  }
+
+  // 회원 정보 조회 및 로그인 처리리
+  async function handleGetUserInfo(id) {
+    try {
+      const response = await fetch(`${DEV_API_URL}/accounts/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Account retrieved successfully") {
+          console.log("회원 정보 조회 성공");
+          handleLogin({
+            id: resData.result.id,
+            email: resData.result.email,
+            role: resData.result.role,
+            user_name: resData.result.user_name,
+            birth_date: resData.result.birth_date,
+            gender: resData.result.gender,
+            address: resData.result.address,
+          });
+          return { success: true, data: resData };
+        }
+      } else {
+        // 서버에서 반환된 에러 정보 처리
+        console.error("에러 유형:", resData.detail.type);
+        console.error("에러 메시지:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+            input: resData.detail.input,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
   }
 
   // 로그아웃
@@ -99,6 +173,9 @@ export default function UserProgressContextProvider({ children }) {
       login: false,
       userInfo: undefined,
     });
+
+    // 로컬 스토리지에서 로그인 정보 삭제
+    localStorage.removeItem("loginUserInfo");
   }
 
   // 이메일 중복 확인
@@ -151,11 +228,61 @@ export default function UserProgressContextProvider({ children }) {
       if (response.ok) {
         if (resData.message === "New account created successfully") {
           console.log("회원 가입 성공", resData.result.id);
-          setLoginUserInfo({
-            login: true,
-            userInfo: {
-              id: resData.result.id,
-            },
+          handleGetUserInfo(resData.result.id);
+          return { success: true, data: resData };
+        }
+      } else {
+        // 서버에서 반환된 에러 정보 처리
+        console.error("에러 유형:", resData.detail.type);
+        console.error("에러 메시지:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+            input: resData.detail.input,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  async function handleUpdateUserInfo(payload) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Account updated successfully") {
+          console.log("회원 정보 수정 성공");
+          handleLogin({
+            id: resData.result.id,
+            email: resData.result.email,
+            role: resData.result.role,
+            user_name: resData.result.user_name,
+            birth_date: resData.result.birth_date,
+            gender: resData.result.gender,
+            address: resData.result.address,
           });
           return { success: true, data: resData };
         }
@@ -251,9 +378,11 @@ export default function UserProgressContextProvider({ children }) {
     handleOpenModal,
     handleCloseModal,
     handleLogin,
+    handleGetUserInfo,
     handleLogout,
     handleCheckEmail,
     handleSignUp,
+    handleUpdateUserInfo,
     handleSignOut,
   };
 

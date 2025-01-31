@@ -1,6 +1,6 @@
 import "./Accounts.css";
 
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
@@ -270,7 +270,7 @@ const regions = [
   },
 ];
 
-export default function Signup() {
+export default function UpdateUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
@@ -278,36 +278,57 @@ export default function Signup() {
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     emailCheck: "",
-    password: false,
-    passwordCheck: false,
   });
 
+  const userInformation = userProgressStore.loginUserInfo.userInfo;
+
   const emailInput = useRef("");
-  const passwordInput = useRef("");
 
-  const [cities, setCities] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
+  useEffect(() => {
+    emailInput.current.value = userInformation.email;
+  }, []);
 
+  const addressParts = userInformation.address
+    ? userInformation.address.toString().split(" ")
+    : ["", ""];
+
+  const initialState = addressParts[0] || ""; // 시/도 초기값
+  const initialCity = addressParts[1] || ""; // 시/군/구 초기값
+
+  const [selectedState, setSelectedState] = useState(initialState);
+  const [cities, setCities] = useState(
+    regions.find((region) => region.name === initialState)?.cities || []
+  );
+  const [selectedCity, setSelectedCity] = useState(initialCity);
+
+  // 이메일 확인 함수
   async function handleEmailCheck() {
     const enteredEmail = emailInput.current.value;
 
     // 이메일 형식 유효성 검사
     const emailIsInvalid = !enteredEmail.includes("@");
-    // const emailCheckState = emailIsInvalid ? "email" : null; // 이메일이 유효하지 않으면 email 필드만 처리
 
     // 이메일 상태 업데이트
     setFormIsInvalid((prevForm) => ({
       ...prevForm,
       email: emailIsInvalid,
-      emailCheck: emailIsInvalid ? null : prevForm.emailCheck, // email 형식이 올바르면 이전 emailCheck 상태 유지
+      emailCheck: emailIsInvalid ? null : prevForm.emailCheck,
     }));
 
     if (emailIsInvalid) {
       return; // 이메일 형식이 잘못되면 중단
     }
 
+    // 만약 이메일이 변경되지 않았다면, 중복 확인을 하지 않고 바로 사용 가능하다고 표시
+    if (enteredEmail === userInformation.email) {
+      setFormIsInvalid((prevForm) => ({
+        ...prevForm,
+        emailCheck: "verified",
+      }));
+      return;
+    }
+
     try {
-      // 이메일 사용 가능 여부 확인
       const isEmailAvailable = await userProgressStore.handleCheckEmail(
         enteredEmail
       );
@@ -323,7 +344,6 @@ export default function Signup() {
           emailCheck: "not-available", // 이메일 사용 불가능
         }));
       } else {
-        // 예상치 못한 값이 반환된 경우 처리
         console.error("Email check result is null. Unable to verify.");
         setFormIsInvalid((prevForm) => ({
           ...prevForm,
@@ -331,7 +351,6 @@ export default function Signup() {
         }));
       }
     } catch (error) {
-      // 오류 발생 시 처리
       console.error("Email check error:", error?.message || error);
       setFormIsInvalid((prevForm) => ({
         ...prevForm,
@@ -346,6 +365,11 @@ export default function Signup() {
 
     const region = regions.find((region) => region.name === stateName);
     setCities(region ? region.cities : []);
+    setSelectedCity(""); // 시/군/구 초기화
+  }
+
+  function handleCityChange(event) {
+    setSelectedCity(event.target.value);
   }
 
   async function handleSubmit(event) {
@@ -373,23 +397,6 @@ export default function Signup() {
       newFormState.emailCheck = "verified";
     }
 
-    // 비밀번호 유효성 검사
-    if (data.password.length < 8) {
-      newFormState.password = true;
-      isValid = false;
-    } else {
-      newFormState.password = false;
-    }
-
-    // 비밀번호 확인 유효성 검사
-    if (data.password !== data["confirm-password"]) {
-      newFormState.passwordCheck = true;
-      isValid = false;
-    } else {
-      newFormState.passwordCheck = false;
-    }
-
-    // 유효성 검사 실패 시 중단
     if (!isValid) {
       setFormIsInvalid(newFormState);
       return;
@@ -398,7 +405,6 @@ export default function Signup() {
     // 입력받은 데이터 객체화
     const payload = {
       email: data.email,
-      password: data.password,
       role: data.role,
       user_name: data["user_name"],
       birth_date: {
@@ -412,15 +418,15 @@ export default function Signup() {
 
     // 백 요청 전송
     try {
-      const result = await userProgressStore.handleSignUp(payload);
+      const result = await userProgressStore.handleUpdateUserInfo(payload);
 
       if (result.success) {
-        console.log("회원 가입 성공:", result.data);
-        alert("회원가입이 완료되었습니다.");
+        console.log("회원 정보 수정 성공:", result.data);
+        alert("회원 정보 수정이 완료되었습니다.");
+        navigate("/accounts"); // 유저 정보 페이지 이동
         userProgressStore.handleCloseModal();
-        navigate("/"); // 메인 페이지 이동
       } else {
-        console.error("회원 가입 실패:", result.error);
+        console.error("회원 정보 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -433,21 +439,20 @@ export default function Signup() {
 
   return (
     <Modal
-      open={userProgressStore.modalProgress === "sign-up"}
+      open={userProgressStore.modalProgress === "update-user-info"}
       onClose={
-        userProgressStore.modalProgress === "sign-up"
+        userProgressStore.modalProgress === "update-user-info"
           ? userProgressStore.handleCloseModal
           : null
       }
     >
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className="signup-header">
-          <h2>영웅이 가입을 환영합니다.</h2>
+          <h2>회원 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>
         </div>
-        {/* <p></p> */}
 
         {/* 이메일 입력 */}
         <div className="signup-control">
@@ -491,9 +496,14 @@ export default function Signup() {
               <p>올바른 이메일 양식을 작성해주세요.</p>
             </div>
           )}
+          {formIsInvalid.emailCheck === "" && (
+            <div className="signup-control-confirm">
+              <p>이메일을 변경하지 않는 경우에도, 중복 확인을 해 주세요.</p>
+            </div>
+          )}
           {formIsInvalid.emailCheck === "not-verified" && (
             <div className="signup-control-error">
-              <p>이메일 중복 확인을 해 주세요.</p>
+              <p>이메일을 변경하시려면 중복 확인을 해 주세요.</p>
             </div>
           )}
           {formIsInvalid.emailCheck === "not-available" && (
@@ -503,43 +513,6 @@ export default function Signup() {
           )}
         </div>
 
-        {/* 비밀번호 입력 */}
-        <div className="signup-control-row">
-          <div className="signup-control">
-            <label htmlFor="password">비밀번호 (8자 이상)</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              ref={passwordInput}
-              required
-            />
-
-            {formIsInvalid.password && (
-              <div className="signup-control-error">
-                <p>비밀번호는 8자 이상이어야 합니다.</p>
-              </div>
-            )}
-          </div>
-
-          {/* 비밀번호 확인 입력 */}
-          <div className="signup-control">
-            <label htmlFor="confirm-password">비밀번호 확인</label>
-            <input
-              id="confirm-password"
-              type="password"
-              name="confirm-password"
-              required
-            />
-
-            {formIsInvalid.passwordCheck && (
-              <div className="signup-control-error">
-                <p>비밀번호가 일치하지 않습니다.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
         <hr />
 
         {/* 개인 정보 입력 */}
@@ -547,12 +520,26 @@ export default function Signup() {
           <div className="signup-wrapper">
             <div className="signup-control">
               <label htmlFor="user_name">이름</label>
-              <input type="text" id="user-name" name="user_name" required />
+              <input
+                type="text"
+                id="user-name"
+                name="user_name"
+                defaultValue={userInformation.user_name || ""}
+                required
+              />
             </div>
 
             <div className="signup-control">
               <label htmlFor="birth_date">생년월일</label>
-              <input type="date" id="birth-date" name="birth_date" required />
+              <input
+                type="date"
+                id="birth-date"
+                name="birth_date"
+                defaultValue={
+                  userInformation.birth_date ? userInformation.birth_date : ""
+                }
+                required
+              />
             </div>
           </div>
 
@@ -579,7 +566,13 @@ export default function Signup() {
 
               <div className="signup-control">
                 <label htmlFor="city">시/군/구</label>
-                <select id="city" name="city" required>
+                <select
+                  id="city"
+                  name="city"
+                  value={selectedCity}
+                  onChange={handleCityChange}
+                  required
+                >
                   <option value="">선택하세요</option>
                   {cities.map((city) => (
                     <option key={city} value={city}>
@@ -614,7 +607,7 @@ export default function Signup() {
         </div>
 
         <button type="submit" className="signup-btn">
-          Sign up
+          Update User Info
         </button>
         <button type="reset" className="reset-btn">
           Reset

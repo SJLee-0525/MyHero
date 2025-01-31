@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
 import "./Nav.css";
-import { useContext } from "react";
+
+import ReactDOM from "react-dom";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../store/userProgressStore";
@@ -23,7 +23,7 @@ export default function TopNav() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 600);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,7 +39,7 @@ export default function TopNav() {
     };
   }, []);
 
-  // 화면 너비가 600px 이하일 때만 렌더링
+  // 화면 너비가 720px 이하일 때만 렌더링
   if (!isMobile) return null;
 
   return ReactDOM.createPortal(

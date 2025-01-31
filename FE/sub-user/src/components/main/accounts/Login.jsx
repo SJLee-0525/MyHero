@@ -5,6 +5,8 @@ import { useRef, useState, useContext } from "react";
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import PageContainer from "../container/PageContainer.jsx";
+import Modal from "../../modal/Modal.jsx";
+import SignUp from "./SignUp.jsx";
 
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
@@ -47,14 +49,19 @@ export default function Login() {
       });
     }
 
-    // 입력받은 데이터 객체화
+    ////////////////////////// 입력받은 데이터 객체화 (임시)
     const userInfo = {
       email: emailInput.current.value,
       password: passwordInput.current.value,
+      id: emailInput.current.value,
     };
 
     console.log("로그인");
     userProgressStore.handleLogin(userInfo);
+  }
+
+  function handleShowSignUp() {
+    userProgressStore.setModalProgress("sign-up");
   }
   return (
     <PageContainer title="로그인">
@@ -62,7 +69,7 @@ export default function Login() {
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="email">이메일 아이디</label>
-            <input id="email" type="email" name="email" ref={emailInput} />
+            <input type="email" name="email" ref={emailInput} />
 
             {formIsInvalid.email && (
               <div className="login-control-error">
@@ -74,7 +81,7 @@ export default function Login() {
           <div className="login-control">
             <label htmlFor="password">비밀번호</label>
             <input
-              id="password"
+              // id="password"
               type="password"
               name="password"
               ref={passwordInput}
@@ -92,8 +99,16 @@ export default function Login() {
           <button type="submit" className="login-btn">
             Login
           </button>
+          <button
+            type="button"
+            className="signup-btn"
+            onClick={handleShowSignUp}
+          >
+            Sign Up
+          </button>
         </p>
       </form>
+      <SignUp />
     </PageContainer>
   );
 }

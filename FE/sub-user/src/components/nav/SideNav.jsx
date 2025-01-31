@@ -24,7 +24,11 @@ export default function SideNav() {
   return (
     <aside id="side-bar">
       <div>
-        <h5>{userProgressStore.loginUserInfo.login ? "login" : "logout"}</h5>
+        <h5>
+          {userProgressStore.loginUserInfo.login
+            ? userProgressStore.loginUserInfo.userInfo.id
+            : "logout"}
+        </h5>
         <ul className="side-nav-elems">
           <SideNavElems
             imgSrc={homeIcon}

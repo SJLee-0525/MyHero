@@ -99,13 +99,15 @@
 
   color: #000; /* Default day color for current month */
   font-weight: bold;
+
+  transition: all 0.3s ease;
 }
 
 .calendar-day:hover {
   border-radius: 10px;
   background-color: rgba(255, 170, 0, 0.562);
 
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 .calendar-day.sunday {

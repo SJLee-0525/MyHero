@@ -7,6 +7,7 @@ Database Table Models
 
 # Library
 from sqlalchemy import Column, Date, String, Enum, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as BaseEnum
 
@@ -43,6 +44,9 @@ class AccountsTable(Base):
     gender = Column(Enum(Gender), nullable=True)
     address = Column(String(128), nullable=True)
 
+    family_relations = relationship("FamiliesTable", backref="account_relations", cascade="all, delete")
+    member_relations = relationship("MemberRelationsTable", backref="account_relations", cascade="all, delete")
+
     def __repr__(self):
         return (f"" +
                 f"<Account(id='{self.id}', " +
@@ -65,6 +69,9 @@ class FamiliesTable(Base):
     main_user = Column(String(16), ForeignKey('accounts.id'), nullable=False)
     family_name = Column(String(128), nullable=True)
 
+    account_relations = relationship("AccountsTable", backref="family_relations")
+    member_relations = relationship("MemberRelationsTable", backref="family_relations", cascade="all, delete")
+
     def __repr__(self):
         return (f"" +
                 f"<Family(id='{self.id}', " +
@@ -82,6 +89,9 @@ class MemberRelationsTable(Base):
     family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
     user_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
     nickname = Column(String(32), nullable=True)
+
+    account_relations = relationship("AccountsTable", backref="member_relations")
+    family_relations = relationship("FamiliesTable", backref="member_relations")
 
     def __repr__(self):
         return (f"" +

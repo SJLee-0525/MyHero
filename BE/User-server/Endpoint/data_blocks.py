@@ -10,6 +10,14 @@ from pydantic import BaseModel
 from typing import Optional
 
 
+class Date(BaseModel):
+    """
+    날짜 데이터
+    """
+    year: int
+    month: int
+    day: int
+
 class EmailCheck(BaseModel):
     """
     중복 이메일을 검증하기 위해 Client가 보내는 데이터
@@ -22,14 +30,6 @@ class PasswordCheck(BaseModel):
     """
     password: str  # 계정 삭제를 위해 검증할 비밀번호
 
-class Date(BaseModel):
-    """
-    날짜 데이터
-    """
-    year: int
-    month: int
-    day: int
-
 class Account(BaseModel):
     """
     계정 생성을 위해 client가 보내는 데이터
@@ -41,6 +41,12 @@ class Account(BaseModel):
     birth_date: Optional[Date] = None  # 사용자 생년월일
     gender: Optional[str] = None  # 사용자 성별 ("male" or "female")
     address: Optional[str] = None  # 사용자 거주지 ("읍면동" 단위까지)
+
+class IDCheck(BaseModel):
+    """
+    계정 확인 및 점검을 위해 Client가 보내는 데이터
+    """
+    id: str  # 확인 및 점검을 위한 ID
 
 class Family(BaseModel):
     """

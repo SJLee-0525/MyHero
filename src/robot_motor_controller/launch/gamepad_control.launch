@@ -1,0 +1,25 @@
+<launch>
+    <!-- 모터 컨트롤러 노드 -->
+    <node pkg="robot_motor_controller" 
+          type="motor_controller_node" 
+          name="motor_controller" 
+          output="screen">
+    </node>
+
+    <!-- 조이스틱 노드 -->
+    <node pkg="joy" type="joy_node" name="joy_node">
+        <param name="dev" value="/dev/input/js0"/>
+        <param name="deadzone" value="0.12"/>
+    </node>
+
+    <!-- 조이스틱-cmd_vel 변환 노드 -->
+    <node pkg="robot_motor_controller" 
+          type="joy_teleop.py" 
+          name="joy_teleop" 
+          output="screen">
+        <param name="axis_linear" value="1"/>  <!-- 왼쪽 스틱 상하 -->
+        <param name="axis_angular" value="0"/>  <!-- 왼쪽 스틱 좌우 -->
+        <param name="scale_linear" value="0.5"/>
+        <param name="scale_angular" value="1.0"/>
+    </node>
+</launch>

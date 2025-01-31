@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import rospy
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Joy
+M_PI = 3.141592
+
+class JoyTeleop:
+    def __init__(self):
+        rospy.init_node('joy_teleop')
+        
+        # 왼쪽 스틱만 사용
+        self.axis_forward = rospy.get_param('~axis_linear', 1)   # Y축
+        self.axis_turn = rospy.get_param('~axis_angular', 0)     # X축
+        self.scale_linear = rospy.get_param('~scale_linear', 0.5) * 0.6
+        self.scale_angular = rospy.get_param('~scale_angular', 1.0)
+        self.deadzone = 0.1  # 데드존 추가
+        
+        self.last_steering = 0.0  # 마지막 조향각 저장
+        self.forward = 0.0        # forward 값 초기화 추가
+        
+        self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+        rospy.Subscriber('joy', Joy, self.joy_callback)
+        rospy.loginfo("Joy Teleop Ready!")
+        self.publish_rate = rospy.Rate(20)  # 20Hz로 publish
+        self.run()
+
+    def run(self):
+        while not rospy.is_shutdown():
+            # 마지막 조향값으로 계속 publish
+            twist = Twist()
+            twist.linear.x = self.scale_linear * self.forward  # forward 값 저장 필요
+            twist.angular.z = self.last_steering * (M_PI / 4.0)
+            self.cmd_vel_pub.publish(twist)
+            self.publish_rate.sleep()
+
+    def joy_callback(self, joy_msg):
+        twist = Twist()
+        
+        # 전진/후진 (Y축) - 부호 변경
+        self.forward = joy_msg.axes[self.axis_forward]
+        twist.linear.x = self.scale_linear * self.forward
+        
+        # 조향 (X축) - 부호 변경
+        turn = joy_msg.axes[self.axis_turn]
+        
+        # 데드존 적용하여 중립 복귀 처리
+        if abs(turn) > self.deadzone:
+            self.last_steering = turn
+        else:
+            self.last_steering = 0.0  # 중립 복귀
+        
+        # 정지 상태에서도 조향각 유지
+        twist.angular.z = self.last_steering * (M_PI / 4.0)
+        
+        self.cmd_vel_pub.publish(twist)
+        
+if __name__ == '__main__':
+    try:
+        JoyTeleop()
+        rospy.spin()
+    except rospy.ROSInterruptException:
+        pass

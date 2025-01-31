@@ -51,6 +51,7 @@ export default function Login() {
     const userInfo = {
       email: emailInput.current.value,
       password: passwordInput.current.value,
+      id: emailInput.current.value,
     };
 
     console.log("로그인");

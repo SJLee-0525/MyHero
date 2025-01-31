@@ -1,4 +1,4 @@
-import { useState, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 
 export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
@@ -51,7 +51,18 @@ export default function UserProgressContextProvider({ children }) {
     userInfo: undefined,
   });
 
-  // env 관련련
+  // 페이지 로드 시 로그인 상태 확인
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem("loginUserInfo");
+    if (storedUserInfo) {
+      setLoginUserInfo({
+        login: true,
+        userInfo: JSON.parse(storedUserInfo),
+      });
+    }
+  }, []);
+
+  // env 관련
   const DEV_API_URL = import.meta.env.VITE_DEV_API;
   const MAIN_API_URL = import.meta.env.VITE_MAIN_API;
   const DEV_KEY = import.meta.env.VITE_DEV_KEY;
@@ -89,8 +100,13 @@ export default function UserProgressContextProvider({ children }) {
   function handleLogin(userInfo) {
     setLoginUserInfo({
       login: true,
-      userInfo,
+      userInfo: {
+        id: userInfo.id,
+      },
     });
+
+    // 로컬 스토리지에 로그인 정보 저장
+    localStorage.setItem("loginUserInfo", JSON.stringify({ id: userInfo.id }));
   }
 
   // 로그아웃
@@ -99,6 +115,9 @@ export default function UserProgressContextProvider({ children }) {
       login: false,
       userInfo: undefined,
     });
+
+    // 로컬 스토리지에서 로그인 정보 삭제
+    localStorage.removeItem("loginUserInfo");
   }
 
   // 이메일 중복 확인
@@ -151,12 +170,7 @@ export default function UserProgressContextProvider({ children }) {
       if (response.ok) {
         if (resData.message === "New account created successfully") {
           console.log("회원 가입 성공", resData.result.id);
-          setLoginUserInfo({
-            login: true,
-            userInfo: {
-              id: resData.result.id,
-            },
-          });
+          handleLogin({ id: resData.result.id });
           return { success: true, data: resData };
         }
       } else {

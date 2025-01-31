@@ -9,9 +9,11 @@ class SPI {
 public:
     static constexpr int CHANNEL_0 = 0;
     static constexpr int CHANNEL_1 = 1;
+    static constexpr int CS0 = 0;      // Chip Select 0
+    static constexpr int CS1 = 1;      // Chip Select 1
     static constexpr int DEFAULT_SPEED = 1000000;  // 1MHz
 
-    SPI(int channel, int speed = DEFAULT_SPEED);
+    SPI(int channel, int chipSelect, int speed = DEFAULT_SPEED);
     ~SPI();
 
     // 복사 및 이동 연산 금지
@@ -33,6 +35,7 @@ public:
 
 private:
     int channel_;
+    int chipSelect_;
     int speed_;
     bool initialized_;
     std::string lastError_;

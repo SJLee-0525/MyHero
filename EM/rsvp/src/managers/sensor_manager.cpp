@@ -1,8 +1,10 @@
-//sensor_manager.cpp
+// src/managers/sensor_manager.cpp
 #include "managers/sensor_manager.hpp"
 #include <chrono>
 #include <thread>
+#include <string>
 
+// static constexpr 변수 정의
 constexpr int SensorManager::DHT11_PIN;
 constexpr int SensorManager::DUST_PIN;
 constexpr int SensorManager::ETHANOL_PIN;
@@ -15,25 +17,30 @@ SensorManager::SensorManager()
 bool SensorManager::initialize() {
     std::lock_guard<std::mutex> lock(mutex_);
     try {
-		//wiringPi 초기화
-		if (wiringPiSetupGpio() == -1) {
-			updateError("wiringPi initualzation failed");
-			return false;
+        // wiringPi 초기화
+        if (wiringPiSetupGpio() == -1) {
+            updateError("wiringPi initialization failed");
+            return false;
         }
 
         // DHT11 센서 초기화
         dht11_ = std::make_unique<DHT11>(DHT11_PIN);
-        
-        // 다른 센서들도 초기화 예정
-        // dustSensor_ = std::make_unique<DustSensor>(DUST_PIN);
+
+        // 에탄올 센서 초기화 (SPI0, CS0)
         ethanolSensor_ = std::make_unique<EthanolSensor>(0);
-        // heartrateSensor_ = std::make_unique<HeartrateSensor>(HEARTRATE_PIN);
+
+        // 심박 센서 초기화 (SPI0, CS1)
+        pulseSensor_ = std::make_unique<PulseSensor>(1);
+        if (!pulseSensor_->startReading()) {
+            updateError(std::string("Failed to start pulse sensor: ") + pulseSensor_->getErrorMessage());
+            return false;
+        }
 
         clearError();
         return true;
     }
     catch (const std::exception& e) {
-        updateError("Sensor initialization failed: " + std::string(e.what()));
+        updateError(std::string("Sensor initialization failed: ") + e.what());
         return false;
     }
 }
@@ -51,15 +58,21 @@ SensorData SensorManager::readAllSensors() {
         currentReadings.humidity = lastReadings_.humidity;
     }
 
-	if(!readEthanol()){
-		currentReadings.error_message = getLastError();
-	}
-	else {
-		currentReadings.ethanol = lastReadings_.ethanol;
-	}
+    // 에탄올 센서 읽기
+    if (!readEthanol()) {
+        currentReadings.error_message = getLastError();
+    }
+    else {
+        currentReadings.ethanol = lastReadings_.ethanol;
+    }
 
-    // 다른 센서들도 순차적으로 읽기
-    // TODO: 다른 센서 구현 후 추가
+    // 심박 센서 읽기
+    if (!readPulse()) {
+        currentReadings.error_message = getLastError();
+    }
+    else {
+        currentReadings.heartrate = lastReadings_.heartrate;
+    }
 
     return currentReadings;
 }
@@ -76,7 +89,7 @@ bool SensorManager::readDHT11() {
     }
 
     if (!dht11_->read()) {
-        updateError("DHT11 read failed: " + std::string(dht11_->getErrorMessage()));
+        updateError(std::string("DHT11 read failed: ") + dht11_->getErrorMessage());
         return false;
     }
 
@@ -93,14 +106,37 @@ bool SensorManager::readEthanol() {
     }
 
     if (!ethanolSensor_->read()) {
-        updateError("Ethanol sensor read failed: " +
-                   std::string(ethanolSensor_->getErrorMessage()));
+        updateError(std::string("Ethanol sensor read failed: ") + ethanolSensor_->getErrorMessage());
         return false;
     }
 
     lastReadings_.ethanol = ethanolSensor_->getEthanolPPM();
     clearError();
     return true;
+}
+
+bool SensorManager::readPulse() {
+    if (!pulseSensor_) {
+        updateError("Pulse sensor not initialized");
+        return false;
+    }
+
+    if (!pulseSensor_->isRunning()) {
+        updateError("Pulse sensor is not running");
+        return false;
+    }
+
+    lastReadings_.heartrate = static_cast<float>(pulseSensor_->getBPM());
+    
+    const std::string& errorMsg = pulseSensor_->getErrorMessage();
+    if (errorMsg.empty()) {
+        clearError();
+        return true;
+    }
+    else {
+        updateError(std::string("Pulse sensor error: ") + errorMsg);
+        return false;
+    }
 }
 
 void SensorManager::updateError(const std::string& error) {

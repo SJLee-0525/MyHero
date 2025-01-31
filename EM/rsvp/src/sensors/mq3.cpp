@@ -3,7 +3,7 @@
 #include <cmath>
 
 EthanolSensor::EthanolSensor(int adcChannel)
-    : spi_(std::make_shared<SPI>(SPI::CHANNEL_0))
+    : spi_(std::make_shared<SPI>(SPI::CHANNEL_0, SPI::CS0))
     , adcChannel_(adcChannel)
     , ethanolPPM_(0.0f)
     , voltage_(0.0f)

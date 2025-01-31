@@ -12,6 +12,7 @@ int main() {
 		cout << "온도: " << Data.temperature << " C , ";
 		cout << "습도: " << Data.humidity << " %\n";
 		cout << "ethanol : " << Data.ethanol << " %\n";
+		cout << "BPM : " << Data.heartrate << "\n";
 		this_thread::sleep_for(chrono::seconds(2));
 	}
     return 0;

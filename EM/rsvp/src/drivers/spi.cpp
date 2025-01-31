@@ -3,12 +3,9 @@
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
-constexpr int SPI::CHANNEL_0;
-constexpr int SPI::CHANNEL_1;
-constexpr int SPI::DEFAULT_SPEED;
-
-SPI::SPI(int channel, int speed) 
+SPI::SPI(int channel, int chipSelect, int speed) 
     : channel_(channel)
+    , chipSelect_(chipSelect)
     , speed_(speed)
     , initialized_(false)
     , lastError_() {
@@ -17,6 +14,13 @@ SPI::SPI(int channel, int speed)
         throw std::runtime_error("Invalid SPI channel");
     }
 
+    if (chipSelect != CS0 && chipSelect != CS1) {
+        throw std::runtime_error("Invalid chip select");
+    }
+
+    // 실제 장치 번호는 channel과 chipSelect를 조합하여 결정
+    int device = chipSelect;
+    
     if (wiringPiSPISetup(channel_, speed_) == -1) {
         updateError("SPI initialization failed");
         throw std::runtime_error(lastError_);

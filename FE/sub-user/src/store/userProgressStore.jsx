@@ -182,7 +182,8 @@ export default function UserProgressContextProvider({ children }) {
   async function handleCheckEmail(email) {
     ///디버깅
     console.log("Email value before sending request:", email);
-    console.log("DEV_API_URL:", process.env.VITE_DEV_API);
+    console.log("DEV_API_URL:", DEV_API_URL);
+    console.log("import.meta.env.VITE_DEV_API:", import.meta.env.VITE_DEV_API);
 
     try {
       const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {

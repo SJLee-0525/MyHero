@@ -1,9 +1,9 @@
-import "./Notification.css"
+import "./Notification.css";
 
-import PageContainer from "..//container/PageContainer.jsx"
+import PageContainer from "../container/PageContainer.jsx";
 
-import AllNotifications from "./AllNotifications.jsx"
-import PublicEmergencyNotifications from "./PublicEmergencyNotifications.jsx"
+import AllNotifications from "./AllNotifications.jsx";
+import PublicEmergencyNotifications from "./PublicEmergencyNotifications.jsx";
 
 export default function Notification() {
   return (
@@ -24,5 +24,5 @@ export default function Notification() {
         </div>
       </div>
     </div>
-  )
+  );
 }

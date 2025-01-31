@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import PageContainer from "../container/PageContainer.jsx";
 import Modal from "../../modal/Modal.jsx";
 
 const regions = [

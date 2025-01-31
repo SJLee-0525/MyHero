@@ -5,8 +5,7 @@ import { useRef, useState, useContext } from "react";
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import PageContainer from "../container/PageContainer.jsx";
-import Modal from "../../modal/Modal.jsx";
-import SignUp from "./SignUp.jsx";
+import Signup from "./Signup.jsx";
 
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
@@ -108,7 +107,7 @@ export default function Login() {
           </button>
         </p>
       </form>
-      <SignUp />
+      <Signup />
     </PageContainer>
   );
 }

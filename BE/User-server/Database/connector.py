@@ -67,6 +67,7 @@ class Database:
                 return result
 
     # 모든 사용자의 ID 불러오기
+    # DEPRECATED : 사용하지 않아서 삭제될 예정
     def get_all_account_id(self) -> list[dict]:
         """
         등록된 사용자 계정 ID를 모두 불러오는 기능
@@ -145,7 +146,7 @@ class Database:
             finally:
                 return result
 
-    # 한 사용자 계정 정보 불러오기
+    # 사용자 계정 정보 불러오기
     def get_one_account(self, account_id: str) -> dict:
         """
         ID를 이용해 하나의 사용자 계정 정보를 불러오는 기능
@@ -186,7 +187,7 @@ class Database:
             finally:
                 return result
 
-    # 한 사용자 비밀번호 Hash 정보 불러오기
+    # 사용자 비밀번호 Hash 정보 불러오기
     def get_hashed_password(self, account_id: str) -> str:
         """
         한 사용자의 Hashed 비밀번호를 불러오는 기능
@@ -207,7 +208,7 @@ class Database:
             finally:
                 return result
 
-    # 한 사용자 계정 정보 변경하기
+    # 사용자 계정 정보 변경하기
     def update_one_account(self, account_id: str, updated_account: AccountsTable) -> bool:
         """
         아이디와 최종으로 변경할 데이터를 이용해 계정의 정보를 변경하는 기능
@@ -251,7 +252,7 @@ class Database:
                 session.commit()
                 return result
 
-    # 한 사용자 계정을 삭제하는 기능 (비밀번호 검증 필요)
+    # 사용자 계정을 삭제하는 기능 (비밀번호 검증 필요)
     def delete_one_account(self, account_id: str) -> bool:
         """
         사용자 계정 자체를 삭제하는 기능
@@ -393,7 +394,7 @@ class Database:
             finally:
                 return result
 
-    # 한 가족 정보를 불러오는 기능
+    # 가족 정보를 불러오는 기능
     def get_one_family(self, family_id: str) -> dict:
         """
         Family ID를 이용해 하나의 가족 데이터를 불러오는 기능
@@ -424,7 +425,7 @@ class Database:
             finally:
                 return result
 
-    # 한 가족 정보를 업데이트 하는 기능
+    # 가족 정보를 업데이트 하는 기능
     def update_one_family(self, family_id: str, updated_family: FamiliesTable) -> bool:
         """
         가족 ID와 변경할 정보를 토대로 DB에 입력된 가족 정보를 변경하는 기능
@@ -453,7 +454,7 @@ class Database:
                 session.commit()
                 return result
 
-    # 한 가족 정보를 삭제하는 기능 (비밀번호 검증 필요)
+    # 가족 정보를 삭제하는 기능 (비밀번호 검증 필요)
     def delete_one_family(self, family_id: str) -> bool:
         """
         가족 정보 자체를 삭제하는 기능
@@ -503,7 +504,7 @@ class Database:
                 return result
 
     # 조건에 따른 모든 가족 관계 불러오는 기능
-    def get_all_members(self, family_id: str, user_id: str) -> list[dict]:
+    def get_all_members(self, family_id: str = None, user_id: str = None) -> list[dict]:
         """
         조건에 따른 모든 가족 관계 정보 불러오는 기능
         :param family_id: 가족 ID str (Nullable)
@@ -562,7 +563,7 @@ class Database:
             finally:
                 return result
 
-    # 한 가족 관계 정보를 불러오는 기능
+    # 가족 관계 정보를 불러오는 기능
     def get_one_member(self, member_id: str) -> dict:
         """
         Member ID를 이용해 하나의 가족 관계 정보를 불러오는 기능
@@ -595,7 +596,7 @@ class Database:
             finally:
                 return result
 
-    # 한 가족 관계 정보를 업데이트 하는 기능
+    # 가족 관계 정보를 업데이트 하는 기능
     def update_one_member(self, member_id: str, updated_member: MemberRelationsTable) -> bool:
         """
         가족 관계 ID와 변경할 정보를 토대로 DB에 입력된 정보를 변경하는 기능
@@ -624,7 +625,7 @@ class Database:
                 session.commit()
                 return result
 
-    # 한 가족 관계 정보를 삭제하는 기능
+    # 가족 관계 정보를 삭제하는 기능
     def delete_one_member(self, member_id: str) -> bool:
         """
         가족 관계 정보 자체를 삭제하는 기능

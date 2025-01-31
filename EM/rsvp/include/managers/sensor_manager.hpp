@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <wiringPi.h>
 #include "sensors/dht11.hpp"
+#include "sensors/mq3.hpp"
 
 struct SensorData {
     float temperature;
@@ -50,7 +51,7 @@ private:
     std::unique_ptr<DHT11> dht11_;
     // 다른 센서들도 추가 예정
     // std::unique_ptr<DustSensor> dustSensor_;
-    // std::unique_ptr<EthanolSensor> ethanolSensor_;
+    std::unique_ptr<EthanolSensor> ethanolSensor_;
     // std::unique_ptr<HeartrateeSensor> heartrateSensor_;
 
     mutable std::mutex mutex_;          // 데이터 접근 보호
@@ -59,6 +60,7 @@ private:
 
     // 내부 helper 함수들
     bool readDHT11();
+	bool readEthanol();
     void updateError(const std::string& error);
     void clearError();
 };

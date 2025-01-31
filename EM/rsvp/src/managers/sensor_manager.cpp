@@ -3,6 +3,11 @@
 #include <chrono>
 #include <thread>
 
+constexpr int SensorManager::DHT11_PIN;
+constexpr int SensorManager::DUST_PIN;
+constexpr int SensorManager::ETHANOL_PIN;
+constexpr int SensorManager::HEARTRATE_PIN;
+
 SensorManager::SensorManager()
     : lastReadings_({0.0f, 0.0f, 0.0f, 0.0f, 0.0f, ""}) {
 }
@@ -21,7 +26,7 @@ bool SensorManager::initialize() {
         
         // 다른 센서들도 초기화 예정
         // dustSensor_ = std::make_unique<DustSensor>(DUST_PIN);
-        // ethanolSensor_ = std::make_unique<EthanolSensor>(ETHANOL_PIN);
+        ethanolSensor_ = std::make_unique<EthanolSensor>(0);
         // heartrateSensor_ = std::make_unique<HeartrateSensor>(HEARTRATE_PIN);
 
         clearError();
@@ -45,6 +50,13 @@ SensorData SensorManager::readAllSensors() {
         currentReadings.temperature = lastReadings_.temperature;
         currentReadings.humidity = lastReadings_.humidity;
     }
+
+	if(!readEthanol()){
+		currentReadings.error_message = getLastError();
+	}
+	else {
+		currentReadings.ethanol = lastReadings_.ethanol;
+	}
 
     // 다른 센서들도 순차적으로 읽기
     // TODO: 다른 센서 구현 후 추가
@@ -70,6 +82,23 @@ bool SensorManager::readDHT11() {
 
     lastReadings_.temperature = dht11_->getTemperature();
     lastReadings_.humidity = dht11_->getHumidity();
+    clearError();
+    return true;
+}
+
+bool SensorManager::readEthanol() {
+    if (!ethanolSensor_) {
+        updateError("Ethanol sensor not initialized");
+        return false;
+    }
+
+    if (!ethanolSensor_->read()) {
+        updateError("Ethanol sensor read failed: " +
+                   std::string(ethanolSensor_->getErrorMessage()));
+        return false;
+    }
+
+    lastReadings_.ethanol = ethanolSensor_->getEthanolPPM();
     clearError();
     return true;
 }

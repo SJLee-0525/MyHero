@@ -1,6 +1,6 @@
 import "./Accounts.css";
 
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
@@ -280,31 +280,55 @@ export default function UpdateUserInfo() {
     emailCheck: "",
   });
 
+  const userInformation = userProgressStore.loginUserInfo.userInfo;
+
   const emailInput = useRef("");
 
-  const [cities, setCities] = useState([]);
-  const [selectedState, setSelectedState] = useState("");
+  useEffect(() => {
+    emailInput.current.value = userInformation.email;
+  }, []);
 
+  const addressParts = userInformation.address
+    ? userInformation.address.toString().split(" ")
+    : ["", ""];
+
+  const initialState = addressParts[0] || ""; // 시/도 초기값
+  const initialCity = addressParts[1] || ""; // 시/군/구 초기값
+
+  const [selectedState, setSelectedState] = useState(initialState);
+  const [cities, setCities] = useState(
+    regions.find((region) => region.name === initialState)?.cities || []
+  );
+  const [selectedCity, setSelectedCity] = useState(initialCity);
+
+  // 이메일 확인 함수
   async function handleEmailCheck() {
     const enteredEmail = emailInput.current.value;
 
     // 이메일 형식 유효성 검사
     const emailIsInvalid = !enteredEmail.includes("@");
-    // const emailCheckState = emailIsInvalid ? "email" : null; // 이메일이 유효하지 않으면 email 필드만 처리
 
     // 이메일 상태 업데이트
     setFormIsInvalid((prevForm) => ({
       ...prevForm,
       email: emailIsInvalid,
-      emailCheck: emailIsInvalid ? null : prevForm.emailCheck, // email 형식이 올바르면 이전 emailCheck 상태 유지
+      emailCheck: emailIsInvalid ? null : prevForm.emailCheck,
     }));
 
     if (emailIsInvalid) {
       return; // 이메일 형식이 잘못되면 중단
     }
 
+    // 만약 이메일이 변경되지 않았다면, 중복 확인을 하지 않고 바로 사용 가능하다고 표시
+    if (enteredEmail === userInformation.email) {
+      setFormIsInvalid((prevForm) => ({
+        ...prevForm,
+        emailCheck: "verified",
+      }));
+      return;
+    }
+
     try {
-      // 이메일 사용 가능 여부 확인
       const isEmailAvailable = await userProgressStore.handleCheckEmail(
         enteredEmail
       );
@@ -320,7 +344,6 @@ export default function UpdateUserInfo() {
           emailCheck: "not-available", // 이메일 사용 불가능
         }));
       } else {
-        // 예상치 못한 값이 반환된 경우 처리
         console.error("Email check result is null. Unable to verify.");
         setFormIsInvalid((prevForm) => ({
           ...prevForm,
@@ -328,7 +351,6 @@ export default function UpdateUserInfo() {
         }));
       }
     } catch (error) {
-      // 오류 발생 시 처리
       console.error("Email check error:", error?.message || error);
       setFormIsInvalid((prevForm) => ({
         ...prevForm,
@@ -343,6 +365,11 @@ export default function UpdateUserInfo() {
 
     const region = regions.find((region) => region.name === stateName);
     setCities(region ? region.cities : []);
+    setSelectedCity(""); // 시/군/구 초기화
+  }
+
+  function handleCityChange(event) {
+    setSelectedCity(event.target.value);
   }
 
   async function handleSubmit(event) {
@@ -370,7 +397,6 @@ export default function UpdateUserInfo() {
       newFormState.emailCheck = "verified";
     }
 
-    // 유효성 검사 실패 시 중단
     if (!isValid) {
       setFormIsInvalid(newFormState);
       return;
@@ -427,7 +453,6 @@ export default function UpdateUserInfo() {
             X
           </button>
         </div>
-        {/* <p></p> */}
 
         {/* 이메일 입력 */}
         <div className="signup-control">
@@ -471,9 +496,14 @@ export default function UpdateUserInfo() {
               <p>올바른 이메일 양식을 작성해주세요.</p>
             </div>
           )}
+          {formIsInvalid.emailCheck === "" && (
+            <div className="signup-control-confirm">
+              <p>이메일을 변경하지 않는 경우에도, 중복 확인을 해 주세요.</p>
+            </div>
+          )}
           {formIsInvalid.emailCheck === "not-verified" && (
             <div className="signup-control-error">
-              <p>이메일 중복 확인을 해 주세요.</p>
+              <p>이메일을 변경하시려면 중복 확인을 해 주세요.</p>
             </div>
           )}
           {formIsInvalid.emailCheck === "not-available" && (
@@ -490,12 +520,26 @@ export default function UpdateUserInfo() {
           <div className="signup-wrapper">
             <div className="signup-control">
               <label htmlFor="user_name">이름</label>
-              <input type="text" id="user-name" name="user_name" required />
+              <input
+                type="text"
+                id="user-name"
+                name="user_name"
+                defaultValue={userInformation.user_name || ""}
+                required
+              />
             </div>
 
             <div className="signup-control">
               <label htmlFor="birth_date">생년월일</label>
-              <input type="date" id="birth-date" name="birth_date" required />
+              <input
+                type="date"
+                id="birth-date"
+                name="birth_date"
+                defaultValue={
+                  userInformation.birth_date ? userInformation.birth_date : ""
+                }
+                required
+              />
             </div>
           </div>
 
@@ -522,7 +566,13 @@ export default function UpdateUserInfo() {
 
               <div className="signup-control">
                 <label htmlFor="city">시/군/구</label>
-                <select id="city" name="city" required>
+                <select
+                  id="city"
+                  name="city"
+                  value={selectedCity}
+                  onChange={handleCityChange}
+                  required
+                >
                   <option value="">선택하세요</option>
                   {cities.map((city) => (
                     <option key={city} value={city}>

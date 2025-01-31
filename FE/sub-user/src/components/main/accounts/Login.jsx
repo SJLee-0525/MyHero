@@ -49,7 +49,7 @@ export default function Login() {
       });
     }
 
-    // 입력받은 데이터 객체화
+    ////////////////////////// 입력받은 데이터 객체화 (임시)
     const userInfo = {
       email: emailInput.current.value,
       password: passwordInput.current.value,
@@ -69,7 +69,7 @@ export default function Login() {
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="email">이메일 아이디</label>
-            <input id="email" type="email" name="email" ref={emailInput} />
+            <input type="email" name="email" ref={emailInput} />
 
             {formIsInvalid.email && (
               <div className="login-control-error">
@@ -81,7 +81,7 @@ export default function Login() {
           <div className="login-control">
             <label htmlFor="password">비밀번호</label>
             <input
-              id="password"
+              // id="password"
               type="password"
               name="password"
               ref={passwordInput}

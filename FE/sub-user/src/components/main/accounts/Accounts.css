@@ -213,6 +213,17 @@
   font-weight: bold;
 }
 
+.signup-control-confirm {
+  color: #44803f;
+  font-size: 0.8rem;
+  height: 2rem;
+  padding: 0.5rem 0;
+}
+
+.signup-control-confirm p {
+  margin: 0;
+}
+
 .signup-control-error {
   color: #ffca99;
   font-size: 0.8rem;

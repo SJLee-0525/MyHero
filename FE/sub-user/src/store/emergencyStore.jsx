@@ -1,6 +1,6 @@
-import { useState, useContext, createContext } from "react"
+import { useState, useContext, createContext } from "react";
 
-import { UserProgressContext } from "./userProgressStore"
+import { UserProgressContext } from "./userProgressStore";
 
 export const EmergencyContext = createContext({
   emergencyAlerts: [
@@ -42,10 +42,10 @@ export const EmergencyContext = createContext({
   handleCheckAlert: () => {},
   handleShowAlertLog: () => {},
   handleCheckHomeAlert: () => {},
-})
+});
 
 export default function EmergencyContextProvider({ children }) {
-  const userProgressStore = useContext(UserProgressContext)
+  const userProgressStore = useContext(UserProgressContext);
 
   const [emergencyAlerts, setEmergencyAlerts] = useState([
     {
@@ -102,13 +102,14 @@ export default function EmergencyContextProvider({ children }) {
       check: true,
       imgSrc: "/lim.png",
     },
-  ])
+  ]);
 
   const [publicEmergencyAlert, setPublicEmergencyAlert] = useState([
     {
       SN: 205163,
       CRT_DT: "2023/09/16 11:09:49",
-      MSG_CN: "[행정안전부] 오늘 11시10분 부산 호우경보 산사태ㆍ상습침수 등 위험지역 대피 외출자제 등 안전에 주의바랍니다",
+      MSG_CN:
+        "[행정안전부] 오늘 11시10분 부산 호우경보 산사태ㆍ상습침수 등 위험지역 대피 외출자제 등 안전에 주의바랍니다",
       RCPTN_RGN_NM: "부산광역시 전체",
       EMRG_STEP_NM: "안전안내",
       DST_SE_NM: "호우",
@@ -118,14 +119,15 @@ export default function EmergencyContextProvider({ children }) {
     {
       SN: 205265,
       CRT_DT: "2023/09/17 06:05:36",
-      MSG_CN: "[기장군] 호우경보 발효중. 하천산책로 해안가 급경사지 등 위험지역 접근금지 및 노약자 외출자제 등 안전에 유의하여 주시기 바랍니다.",
+      MSG_CN:
+        "[기장군] 호우경보 발효중. 하천산책로 해안가 급경사지 등 위험지역 접근금지 및 노약자 외출자제 등 안전에 유의하여 주시기 바랍니다.",
       RCPTN_RGN_NM: "부산광역시 기장군",
       EMRG_STEP_NM: "안전안내",
       DST_SE_NM: "한파",
       REG_YMD: "2023-09-17",
       MDFCN_TMD: "2023-09-17",
     },
-  ])
+  ]);
 
   const [homeNotifications, setHomeNotifications] = useState([
     {
@@ -162,7 +164,7 @@ export default function EmergencyContextProvider({ children }) {
 
       check: false,
     },
-  ])
+  ]);
 
   // 한 번 확인하면 이전의 알림은 전부 읽음 처리.
   function handleCheckAlert() {
@@ -171,14 +173,14 @@ export default function EmergencyContextProvider({ children }) {
         return {
           ...prevAlert,
           check: true,
-        }
-      })
-    })
+        };
+      });
+    });
   }
 
   // 긴급 상황 알림 기록 모달 호출
   function handleShowAlertLog() {
-    userProgressStore.handleOpenModal("emergency-alert-log")
+    userProgressStore.handleOpenModal("emergency-alert-log");
   }
 
   function handleCheckHomeAlert() {
@@ -187,12 +189,12 @@ export default function EmergencyContextProvider({ children }) {
         return {
           ...prevAlert,
           check: true,
-        }
-      })
-    })
+        };
+      });
+    });
   }
 
-  console.log(emergencyAlerts)
+  // console.log(emergencyAlerts)
 
   const ctxValue = {
     emergencyAlerts,
@@ -204,7 +206,11 @@ export default function EmergencyContextProvider({ children }) {
     handleCheckAlert,
     handleShowAlertLog,
     handleCheckHomeAlert,
-  }
+  };
 
-  return <EmergencyContext.Provider value={ctxValue}>{children}</EmergencyContext.Provider>
+  return (
+    <EmergencyContext.Provider value={ctxValue}>
+      {children}
+    </EmergencyContext.Provider>
+  );
 }

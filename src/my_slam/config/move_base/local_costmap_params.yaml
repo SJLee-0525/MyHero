@@ -5,14 +5,21 @@ local_costmap:
   robot_base_frame: "base_footprint"
   update_frequency: 5.0
   publish_frequency: 5.0
-  width: 3.0                      # 로컬 맵 가로 3m
-  height: 3.0                     # 로컬 맵 세로 3m
+  width: 4.0                      # 로컬 맵 가로 3m
+  height: 4.0                     # 로컬 맵 세로 3m
   resolution: 0.05
   transform_tolerance: 0.5
 
+  # 중요: clearing 관련 파라미터 추가
+  track_unknown_space: true
+  unknown_cost_value: -1
+  clearing_rotation_allowed: false
+
   static_map: false
   rolling_window: true            # 로봇을 중심으로 로컬 윈도우가 움직이는 방식
+  always_send_full_costmap: true # 전체 코스트맵 항상 publish
 
 plugins:
+  - {name: static_layer, type: "costmap_2d::StaticLayer"}
   - {name: obstacle_layer, type: "costmap_2d::ObstacleLayer"}
   - {name: inflation_layer, type: "costmap_2d::InflationLayer"}

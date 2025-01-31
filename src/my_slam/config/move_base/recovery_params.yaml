@@ -1,22 +1,15 @@
 recovery_behaviors:
-  - name: 'back_up'               # 1. 후진 시도
-    type: 'back_up_recovery/BackUpRecovery'
-    
-  - name: 'conservative_reset'    # 2. 부분 초기화
+  - name: 'conservative_reset'    
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
-    
-  - name: 'aggressive_reset'      # 3. 전체 초기화
+
+  - name: 'aggressive_reset'      
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
 
 # recovery 세부 설정
-back_up:
-  backup_dist: -0.3              # 30cm 후진
-  backup_vel: -0.1               # 0.1m/s 속도로 후진
-
 conservative_reset:
-  reset_distance: 2.0            # 2m 반경 초기화
+  reset_distance: 2.5            
   layer_names: ["laser_scan"]
 
 aggressive_reset:
-  reset_distance: 0.0            # 전체 초기화
+  reset_distance: 0.0            
   layer_names: ["laser_scan"]

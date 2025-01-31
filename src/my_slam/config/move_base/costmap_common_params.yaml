@@ -9,15 +9,15 @@ transform_tolerance: 0.5             # TF 지연 허용치 (초)
 
 # 로봇의 실제 크기가 30cm x 16cm
 # => 여유를 두어 footprint를 설정 (단위: m)
-footprint: [[0.15, 0.08], [0.15, -0.08], [-0.15, -0.08], [-0.15, 0.08]]
+footprint: [[-0.2, -0.15], [-0.2, 0.15], [0.2, 0.15], [0.2, -0.15]]  # 로봇 실제 크기
 
 # 만약 원형 로봇처럼 처리하고 싶다면 대신
 # robot_radius: 0.12
 # (위 footprint와 robot_radius는 동시에 쓰지 않음)
 
 footprint_padding: 0.01             # 장애물과의 최소 여유(패딩)
-obstacle_range: 2.5                 # 장애물로 인식할 최대거리 (LiDAR 12m라도 실제 2.5m까지만 costmap 처리)
-raytrace_range: 3.0                 # 레이 트레이싱으로 free space로 인식할 범위
+obstacle_range: 4.0                 # 장애물로 인식할 최대거리 (LiDAR 12m라도 실제 2.5m까지만 costmap 처리)
+raytrace_range: 12.0                 # 레이 트레이싱으로 free space로 인식할 범위
 min_obstacle_height: 0.0
 max_obstacle_height: 2.0
 
@@ -26,8 +26,23 @@ max_obstacle_height: 2.0
 # 센서 업데이트 관련 (라이다만 사용)
 observation_sources: "laser_scan"
 laser_scan:
+  observation_persistence: 0.0    # 새로 추가
   data_type: LaserScan
   topic: scan             # 실제 LiDAR 토픽 이름
   marking: true
   clearing: true
   sensor_frame: laser_frame
+  inf_is_valid: false # 실내에서는 false 권장
+  min_obstacle_height: 0.0
+  max_obstacle_height: 0.5
+  obstacle_range: 3.5
+  raytrace_range: 7.0
+  min_range: 0.3
+  max_range: 12.0
+
+# Inflation 설정
+inflation_layer:
+  enabled: true
+  cost_scaling_factor: 5.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
+  inflation_radius: 0.3      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
+  inflation_unkown: false

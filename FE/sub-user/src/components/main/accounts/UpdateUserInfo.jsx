@@ -270,7 +270,7 @@ const regions = [
   },
 ];
 
-export default function Signup() {
+export default function UpdateUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
@@ -278,12 +278,9 @@ export default function Signup() {
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     emailCheck: "",
-    password: false,
-    passwordCheck: false,
   });
 
   const emailInput = useRef("");
-  const passwordInput = useRef("");
 
   const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
@@ -373,22 +370,6 @@ export default function Signup() {
       newFormState.emailCheck = "verified";
     }
 
-    // 비밀번호 유효성 검사
-    if (data.password.length < 8) {
-      newFormState.password = true;
-      isValid = false;
-    } else {
-      newFormState.password = false;
-    }
-
-    // 비밀번호 확인 유효성 검사
-    if (data.password !== data["confirm-password"]) {
-      newFormState.passwordCheck = true;
-      isValid = false;
-    } else {
-      newFormState.passwordCheck = false;
-    }
-
     // 유효성 검사 실패 시 중단
     if (!isValid) {
       setFormIsInvalid(newFormState);
@@ -398,7 +379,6 @@ export default function Signup() {
     // 입력받은 데이터 객체화
     const payload = {
       email: data.email,
-      password: data.password,
       role: data.role,
       user_name: data["user_name"],
       birth_date: {
@@ -417,7 +397,6 @@ export default function Signup() {
       if (result.success) {
         console.log("회원 가입 성공:", result.data);
         alert("회원가입이 완료되었습니다.");
-        userProgressStore.handleCloseModal();
         navigate("/"); // 메인 페이지 이동
       } else {
         console.error("회원 가입 실패:", result.error);
@@ -433,16 +412,16 @@ export default function Signup() {
 
   return (
     <Modal
-      open={userProgressStore.modalProgress === "sign-up"}
+      open={userProgressStore.modalProgress === "update-user-info"}
       onClose={
-        userProgressStore.modalProgress === "sign-up"
+        userProgressStore.modalProgress === "update-user-info"
           ? userProgressStore.handleCloseModal
           : null
       }
     >
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className="signup-header">
-          <h2>영웅이 가입을 환영합니다.</h2>
+          <h2>회원 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>
@@ -501,43 +480,6 @@ export default function Signup() {
               <p>이미 사용 중인 이메일입니다.</p>
             </div>
           )}
-        </div>
-
-        {/* 비밀번호 입력 */}
-        <div className="signup-control-row">
-          <div className="signup-control">
-            <label htmlFor="password">비밀번호 (8자 이상)</label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              ref={passwordInput}
-              required
-            />
-
-            {formIsInvalid.password && (
-              <div className="signup-control-error">
-                <p>비밀번호는 8자 이상이어야 합니다.</p>
-              </div>
-            )}
-          </div>
-
-          {/* 비밀번호 확인 입력 */}
-          <div className="signup-control">
-            <label htmlFor="confirm-password">비밀번호 확인</label>
-            <input
-              id="confirm-password"
-              type="password"
-              name="confirm-password"
-              required
-            />
-
-            {formIsInvalid.passwordCheck && (
-              <div className="signup-control-error">
-                <p>비밀번호가 일치하지 않습니다.</p>
-              </div>
-            )}
-          </div>
         </div>
 
         <hr />

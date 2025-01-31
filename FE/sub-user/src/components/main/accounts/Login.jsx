@@ -5,6 +5,8 @@ import { useRef, useState, useContext } from "react";
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import PageContainer from "../container/PageContainer.jsx";
+import Modal from "../../modal/Modal.jsx";
+import SignUp from "./SignUp.jsx";
 
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
@@ -57,6 +59,10 @@ export default function Login() {
     console.log("로그인");
     userProgressStore.handleLogin(userInfo);
   }
+
+  function handleShowSignUp() {
+    userProgressStore.setModalProgress("sign-up");
+  }
   return (
     <PageContainer title="로그인">
       <form id="login-form" onSubmit={handleLogin}>
@@ -93,8 +99,16 @@ export default function Login() {
           <button type="submit" className="login-btn">
             Login
           </button>
+          <button
+            type="button"
+            className="signup-btn"
+            onClick={handleShowSignUp}
+          >
+            Sign Up
+          </button>
         </p>
       </form>
+      <SignUp />
     </PageContainer>
   );
 }

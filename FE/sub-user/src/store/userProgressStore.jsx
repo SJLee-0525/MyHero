@@ -199,6 +199,21 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  async function handleUpdateUserInfo(payload) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    } catch {}
+  }
+
   async function handleSignOut(password) {
     console.log(password);
     try {

@@ -54,3 +54,11 @@ class Family(BaseModel):
     """
     main_user: Optional[str] = None  # 가족의 대표가 될 주 사용자 ID
     family_name: Optional[str] = None  # 가족 구성의 별명
+
+class Member(BaseModel):
+    """
+    가족 관계 생성을 위해 client가 보내는 데이터
+    """
+    family_id: Optional[str] = None  # 가족의 ID
+    user_id: Optional[str] = None  # 관계를 생성할 대상의 사용자 ID
+    nickname: Optional[str] = None  # 주 사용자에게 보여질 별명

@@ -14,6 +14,7 @@ from enum import Enum
 class Identify(Enum):
     USER = "user"
     FAMILY = "family"
+    MEMBER = "member"
 
 
 def random_id(length : int = 16, type : Identify = Identify.USER):

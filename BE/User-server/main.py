@@ -567,40 +567,10 @@ async def update_family(family_id: str, updated_family: Family):
             }
         )
 
-
-    if updated_family.main_user:
-        # 없는 Main ID로 변경하려는지 확인
-        check_account: dict = database.get_one_account(updated_family.main_user)
-
-        if not check_account:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail={
-                    "type": "not found",
-                    "message": "Main user not found",
-                    "input": jsonable_encoder(updated_family)
-                }
-            )
-
-        # 변경할 사용자의 역할 점검
-        user_role: str = check_account["role"]
-
-        if user_role is not Role.MAIN:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail={
-                    "type": "invalid value",
-                    "message": "Input user is not a main user",
-                    "input": jsonable_encoder(updated_family)
-                }
-            )
-
-
-
     # 최종적으로 변경할 데이터 생성
     total_updated_family: FamiliesTable = FamiliesTable(
         id=family_id,
-        main_user=updated_family.main_user if updated_family.main_user is not None else previous_family["main_user"],
+        main_user=previous_family["main_user"],
         family_name=updated_family.family_name if updated_family.family_name is not None else previous_family["family_name"]
     )
 

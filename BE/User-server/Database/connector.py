@@ -6,7 +6,7 @@ Database Connector
 """
 
 # Library
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 from Database.models import *
@@ -430,7 +430,7 @@ class Database:
         가족 ID와 변경할 정보를 토대로 DB에 입력된 가족 정보를 변경하는 기능
         :param family_id: 가족의 ID
         :param updated_family: 변경할 정보가 포함된 FamiliesTable Mapping 정보
-        :return: 정보가 성공적으로 변경되었는지 여부 bool
+        :return: 성공적으로 변경되었는지 여부 bool
         """
         result: bool = False
 
@@ -439,9 +439,6 @@ class Database:
                 previous_family = session.query(FamiliesTable).filter(FamiliesTable.id == family_id).first()
 
                 if previous_family is not None:
-                    # 주 사용자 정보가 있는 경우
-                    if updated_family.main_user is not None:
-                        previous_family.main_user = updated_family.main_user
                     # 가족 별명 정보가 있는 경우
                     if updated_family.family_name is not None:
                         previous_family.family_name = updated_family.family_name
@@ -460,8 +457,8 @@ class Database:
     def delete_one_family(self, family_id: str) -> bool:
         """
         가족 정보 자체를 삭제하는 기능
-        :param family_id:
-        :return:
+        :param family_id: 가족의 ID
+        :return: 정상적으로 삭제되었는지 여부 bool
         """
         result: bool = False
 
@@ -481,3 +478,173 @@ class Database:
                 session.commit()
                 return result
 
+    # ========== Members ==========
+
+    # 새로운 가족 관계 생성하는 기능
+    def create_member(self, member_data: MemberRelationsTable) -> bool:
+        """
+        새로운 가족 관계를 생성하는 기능
+        :param member_data: MemberRelationsTable 형식으로 미리 Mapping된 정보
+        :return: 가족 관계가 정상적으로 생성되었는지 여부 bool
+        """
+        result: bool = False
+
+        with self.pre_session() as session:
+            try:
+                session.add(member_data)
+                print(f"[DB] New member created: {member_data}")
+                result = True
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error creating new member: {str(error)}")
+                result = False
+            finally:
+                session.commit()
+                return result
+
+    # 조건에 따른 모든 가족 관계 불러오는 기능
+    def get_all_members(self, family_id: str, user_id: str) -> list[dict]:
+        """
+        조건에 따른 모든 가족 관계 정보 불러오는 기능
+        :param family_id: 가족 ID str (Nullable)
+        :param user_id: 사용자 계정 ID str (Nullable)
+        :return: 가족 관계 단위로 묶은 데이터 list[dict]
+        """
+        result: list[dict] = []
+
+        with self.pre_session() as session:
+            try:
+                member_list: list = []
+
+                # 주어진 조건에 따라 Query 설정
+                if family_id and not user_id:
+                    member_list = session.query(
+                        MemberRelationsTable.id,
+                        MemberRelationsTable.family_id,
+                        MemberRelationsTable.user_id,
+                        MemberRelationsTable.nickname
+                    ).filter(MemberRelationsTable.family_id == family_id).all()
+                elif not family_id and user_id:
+                    member_list = session.query(
+                        MemberRelationsTable.id,
+                        MemberRelationsTable.family_id,
+                        MemberRelationsTable.user_id,
+                        MemberRelationsTable.nickname
+                    ).filter(MemberRelationsTable.user_id == user_id).all()
+                elif family_id and user_id:
+                    member_list = session.query(
+                        MemberRelationsTable.id,
+                        MemberRelationsTable.family_id,
+                        MemberRelationsTable.user_id,
+                        MemberRelationsTable.nickname
+                    ).filter(MemberRelationsTable.family_id == family_id and
+                             MemberRelationsTable.user_id == user_id).all()
+                else:
+                    member_list = session.query(
+                        MemberRelationsTable.id,
+                        MemberRelationsTable.family_id,
+                        MemberRelationsTable.user_id,
+                        MemberRelationsTable.nickname
+                    ).all()
+
+                serialized_data: list[dict] = [{
+                    "id": data[0],
+                    "family_id": data[1],
+                    "user_id": data[2],
+                    "nickname": data[3]
+                } for data in member_list]
+
+                result = serialized_data
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error getting all member data: {str(error)}")
+                result = []
+            finally:
+                return result
+
+    # 한 가족 관계 정보를 불러오는 기능
+    def get_one_member(self, member_id: str) -> dict:
+        """
+        Member ID를 이용해 하나의 가족 관계 정보를 불러오는 기능
+        :param member_id: 가족 관계 ID
+        :return: 하나의 가족 관계 정보 dict
+        """
+        result: dict = {}
+
+        with self.pre_session() as session:
+            try:
+                member_data = session.query(
+                    MemberRelationsTable.id,
+                    MemberRelationsTable.family_id,
+                    MemberRelationsTable.user_id,
+                    MemberRelationsTable.nickname
+                ).filter(MemberRelationsTable.id == member_id).first()
+
+                serialized_data: dict = {
+                    "id": member_data[0],
+                    "family_id": member_data[1],
+                    "user_id": member_data[2],
+                    "nickname": member_data[3]
+                }
+
+                result = serialized_data
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error getting one member data: {str(error)}")
+                result = {}
+            finally:
+                return result
+
+    # 한 가족 관계 정보를 업데이트 하는 기능
+    def update_one_member(self, member_id: str, updated_member: MemberRelationsTable) -> bool:
+        """
+        가족 관계 ID와 변경할 정보를 토대로 DB에 입력된 정보를 변경하는 기능
+        :param member_id: 가족 관계를 나타내는 ID
+        :param updated_member: 변경할 정보가 포함된 MemberRelationsTable Mapping 정보
+        :return: 성공적으로 변경되었는지 여부 bool
+        """
+        result: bool = False
+
+        with self.pre_session() as session:
+            try:
+                previous_member = session.query(MemberRelationsTable).filter(MemberRelationsTable.id == member_id).first()
+
+                if previous_member is not None:
+                    # 가족 관계 별명 정보가 있는 경우
+                    if updated_member.nickname is not None:
+                        previous_member.nickname = updated_member.nickname
+                    result = True
+                else:
+                    result = False
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error updating one member data: {str(error)}")
+                result = False
+            finally:
+                session.commit()
+                return result
+
+    # 한 가족 관계 정보를 삭제하는 기능
+    def delete_one_member(self, member_id: str) -> bool:
+        """
+        가족 관계 정보 자체를 삭제하는 기능
+        :param member_id: 가족 관계의 ID
+        :return: 정상적으로 삭제되었는지 여부 bool
+        """
+        result: bool = False
+
+        with self.pre_session() as session:
+            try:
+                member_data = session.query(MemberRelationsTable).filter(MemberRelationsTable.id == member_id).first()
+                if member_data is not None:
+                    session.delete(member_data)
+                    result = True
+                else:
+                    result = False
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error deleting one member data: {str(error)}")
+                result = False
+            finally:
+                session.commit()
+                return result

@@ -147,8 +147,8 @@ async def create_account(account_data: Account):
 
     while not id_verified:
         new_id = random_id(16, Identify.USER)
-        account_data: list = database.get_all_accounts()
-        id_list = [data["id"] for data in account_data]
+        accounts: list = database.get_all_accounts()
+        id_list = [data["id"] for data in accounts]
         if new_id not in id_list:
             id_verified = True
 
@@ -465,15 +465,15 @@ async def create_family(family_data: Family):
             }
         )
 
-    # 주 사용자로 제공된 ID의 역할 점검
-    user_role: str = database.get_one_account(family_data.main_user)["role"]
+    # 주 사용자 존재 확인 및 역할 점검
+    exist_user: dict= database.get_one_account(family_data.main_user)
 
-    if user_role is not Role.MAIN:
+    if not exist_user or exist_user["role"] is not Role.MAIN:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "type": "invalid value",
-                "message": "Input user is not a main user",
+                "message": "Does not exist or is not a main user",
                 "input": jsonable_encoder(family_data)
             }
         )
@@ -484,8 +484,8 @@ async def create_family(family_data: Family):
 
     while not id_verified:
         new_id = random_id(16, Identify.FAMILY)
-        family_data: list = database.get_all_families()
-        id_list = [data["id"] for data in family_data]
+        families: list = database.get_all_families()
+        id_list = [data["id"] for data in families]
         if new_id not in id_list:
             id_verified = True
 
@@ -679,8 +679,34 @@ async def create_member(member_data: Member):
             }
         )
 
+    # 존재하는 가족 데이터인지 점검
+    exist_family: dict = database.get_one_family(member_data.family_id)
+
+    if not exist_family:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Family not found",
+                "input": jsonable_encoder(member_data)
+            }
+        )
+
+    # 존재하는 사용자인지 점검
+    exist_user: dict = database.get_one_account(member_data.user_id)
+
+    if not exist_user or exist_user["role"] is not Role.SUB:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "User not found or is not a sub user",
+                "input": jsonable_encoder(member_data)
+            }
+        )
+
     # 이미 생성된 가족 관계가 있는지 점검
-    exist_member: list = database.get_all_members(member_data.family_id, member_data.user_id)
+    exist_member: list = database.get_all_members(family_id=member_data.family_id, user_id=member_data.user_id)
 
     if exist_member:
         raise HTTPException(
@@ -698,8 +724,8 @@ async def create_member(member_data: Member):
 
     while not id_verified:
         new_id = random_id(16, Identify.MEMBER)
-        member_data: list = database.get_all_members()
-        id_list = [data["id"] for data in member_data]
+        members: list = database.get_all_members()
+        id_list = [data["id"] for data in members]
         if new_id not in id_list:
             id_verified = True
 

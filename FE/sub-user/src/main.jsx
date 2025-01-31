@@ -9,21 +9,28 @@ import EmergencyContextProvider from "./store/emergencyStore.jsx";
 import CalendarStoreContextProvider from "./store/calendarStore.jsx";
 import MessageContextProvider from "./store/messageStore.jsx";
 import HealthContextProvider from "./store/healthStore.jsx";
+import { loadEnvironments } from "./store/environmentsStore.jsx";
 
-createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <UserProgressContextProvider>
-      <HealthContextProvider>
-        <HealthContextProvider>
-          <EmergencyContextProvider>
-            <MessageContextProvider>
-              <CalendarStoreContextProvider>
-                <App />
-              </CalendarStoreContextProvider>
-            </MessageContextProvider>
-          </EmergencyContextProvider>
-        </HealthContextProvider>
-      </HealthContextProvider>
-    </UserProgressContextProvider>
-  </StrictMode>
-);
+const startApp = async () => {
+  await loadEnvironments();
+
+  createRoot(document.getElementById("root")).render(
+      <StrictMode>
+        <UserProgressContextProvider>
+          <HealthContextProvider>
+            <HealthContextProvider>
+              <EmergencyContextProvider>
+                <MessageContextProvider>
+                  <CalendarStoreContextProvider>
+                    <App />
+                  </CalendarStoreContextProvider>
+                </MessageContextProvider>
+              </EmergencyContextProvider>
+            </HealthContextProvider>
+          </HealthContextProvider>
+        </UserProgressContextProvider>
+      </StrictMode>
+  );
+};
+
+startApp();

@@ -33,6 +33,13 @@ export default function App() {
   };
 
   useEffect(() => {
+    const savedBackground = localStorage.getItem("background");
+    if (savedBackground) {
+      document.body.style.background = `url(${savedBackground})`;
+      document.body.style.backgroundSize = "cover";
+      document.body.style.backgroundPosition = "center";
+    }
+
     const handleUserActivity = () => {
       if (isScreensaverActive) {
         setIsScreensaverActive(false);

@@ -20,6 +20,8 @@ export const StoreContext = createContext({
   setDriveState: () => {},
   setMicState: () => {},
   handleMessageState: () => {},
+  handleMessageChange: () => {},
+  handleSendMessage: () => {},
   handleEmergencyState: () => {},
   handleNotificationState: () => {},
   handleHealthState: () => {},
@@ -41,6 +43,16 @@ export default function StoreContextProvider({ children }) {
   function handleMessageState() {
     setOpenMessageState(true);
     console.log("Message: ", !openMessageState);
+  }
+
+  function handleMessageChange() {
+    setOpenMessageState(true);
+    console.log("Message Change: ", !openMessageState);
+  }
+
+  function handleSendMessage() {
+    setOpenMessageState(true);
+    console.log("Send Message: ", !openMessageState);
   }
 
   function handleEmergencyState() {
@@ -119,6 +131,8 @@ export default function StoreContextProvider({ children }) {
     setDriveState,
     setMicState,
     handleMessageState,
+    handleMessageChange,
+    handleSendMessage,
     handleEmergencyState,
     handleNotificationState,
     handleHealthState,

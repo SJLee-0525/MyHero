@@ -1,7 +1,7 @@
 import React from "react";
-import "./Alert.css";
+import "./Emergency.css";
 
-export default function Alert({type, children}) {
+export default function Emergency({type, children}) {
     return (
         <div id={type}>
             <p id="content">매우 비상</p>

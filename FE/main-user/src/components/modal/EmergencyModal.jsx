@@ -1,13 +1,13 @@
-import Alert from "../alert/Alert";
+import Emergency from "../emergency/Emergency";
 import "./Modal.css";
 
-export default function EmergencyModal({ title, onCloseConfirm}) {
+export default function EmergencyModal({ title, onCloseConfirm }) {
   return (
     <div id="emergency-modal-body">
       <div id="emergency-modal-bar">
         <h2>{title}</h2>
       </div>
-      <Alert />
+      <Emergency />
       <div id="double-button">
         <button onClick={onCloseConfirm} className="redButton">
             신고하기

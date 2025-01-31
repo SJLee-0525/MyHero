@@ -251,7 +251,7 @@ class Database:
                 session.commit()
                 return result
 
-    # 한 사용자 계정을 삭제하는 기능
+    # 한 사용자 계정을 삭제하는 기능 (비밀번호 검증 필요)
     def delete_one_account(self, account_id: str) -> bool:
         """
         사용자 계정 자체를 삭제하는 기능
@@ -279,6 +279,7 @@ class Database:
     # ========== Families ==========
 
     # 모든 가족의 ID 불러오기
+    # DEPRECATED : 사용하지 않아서 삭제될 예정
     def get_all_family_id(self) -> list[dict]:
         """
         등록된 모든 가족의 ID를 불러오는 기능
@@ -298,6 +299,7 @@ class Database:
                 return result
 
     # 모든 가족의 Main User ID 불러오기
+    # DEPRECATED : 사용하지 않아서 삭제될 예정
     def get_all_family_main(self) -> list[dict]:
         """
         등록된 모든 가족의 Main User ID를 불러오는 기능
@@ -316,8 +318,13 @@ class Database:
             finally:
                 return result
 
-    #
+    # 주 사용자 ID로 가족 ID를 불러오기
     def main_id_to_family_id(self, main_id: str) -> str:
+        """
+        주 사용자 ID로 가족 ID를 불러오는 기능
+        :param main_id: 주 사용자의 ID
+        :return: 가족 ID str
+        """
         result: str = ""
 
         with self.pre_session() as session:
@@ -334,7 +341,6 @@ class Database:
                 result = ""
             finally:
                 return result
-
 
     # 새로운 가족을 생성하는 기능
     def create_family(self, family_data: FamiliesTable) -> bool:
@@ -450,6 +456,7 @@ class Database:
                 session.commit()
                 return result
 
+    # 한 가족 정보를 삭제하는 기능 (비밀번호 검증 필요)
     def delete_one_family(self, family_id: str) -> bool:
         """
         가족 정보 자체를 삭제하는 기능

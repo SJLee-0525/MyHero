@@ -21,5 +21,7 @@
         <param name="axis_angular" value="0"/>  <!-- 왼쪽 스틱 좌우 -->
         <param name="scale_linear" value="0.5"/>
         <param name="scale_angular" value="1.0"/>
+        <param name="mode_button" value="0"/>  <!-- A 버튼 -->
+        <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
     </node>
 </launch>

@@ -4,6 +4,8 @@
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
+import actionlib
+from move_base_msgs.msg import MoveBaseAction
 M_PI = 3.141592
 
 class JoyTeleop:
@@ -24,6 +26,11 @@ class JoyTeleop:
         rospy.Subscriber('joy', Joy, self.joy_callback)
         rospy.loginfo("Joy Teleop Ready!")
         self.publish_rate = rospy.Rate(20)  # 20Hz로 publish
+        self.manual_mode = False  # 수동 모드 플래그
+        self.mode_button = rospy.get_param('~mode_button', 0)  # A버튼을 모드 전환으로 사용
+        
+        # move_base enable/disable을 위한 서비스 클라이언트
+        self.move_base_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.run()
 
     def run(self):
@@ -36,25 +43,42 @@ class JoyTeleop:
             self.publish_rate.sleep()
 
     def joy_callback(self, joy_msg):
-        twist = Twist()
-        
-        # 전진/후진 (Y축) - 부호 변경
-        self.forward = joy_msg.axes[self.axis_forward]
-        twist.linear.x = self.scale_linear * self.forward
-        
-        # 조향 (X축) - 부호 변경
-        turn = joy_msg.axes[self.axis_turn]
-        
-        # 데드존 적용하여 중립 복귀 처리
-        if abs(turn) > self.deadzone:
-            self.last_steering = turn
+        # 모드 전환 버튼 확인
+        if joy_msg.buttons[self.mode_button] == 1:  # 버튼이 눌렸을 때
+            self.manual_mode = not self.manual_mode
+            if self.manual_mode:
+                # 자율주행 취소
+                self.move_base_client.cancel_all_goals()
+                rospy.loginfo("Manual Control Mode")
+            else:
+                rospy.loginfo("Autonomous Mode")
+                
+        # 수동 모드일 때만 조이스틱 입력 처리
+        if self.manual_mode:
+            twist = Twist()
+            twist.linear.x = self.scale_linear * joy_msg.axes[self.axis_forward]
+            twist.angular.z = joy_msg.axes[self.axis_turn] * (M_PI / 4.0)
+            self.cmd_vel_pub.publish(twist)
         else:
-            self.last_steering = 0.0  # 중립 복귀
+            twist = Twist()
         
-        # 정지 상태에서도 조향각 유지
-        twist.angular.z = self.last_steering * (M_PI / 4.0)
+            # 전진/후진 (Y축) - 부호 변경
+            self.forward = joy_msg.axes[self.axis_forward]
+            twist.linear.x = self.scale_linear * self.forward
         
-        self.cmd_vel_pub.publish(twist)
+            # 조향 (X축) - 부호 변경
+            turn = joy_msg.axes[self.axis_turn]
+        
+            # 데드존 적용하여 중립 복귀 처리
+            if abs(turn) > self.deadzone:
+                self.last_steering = turn
+            else:
+                self.last_steering = 0.0  # 중립 복귀
+        
+            # 정지 상태에서도 조향각 유지
+            twist.angular.z = self.last_steering * (M_PI / 4.0)
+        
+            self.cmd_vel_pub.publish(twist)
         
 if __name__ == '__main__':
     try:

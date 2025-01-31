@@ -1,7 +1,12 @@
-import "./Modal.css";
+import React from "react";
+import { useContext } from "react";
+import { StoreContext } from "../../store/store.jsx";
 import Chatting from "../message/Chatting";
+import "./Modal.css";
 
-export default function MessageModal({ title, onCloseConfirm }) {
+export default function MessageModal({ title }) {
+  const store = useContext(StoreContext);
+
   return (
     <div id="modal-body">
       <div id="modal-bar">
@@ -10,7 +15,7 @@ export default function MessageModal({ title, onCloseConfirm }) {
       <div id="chatting-area">
         <Chatting />
       </div>
-      <button onClick={onCloseConfirm} className="button">
+      <button onClick={store.handleModalClose} className="button">
          닫기
       </button>
     </div>

@@ -74,7 +74,7 @@ void MotorController::controlTimerCallback(const ros::TimerEvent &event)
 
     // 모터 제어값 계산
     float throttle = current_linear_vel_ / MAX_LINEAR_VEL; // -1.0 ~ 1.0
-    float angle = (-current_angular_vel_) * 180.0 / M_PI;  // rad to degree
+    float angle = current_angular_vel_ * 45;  // rad to degree
 
     // 실제 모터 제어
     motor_.setThrottle(throttle);

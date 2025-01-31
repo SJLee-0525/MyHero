@@ -25,7 +25,7 @@ private:
 
     // 제어 파라미터 고정값
     const float MAX_LINEAR_VEL = 0.5f;         // m/s
-    const float MAX_ANGULAR_VEL = M_PI / 4.0f; // rad/s
+    const float MAX_ANGULAR_VEL = 1.0f;        // rad/s
     const float CONTROL_RATE = 50.0f;          // Hz
     const float ACCEL_LIMIT = 0.1f;            // 가속도 제한
 

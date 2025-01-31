@@ -11,5 +11,5 @@ private:
 
 public:
     Servo(PCA9685& pwm_device);
-    void setAngle(uint8_t channel, float angle);  // 0 to 180 degrees
+    void setAngle(uint8_t channel, float angle);  // -45 to 45 degrees
 };

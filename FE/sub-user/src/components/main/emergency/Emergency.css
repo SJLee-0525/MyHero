@@ -118,14 +118,34 @@
 
 #emergency-alert-box .button-container .report {
   background-color: #ff5a33;
+
+  transition: all 0.3s ease;
+}
+
+#emergency-alert-box .button-container .report:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #emergency-alert-box .button-container .call {
   background-color: #44803f;
 }
 
+#emergency-alert-box .button-container .call:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
+}
+
 #emergency-alert-box .button-container .close {
   background-color: #aaa;
+}
+
+#emergency-alert-box .button-container .close:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #emergency-alert-box .widget-button-container {
@@ -150,14 +170,38 @@
 
 #emergency-alert-box .widget-button-container .report {
   background-color: #ff5a33;
+
+  transition: all 0.3s ease;
+}
+
+#emergency-alert-box .widget-button-container .report:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #emergency-alert-box .widget-button-container .call {
   background-color: #44803f;
+
+  transition: all 0.3s ease;
+}
+
+#emergency-alert-box .widget-button-container .call:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #emergency-alert-box .widget-button-container .close {
   background-color: #aaa;
+
+  transition: all 0.3s ease;
+}
+
+#emergency-alert-box .widget-button-container .close:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #emergency-log {
@@ -190,13 +234,16 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  transition: all 0.3s ease;
+}
+
+#emergency-log .log-button:hover {
+  background-color: #ff9500;
+
+  transition: all 0.3s ease;
 }
 
 #emergency-widget-log .log-widget-button {
@@ -209,13 +256,16 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  transition: all 0.3s ease;
+}
+
+#emergency-widget-log .log-widget-button:hover {
+  background-color: #ff9500;
+
+  transition: all 0.3s ease;
 }
 
 .emergency-log-modal h2 {
@@ -354,4 +404,14 @@
   font-weight: bold;
 
   background: white;
+
+  transition: all 0.3s ease;
+}
+
+.emergency-alert-modal-actions button:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
 }

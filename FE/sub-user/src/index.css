@@ -38,6 +38,18 @@ body {
   height: 100%;
 }
 
+#side-nav {
+  /* 
+  사이드 바 뒤의 요소가 초과되는 문제: 
+  index.html에 side-nav id를 가진 div에 따로 렌더링 시킨 후
+  해당 div의 z-index를 9999로 설정
+  기존 방식은 네비게이션 바를 fixed로 설정하여 렌더링 시키는 방식이었는데, 
+  fixed는 z-index를 무시하므로 문제가 발생
+  렌더링 되는 부분을 분리하고, 해당 부분의 z-index를 설정 후 그 위에서 fixed로 요소를 배치해 문제 해결
+   */
+  z-index: 9999;
+}
+
 @media screen and (max-width: 720px) {
   body {
     display: flex;

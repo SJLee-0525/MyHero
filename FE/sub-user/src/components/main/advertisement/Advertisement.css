@@ -1,0 +1,127 @@
+#advertisement {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100vw;
+}
+
+#ad-main-header {
+  position: relative;
+
+  width: 100vw;
+}
+
+#ad-main-header img {
+  width: 100vw;
+}
+
+#ad-main-header .ad-main-header-text {
+  position: absolute;
+  top: 50%;
+  right: 10%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+
+  width: 50%;
+}
+
+#ad-main-header .ad-main-header-text h1 {
+  font-size: 35px;
+  text-align: end;
+}
+
+#ad-main-header .ad-main-header-text button {
+  width: 200px;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: black;
+  font-weight: bold;
+
+  background: white;
+
+  transition: all 0.3s ease;
+}
+
+#ad-main-header .ad-main-header-text button:hover {
+  background: #ff9500;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
+.login-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-modal-header h2 {
+  margin: 10px;
+}
+
+.login-modal-header button {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background-color: transparent;
+  color: #ff5a33;
+
+  font-size: larger;
+
+  text-align: center;
+
+  transition: all 0.3s ease;
+}
+
+.login-modal-header button:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 720px) {
+  #ad-main-header {
+    position: static;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100vw;
+  }
+
+  #ad-main-header img {
+    width: 100vw;
+  }
+
+  #ad-main-header .ad-main-header-text {
+    position: static;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin: 30px 0px;
+
+    width: 100vw;
+  }
+
+  #ad-main-header .ad-main-header-text h1 {
+    font-size: 35px;
+    text-align: center;
+  }
+}

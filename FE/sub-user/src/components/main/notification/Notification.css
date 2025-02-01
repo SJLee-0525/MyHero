@@ -117,9 +117,7 @@
 }
 
 #home-notifications .home-notification-btn button:hover {
-  background-color: white;
-
-  color: black;
+  background-color: #ff9500;
 
   transition: all 0.3s ease;
 }

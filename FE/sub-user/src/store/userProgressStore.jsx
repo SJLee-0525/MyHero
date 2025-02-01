@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext } from "react"
 
 import { getEnvironments } from "./environmentsStore.jsx"
+// import { set } from "date-fns"
 
 export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
@@ -33,7 +34,7 @@ export const UserProgressContext = createContext({
 
 export default function UserProgressContextProvider({ children }) {
   // 사이드 바 메뉴 요소 활성화 관련
-  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState("")
+  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState("home")
 
   // 기기 조작 관련
   const [toggleStatus, setToggleStatus] = useState({
@@ -55,9 +56,10 @@ export default function UserProgressContextProvider({ children }) {
     userInfo: undefined,
   })
 
-  // 페이지 로드 시 로그인 상태 확인
+  // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("loginUserInfo")
+    const storedActiveSideBarElem = localStorage.getItem("isActiveSideBarElem")
 
     try {
       if (storedUserInfo) {
@@ -69,6 +71,15 @@ export default function UserProgressContextProvider({ children }) {
     } catch (error) {
       console.error("Error parsing loginUserInfo from localStorage:", error)
       localStorage.removeItem("loginUserInfo") // 데이터 손상 시 제거
+    }
+
+    try {
+      if (storedActiveSideBarElem) {
+        setIsActiveSideBarElem(storedActiveSideBarElem)
+      }
+    } catch (error) {
+      console.error("Error parsing isActiveSideBarElem from localStorage:", error)
+      localStorage.removeItem("isActiveSideBarElem") // 데이터 손상 시 제거
     }
   }, [])
 
@@ -88,6 +99,8 @@ export default function UserProgressContextProvider({ children }) {
   // 사이드 바 요소 활성화
   function handleActiveSideBarElem(identifier) {
     setIsActiveSideBarElem(identifier)
+    localStorage.setItem("isActiveSideBarElem", identifier) // 활성화된 요소 저장
+
     setSidebarIsOpened(false) // 모바일 환경일 경우 사이드 바 닫음
   }
 
@@ -188,6 +201,18 @@ export default function UserProgressContextProvider({ children }) {
 
     // 사이드바 관리
     setIsActiveSideBarElem("accounts")
+
+    // 기본 경로로 이동
+    window.location.href = "/"
+
+    // 모달 초기화
+    handleCloseModal()
+
+    // 사이드바 닫기
+    setSidebarIsOpened(false)
+
+    // 기기 활성화 요소 초기화
+    localStorage.removeItem("isActiveSideBarElem")
   }
 
   // 이메일 중복 확인

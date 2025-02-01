@@ -347,6 +347,138 @@ hr {
   border: 1px rgba(255, 255, 255, 0.568) solid;
 }
 
+#user-info {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  padding: 0px 10px;
+  gap: 10px;
+}
+
+#user-info-btn-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+}
+
+#user-info-btn-container .selected-btn {
+  margin: 4px 0px;
+  padding: 4px 4px;
+
+  height: 45px;
+  width: 120px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #ff9500;
+
+  font-weight: bold;
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
+#user-info-btn-container .unselected-btn {
+  margin: 4px 0px;
+  padding: 4px 4px;
+
+  height: 45px;
+  width: 120px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.568);
+
+  transition: all 0.3s ease;
+}
+
+#user-info-btn-container .unselected-btn:hover {
+  filter: brightness(0.8);
+
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info {
+  margin: 0;
+  padding: 2rem;
+
+  width: 100%;
+
+  border: 1px rgba(255, 255, 255, 0.568) solid;
+  border-radius: 8px;
+}
+
+#login-user-info .login-user-info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 15px;
+}
+
+#login-user-info .login-user-info-header h3 {
+  margin: 0 0 10px 0;
+  padding: 0;
+
+  color: #ff9500;
+}
+
+#login-user-info .login-user-info-header button {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff9500;
+  color: white;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .login-user-info-header button:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info table {
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  width: 100%;
+}
+
+#login-user-info td {
+  padding: 12px;
+
+  border: none;
+  border-bottom: 1px rgba(255, 255, 255, 0.568) solid;
+}
+
+#login-user-info tr:last-child td {
+  border-bottom: none;
+}
+
+#login-user-info td:first-child {
+  width: 25%;
+
+  font-weight: bold;
+}
+
 /* @media screen and (max-width: 720px) {
   #accounts-main {
     min-width: 400px;

@@ -76,6 +76,14 @@
 
   color: white;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-form .login-form-action .login-btn:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #login-form .login-form-action .signup-btn {
@@ -91,6 +99,16 @@
 
   color: white;
   font-weight: bold;
+
+  transition: all 0.3 ease;
+}
+
+#login-form .login-form-action .signup-btn:hover {
+  background-color: #ff9500;
+
+  filter: brightness(1.1);
+
+  transition: all 0.3s ease;
 }
 
 #signup-form {
@@ -124,12 +142,22 @@
   border: 0;
   border-radius: 12px;
 
-  background-color: #ff5a33;
-  color: white;
+  background-color: transparent;
+  color: #ff5a33;
 
   font-size: larger;
 
   text-align: center;
+
+  transition: all 0.3s ease;
+}
+
+.signup-header button:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
 }
 
 #signup-form .signup-control {
@@ -211,6 +239,14 @@
 
   color: white;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#signup-form .signup-form-action .login-btn:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 .signup-control-confirm {
@@ -225,7 +261,7 @@
 }
 
 .signup-control-error {
-  color: #ffca99;
+  color: #ff5a33;
   font-size: 0.8rem;
   height: 2rem;
   padding: 0.5rem 0;
@@ -242,10 +278,18 @@
   border: 0;
   border-radius: 8px;
 
-  background-color: rgba(255, 255, 255, 0.568);
+  background-color: #ff9500;
 
-  color: black;
+  color: white;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#signup-form .email-check:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 #signup-form .email-verified {
@@ -287,6 +331,16 @@
 
   color: #ff5a33;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#signup-form .reset-btn:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
 }
 
 #signup-form .signup-btn {
@@ -302,6 +356,14 @@
 
   color: white;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#signup-form .signup-btn:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 .logout-btn {
@@ -317,6 +379,14 @@
 
   color: white;
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
 }
 
 .signout-form label {
@@ -401,8 +471,9 @@ hr {
 }
 
 #user-info-btn-container .unselected-btn:hover {
-  filter: brightness(0.8);
+  background: rgba(188, 188, 188, 0.568);
 
+  color: white;
   font-weight: bold;
 
   transition: all 0.3s ease;

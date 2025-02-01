@@ -404,4 +404,14 @@
   font-weight: bold;
 
   background: white;
+
+  transition: all 0.3s ease;
+}
+
+.emergency-alert-modal-actions button:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
 }

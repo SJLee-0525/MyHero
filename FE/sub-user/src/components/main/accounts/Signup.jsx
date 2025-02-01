@@ -316,6 +316,7 @@ export default function Signup() {
         console.log("회원 가입 성공:", result.data)
         alert("회원가입이 완료되었습니다.")
         userProgressStore.handleCloseModal()
+        userProgressStore.setIsActiveSideBarElem("home")
         navigate("/") // 메인 페이지 이동
       } else {
         console.error("회원 가입 실패:", result.error)

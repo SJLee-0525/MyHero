@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext } from "react"
+
 import { getEnvironments } from "./environmentsStore.jsx"
 
 export const UserProgressContext = createContext({
@@ -32,7 +33,7 @@ export const UserProgressContext = createContext({
 
 export default function UserProgressContextProvider({ children }) {
   // 사이드 바 메뉴 요소 활성화 관련
-  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState(undefined)
+  const [isActiveSideBarElem, setIsActiveSideBarElem] = useState("")
 
   // 기기 조작 관련
   const [toggleStatus, setToggleStatus] = useState({
@@ -184,6 +185,9 @@ export default function UserProgressContextProvider({ children }) {
 
     // 로컬 스토리지에서 로그인 정보 삭제
     localStorage.removeItem("loginUserInfo")
+
+    // 사이드바 관리
+    setIsActiveSideBarElem("accounts")
   }
 
   // 이메일 중복 확인
@@ -322,6 +326,7 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  // 회원 탈퇴
   async function handleSignOut(password) {
     console.log(password)
     try {

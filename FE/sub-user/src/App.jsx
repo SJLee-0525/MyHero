@@ -1,21 +1,21 @@
-import "./App.css";
+import "./App.css"
 
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react"
+import { BrowserRouter, Routes, Route } from "react-router-dom"
 
-import TopNav from "./components/nav/TopNav";
-import SideNav from "./components/nav/SideNav";
+import TopNav from "./components/nav/TopNav"
+import SideNav from "./components/nav/SideNav"
 
-import Home from "./components/main/home/Home.jsx";
-import Notification from "./components/main/notification/Notification.jsx";
-import Message from "./components/main/message/Message.jsx";
-import Emergency from "./components/main/emergency/Emergency.jsx";
-import Calendar from "./components/main/calendar/Calendar.jsx";
-import Activity from "./components/main/activity/Activity.jsx";
-import Mental from "./components/main/mental/Mental.jsx";
+import Home from "./components/main/home/Home.jsx"
+import Notification from "./components/main/notification/Notification.jsx"
+import Message from "./components/main/message/Message.jsx"
+import Emergency from "./components/main/emergency/Emergency.jsx"
+import Calendar from "./components/main/calendar/Calendar.jsx"
+import Activity from "./components/main/activity/Activity.jsx"
+import Mental from "./components/main/mental/Mental.jsx"
 
-import Accounts from "./components/main/accounts/Accounts.jsx";
-import Settings from "./components/main/settings/Settings.jsx";
+import Accounts from "./components/main/accounts/Accounts.jsx"
+import Settings from "./components/main/settings/Settings.jsx"
 // import Router from "./router/router";
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
         </main>
       </div>
     </BrowserRouter>
-  );
+  )
 }
 
-export default App;
+export default App

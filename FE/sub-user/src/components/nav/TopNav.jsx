@@ -70,60 +70,53 @@ export default function TopNav() {
             <img src={closeIcon} alt="close" />
           </button>
         </div>
-        {userProgressStore.loginUserInfo.login && (
-          <ul className="top-side-bar-nav">
-            <TopNavSideNavElems imgSrc={homeIcon} altSrc="home" identifier="HOME" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
-            <TopNavSideNavElems
-              imgSrc={notificationIcon}
-              altSrc="notification"
-              identifier="NOTIFICATION"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={smsIcon}
-              altSrc="message"
-              identifier="MESSAGE"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={sirenIcon}
-              altSrc="emergency"
-              identifier="EMERGENCY"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={calendarIcon}
-              altSrc="calendar"
-              identifier="CALENDAR"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={runIcon}
-              altSrc="activity"
-              identifier="ACTIVITY"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={vitalSignIcon}
-              altSrc="mental"
-              identifier="MENTAL"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-            <TopNavSideNavElems
-              imgSrc={settingIcon}
-              altSrc="settings"
-              identifier="SETTINGS"
-              activeIdentifier={userProgressStore.isActiveSideBarElem}
-              onClickElem={userProgressStore.handleActiveSideBarElem}
-            />
-          </ul>
-        )}
+
+        <ul className="top-side-bar-nav">
+          <TopNavSideNavElems imgSrc={homeIcon} altSrc="home" identifier="HOME" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
+          <TopNavSideNavElems
+            imgSrc={notificationIcon}
+            altSrc="notification"
+            identifier="NOTIFICATION"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+          <TopNavSideNavElems imgSrc={smsIcon} altSrc="message" identifier="MESSAGE" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
+          <TopNavSideNavElems
+            imgSrc={sirenIcon}
+            altSrc="emergency"
+            identifier="EMERGENCY"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+          <TopNavSideNavElems
+            imgSrc={calendarIcon}
+            altSrc="calendar"
+            identifier="CALENDAR"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+          <TopNavSideNavElems
+            imgSrc={runIcon}
+            altSrc="activity"
+            identifier="ACTIVITY"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+          <TopNavSideNavElems
+            imgSrc={vitalSignIcon}
+            altSrc="mental"
+            identifier="MENTAL"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+          <TopNavSideNavElems
+            imgSrc={settingIcon}
+            altSrc="settings"
+            identifier="SETTINGS"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
+        </ul>
       </aside>
     </div>,
     document.getElementById("mobile-nav")

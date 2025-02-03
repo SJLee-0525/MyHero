@@ -1,11 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Caprasimo&family=Roboto+Slab:wght@400;700&display=swap");
 
+@font-face {
+  font-family: "PretendardVariable";
+  src: url("./fonts/PretendardVariable.ttf") format("truetype");
+}
+
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: "Roboto Slab", sans-serif;
+  font-family: "PretendardVariable";
   line-height: 1.5;
 
   color: #ebe7ef;

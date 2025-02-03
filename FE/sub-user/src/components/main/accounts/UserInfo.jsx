@@ -8,11 +8,15 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import PageContainer from "../container/PageContainer.jsx";
 import LoginUserInfo from "./LoginUserInfo.jsx";
 import FamilyUserInfo from "./FamilyUserInfo.jsx";
+import MemberUserInfo from "./MemberUserInfo.jsx";
+
+// 모달 컴포넌트들
 import UpdateUserInfo from "./UpdateUserInfo.jsx";
 import CreateFamily from "./CreateFamily.jsx";
 import Signout from "./Signout.jsx";
 import UpdateFamily from "./UpdateFamily.jsx";
 import DeleteFamily from "./DeleteFamily.jsx";
+import CreateMember from "./CreateMember.jsx";
 
 export default function UserInfo() {
   const userProgressStore = useContext(UserProgressContext);
@@ -56,11 +60,14 @@ export default function UserInfo() {
             }
             onClick={() => setSelectedUserInfo("familyUserInfo")}
           >
-            등록된 가족 정보
+            등록된 모임 정보
           </button>
         </div>
         {selectedUserInfo === "loginUserInfo" && <LoginUserInfo />}
-        {selectedUserInfo === "familyUserInfo" && <FamilyUserInfo />}
+        {selectedUserInfo === "familyUserInfo" &&
+          loginUserInfo.userInfo.role === "main" && <FamilyUserInfo />}
+        {selectedUserInfo === "familyUserInfo" &&
+          loginUserInfo.userInfo.role === "sub" && <MemberUserInfo />}
 
         <p className="login-form-action">
           <button className="logout-btn" onClick={handleLogout}>
@@ -77,6 +84,7 @@ export default function UserInfo() {
       <Signout />
       <UpdateFamily />
       <DeleteFamily />
+      <CreateMember />
     </PageContainer>
   );
 }

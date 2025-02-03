@@ -1,66 +1,68 @@
-import "./Accounts.css"
+import "./Accounts.css";
 
-import { useRef, useState, useContext } from "react"
+import { useRef, useState, useContext } from "react";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 // import PageContainer from "../container/PageContainer.jsx"
-import Signup from "./Signup.jsx"
+import Signup from "./Signup.jsx";
 
 export default function Login() {
-  const userProgressStore = useContext(UserProgressContext)
+  const userProgressStore = useContext(UserProgressContext);
 
   // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     password: false,
-  })
+  });
 
-  const emailInput = useRef("")
-  const passwordInput = useRef("")
+  const emailInput = useRef("");
+  const passwordInput = useRef("");
 
   function handleLogin(event) {
-    event.preventDefault()
+    event.preventDefault();
 
     // 이메일 유효성 검사
-    const emailIsInvalid = !emailInput.current.value.includes("@")
+    const emailIsInvalid = !emailInput.current.value.includes("@");
     if (emailIsInvalid) {
       setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: true }
-      })
-      return
+        return { ...prevForm, email: true };
+      });
+      return;
     } else {
       setFormIsInvalid((prevForm) => {
-        return { ...prevForm, email: false }
-      })
+        return { ...prevForm, email: false };
+      });
     }
 
     // 비밀번호 유효성 검사
-    const passwordIsInvalid = passwordInput.current.value.length < 8
+    const passwordIsInvalid = passwordInput.current.value.length < 8;
     if (passwordIsInvalid) {
       setFormIsInvalid((prevForm) => {
-        return { ...prevForm, password: true }
-      })
-      return
+        return { ...prevForm, password: true };
+      });
+      return;
     } else {
       setFormIsInvalid((prevForm) => {
-        return { ...prevForm, password: false }
-      })
+        return { ...prevForm, password: false };
+      });
     }
 
     ////////////////////////// 입력받은 데이터 객체화 (임시)
-    const userInfo = {
-      email: emailInput.current.value,
-      password: passwordInput.current.value,
-      id: emailInput.current.value,
-    }
+    // const userInfo = {
+    //   email: emailInput.current.value,
+    //   password: passwordInput.current.value,
+    //   id: emailInput.current.value,
+    // }
 
-    console.log("로그인")
-    userProgressStore.handleLogin(userInfo)
+    const email = emailInput.current.value;
+    const password = passwordInput.current.value;
+
+    userProgressStore.handleLogin(email, password);
   }
 
   function handleShowSignUp() {
-    userProgressStore.setModalProgress("sign-up")
+    userProgressStore.setModalProgress("sign-up");
   }
   return (
     <>
@@ -98,12 +100,16 @@ export default function Login() {
           <button type="submit" className="login-btn">
             Login
           </button>
-          <button type="button" className="signup-btn" onClick={handleShowSignUp}>
+          <button
+            type="button"
+            className="signup-btn"
+            onClick={handleShowSignUp}
+          >
             Sign Up
           </button>
         </p>
       </form>
       <Signup />
     </>
-  )
+  );
 }

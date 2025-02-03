@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 
 import { getEnvironments } from "./environmentsStore.jsx";
-import handleCreateFamily from "../components/main/accounts/CreateFamily.jsx";
 // import { set } from "date-fns"
 
 export const UserProgressContext = createContext({
@@ -17,6 +16,10 @@ export const UserProgressContext = createContext({
     isExist: false,
     familyInfo: undefined,
   },
+  memberInfo: {
+    isExist: false,
+    registerData: undefined,
+  },
   DEV_API_URL: "",
   MAIN_API_URL: "",
   DEV_KEY: "",
@@ -27,6 +30,7 @@ export const UserProgressContext = createContext({
   setModalProgress: () => {},
   setLoginUserInfo: () => {},
   setFamilyInfo: () => {},
+  setMemberInfo: () => {},
   handleActiveSideBarElem: (identifier) => {},
   handleToggleStatus: (toggle) => {},
   handleSidebarToggle: () => {},
@@ -44,6 +48,7 @@ export const UserProgressContext = createContext({
   handleGetFamilyInfo: (familyId) => {},
   handleUpdateFamilyInfo: (newFamilyName) => {},
   handleDeleteFamilyInfo: (password) => {},
+  handleCreateMember: (familyId, nickname) => {},
 });
 
 export default function UserProgressContextProvider({ children }) {
@@ -74,6 +79,11 @@ export default function UserProgressContextProvider({ children }) {
   const [familyInfo, setFamilyInfo] = useState({
     isExist: false,
     familyInfo: undefined,
+  });
+
+  const [memberInfo, setMemberInfo] = useState({
+    isExist: false,
+    registerData: undefined,
   });
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
@@ -151,23 +161,11 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   // 로그인
-  function handleLogin(userInfo) {
-    setLoginUserInfo({
-      login: true,
-      userInfo,
-    });
-
-    // loginUserInfo가 아직 업데이트되지 않은 상태이므로 userInfo를 직접 저장
-    localStorage.setItem("loginUserInfo", JSON.stringify(userInfo));
-
-    // 로그인 시 유저가 main이면 Family 정보 조회
-  }
-
-  // 회원 정보 조회 및 로그인 처리
-  async function handleGetUserInfo(id) {
+  async function handleLogin(email, password) {
     try {
-      const response = await fetch(`${DEV_API_URL}/accounts/${id}`, {
-        method: "GET",
+      const response = await fetch(`${DEV_API_URL}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -176,16 +174,77 @@ export default function UserProgressContextProvider({ children }) {
       const resData = await response.json();
 
       if (response.ok) {
-        if (resData.message === "Account retrieved successfully") {
+        if (resData.message === "Login successful") {
+          console.log("로그인 성공");
+
+          // 로그인 성공 시 session_id 저장
+          // sessionStorage.setItem("session_id", resData.result.session_id);
+
+          // 로그인 후 쿠키 저장
+          document.cookie = `session_id=${resData.result.session_id}; path=/; Secure; SameSite=Strict`;
+
+          // 로그인 정보 저장
+          const userInfo = resData.result.user_data;
+          setLoginUserInfo({
+            login: true,
+            userInfo,
+          });
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("로그인 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 최신 회원 정보 조회
+  async function handleGetUserInfo(id) {
+    // API 요청 시 session_id 추가
+    const sessionId = sessionStorage.getItem("session_id");
+
+    try {
+      const response = await fetch(`${DEV_API_URL}/accounts/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionId}`,
+        },
+        credentials: "include", // 쿠키 자동 전송
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Account updated successfully") {
           console.log("회원 정보 조회 성공");
-          handleLogin({
-            id: resData.result.id,
-            email: resData.result.email,
-            role: resData.result.role,
-            user_name: resData.result.user_name,
-            birth_date: resData.result.birth_date,
-            gender: resData.result.gender,
-            address: resData.result.address,
+          setLoginUserInfo({
+            login: true,
+            userInfo: {
+              id: resData.result.id,
+              email: resData.result.email,
+              role: resData.result.role,
+              user_name: resData.result.user_name,
+              birth_date: resData.result.birth_date,
+              gender: resData.result.gender,
+              address: resData.result.address,
+            },
           });
           return { success: true, data: resData };
         }
@@ -216,29 +275,57 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   // 로그아웃
-  function handleLogout() {
-    setLoginUserInfo({
-      login: false,
-      userInfo: undefined,
-    });
+  async function handleLogout() {
+    try {
+      const sessionId = sessionStorage.getItem("session_id");
 
-    // 로컬 스토리지에서 로그인 정보 삭제
-    localStorage.removeItem("loginUserInfo");
+      const response = await fetch(`${DEV_API_URL}/auth/logout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionId}`,
+        },
+        credentials: "include", // 쿠키 자동 전송
+      });
 
-    // 사이드바 관리
-    setIsActiveSideBarElem("accounts");
+      const resData = await response.json();
 
-    // 기본 경로로 이동
-    window.location.href = "/";
+      if (response.ok) {
+        if (resData.message === "Logout successful") {
+          console.log("로그아웃 성공");
 
-    // 모달 초기화
-    handleCloseModal();
+          setLoginUserInfo({
+            login: false,
+            userInfo: undefined,
+          });
 
-    // 사이드바 닫기
-    setSidebarIsOpened(false);
+          // 로컬 스토리지에서 로그인 정보 삭제
+          localStorage.removeItem("loginUserInfo");
 
-    // 기기 활성화 요소 초기화
-    localStorage.removeItem("isActiveSideBarElem");
+          // 세션에서 session_id 삭제
+          sessionStorage.removeItem("session_id");
+
+          // 사이드바 관리
+          setIsActiveSideBarElem("accounts");
+
+          // 기본 경로로 이동
+          window.location.href = "/";
+
+          // 모달 초기화
+          handleCloseModal();
+
+          // 사이드바 닫기
+          setSidebarIsOpened(false);
+
+          // 기기 활성화 요소 초기화
+          localStorage.removeItem("isActiveSideBarElem");
+        }
+      } else {
+        console.error("로그아웃 실패:", resData.detail.message);
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+    }
   }
 
   // 이메일 중복 확인
@@ -296,7 +383,7 @@ export default function UserProgressContextProvider({ children }) {
       if (response.ok) {
         if (resData.message === "New account created successfully") {
           console.log("회원 가입 성공", resData.result.id);
-          handleGetUserInfo(resData.result.id);
+          handleLogin(payload.email, payload.password); // 회원 가입 후 자동 로그인
           return { success: true, data: resData };
         }
       } else {
@@ -327,6 +414,20 @@ export default function UserProgressContextProvider({ children }) {
 
   // 회원 정보 수정
   async function handleUpdateUserInfo(payload) {
+    const isConfirmed = window.confirm(
+      '정말 회원 정보를 수정하시겠습니까?\n"확인"을 누르면 수정이 완료됩니다.'
+    );
+    if (!isConfirmed) {
+      console.log("회원 수정 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "사용자가 취소했습니다." },
+      };
+    }
+
+    // // API 요청 시 session_id 추가
+    const sessionId = sessionStorage.getItem("session_id");
+
     try {
       const response = await fetch(
         `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
@@ -335,7 +436,9 @@ export default function UserProgressContextProvider({ children }) {
           body: JSON.stringify(payload),
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionId}`,
           },
+          credentials: "include", // 쿠키 자동 전송
         }
       );
 
@@ -344,15 +447,13 @@ export default function UserProgressContextProvider({ children }) {
       if (response.ok) {
         if (resData.message === "Account updated successfully") {
           console.log("회원 정보 수정 성공");
-          handleLogin({
-            id: resData.result.id,
-            email: resData.result.email,
-            role: resData.result.role,
-            user_name: resData.result.user_name,
-            birth_date: resData.result.birth_date,
-            gender: resData.result.gender,
-            address: resData.result.address,
-          });
+
+          // 최신 회원 정보 갱신
+          console.log(sessionStorage.getItem("session_id")); // sessionStorage 확인
+          console.log(document.cookie); // 쿠키에 저장된 내용 확인
+
+          handleGetUserInfo(loginUserInfo.userInfo.id);
+
           return { success: true, data: resData };
         }
       } else {
@@ -383,6 +484,17 @@ export default function UserProgressContextProvider({ children }) {
 
   // 회원 탈퇴
   async function handleSignOut(password) {
+    const isConfirmed = window.confirm(
+      `정말 회원 탈퇴하시겠습니까?\n탈퇴 시 복구가 불가능합니다.`
+    );
+    if (!isConfirmed) {
+      console.log("회원 탈퇴 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "사용자가 취소했습니다." },
+      };
+    }
+
     console.log(password);
     try {
       const response = await fetch(
@@ -428,7 +540,8 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   async function handleCheckFamilyExist(userId) {
-    console.log(userId);
+    // console.log(userId);
+
     try {
       const response = await fetch(`${DEV_API_URL}/families/check-exist`, {
         method: "POST",
@@ -462,21 +575,36 @@ export default function UserProgressContextProvider({ children }) {
 
   // 가족 생성
   async function handleCreateFamily(payload) {
+    const isConfirmed = window.confirm(
+      `${payload.family_name}으로 가족 모임 생성을 하시겠습니까?\n확인을 누르면 가족이 생성됩니다.`
+    );
+    if (!isConfirmed) {
+      console.log("가족 모임 생성 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "사용자가 취소했습니다." },
+      };
+    }
+
     console.log(payload);
+    const sessionId = sessionStorage.getItem("session_id");
+
     try {
       const response = await fetch(`${DEV_API_URL}/families`, {
         method: "POST",
         body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionId}`,
         },
+        credentials: "include", // 쿠키 자동 전송
       });
 
       const resData = await response.json();
 
       if (response.ok) {
         if (resData.message === "New family created successfully") {
-          console.log("가족 생성 성공");
+          console.log("가족 모임 생성 성공");
 
           // 가족 생성 후 가족 정보 조회
           const familyId = resData.result.id;
@@ -552,6 +680,17 @@ export default function UserProgressContextProvider({ children }) {
 
   // 가족 정보 수정
   async function handleUpdateFamilyInfo(newFamilyName) {
+    const isConfirmed = window.confirm(
+      "정말 가족 모임 정보를 변경하시겠습니까?\n확인을 누르면 변경됩니다."
+    );
+    if (!isConfirmed) {
+      console.log("가족 정보 변경 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "사용자가 취소했습니다." },
+      };
+    }
+
     try {
       const response = await fetch(
         `${DEV_API_URL}/families/${familyInfo.familyInfo.id}`,
@@ -570,7 +709,7 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.ok) {
         if (resData.message === "Family updated successfully") {
-          console.log("가족 정보 수정 성공");
+          console.log("가족 모임 정보 수정 성공");
 
           // 가족 정보 다시 조회
           handleGetFamilyInfo(familyInfo.familyInfo.id);
@@ -578,7 +717,7 @@ export default function UserProgressContextProvider({ children }) {
           return { success: true, data: resData };
         }
       } else {
-        console.error("가족 정보 수정 실패:", resData.detail.message);
+        console.error("가족 모임 정보 수정 실패:", resData.detail.message);
         return {
           success: false,
           error: {
@@ -601,7 +740,18 @@ export default function UserProgressContextProvider({ children }) {
 
   // 가족 정보 삭제
   async function handleDeleteFamilyInfo(password) {
-    console.log(password);
+    const isConfirmed = window.confirm(
+      "정말 가족 모임을 삭제하시겠습니까?\n삭제 시 복구가 불가능합니다."
+    );
+    if (!isConfirmed) {
+      console.log("가족 정보 삭제 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "삭제 취소." },
+      };
+    }
+
+    // console.log(password);
     try {
       const response = await fetch(
         `${DEV_API_URL}/families/${familyInfo.familyInfo.id}`,
@@ -618,7 +768,7 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.ok) {
         if (resData.message === "Family deleted successfully") {
-          console.log("가족 정보 삭제 성공");
+          console.log("가족 모임 삭제 성공");
 
           // 가족 정보 상태 초기화
           setFamilyInfo({
@@ -629,7 +779,108 @@ export default function UserProgressContextProvider({ children }) {
           return { success: true, data: resData };
         }
       } else {
-        console.error("가족 정보 삭제 실패:", resData.detail.message);
+        console.error("가족 모임 삭제 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 등록된 가족 모임 조회
+  async function handleCheckFamilyList() {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/members?userId=${encodeURIComponent(
+          loginUserInfo.userInfo.id
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "All members retrieved successfully") {
+          console.log("가족 목록 조회 성공");
+
+          // 정보 갱신
+          setMemberInfo({
+            isExist: true,
+            registerData: resData.result,
+          });
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("가족 목록 조회 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 구성원 추가
+  async function handleCreateMember(payload) {
+    const { familyId, nickname } = payload;
+
+    try {
+      const response = await fetch(`${DEV_API_URL}/members`, {
+        method: "POST",
+        body: JSON.stringify({
+          family_id: familyId,
+          user_id: loginUserInfo.userInfo.id,
+          nickname: nickname,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "New member created successfully") {
+          console.log("가족 구성원 추가 성공");
+
+          // 정보 갱신
+          handleCheckFamilyList();
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("가족 구성원 추가 실패:", resData.detail.message);
         return {
           success: false,
           error: {
@@ -657,6 +908,7 @@ export default function UserProgressContextProvider({ children }) {
     modalProgress,
     loginUserInfo,
     familyInfo,
+    memberInfo,
     DEV_API_URL,
     MAIN_API_URL,
     DEV_KEY,
@@ -667,6 +919,7 @@ export default function UserProgressContextProvider({ children }) {
     setModalProgress,
     setLoginUserInfo,
     setFamilyInfo,
+    setMemberInfo,
     handleActiveSideBarElem,
     handleToggleStatus,
     handleSidebarToggle,
@@ -684,6 +937,8 @@ export default function UserProgressContextProvider({ children }) {
     handleGetFamilyInfo,
     handleUpdateFamilyInfo,
     handleDeleteFamilyInfo,
+    handleCheckFamilyList,
+    handleCreateMember,
   };
 
   return (

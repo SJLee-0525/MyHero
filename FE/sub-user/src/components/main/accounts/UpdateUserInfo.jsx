@@ -458,7 +458,7 @@ export default function UpdateUserInfo() {
           <label htmlFor="email">이메일 아이디</label>
           <div className="signup-wrapper">
             <input
-              id="email"
+              // id="email"
               className="email-input"
               type="email"
               name="email"
@@ -521,7 +521,7 @@ export default function UpdateUserInfo() {
               <label htmlFor="user_name">이름</label>
               <input
                 type="text"
-                id="user-name"
+                // id="user-name"
                 name="user_name"
                 defaultValue={userInformation.user_name || ""}
                 required
@@ -532,7 +532,7 @@ export default function UpdateUserInfo() {
               <label htmlFor="birth_date">생년월일</label>
               <input
                 type="date"
-                id="birth-date"
+                // id="birth-date"
                 name="birth_date"
                 defaultValue={
                   userInformation.birth_date ? userInformation.birth_date : ""
@@ -548,7 +548,7 @@ export default function UpdateUserInfo() {
               <div className="signup-control">
                 <label htmlFor="state">시/도</label>
                 <select
-                  id="state"
+                  // id="state"
                   name="state"
                   value={selectedState}
                   onChange={handleStateChange}
@@ -566,7 +566,7 @@ export default function UpdateUserInfo() {
               <div className="signup-control">
                 <label htmlFor="city">시/군/구</label>
                 <select
-                  id="city"
+                  // id="city"
                   name="city"
                   value={selectedCity}
                   onChange={handleCityChange}

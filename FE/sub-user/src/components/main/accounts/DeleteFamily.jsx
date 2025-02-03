@@ -31,11 +31,11 @@ export default function DeleteFamily() {
 
       if (result.success === true) {
         // 가족 삭제 성공
-        alert("가족 삭제 성공");
+        alert("가족 모임 삭제 성공");
         userProgressStore.handleCloseModal();
         navigate("/accounts");
       } else {
-        console.error("가족 삭제 실패:", result.error);
+        console.error("가족 모임 삭제 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -56,7 +56,7 @@ export default function DeleteFamily() {
       }
     >
       <div className="signup-header">
-        <h2>가족 삭제</h2>
+        <h2>가족 모임 삭제</h2>
         <button type="button" onClick={userProgressStore.handleCloseModal}>
           X
         </button>
@@ -70,7 +70,7 @@ export default function DeleteFamily() {
           </div>
         )}
         <button className="logout-btn" onClick={handleDeleteFamily}>
-          가족 삭제
+          모임 삭제
         </button>
       </p>
     </Modal>

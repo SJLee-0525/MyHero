@@ -33,11 +33,11 @@ export default function UpdateFamily() {
       );
       if (result.success === true) {
         // 가족 정보 수정 성공
-        alert("가족 정보 수정 성공");
+        alert("가족 모임 정보 수정 성공");
         userProgressStore.handleCloseModal();
         navigate("/accounts");
       } else {
-        console.error("가족 정보 수정 실패:", result.error);
+        console.error("가족 모임 정보 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -59,17 +59,17 @@ export default function UpdateFamily() {
     >
       <div id="signup-form">
         <div className="signup-header">
-          <h2>가족 정보 수정</h2>
+          <h2>가족 모임 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>
         </div>
         <p className="signup-control">
-          <label htmlFor="text">가족 이름</label>
+          <label htmlFor="text">수정할 가족 모임 이름</label>
           <input type="text" ref={inputName} />
           {nameIsInvalid && (
             <div className="signup-control-error">
-              <p>가족 이름은 2글자 이상이어야 합니다.</p>
+              <p>가족 모임 이름은 2글자 이상이어야 합니다.</p>
             </div>
           )}
           <button className="signup-btn" onClick={handleUpdateFamily}>

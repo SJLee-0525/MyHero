@@ -4,16 +4,21 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Database Authentication Part
 """
-from dotenv import load_dotenv
+
 
 # Library
 from Database.connector import Database
 from Database.models import *
+
+from fastapi import Request, HTTPException, status
+
 from sqlalchemy import func
 from sqlalchemy.exc import SQLAlchemyError
-from fastapi import Request, HTTPException, status
+
 from time import time
+
 import os
+from dotenv import load_dotenv
 
 database: Database = Database()
 

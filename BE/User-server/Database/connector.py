@@ -8,9 +8,9 @@ Database Connector
 # Library
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-import os
 
+import os
+from dotenv import load_dotenv
 
 class Database:
     def __init__(self):

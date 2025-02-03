@@ -17,15 +17,17 @@ export default function FamilyUserInfo() {
     userProgressStore.handleOpenModal("update-family-user-info");
   }
 
+  function handleShowDeleteFamilyUserInfo() {
+    userProgressStore.handleOpenModal("delete-family");
+  }
+
   return (
     <>
       {!familyUserInfo.isExist && (
         <div id="login-user-info">
           <div className="not-found-family-user-info">
             <h3>등록된 가족 정보가 없습니다.</h3>
-            <button onClick={handleShowCreateFamilyUserInfo}>
-              가족 정보 등록
-            </button>
+            <button onClick={handleShowCreateFamilyUserInfo}>가족 생성</button>
           </div>
         </div>
       )}
@@ -34,6 +36,9 @@ export default function FamilyUserInfo() {
           <div className="login-user-info-header">
             <h3>{familyUserInfo.familyInfo.family_name}네 가족 정보</h3>
             <button>등록 정보 수정</button>
+            <button onClick={handleShowDeleteFamilyUserInfo}>
+              가족 정보 삭제
+            </button>
           </div>
           <table>
             <tr>

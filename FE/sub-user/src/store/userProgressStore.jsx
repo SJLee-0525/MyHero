@@ -38,10 +38,12 @@ export const UserProgressContext = createContext({
   handleCheckEmail: (email) => {},
   handleSignUp: (payload) => {},
   handleUpdateUserInfo: (payload) => {},
+  handleSignOut: (password) => {},
   handleCheckFamilyExist: (userId) => {},
   handleCreateFamily: (payload) => {},
   handleGetFamilyInfo: (familyId) => {},
-  handleSignOut: (password) => {},
+  handleUpdateFamilyInfo: (newFamilyName) => {},
+  handleDeleteFamilyInfo: (password) => {},
 });
 
 export default function UserProgressContextProvider({ children }) {
@@ -323,6 +325,7 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  // 회원 정보 수정
   async function handleUpdateUserInfo(payload) {
     try {
       const response = await fetch(
@@ -375,6 +378,52 @@ export default function UserProgressContextProvider({ children }) {
           message: "네트워크 오류가 발생했습니다.",
         },
       };
+    }
+  }
+
+  // 회원 탈퇴
+  async function handleSignOut(password) {
+    console.log(password);
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        // 회원 탈퇴 성공
+        if (resData.message === "Account deleted successfully") {
+          handleLogout(); // 로그아웃 처리
+          return { success: true };
+        }
+      } else {
+        // 잘못된 비밀번호 입력
+        if (resData.detail.type === "unauthorized") {
+          console.error("잘못된 비밀번호 입력");
+        } else if (resData.detail.type === "Password is required") {
+          console.error("비밀번호 입력은 필수입니다");
+        }
+        console.log(resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      // 네트워크 오류 등 기타 예외 처리
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      throw new Error("요청을 처리하는 동안 오류가 발생했습니다.");
     }
   }
 
@@ -501,12 +550,61 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
-  // 회원 탈퇴
-  async function handleSignOut(password) {
+  // 가족 정보 수정
+  async function handleUpdateFamilyInfo(newFamilyName) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/families/${familyInfo.familyInfo.id}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({
+            family_name: newFamilyName,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Family updated successfully") {
+          console.log("가족 정보 수정 성공");
+
+          // 가족 정보 다시 조회
+          handleGetFamilyInfo(familyInfo.familyInfo.id);
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("가족 정보 수정 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 정보 삭제
+  async function handleDeleteFamilyInfo(password) {
     console.log(password);
     try {
       const response = await fetch(
-        `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
+        `${DEV_API_URL}/families/${familyInfo.familyInfo.id}`,
         {
           method: "DELETE",
           body: JSON.stringify({ password: password }),
@@ -519,19 +617,19 @@ export default function UserProgressContextProvider({ children }) {
       const resData = await response.json();
 
       if (response.ok) {
-        // 회원 탈퇴 성공
-        if (resData.message === "Account deleted successfully") {
-          handleLogout(); // 로그아웃 처리
-          return { success: true };
+        if (resData.message === "Family deleted successfully") {
+          console.log("가족 정보 삭제 성공");
+
+          // 가족 정보 상태 초기화
+          setFamilyInfo({
+            isExist: false,
+            familyInfo: undefined,
+          });
+
+          return { success: true, data: resData };
         }
       } else {
-        // 잘못된 비밀번호 입력
-        if (resData.detail.type === "unauthorized") {
-          console.error("잘못된 비밀번호 입력");
-        } else if (resData.detail.type === "Password is required") {
-          console.error("비밀번호 입력은 필수입니다");
-        }
-        console.log(resData.detail.message);
+        console.error("가족 정보 삭제 실패:", resData.detail.message);
         return {
           success: false,
           error: {
@@ -541,9 +639,14 @@ export default function UserProgressContextProvider({ children }) {
         };
       }
     } catch (error) {
-      // 네트워크 오류 등 기타 예외 처리
       console.error("네트워크 오류 또는 기타 예외:", error);
-      throw new Error("요청을 처리하는 동안 오류가 발생했습니다.");
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
     }
   }
 
@@ -574,11 +677,13 @@ export default function UserProgressContextProvider({ children }) {
     handleLogout,
     handleCheckEmail,
     handleSignUp,
+    handleSignOut,
     handleUpdateUserInfo,
     handleCheckFamilyExist,
     handleCreateFamily,
     handleGetFamilyInfo,
-    handleSignOut,
+    handleUpdateFamilyInfo,
+    handleDeleteFamilyInfo,
   };
 
   return (

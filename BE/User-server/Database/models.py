@@ -7,6 +7,7 @@ Database Table Models
 
 # Library
 from sqlalchemy import Column, Date, String, Enum, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as BaseEnum
 
@@ -29,6 +30,9 @@ class Gender(BaseEnum):
 # ========== DB Tables ==========
 
 class AccountsTable(Base):
+    """
+    사용자 계정 정보
+    """
     __tablename__ = "accounts"
 
     id = Column(String(16), primary_key=True, nullable=False)
@@ -39,6 +43,9 @@ class AccountsTable(Base):
     birth_date = Column(Date, nullable=True)
     gender = Column(Enum(Gender), nullable=True)
     address = Column(String(128), nullable=True)
+
+    family_relations = relationship("FamiliesTable", backref="family_list", cascade="all, delete")
+    member_relations = relationship("MemberRelationsTable", backref="member_list", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -53,15 +60,39 @@ class AccountsTable(Base):
                 )
 
 class FamiliesTable(Base):
+    """
+    가족 정보
+    """
     __tablename__ = "families"
 
     id = Column(String(16), primary_key=True, nullable=False)
     main_user = Column(String(16), ForeignKey('accounts.id'), nullable=False)
     family_name = Column(String(128), nullable=True)
 
+    member_relations = relationship("MemberRelationsTable", backref="family_relations", cascade="all, delete")
+
     def __repr__(self):
         return (f"" +
                 f"<Family(id='{self.id}', " +
                 f"main_user='{self.main_user}', " +
                 f"family_name='{self.family_name}')>"
+                )
+
+class MemberRelationsTable(Base):
+    """
+    가족에 연관된 멤버 정보
+    """
+    __tablename__ = "memberrelations"
+
+    id = Column(String(16), primary_key=True, nullable=False)
+    family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
+    user_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    nickname = Column(String(32), nullable=True)
+
+    def __repr__(self):
+        return (f"" +
+                f"<MemberRelation(id='{self.id}', " +
+                f"family_id='{self.family_id}', " +
+                f"user_id='{self.user_id}', " +
+                f"nickname='{self.nickname}')>"
                 )

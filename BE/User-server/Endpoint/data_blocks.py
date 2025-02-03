@@ -22,13 +22,13 @@ class EmailCheck(BaseModel):
     """
     중복 이메일을 검증하기 위해 Client가 보내는 데이터
     """
-    email: str  # 중복을 검증할 이메일 주소
+    email: Optional[str] = None  # 중복을 검증할 이메일 주소
 
 class PasswordCheck(BaseModel):
     """
     계정 삭제를 위해 Client가 보내는 데이터
     """
-    password: str  # 계정 삭제를 위해 검증할 비밀번호
+    password: Optional[str] = None  # 계정 삭제를 위해 검증할 비밀번호
 
 class Account(BaseModel):
     """
@@ -46,7 +46,7 @@ class IDCheck(BaseModel):
     """
     계정 확인 및 점검을 위해 Client가 보내는 데이터
     """
-    id: str  # 확인 및 점검을 위한 ID
+    id: Optional[str] = None  # 확인 및 점검을 위한 ID
 
 class Family(BaseModel):
     """
@@ -62,3 +62,10 @@ class Member(BaseModel):
     family_id: Optional[str] = None  # 가족의 ID
     user_id: Optional[str] = None  # 관계를 생성할 대상의 사용자 ID
     nickname: Optional[str] = None  # 주 사용자에게 보여질 별명
+
+class Login(BaseModel):
+    """
+    로그인을 위해 client가 보내는 데이터
+    """
+    email: Optional[str] = None  # 로그인에 사용할 이메일 주소
+    password: Optional[str] = None  # 로그인에 사용할 비밀번호

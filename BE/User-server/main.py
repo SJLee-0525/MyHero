@@ -2,24 +2,24 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.3.0
+version : 0.4.0
 """
+from msilib import add_data
 
 # Libraries
-from fastapi import FastAPI, HTTPException, status, Query
+from fastapi import FastAPI, HTTPException, status, Query, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
-from Database.connector import Database
+import Database
 from Database.models import *
 
 from Endpoint.data_blocks import *
 
-from Utilities.basic import *
+from Utilities.auth_tools import *
 from datetime import date
 
 app = FastAPI()
-database = Database()
 
 # ========== CORS 설정 ==========
 origins_url = [
@@ -49,9 +49,9 @@ app.add_middleware(  # type: ignore
 @app.post("/accounts/check-email", status_code=status.HTTP_200_OK)
 async def check_email(email_check: EmailCheck):
     target_email: str = email_check.email
-    email_list: list = [data["email"] for data in database.get_all_email()]
+    email_list: list = [data["email"] for data in Database.get_all_email()]
 
-    if target_email is None or target_email == "":
+    if target_email is None or target_email == "":  # 필요한 정보 없이 요청하려는지 점검
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -60,7 +60,7 @@ async def check_email(email_check: EmailCheck):
                 "input": jsonable_encoder(email_check)
             }
         )
-    elif target_email in email_list:
+    elif target_email in email_list:  # 모든 사용자 이메일 주소와 비교하여 겹치는지 점검
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -129,7 +129,7 @@ async def create_account(account_data: Account):
         )
 
     # 중복 이메일 점검
-    email_list: list = [data["email"] for data in database.get_all_email()]
+    email_list: list = [data["email"] for data in Database.get_all_email()]
 
     if account_data.email in email_list:
         raise HTTPException(
@@ -147,7 +147,7 @@ async def create_account(account_data: Account):
 
     while not id_verified:
         new_id = random_id(16, Identify.USER)
-        accounts: list = database.get_all_accounts()
+        accounts: list = Database.get_all_accounts()
         id_list = [data["id"] for data in accounts]
         if new_id not in id_list:
             id_verified = True
@@ -187,7 +187,7 @@ async def create_account(account_data: Account):
     )
 
     # 계정 업로드
-    result: bool = database.create_account(new_account)
+    result: bool = Database.create_account(new_account)
 
     if result:
         return {
@@ -209,7 +209,7 @@ async def create_account(account_data: Account):
 # 모든 사용자 계정의 정보를 불러오는 기능
 @app.get("/accounts", status_code=status.HTTP_200_OK)
 async def get_all_accounts():
-    account_list: list = database.get_all_accounts()
+    account_list: list = Database.get_all_accounts()
 
     if account_list:
         return {
@@ -224,8 +224,23 @@ async def get_all_accounts():
 
 # 사용자 계정 정보를 불러오는 기능
 @app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
-async def get_account(user_id: str):
-    account_data: dict = database.get_one_account(user_id)
+async def get_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have access to this account",
+                "input": {
+                    "user_id": user_id,
+                    "request_id": request_id
+                }
+            }
+        )
+
+    account_data: dict = Database.get_one_account(user_id)
 
     if account_data:
         return {
@@ -245,7 +260,7 @@ async def get_account(user_id: str):
 # 사용자 계정 정보를 수정하는 기능
 @app.patch("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def update_account(user_id: str, updated_account: Account):
-    previous_account: dict = database.get_one_account(user_id)
+    previous_account: dict = Database.get_one_account(user_id)
 
     # 없는 계정을 변경하려는지 확인
     if not previous_account:
@@ -280,7 +295,7 @@ async def update_account(user_id: str, updated_account: Account):
 
     # 중복된 이메일로 변경하려는지 점검
     if updated_account.email:
-        email_list: list = [data["email"] for data in database.get_all_email()]
+        email_list: list = [data["email"] for data in Database.get_all_email()]
         if updated_account.email in email_list:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
@@ -324,10 +339,10 @@ async def update_account(user_id: str, updated_account: Account):
     )
 
     # 사용자 계정 정보 변경
-    result: bool = database.update_one_account(user_id, total_updated_account)
+    result: bool = Database.update_one_account(user_id, total_updated_account)
 
     if result:
-        final_updated_account: dict = database.get_one_account(user_id)
+        final_updated_account: dict = Database.get_one_account(user_id)
         return {
             "message": "Account updated successfully",
             "result": jsonable_encoder(final_updated_account, exclude={"password"})
@@ -345,7 +360,7 @@ async def update_account(user_id: str, updated_account: Account):
 # 사용자 계정을 삭제하는 기능 (사용자의 비밀번호 필요)
 @app.delete("/accounts/{user_id}", status_code=status.HTTP_200_OK)
 async def delete_account(user_id: str, checker: PasswordCheck):
-    previous_account: dict = database.get_one_account(user_id)
+    previous_account: dict = Database.get_one_account(user_id)
 
     # 없는 계정을 삭제하려는지 확인
     if not previous_account:
@@ -372,7 +387,7 @@ async def delete_account(user_id: str, checker: PasswordCheck):
 
     # 비밀번호 검증
     input_password: str = checker.password
-    hashed_password: str = database.get_hashed_password(user_id)
+    hashed_password: str = Database.get_hashed_password(user_id)
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
@@ -386,7 +401,7 @@ async def delete_account(user_id: str, checker: PasswordCheck):
         )
 
     # 사용자 계정 삭제 진행
-    result: bool = database.delete_one_account(user_id)
+    result: bool = Database.delete_one_account(user_id)
 
     if result:
         return {
@@ -420,7 +435,7 @@ async def check_family_from_main_id(family_check: IDCheck):
         )
 
     # 가족 정보가 존재하는지 확인
-    exist_family: str = database.main_id_to_family_id(family_check.id)
+    exist_family: str = Database.main_id_to_family_id(family_check.id)
 
     if exist_family == "":
         raise HTTPException(
@@ -453,7 +468,7 @@ async def create_family(family_data: Family):
         )
 
     # 가족이 이미 생성되었는지 점검
-    exist_family: str = database.main_id_to_family_id(family_data.main_user)
+    exist_family: str = Database.main_id_to_family_id(family_data.main_user)
 
     if exist_family:
         raise HTTPException(
@@ -466,7 +481,7 @@ async def create_family(family_data: Family):
         )
 
     # 주 사용자 존재 확인 및 역할 점검
-    exist_user: dict= database.get_one_account(family_data.main_user)
+    exist_user: dict= Database.get_one_account(family_data.main_user)
 
     if not exist_user or exist_user["role"] is not Role.MAIN:
         raise HTTPException(
@@ -484,7 +499,7 @@ async def create_family(family_data: Family):
 
     while not id_verified:
         new_id = random_id(16, Identify.FAMILY)
-        families: list = database.get_all_families()
+        families: list = Database.get_all_families()
         id_list = [data["id"] for data in families]
         if new_id not in id_list:
             id_verified = True
@@ -496,7 +511,7 @@ async def create_family(family_data: Family):
         family_name=family_data.family_name
     )
 
-    result: bool = database.create_family(new_family)
+    result: bool = Database.create_family(new_family)
 
     if result:
         return {
@@ -518,7 +533,7 @@ async def create_family(family_data: Family):
 # 모든 가족의 정보를 불러오는 기능
 @app.get("/families", status_code=status.HTTP_200_OK)
 async def get_all_families():
-    family_list: list = database.get_all_families()
+    family_list: list = Database.get_all_families()
 
     if family_list:
         return {
@@ -534,7 +549,7 @@ async def get_all_families():
 # 가족 정보를 불러오는 기능
 @app.get("/families/{family_id}", status_code=status.HTTP_200_OK)
 async def get_family(family_id: str):
-    family_data: dict = database.get_one_family(family_id)
+    family_data: dict = Database.get_one_family(family_id)
 
     if family_data:
         return {
@@ -554,7 +569,7 @@ async def get_family(family_id: str):
 # 가족 정보를 수정하는 기능 (family_name만 수정 가능)
 @app.patch("/families/{family_id}", status_code=status.HTTP_200_OK)
 async def update_family(family_id: str, updated_family: Family):
-    previous_family: dict = database.get_one_family(family_id)
+    previous_family: dict = Database.get_one_family(family_id)
 
     # 없는 가족 정보를 변경하려는지 확인
     if not previous_family:
@@ -575,10 +590,10 @@ async def update_family(family_id: str, updated_family: Family):
     )
 
     # 가족 정보 변경
-    result: bool = database.update_one_family(family_id, total_updated_family)
+    result: bool = Database.update_one_family(family_id, total_updated_family)
 
     if result:
-        final_updated_family: dict = database.get_one_family(family_id)
+        final_updated_family: dict = Database.get_one_family(family_id)
         return {
             "message": "Family updated successfully",
             "result": jsonable_encoder(final_updated_family)
@@ -596,7 +611,7 @@ async def update_family(family_id: str, updated_family: Family):
 # 가족 정보를 삭제하는 기능 (주 사용자의 비밀번호 필요)
 @app.delete("/families/{family_id}", status_code=status.HTTP_200_OK)
 async def delete_family(family_id: str, checker: PasswordCheck):
-    previous_family: dict = database.get_one_family(family_id)
+    previous_family: dict = Database.get_one_family(family_id)
 
     # 없는 가족을 삭제하려는지 확인
     if not previous_family:
@@ -623,7 +638,7 @@ async def delete_family(family_id: str, checker: PasswordCheck):
 
     # 비밀번호 검증
     input_password: str = checker.password
-    hashed_password: str = database.get_hashed_password(previous_family["main_user"])
+    hashed_password: str = Database.get_hashed_password(previous_family["main_user"])
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
@@ -637,7 +652,7 @@ async def delete_family(family_id: str, checker: PasswordCheck):
         )
 
     # 가족 삭제 진행
-    final_result: bool = database.delete_one_family(family_id)
+    final_result: bool = Database.delete_one_family(family_id)
 
     if final_result:
         return {
@@ -680,7 +695,7 @@ async def create_member(member_data: Member):
         )
 
     # 존재하는 가족 데이터인지 점검
-    exist_family: dict = database.get_one_family(member_data.family_id)
+    exist_family: dict = Database.get_one_family(member_data.family_id)
 
     if not exist_family:
         raise HTTPException(
@@ -693,7 +708,7 @@ async def create_member(member_data: Member):
         )
 
     # 존재하는 사용자인지 점검
-    exist_user: dict = database.get_one_account(member_data.user_id)
+    exist_user: dict = Database.get_one_account(member_data.user_id)
 
     if not exist_user or exist_user["role"] is not Role.SUB:
         raise HTTPException(
@@ -706,7 +721,7 @@ async def create_member(member_data: Member):
         )
 
     # 이미 생성된 가족 관계가 있는지 점검
-    exist_member: list = database.get_all_members(family_id=member_data.family_id, user_id=member_data.user_id)
+    exist_member: list = Database.get_all_members(family_id=member_data.family_id, user_id=member_data.user_id)
 
     if exist_member:
         raise HTTPException(
@@ -724,7 +739,7 @@ async def create_member(member_data: Member):
 
     while not id_verified:
         new_id = random_id(16, Identify.MEMBER)
-        members: list = database.get_all_members()
+        members: list = Database.get_all_members()
         id_list = [data["id"] for data in members]
         if new_id not in id_list:
             id_verified = True
@@ -737,7 +752,7 @@ async def create_member(member_data: Member):
         nickname=member_data.nickname
     )
 
-    result: bool = database.create_member(new_member)
+    result: bool = Database.create_member(new_member)
 
     if result:
         return {
@@ -759,9 +774,11 @@ async def create_member(member_data: Member):
 # 조건에 따른 모든 가족 관계 정보 불러오는 기능
 @app.get("/members", status_code=status.HTTP_200_OK)
 async def get_all_members(
-        family_id: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
-        user_id: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):
-    member_list: list = database.get_all_members(family_id=family_id, user_id=user_id)
+        familyId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
+        userId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):
+    member_list: list = Database.get_all_members(family_id=familyId, user_id=userId)
+
+    print(familyId, userId)
 
     if member_list:
         return {
@@ -777,7 +794,7 @@ async def get_all_members(
 # 가족 관계 정보를 불러오는 기능
 @app.get("/members/{member_id}", status_code=status.HTTP_200_OK)
 async def get_member(member_id: str):
-    member_data: dict = database.get_one_member(member_id)
+    member_data: dict = Database.get_one_member(member_id)
 
     if member_data:
         return {
@@ -797,7 +814,7 @@ async def get_member(member_id: str):
 # 가족 관계 정보를 수정하는 기능 (nickname만 수정 가능)
 @app.patch("/members/{member_id}", status_code=status.HTTP_200_OK)
 async def update_member(member_id: str, updated_member: Member):
-    previous_member: dict = database.get_one_member(member_id)
+    previous_member: dict = Database.get_one_member(member_id)
 
     # 없는 가족 관계 정보를 변경하려는지 확인
     if not previous_member:
@@ -819,10 +836,10 @@ async def update_member(member_id: str, updated_member: Member):
     )
 
     # 가족 관계 정보 변경
-    result: bool = database.update_one_member(member_id, total_updated_member)
+    result: bool = Database.update_one_member(member_id, total_updated_member)
 
     if result:
-        final_updated_member: dict = database.get_one_member(member_id)
+        final_updated_member: dict = Database.get_one_member(member_id)
         return {
             "message": "Member updated successfully",
             "result": jsonable_encoder(final_updated_member)
@@ -840,7 +857,7 @@ async def update_member(member_id: str, updated_member: Member):
 # 가족 관계 정보를 삭제하는 기능
 @app.delete("/members/{member_id}", status_code=status.HTTP_200_OK)
 async def delete_member(member_id: str, checker: PasswordCheck):
-    previous_member: dict = database.get_one_member(member_id)
+    previous_member: dict = Database.get_one_member(member_id)
 
     # 없는 가족 관계를 삭제하려는지 확인
     if not previous_member:
@@ -867,7 +884,7 @@ async def delete_member(member_id: str, checker: PasswordCheck):
 
     # 비밀번호 검증
     input_password: str = checker.password
-    hashed_password: str = database.get_hashed_password(previous_member["user_id"])
+    hashed_password: str = Database.get_hashed_password(previous_member["user_id"])
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
@@ -881,7 +898,7 @@ async def delete_member(member_id: str, checker: PasswordCheck):
         )
 
     # 가족 관계 삭제 진행
-    final_result: bool = database.delete_one_member(member_id)
+    final_result: bool = Database.delete_one_member(member_id)
 
     if final_result:
         return {
@@ -896,3 +913,129 @@ async def delete_member(member_id: str, checker: PasswordCheck):
                 "input": {"member_id": member_id, "password": "<PASSWORD>"}
             }
         )
+
+# ========== Auth ==========
+
+# 사용자가 로그인하는 기능
+@app.post("/auth/login", status_code=status.HTTP_200_OK)
+async def login(response: Response, login_data: Login):
+    # 필요한 정보가 입력되었는지 확인
+    if login_data.email is None or login_data.email == "" or \
+            login_data.password is None or login_data.password == "":
+        location: list = ["body"]
+
+        if login_data.email is None or login_data.email == "":
+            location.append("email")
+        if login_data.password is None or login_data.password == "":
+            location.append("password")
+
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": location,
+                "message": "Login data is required",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자의 이메일을 이용해 ID를 가져오기
+    user_id: str = Database.get_id_from_email(login_data.email)
+
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자의 기본 정보 가져오기
+    user_data: dict = Database.get_one_account(user_id)
+
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 비밀번호 검증
+    input_password: str = login_data.password
+    hashed_password: str = Database.get_hashed_password(user_id)
+    is_verified: bool = verify_password(input_password, hashed_password)
+
+    if not is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # Session 생성하기
+    new_xid: str = random_xid(16)
+
+    new_session: LoginSessionsTable = LoginSessionsTable(
+        xid=new_xid,
+        user_id=user_id,
+        is_main_user=user_data["role"] is Role.MAIN
+    )
+
+    # Sesstion 생성하기
+    result: bool = Database.create_session(new_session)
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create session",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 식별용 쿠키 설정
+    response.set_cookie("session_id", new_xid, httponly=True, secure=True, samesite="lax")
+
+    return {
+        "message": "Login successful",
+        "result": {
+            "session_id": new_xid,
+            "user_data": jsonable_encoder(user_data)
+        }
+    }
+
+# 사용자가 로그아웃 하는 기능
+@app.post("/auth/logout", status_code=status.HTTP_200_OK)
+async def logout(request: Request, response: Response):
+    session_id: str = request.cookies.get("session_id")
+
+    if session_id:
+        # Session 삭제하기
+        result: bool = Database.delete_session(session_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "type": "server error",
+                    "message": "Failed to delete session",
+                    "input": {"session_id": session_id}
+                }
+            )
+
+        # 식별용 쿠키 삭제
+        response.delete_cookie("session_id")
+
+    return {
+        "message": "Logout successful"
+    }
+

@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-Server Utilities
+Server Authentication Tools
 """
 
 # Library
@@ -10,6 +10,7 @@ import random
 import string
 import bcrypt
 from enum import Enum
+from secrets import token_hex
 
 class Identify(Enum):
     USER = "user"
@@ -17,18 +18,27 @@ class Identify(Enum):
     MEMBER = "member"
 
 
-def random_id(length : int = 16, type : Identify = Identify.USER):
+def random_id(length: int = 16, set_type: Identify = Identify.USER):
     """
-    사용자 ID를 난수로 생성하는 기능
-    :param length: [int] ID의 길이
-    :param type: [Identify] 생성하려는 ID의 종류
+    각종 ID를 난수로 생성하는 기능
+    :param length: ID의 길이
+    :param set_type: 생성하려는 ID의 종류
     :return: 문자와 숫자가 혼합된 length 길이의 ID
     """
 
     characters = string.ascii_letters + string.digits
-    start = type.value[0].upper()
-    return start + ''.join(random.choice(characters) for _ in range(length - 1))
+    start = set_type.value[0].upper()
+    new_id: str = start + ''.join(random.choice(characters) for _ in range(length - 1))
+    return new_id
 
+def random_xid(length_byte: int = 16) -> str:
+    """
+    각종 16진수 xid를 난수로 생성하는 기능
+    :param length_byte: ID의 Byte 길이 (16 -> 32자리의 16진수 string)
+    :return: 16진수로 이뤄진 length_byte 길이의 xid
+    """
+    new_xid: str = token_hex(length_byte)
+    return new_xid
 
 def hash_password(plain_password: str) -> str:
     """
@@ -39,7 +49,8 @@ def hash_password(plain_password: str) -> str:
 
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(plain_password.encode('utf-8'), salt)
-    return hashed_password.decode('utf-8')
+    decoded_password = hashed_password.decode('utf-8')
+    return decoded_password
 
 
 def verify_password(input_password: str, hashed_password: str) -> bool:
@@ -49,4 +60,5 @@ def verify_password(input_password: str, hashed_password: str) -> bool:
     :param hashed_password: DB에 저장된 암호화 비밀번호
     :return: True -> 일치함, False -> 불일치함
     """
-    return bcrypt.checkpw(input_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    result: bool = bcrypt.checkpw(input_password.encode('utf-8'), hashed_password.encode('utf-8'))
+    return result

@@ -6,7 +6,7 @@ Database Table Models
 """
 
 # Library
-from sqlalchemy import Column, Date, String, Enum, ForeignKey
+from sqlalchemy import Column, Date, TIMESTAMP, String, Enum, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from enum import Enum as BaseEnum
@@ -46,6 +46,7 @@ class AccountsTable(Base):
 
     family_relations = relationship("FamiliesTable", backref="family_list", cascade="all, delete")
     member_relations = relationship("MemberRelationsTable", backref="member_list", cascade="all, delete")
+    login_sessions = relationship("LoginSessionsTable", backref="login_sessions", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -95,4 +96,23 @@ class MemberRelationsTable(Base):
                 f"family_id='{self.family_id}', " +
                 f"user_id='{self.user_id}', " +
                 f"nickname='{self.nickname}')>"
+                )
+
+class LoginSessionsTable(Base):
+    """
+    사용자의 로그인 세션 정보
+    """
+    __tablename__ = "loginsessions"
+
+    xid = Column(String(32), primary_key=True, nullable=False)
+    user_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    last_active = Column(TIMESTAMP, nullable=True, server_default=func.now(), onupdate=func.now())
+    is_main_user = Column(Boolean, nullable=False)
+
+    def __repr__(self):
+        return (f"" +
+                f"<LoginSession(xid='{self.xid}', " +
+                f"user_id='{self.user_id}', " +
+                f"last_active='{self.last_active}', " +
+                f"is_main_user='{self.is_main_user}')>"
                 )

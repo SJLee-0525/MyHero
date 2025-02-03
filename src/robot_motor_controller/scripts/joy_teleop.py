@@ -38,7 +38,7 @@ class JoyTeleop:
             # 마지막 조향값으로 계속 publish
             twist = Twist()
             twist.linear.x = self.scale_linear * self.forward  # forward 값 저장 필요
-            twist.angular.z = self.last_steering * (M_PI / 4.0)
+            twist.angular.z = self.last_steering
             self.cmd_vel_pub.publish(twist)
             self.publish_rate.sleep()
 
@@ -72,7 +72,7 @@ class JoyTeleop:
             else:
                 self.last_steering = 0.0
                 
-            twist.angular.z = self.last_steering * (M_PI / 4.0)
+            twist.angular.z = self.last_steering
             self.cmd_vel_pub.publish(twist)
         else:
             twist = Twist()
@@ -91,7 +91,7 @@ class JoyTeleop:
                 self.last_steering = 0.0  # 중립 복귀
         
             # 정지 상태에서도 조향각 유지
-            twist.angular.z = self.last_steering * (M_PI / 4.0)
+            twist.angular.z = self.last_steering
         
             self.cmd_vel_pub.publish(twist)
         

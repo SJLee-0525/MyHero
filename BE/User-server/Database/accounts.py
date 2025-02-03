@@ -5,7 +5,7 @@
 Database Accounts Part
 """
 
-# DB Connector
+# Library
 from Database.connector import Database
 from Database.models import *
 from sqlalchemy.exc import SQLAlchemyError

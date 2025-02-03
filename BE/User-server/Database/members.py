@@ -5,7 +5,7 @@
 Database Members Part
 """
 
-# DB Connector
+# Library
 from Database.connector import Database
 from Database.models import *
 from sqlalchemy import and_

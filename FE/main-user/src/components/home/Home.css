@@ -43,6 +43,7 @@
   border: none;
   padding: 0;
   transition: all 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 #icon-box #icon:hover {
@@ -61,62 +62,160 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 25%;
-  /* background-color: blue; */
+  height: 30%;
   padding: 0 2rem;
-  gap: 2rem;
+  margin-bottom: 1rem;
+  gap: 1.5rem;
+  position: relative;
 }
 
 #dock #dock-icon {
-  width: 150px;
-  height: 150px;
-  /* background: #282617ad; */
+  --w: 8em;
+  --bg: rgb(var(--rgb));
+  --bga: rgba(var(--rgb), 0.4);
+
+  width: var(--w);
+  height: var(--w);
+  background: var(--bg);
+  box-shadow: 0 3px 12px 2px var(--bga);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.1s transform, 0.3s box-shadow;
+  will-change: transform, box-shadow;
+  backface-visibility: hidden;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  flex-shrink: 0;
 }
 
-#dock #dock-icon .enable-img:hover {
-  filter: brightness(60%);
-  transition: all 0.3s ease;
+/* Dock 버튼 비활성화 상태 */
+#dock #dock-icon.disable {
+  background: transparent !important;
+  box-shadow: none !important;
+  opacity: 0.5;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
-#dock #dock-icon .disable-img:hover {
-  filter: brightness(60%);
-  transition: all 0.3s ease;
+#dock #dock-icon img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
 }
 
 #dock #dock-icon .enable-img {
-  width: 80%;
-  height: 80%;
-  /* background-color: #b4cf66; */
+  width: 100%;
+  height: 100%;
   border-radius: 100%;
 }
 
 #dock #dock-icon .disable-img {
-  width: 80%;
-  filter: brightness(50%);
-  height: 80%;
-  /* background-color: #ff5a33; */
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+  filter: grayscale(100%) brightness(60%);
+  transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
   border-radius: 100%;
 }
 
-#dock #dock-icon img {
-  width: 100%;
-}
-
-#dock #dock-icon img {
-  width: 100%;
-  /* filter: brightness(50%); */
-}
-
 #dock #dock-icon button {
-  background: transparent;
   border: none;
+  width: 100%;
+  height: 100%;
   padding: 0;
+  margin: 0;
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.2);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+}
+
+/* 클릭 시 색상 변화 효과 */
+#dock #dock-icon:after {
+  --bg: rgb(var(--rgb));
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: -15%;
+  width: 200%;
+  height: 200%;
+  background: var(--bg);
+  border-radius: inherit;
+  transform: translate(5%, 5%) scale(0.03);
+  pointer-events: none;
+}
+
+/* 클릭 애니메이션 */
+#dock #dock-icon.animating:after {
+  animation: clickEffect 0.5s cubic-bezier(0.5, 0, 0.5, 1) backwards;
+}
+
+/* Dock 버튼만 색상 변경 */
+#dock #dock-icon.active {
+  background: rgb(var(--rgb));
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+#dock #dock-icon:not(.active):after {
+  --rgb: 255, 255, 255;
+}
+
+#dock #dock-icon:not(.active) {
+  --rgb: none;
+  box-shadow: 0 3px 3px 3px rgba(255, 255, 255, 0.6);
+}
+
+#dock #dock-icon.active:after {
+  --rgb: 255, 255, 255;
+}
+
+/* 클릭 애니메이션 효과 */
+@keyframes clickEffect {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.99);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* 마우스 오버 시 확대 효과 */
+#dock #dock-icon:hover {
+  transform: scale(1.02);
+}
+
+/* Dock 버튼만 클릭 효과 */
+#dock #dock-icon.clicked {
+  animation: clickEffect 1s cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+/* Dock 버튼 내부 SVG 애니메이션 */
+#dock #dock-icon svg {
+  --dash: 190;
+  stroke-linecap: round;
+  stroke-dasharray: var(--dash);
+  stroke-dashoffset: var(--dash);
+  width: 46px;
+  height: 46px;
+  transform: scaleX(-1) rotate(-89deg);
+  transition: 0.4s var(--timing);
+  margin: auto;
+  position: relative;
+  z-index: 1;
+  will-change: transform, stroke-dashoffset;
+}
+
+/* Dock 비활성화 시 애니메이션 */
+#dock #dock-icon:not(.active) svg {
+  stroke-dashoffset: 40;
+  transform: scaleX(-0.5) rotate(-52deg);
+  transition: 0.5s 0.25s;
 }
 
 @media screen and (max-width: 768px) {

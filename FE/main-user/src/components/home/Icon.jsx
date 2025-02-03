@@ -1,23 +1,16 @@
 import "./Home.css";
 
-export default function Icon({
-  type,
-  state,
-  imgSrc,
-  altSrc,
-  onClickIcon,
-  children,
-}) {
+export default function Icon({ type, state, imgSrc, altSrc, onClickIcon, children, clicked, disabled }) {
   return (
-    <div id={type}>
+    <div id={type} className={`clicked ? "clicked" : ""}  ${disabled ? "disable" : ""}`}>
       <button onClick={onClickIcon}>
         <img
           src={imgSrc}
           alt={altSrc}
           className={!state ? "disable-img" : "enable-img"}
         />
-        {type === "icon" && <p className="icon-name">{children}</p>}
       </button>
+      {type === "icon" && <p className="icon-name">{children}</p>}
     </div>
   );
 }

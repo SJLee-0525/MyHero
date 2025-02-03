@@ -178,16 +178,17 @@ export default function UserProgressContextProvider({ children }) {
           console.log("로그인 성공");
 
           // 로그인 성공 시 session_id 저장
-          // sessionStorage.setItem("session_id", resData.result.session_id);
+          sessionStorage.setItem("session_id", resData.result.session_id);
 
           // 로그인 후 쿠키 저장
           document.cookie = `session_id=${resData.result.session_id}; path=/; Secure; SameSite=Strict`;
 
           // 로그인 정보 저장
           const userInfo = resData.result.user_data;
+
           setLoginUserInfo({
             login: true,
-            userInfo,
+            userInfo: userInfo,
           });
 
           return { success: true, data: resData };
@@ -214,20 +215,32 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  // loginUserInfo가 업데이트된 후에 handleCheckFamilyList 호출
+  // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
+  // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
+  useEffect(() => {
+    if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+      handleCheckFamilyList();
+    }
+  }, [loginUserInfo]);
+
   // 최신 회원 정보 조회
   async function handleGetUserInfo(id) {
     // API 요청 시 session_id 추가
     const sessionId = sessionStorage.getItem("session_id");
 
     try {
-      const response = await fetch(`${DEV_API_URL}/accounts/${id}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionId}`,
-        },
-        credentials: "include", // 쿠키 자동 전송
-      });
+      const response = await fetch(
+        `${DEV_API_URL}/accounts/${encodeURIComponent(id)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionId}`,
+          },
+          credentials: "include", // 쿠키 자동 전송
+        }
+      );
 
       const resData = await response.json();
 
@@ -449,8 +462,11 @@ export default function UserProgressContextProvider({ children }) {
           console.log("회원 정보 수정 성공");
 
           // 최신 회원 정보 갱신
-          console.log(sessionStorage.getItem("session_id")); // sessionStorage 확인
-          console.log(document.cookie); // 쿠키에 저장된 내용 확인
+          console.log(
+            "세션 스토리지 데이터:",
+            sessionStorage.getItem("session_id")
+          ); // sessionStorage 확인
+          console.log("쿠키 데이터:", document.cookie); // 쿠키에 저장된 내용 확인
 
           handleGetUserInfo(loginUserInfo.userInfo.id);
 

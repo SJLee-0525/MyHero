@@ -9,6 +9,7 @@ Database Table Models
 from sqlalchemy import Column, Date, TIMESTAMP, String, Enum, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
+
 from enum import Enum as BaseEnum
 
 # Create table base

@@ -550,6 +550,44 @@ hr {
   font-weight: bold;
 }
 
+#login-user-info .not-found-family-user-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 350px;
+  gap: 10px;
+
+  color: white;
+  font-weight: bold;
+}
+
+#login-user-info .not-found-family-user-info button {
+  width: 180px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: white;
+  color: black;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .not-found-family-user-info button:hover {
+  background-color: #ff9500;
+  color: white;
+
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
 /* @media screen and (max-width: 720px) {
   #accounts-main {
     min-width: 400px;

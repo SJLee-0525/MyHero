@@ -7,6 +7,7 @@ from sqlalchemy.pool import Pool
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
 from time import sleep
+from datetime import datetime
 
 # 환경 변수 로드
 load_dotenv()
@@ -110,3 +111,11 @@ class Account(Base):
     birth_date = Column(Date)
     gender = Column(Enum('MALE', 'FEMALE', 'OTHER'))
     address = Column(String(128))
+
+class FallDetection(Base):
+    __tablename__ = 'falldetections'
+    
+    index = Column(Integer, primary_key=True, autoincrement=True)
+    timestamp = Column(DateTime, default=datetime.now)
+    image_path = Column(String(255), nullable=True)
+    user_id = Column(String(16), ForeignKey('accounts.id'))

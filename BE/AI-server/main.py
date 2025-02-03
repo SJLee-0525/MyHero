@@ -14,8 +14,9 @@ from services.weather import WeatherService
 from services.chat import ChatService
 from services.emotion import EmotionService
 from services.disaster import DisasterService
+from services.news import NewsService
 from utils.cache import CacheManager
-from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus
+from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection
 
 # 환경 변수 로드
 load_dotenv()
@@ -47,6 +48,7 @@ app.add_middleware(
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 weather_service = WeatherService(api_key=os.getenv("WEATHER_API_KEY"))
 disaster_service = DisasterService(api_key=os.getenv("DISASTER_API_KEY"))
+news_service = NewsService(api_key=os.getenv("NEWS_API_KEY"))
 cache_manager = CacheManager()
 
 class ChatRequest(BaseModel):
@@ -114,6 +116,18 @@ async def get_weather(user_id: str, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Weather error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/news")
+async def get_news():
+    try:
+        news_data = await news_service.get_news()
+        if not news_data:
+            raise HTTPException(status_code=404, detail="뉴스 정보를 찾을 수 없습니다")
+        return news_data
+    except Exception as e:
+        logger.error(f"News error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/check-disaster/{user_id}")
 async def check_disaster(user_id: str, db: Session = Depends(get_db)):
@@ -201,6 +215,31 @@ async def generate_keywords(user_id: str, db: Session = Depends(get_db)):
     
     except Exception as e:
         logger.error(f"키워드 생성 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# 낙상감지
+@app.post("/fall-alert")
+async def handle_fall_alert(alert_data: dict, db: Session = Depends(get_db)):
+    try:
+        # 테이블 구조에 맞게 데이터 저장
+        fall_detection = FallDetection(
+            image_path=alert_data.get('image_path'),
+            user_id=alert_data.get('user_id', 'test_user')
+        )
+        
+        db.add(fall_detection)
+        db.commit()
+        
+        logger.info(f"낙상 감지 저장 완료 - 시간: {fall_detection.timestamp}")
+        return {
+            "status": "success", 
+            "message": "낙상 감지 기록이 저장되었습니다.",
+            "timestamp": fall_detection.timestamp
+        }
+        
+    except Exception as e:
+        db.rollback()
+        logger.error(f"낙상 감지 저장 실패: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":

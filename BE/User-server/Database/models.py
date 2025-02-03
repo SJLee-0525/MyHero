@@ -104,14 +104,14 @@ class LoginSessionsTable(Base):
     """
     __tablename__ = "loginsessions"
 
-    uid = Column(String(32), primary_key=True, nullable=False)
+    xid = Column(String(32), primary_key=True, nullable=False)
     user_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
-    last_active = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
+    last_active = Column(TIMESTAMP, nullable=True, server_default=func.now(), onupdate=func.now())
     is_main_user = Column(Boolean, nullable=False)
 
     def __repr__(self):
         return (f"" +
-                f"<LoginSession(uid='{self.uid}', " +
+                f"<LoginSession(xid='{self.xid}', " +
                 f"user_id='{self.user_id}', " +
                 f"last_active='{self.last_active}', " +
                 f"is_main_user='{self.is_main_user}')>"

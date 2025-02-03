@@ -2,11 +2,12 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.3.0
+version : 0.4.0
 """
+from msilib import add_data
 
 # Libraries
-from fastapi import FastAPI, HTTPException, status, Query
+from fastapi import FastAPI, HTTPException, status, Query, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -50,7 +51,7 @@ async def check_email(email_check: EmailCheck):
     target_email: str = email_check.email
     email_list: list = [data["email"] for data in Database.get_all_email()]
 
-    if target_email is None or target_email == "":
+    if target_email is None or target_email == "":  # 필요한 정보 없이 요청하려는지 점검
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -59,7 +60,7 @@ async def check_email(email_check: EmailCheck):
                 "input": jsonable_encoder(email_check)
             }
         )
-    elif target_email in email_list:
+    elif target_email in email_list:  # 모든 사용자 이메일 주소와 비교하여 겹치는지 점검
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -223,7 +224,22 @@ async def get_all_accounts():
 
 # 사용자 계정 정보를 불러오는 기능
 @app.get("/accounts/{user_id}", status_code=status.HTTP_200_OK)
-async def get_account(user_id: str):
+async def get_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have access to this account",
+                "input": {
+                    "user_id": user_id,
+                    "request_id": request_id
+                }
+            }
+        )
+
     account_data: dict = Database.get_one_account(user_id)
 
     if account_data:
@@ -758,9 +774,11 @@ async def create_member(member_data: Member):
 # 조건에 따른 모든 가족 관계 정보 불러오는 기능
 @app.get("/members", status_code=status.HTTP_200_OK)
 async def get_all_members(
-        family_id: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
-        user_id: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):
-    member_list: list = Database.get_all_members(family_id=family_id, user_id=user_id)
+        familyId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
+        userId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):
+    member_list: list = Database.get_all_members(family_id=familyId, user_id=userId)
+
+    print(familyId, userId)
 
     if member_list:
         return {
@@ -897,4 +915,127 @@ async def delete_member(member_id: str, checker: PasswordCheck):
         )
 
 # ========== Auth ==========
+
+# 사용자가 로그인하는 기능
+@app.post("/auth/login", status_code=status.HTTP_200_OK)
+async def login(response: Response, login_data: Login):
+    # 필요한 정보가 입력되었는지 확인
+    if login_data.email is None or login_data.email == "" or \
+            login_data.password is None or login_data.password == "":
+        location: list = ["body"]
+
+        if login_data.email is None or login_data.email == "":
+            location.append("email")
+        if login_data.password is None or login_data.password == "":
+            location.append("password")
+
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": location,
+                "message": "Login data is required",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자의 이메일을 이용해 ID를 가져오기
+    user_id: str = Database.get_id_from_email(login_data.email)
+
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 사용자의 기본 정보 가져오기
+    user_data: dict = Database.get_one_account(user_id)
+
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 비밀번호 검증
+    input_password: str = login_data.password
+    hashed_password: str = Database.get_hashed_password(user_id)
+    is_verified: bool = verify_password(input_password, hashed_password)
+
+    if not is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid email or password",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # Session 생성하기
+    new_xid: str = random_xid(16)
+
+    new_session: LoginSessionsTable = LoginSessionsTable(
+        xid=new_xid,
+        user_id=user_id,
+        is_main_user=user_data["role"] is Role.MAIN
+    )
+
+    # Sesstion 생성하기
+    result: bool = Database.create_session(new_session)
+
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create session",
+                "input": {"email": login_data.email, "password": "<PASSWORD>"}
+            }
+        )
+
+    # 식별용 쿠키 설정
+    response.set_cookie("session_id", new_xid, httponly=True, secure=True, samesite="lax")
+
+    return {
+        "message": "Login successful",
+        "result": {
+            "session_id": new_xid,
+            "user_data": jsonable_encoder(user_data)
+        }
+    }
+
+# 사용자가 로그아웃 하는 기능
+@app.post("/auth/logout", status_code=status.HTTP_200_OK)
+async def logout(request: Request, response: Response):
+    session_id: str = request.cookies.get("session_id")
+
+    if session_id:
+        # Session 삭제하기
+        result: bool = Database.delete_session(session_id)
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "type": "server error",
+                    "message": "Failed to delete session",
+                    "input": {"session_id": session_id}
+                }
+            )
+
+        # 식별용 쿠키 삭제
+        response.delete_cookie("session_id")
+
+    return {
+        "message": "Logout successful"
+    }
 

@@ -11,6 +11,7 @@ from .accounts import (
     create_account,
     get_all_accounts,
     get_one_account,
+    get_id_from_email,
     get_hashed_password,
     update_one_account,
     delete_one_account
@@ -32,4 +33,10 @@ from .members import (
     get_one_member,
     update_one_member,
     delete_one_member
+)
+
+from .authentication import (
+    create_session,
+    delete_session,
+    check_current_user
 )

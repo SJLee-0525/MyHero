@@ -30,7 +30,8 @@ def create_session(session_data: LoginSessionsTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             session.add(session_data)
             print(f"[DB] New session created: {session_data}")
@@ -52,9 +53,10 @@ def delete_session(session_id: str) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
-            session_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.uid == session_id).first()
+            session_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.xid == session_id).first()
             if session_data is not None:
                 session.delete(session_data)
                 result = True
@@ -87,14 +89,15 @@ def check_current_user(request: Request) -> str:
             }
         )
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             login_data = session.query(
-                LoginSessionsTable.uid,
+                LoginSessionsTable.xid,
                 LoginSessionsTable.user_id,
                 LoginSessionsTable.last_active,
                 LoginSessionsTable.is_main_user
-            ).filter(LoginSessionsTable.uid == session_id).first()
+            ).filter(LoginSessionsTable.xid == session_id).first()
 
             # DB에 해당하는 세션 정보가 존재하는지 확인
             if not login_data:
@@ -107,7 +110,7 @@ def check_current_user(request: Request) -> str:
                 )
 
             serialized_data: dict = {
-                "uid": login_data[0],
+                "xid": login_data[0],
                 "user_id": login_data[1],
                 "last_active": login_data[2],
                 "is_main_user": login_data[3]

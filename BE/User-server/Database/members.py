@@ -22,7 +22,8 @@ def create_member(member_data: MemberRelationsTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             session.add(member_data)
             print(f"[DB] New member created: {member_data}")
@@ -46,7 +47,8 @@ def get_all_members(family_id: str = None, user_id: str = None) -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             member_list: list = []
 
@@ -106,7 +108,8 @@ def get_one_member(member_id: str) -> dict:
     """
     result: dict = {}
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             member_data = session.query(
                 MemberRelationsTable.id,
@@ -141,7 +144,8 @@ def update_one_member(member_id: str, updated_member: MemberRelationsTable) -> b
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             previous_member = session.query(MemberRelationsTable).filter(MemberRelationsTable.id == member_id).first()
 
@@ -170,7 +174,8 @@ def delete_one_member(member_id: str) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             member_data = session.query(MemberRelationsTable).filter(MemberRelationsTable.id == member_id).first()
             if member_data is not None:

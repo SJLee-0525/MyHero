@@ -20,7 +20,8 @@ def get_all_email() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             account_list = session.query(AccountsTable.email).all()
             result = [{"email": data[0]} for data in account_list]
@@ -40,7 +41,8 @@ def get_all_account_id() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             id_list = session.query(AccountsTable.id).all()
             result = [{"id": data[0]} for data in id_list]
@@ -60,7 +62,8 @@ def create_account(account_data: AccountsTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             session.add(account_data)
             print(f"[DB] New account created: {account_data}")
@@ -81,7 +84,8 @@ def get_all_accounts() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             account_list = session.query(
                 AccountsTable.id,
@@ -120,7 +124,8 @@ def get_one_account(account_id: str) -> dict:
     """
     result: dict = {}
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             account_data = session.query(
                 AccountsTable.id,
@@ -152,6 +157,26 @@ def get_one_account(account_id: str) -> dict:
         finally:
             return result
 
+# 사용자 이메일로부터 사용자 ID 불러오기
+def get_id_from_email(email: str) -> str:
+    """
+    사용자 이메일 주소를 이용해 사용자 ID를 받아내는 기능
+    :param email: 사용자의 이메일 주소
+    :return: 찾은 사용자 ID str
+    """
+    user_id: str = ""
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            user_id = session.query(AccountsTable.id).filter(AccountsTable.email == email).first()[0].__str__()
+        except SQLAlchemyError as error:
+            session.rollback()
+            print(f"[DB] Error getting id from email: {str(error)}")
+            user_id = ""
+        finally:
+            return user_id
+
 # 사용자 비밀번호 Hash 정보 불러오기
 def get_hashed_password(account_id: str) -> str:
     """
@@ -161,7 +186,8 @@ def get_hashed_password(account_id: str) -> str:
     """
     result: str = ""
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             hashed_password = \
             session.query(AccountsTable.password).filter(AccountsTable.id == account_id).first()[0]
@@ -183,7 +209,8 @@ def update_one_account(account_id: str, updated_account: AccountsTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             previous_account = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
 
@@ -226,7 +253,8 @@ def delete_one_account(account_id: str) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             account_data = session.query(AccountsTable).filter(AccountsTable.id == account_id).first()
             if account_data is not None:

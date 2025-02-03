@@ -20,9 +20,9 @@ class Identify(Enum):
 
 def random_id(length: int = 16, set_type: Identify = Identify.USER):
     """
-    사용자 ID를 난수로 생성하는 기능
-    :param length: [int] ID의 길이
-    :param set_type: [Identify] 생성하려는 ID의 종류
+    각종 ID를 난수로 생성하는 기능
+    :param length: ID의 길이
+    :param set_type: 생성하려는 ID의 종류
     :return: 문자와 숫자가 혼합된 length 길이의 ID
     """
 
@@ -31,10 +31,14 @@ def random_id(length: int = 16, set_type: Identify = Identify.USER):
     new_id: str = start + ''.join(random.choice(characters) for _ in range(length - 1))
     return new_id
 
-def random_uid(length_byte: int = 16) -> str:
-    new_uid: str = token_hex(length_byte)
-    return new_uid
-
+def random_xid(length_byte: int = 16) -> str:
+    """
+    각종 16진수 xid를 난수로 생성하는 기능
+    :param length_byte: ID의 Byte 길이 (16 -> 32자리의 16진수 string)
+    :return: 16진수로 이뤄진 length_byte 길이의 xid
+    """
+    new_xid: str = token_hex(length_byte)
+    return new_xid
 
 def hash_password(plain_password: str) -> str:
     """

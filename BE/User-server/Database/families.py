@@ -21,7 +21,8 @@ def get_all_family_id() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             id_list = session.query(FamiliesTable.id).all()
             result = [{"id": data[0]} for data in id_list]
@@ -42,7 +43,8 @@ def get_all_family_main() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             main_id_list = session.query(FamiliesTable.main_user).all()
             result = [{"main_id": data[0]} for data in main_id_list]
@@ -63,7 +65,8 @@ def main_id_to_family_id(main_id: str) -> str:
     """
     result: str = ""
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             family_id = session.query(FamiliesTable.id).filter(FamiliesTable.main_user == main_id).first()
 
@@ -88,7 +91,8 @@ def create_family(family_data: FamiliesTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             session.add(family_data)
             print(f"[DB] New family created: {family_data}")
@@ -109,7 +113,8 @@ def get_all_families() -> list[dict]:
     """
     result: list[dict] = []
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             family_list = session.query(
                 FamiliesTable.id,
@@ -141,7 +146,8 @@ def get_one_family(family_id: str) -> dict:
     """
     result: dict = {}
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             family_data = session.query(
                 FamiliesTable.id,
@@ -174,7 +180,8 @@ def update_one_family(family_id: str, updated_family: FamiliesTable) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             previous_family = session.query(FamiliesTable).filter(FamiliesTable.id == family_id).first()
 
@@ -203,7 +210,8 @@ def delete_one_family(family_id: str) -> bool:
     """
     result: bool = False
 
-    with database.get_pre_session() as session:
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
         try:
             family_data = session.query(FamiliesTable).filter(FamiliesTable.id == family_id).first()
             if family_data is not None:

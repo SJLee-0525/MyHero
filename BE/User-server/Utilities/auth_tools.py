@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-Server Utilities
+Server Authentication Tools
 """
 
 # Library

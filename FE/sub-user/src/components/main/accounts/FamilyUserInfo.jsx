@@ -35,7 +35,9 @@ export default function FamilyUserInfo() {
         <>
           <div className="login-user-info-header">
             <h3>{familyUserInfo.familyInfo.family_name}네 가족 정보</h3>
-            <button>등록 정보 수정</button>
+            <button onClick={handleShowUpdateFamilyUserInfo}>
+              가족 정보 수정
+            </button>
             <button onClick={handleShowDeleteFamilyUserInfo}>
               가족 정보 삭제
             </button>

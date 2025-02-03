@@ -11,6 +11,7 @@ import FamilyUserInfo from "./FamilyUserInfo.jsx";
 import UpdateUserInfo from "./UpdateUserInfo.jsx";
 import CreateFamily from "./CreateFamily.jsx";
 import Signout from "./Signout.jsx";
+import UpdateFamily from "./UpdateFamily.jsx";
 import DeleteFamily from "./DeleteFamily.jsx";
 
 export default function UserInfo() {
@@ -74,6 +75,7 @@ export default function UserInfo() {
       <UpdateUserInfo />
       <CreateFamily />
       <Signout />
+      <UpdateFamily />
       <DeleteFamily />
     </PageContainer>
   );

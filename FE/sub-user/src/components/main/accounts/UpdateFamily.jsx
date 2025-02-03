@@ -7,7 +7,7 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import Modal from "../../modal/Modal.jsx";
 
-export default function CreateFamily() {
+export default function UpdateFamily() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ export default function CreateFamily() {
 
   const inputName = useRef("");
 
-  async function handleCreateFamily(event) {
+  async function handleUpdateFamily(event) {
     event.preventDefault();
 
     // 가족 이름 유효성 검사
@@ -27,52 +27,17 @@ export default function CreateFamily() {
       setNameIsInvalid(false);
     }
 
-    // 입력받은 데이터 객체화
-    const payload = {
-      main_user: userProgressStore.loginUserInfo.userInfo.id,
-      family_name: inputName.current.value,
-    };
-
     try {
-      const result = await userProgressStore.handleCreateFamily(payload);
-      if (result.success === true) {
-        // 가족 생성 성공
-        alert("가족 생성 성공");
-        userProgressStore.handleCloseModal();
-        navigate("/accounts");
-      } else {
-        console.error("가족 생성 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
-      }
-    } catch (error) {
-      console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
-    }
-  }
-
-  // 회원 탈퇴 로직
-  async function handleSignOut() {
-    // 비밀번호 유효성 검사
-    const inputIsInvalid = inputPassword.current.value.length < 8;
-    if (inputIsInvalid) {
-      setPasswordIsInvalid(true);
-      return;
-    }
-
-    try {
-      const result = await userProgressStore.handleSignOut(
-        inputPassword.current.value
+      const result = await userProgressStore.handleUpdateFamilyInfo(
+        inputName.current.value
       );
-
       if (result.success === true) {
-        // 회원 탈퇴 성공
-        alert("회원 탈퇴 성공");
+        // 가족 정보 수정 성공
+        alert("가족 정보 수정 성공");
         userProgressStore.handleCloseModal();
         navigate("/accounts");
       } else {
-        console.error("회원 탈퇴 실패:", result.error);
+        console.error("가족 정보 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -85,16 +50,16 @@ export default function CreateFamily() {
 
   return (
     <Modal
-      open={userProgressStore.modalProgress === "create-family-user-info"}
+      open={userProgressStore.modalProgress === "update-family-user-info"}
       onClose={
-        userProgressStore.modalProgress === "create-family-user-info"
+        userProgressStore.modalProgress === "update-family-user-info"
           ? userProgressStore.handleCloseModal
           : null
       }
     >
       <div id="signup-form">
         <div className="signup-header">
-          <h2>가족 생성</h2>
+          <h2>가족 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>
@@ -107,8 +72,8 @@ export default function CreateFamily() {
               <p>가족 이름은 2글자 이상이어야 합니다.</p>
             </div>
           )}
-          <button className="signup-btn" onClick={handleCreateFamily}>
-            생성
+          <button className="signup-btn" onClick={handleUpdateFamily}>
+            수정
           </button>
         </p>
       </div>

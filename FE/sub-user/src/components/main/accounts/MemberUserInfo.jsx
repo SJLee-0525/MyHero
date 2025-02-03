@@ -4,38 +4,58 @@ import { useContext } from "react";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-export default function FamilyUserInfo() {
+export default function MemberUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   const loginUserInfo = userProgressStore.loginUserInfo;
-  const familyUserInfo = userProgressStore.familyInfo;
+  const memberUserInfo = userProgressStore.memberInfo;
 
-  function handleShowCreateFamilyUserInfo() {
-    userProgressStore.handleOpenModal("create-family-user-info");
+  function handleShowCreateMemberUserInfo() {
+    userProgressStore.handleOpenModal("create-member-user-info");
   }
 
-  function handleShowUpdateFamilyUserInfo() {
-    userProgressStore.handleOpenModal("update-family-user-info");
-  }
+  //   function handleShowUpdateFamilyUserInfo() {
+  //     userProgressStore.handleOpenModal("update-family-user-info");
+  //   }
 
-  function handleShowDeleteFamilyUserInfo() {
-    userProgressStore.handleOpenModal("delete-family");
-  }
+  //   function handleShowDeleteFamilyUserInfo() {
+  //     userProgressStore.handleOpenModal("delete-family");
+  //   }
 
   return (
     <>
-      {!familyUserInfo.isExist && (
+      {!memberUserInfo.isExist && (
         <div id="login-user-info">
           <div className="not-found-family-user-info">
-            <h3>등록된 가족 모임 정보가 없습니다.</h3>
-            <button onClick={handleShowCreateFamilyUserInfo}>
-              가족 모임 생성
+            {!memberUserInfo.isExist && (
+              <h3>연결된 가족 모임 정보가 없습니다.</h3>
+            )}
+            <button onClick={handleShowCreateMemberUserInfo}>
+              가족 모임 연결
             </button>
           </div>
         </div>
       )}
-      {familyUserInfo.isExist && (
-        <>
-          <div className="login-user-info-header">
+      {memberUserInfo.isExist && (
+        <div>
+          <div id="login-user-info">
+            <button onClick={handleShowCreateMemberUserInfo}>
+              가족 모임 연결
+            </button>
+          </div>
+          <div>
+            {memberUserInfo.registerData.map((info) => {
+              return (
+                <div>
+                  <p>id: {info.id}</p>
+                  <p>family_id: {info.family_id}</p>
+                  <p>user_id: {info.user_id}</p>
+                  <p>{info.nickname}</p>
+                  <hr />
+                </div>
+              );
+            })}
+          </div>
+          {/* <div className="login-user-info-header">
             <h3>{familyUserInfo.familyInfo.family_name}네 모임 정보</h3>
             <button onClick={handleShowUpdateFamilyUserInfo}>
               가족 정보 수정
@@ -89,8 +109,8 @@ export default function FamilyUserInfo() {
               {loginUserInfo.userInfo.role === "sub" && <td>보조 사용자</td>}
               {!loginUserInfo.userInfo.role && <td>-</td>}
             </tr>
-          </table>
-        </>
+          </table> */}
+        </div>
       )}
     </>
   );

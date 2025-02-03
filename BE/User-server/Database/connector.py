@@ -42,8 +42,6 @@ class Database:
             bind=self.engine
         )
 
-        print("[DB] DB Engine created and ready to use!")
-
     # DB 연결을 위한 Pre Session을 반환하는 기능
     def get_pre_session(self):
         return self.pre_session

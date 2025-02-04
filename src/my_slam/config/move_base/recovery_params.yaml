@@ -13,16 +13,16 @@ recovery_behaviors:
 
 # recovery 세부 설정
 conservative_reset:
-  reset_distance: 4.0
+  reset_distance: 3.0
   layer_names: ["laser_scan"]
 
 backoff_slow:                      # 첫 번째 후진 파라미터
-  backoff_distance: 0.5    
-  vel: 1.0
+  backoff_distance: 0.2    
+  vel: 0.3
 
 backoff_fast:                      # 두 번째 후진 파라미터
-  backoff_distance: 1.0    
-  vel: 1.0
+  backoff_distance: 0.5    
+  vel: 0.3
 
 aggressive_reset:
   reset_distance: 0.0            

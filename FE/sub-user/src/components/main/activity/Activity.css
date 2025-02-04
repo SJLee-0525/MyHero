@@ -146,6 +146,7 @@ hr {
 
   background-color: #44803f;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -170,6 +171,7 @@ hr {
 
   background-color: #ff5a33;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 

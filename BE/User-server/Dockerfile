@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 COPY ./main.py /app/main.py
 COPY ./Database /app/Database
 COPY ./Endpoint /app/Endpoint
+COPY ./Routers /app/Routers
 COPY ./Utilities /app/Utilities
 
 # Set Run

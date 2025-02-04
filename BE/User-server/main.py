@@ -9,7 +9,7 @@ version : 0.4.2
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from Routers import accounts, families, members, authentication
+from Routers import accounts, families, members, authentication, status
 
 app = FastAPI()
 
@@ -40,3 +40,4 @@ app.include_router(accounts.router)
 app.include_router(families.router)
 app.include_router(members.router)
 app.include_router(authentication.router)
+app.include_router(status.router)

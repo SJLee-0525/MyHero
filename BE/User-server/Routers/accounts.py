@@ -61,7 +61,7 @@ async def check_email(email_check: EmailCheck):
         }
 
 # 새로운 계정을 생성하는 기능
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_account(account_data: Account):
     # 필수 입력 정보를 전달했는지 점검
     missing_location: list = ["body"]
@@ -182,7 +182,7 @@ async def create_account(account_data: Account):
         )
 
 # 모든 사용자 계정의 정보를 불러오는 기능
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 async def get_all_accounts(request_id: str = Depends(Database.check_current_user)):
     # 시스템 계정을 제외한 모든 사용자가 이 항목에 직접 접근 불가능
     request_data: dict = Database.get_one_account(request_id)

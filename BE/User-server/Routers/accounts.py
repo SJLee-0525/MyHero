@@ -223,8 +223,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "user_id": user_id,
-                    "request_id": request_id
+                    "user_id": user_id
                 }
             }
         )
@@ -259,7 +258,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             detail={
                 "type": "can not access",
                 "message": "You do not have permission",
-                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                "input": { "user_id": user_id, **jsonable_encoder(updated_account) }
             }
         )
 
@@ -272,7 +271,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             detail={
                 "type": "not found",
                 "message": "Account not found",
-                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                "input": { "user_id": user_id, **jsonable_encoder(updated_account) }
             }
         )
 
@@ -283,7 +282,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (role)",
-                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                "input": { "user_id": user_id, **jsonable_encoder(updated_account) }
             }
         )
     elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
@@ -292,7 +291,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (gender)",
-                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                "input": { "user_id": user_id, **jsonable_encoder(updated_account) }
             }
         )
 
@@ -305,7 +304,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
                 detail={
                     "type": "already exists",
                     "message": "Email is already in use",
-                    "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                    "input": { "user_id": user_id, **jsonable_encoder(updated_account) }
                 }
             )
 

@@ -98,6 +98,11 @@ export default function CreateFamily() {
         // 가족 모임 등록 성공
         alert("가족 모임 등록 성공");
         userProgressStore.handleCloseModal();
+
+        inputFamilyId.current.value = "";
+        inputName.current.value = "";
+        setFamilyIdChecked(false);
+
         navigate("/accounts");
       } else {
         console.error("가족 모임 등록 실패:", result.error);

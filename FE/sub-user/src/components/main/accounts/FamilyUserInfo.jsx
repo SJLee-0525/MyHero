@@ -6,7 +6,6 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function FamilyUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
-  const loginUserInfo = userProgressStore.loginUserInfo;
   const familyUserInfo = userProgressStore.familyInfo;
 
   function handleShowCreateFamilyUserInfo() {
@@ -34,63 +33,67 @@ export default function FamilyUserInfo() {
         </div>
       )}
       {familyUserInfo.isExist && (
-        <>
+        <div id="login-user-info">
           <div className="login-user-info-header">
-            <h3>{familyUserInfo.familyInfo.family_name}네 모임 정보</h3>
-            <button onClick={handleShowUpdateFamilyUserInfo}>
-              가족 정보 수정
-            </button>
-            <button onClick={handleShowDeleteFamilyUserInfo}>
-              가족 정보 삭제
-            </button>
+            <div>
+              <h3>{familyUserInfo.familyInfo.family_name}네 모임 정보</h3>
+              <p>등록 ID: {familyUserInfo.familyInfo.id}</p>
+            </div>
+            <div className="family-btn-container">
+              <button
+                className="update"
+                onClick={handleShowUpdateFamilyUserInfo}
+              >
+                가족 정보 수정
+              </button>
+              <button
+                className="delete"
+                onClick={handleShowDeleteFamilyUserInfo}
+              >
+                가족 정보 삭제
+              </button>
+            </div>
           </div>
-          <table>
-            <tr>
-              <td>이름</td>
-              <td>
-                {loginUserInfo.userInfo.user_name
-                  ? loginUserInfo.userInfo.user_name
-                  : "-"}
-              </td>
-            </tr>
-            <tr>
-              <td>성별</td>
-              {loginUserInfo.userInfo.gender === "male" && <td>남성</td>}
-              {loginUserInfo.userInfo.gender === "female" && <td>여성</td>}
-              {!loginUserInfo.userInfo.gender && <td>-</td>}
-            </tr>
-            <tr>
-              <td>생년월일</td>
-              <td>
-                {loginUserInfo.userInfo.birth_date
-                  ? loginUserInfo.userInfo.birth_date
-                  : "-"}
-              </td>
-            </tr>
-            <tr>
-              <td>거주지</td>
-              <td>
-                {loginUserInfo.userInfo.address
-                  ? loginUserInfo.userInfo.address
-                  : "-"}
-              </td>
-            </tr>
-            <tr>
-              <td>가입 이메일</td>
-              <td>
-                {loginUserInfo.userInfo.email
-                  ? loginUserInfo.userInfo.email
-                  : "-"}
-              </td>
-            </tr>
-            <tr>
-              <td>역할</td>
-              {loginUserInfo.userInfo.role === "main" && <td>주 사용자</td>}
-              {loginUserInfo.userInfo.role === "sub" && <td>보조 사용자</td>}
-              {!loginUserInfo.userInfo.role && <td>-</td>}
-            </tr>
-          </table>
-        </>
+          <div>
+            <div className="family-container">
+              {familyUserInfo.familyMember &&
+                familyUserInfo.familyMember.length === 0 && (
+                  <h3>가족 모임에 등록된 멤버가 없습니다.</h3>
+                )}
+              {familyUserInfo.familyMember &&
+                familyUserInfo.familyMember.length > 0 && (
+                  <>
+                    <h3>
+                      총 {familyUserInfo.familyMember.length}명의 구성원이
+                      등록되어 있습니다.
+                    </h3>
+                    {familyUserInfo.familyMember.map((member) => (
+                      <div key={member.id}>
+                        <div className="member-container">
+                          <table>
+                            <tbody>
+                              <tr>
+                                <td>유저 ID</td>
+                                <td>{member.user_id}</td>
+                              </tr>
+                              <tr>
+                                <td>등록 닉네임</td>
+                                <td>{member.nickname}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                          <div className="member-btn-container">
+                            <button className="delete">추방</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                )}
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

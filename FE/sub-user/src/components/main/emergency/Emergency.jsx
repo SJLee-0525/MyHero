@@ -1,16 +1,16 @@
 import "./Emergency.css";
 
-import { useState, useContext } from "react";
+import { useContext } from "react";
 
 import PageContainer from "../container/PageContainer.jsx";
 import EmergencyAlert from "./EmergencyAlert.jsx";
 import EmergencyLog from "./EmergencyLog.jsx";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx";
+// import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import { EmergencyContext } from "../../../store/emergencyStore.jsx";
 
 export default function Emergency() {
-  const userProgressStore = useContext(UserProgressContext);
+  // const userProgressStore = useContext(UserProgressContext);
   const emergencyStore = useContext(EmergencyContext);
 
   return (

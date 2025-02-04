@@ -1,7 +1,6 @@
 import "./Accounts.css";
 
-import { useRef, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
@@ -17,6 +16,8 @@ import Signout from "./Signout.jsx";
 import UpdateFamily from "./UpdateFamily.jsx";
 import DeleteFamily from "./DeleteFamily.jsx";
 import CreateMember from "./CreateMember.jsx";
+import UpdateMember from "./UpdateMember.jsx";
+import DeleteMember from "./DeleteMember.jsx";
 
 export default function UserInfo() {
   const userProgressStore = useContext(UserProgressContext);
@@ -36,7 +37,7 @@ export default function UserInfo() {
 
   if (!loginUserInfo.login) return null;
 
-  console.log(loginUserInfo);
+  // console.log(loginUserInfo);
 
   return (
     <PageContainer title="유저 정보">
@@ -70,13 +71,15 @@ export default function UserInfo() {
           loginUserInfo.userInfo.role === "sub" && <MemberUserInfo />}
 
         <p className="login-form-action">
-          <button className="logout-btn" onClick={handleLogout}>
-            Log Out
-          </button>
+          <div className="danger-zone">
+            <button className="logout-btn" onClick={handleLogout}>
+              Log Out
+            </button>
 
-          <button className="logout-btn" onClick={handleShowSignOut}>
-            회원 탈퇴
-          </button>
+            <button className="logout-btn" onClick={handleShowSignOut}>
+              회원 탈퇴
+            </button>
+          </div>
         </p>
       </div>
       <UpdateUserInfo />
@@ -85,6 +88,8 @@ export default function UserInfo() {
       <UpdateFamily />
       <DeleteFamily />
       <CreateMember />
+      <UpdateMember />
+      <DeleteMember />
     </PageContainer>
   );
 }

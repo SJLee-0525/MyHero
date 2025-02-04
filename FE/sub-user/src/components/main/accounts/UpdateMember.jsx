@@ -7,7 +7,7 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import Modal from "../../modal/Modal.jsx";
 
-export default function CreateFamily() {
+export default function UpdateMember() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
@@ -15,10 +15,10 @@ export default function CreateFamily() {
 
   const inputName = useRef("");
 
-  async function handleCreateFamily(event) {
+  async function handleUpdateMember(event) {
     event.preventDefault();
 
-    // 가족 이름 유효성 검사
+    // 닉네임 유효성 검사
     const invalid = inputName.current.value.length < 2;
     if (invalid) {
       setNameIsInvalid(true);
@@ -27,25 +27,18 @@ export default function CreateFamily() {
       setNameIsInvalid(false);
     }
 
-    // 입력받은 데이터 객체화
-    const payload = {
-      main_user: userProgressStore.loginUserInfo.userInfo.id,
-      family_name: inputName.current.value,
-    };
-
     try {
-      const result = await userProgressStore.handleCreateFamily(payload);
+      const result = await userProgressStore.handleUpdateMember(
+        inputName.current.value
+      );
       if (result.success === true) {
-        // 가족 생성 성공
-        alert("가족 모임 생성 성공");
-
+        // 닉네임 수정 성공
+        alert("닉네임 수정 성공");
         userProgressStore.handleCloseModal();
-
         inputName.current.value = "";
-
         navigate("/accounts");
       } else {
-        console.error("가족 모임 생성 실패:", result.error);
+        console.error("닉네임 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
         );
@@ -58,30 +51,30 @@ export default function CreateFamily() {
 
   return (
     <Modal
-      open={userProgressStore.modalProgress === "create-family-user-info"}
+      open={userProgressStore.modalProgress === "update-member-user-info"}
       onClose={
-        userProgressStore.modalProgress === "create-family-user-info"
+        userProgressStore.modalProgress === "update-member-user-info"
           ? userProgressStore.handleCloseModal
           : null
       }
     >
       <div id="signup-form">
         <div className="signup-header">
-          <h2>가족 모임 생성</h2>
+          <h2>닉네임 정보 수정 {userProgressStore.selectedModalId}</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>
         </div>
         <p className="signup-control">
-          <label htmlFor="text">가족 모임 이름</label>
+          <label htmlFor="text">닉네임</label>
           <input type="text" ref={inputName} />
           {nameIsInvalid && (
             <div className="signup-control-error">
-              <p>가족 모임 이름은 2글자 이상이어야 합니다.</p>
+              <p>닉네임은 2글자 이상이어야 합니다.</p>
             </div>
           )}
-          <button className="signup-btn" onClick={handleCreateFamily}>
-            모임 생성
+          <button className="signup-btn" onClick={handleUpdateMember}>
+            수정
           </button>
         </p>
       </div>

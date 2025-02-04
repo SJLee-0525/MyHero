@@ -7,7 +7,7 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import Modal from "../../modal/Modal.jsx";
 
-export default function DeleteFamily() {
+export default function DeleteMember() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
 
@@ -16,7 +16,7 @@ export default function DeleteFamily() {
   const inputPassword = useRef("");
 
   // 가족 삭제 로직
-  async function handleDeleteFamily() {
+  async function handleDeleteMember() {
     // 비밀번호 유효성 검사
     const inputIsInvalid = inputPassword.current.value.length < 8;
     if (inputIsInvalid) {
@@ -25,7 +25,7 @@ export default function DeleteFamily() {
     }
 
     try {
-      const result = await userProgressStore.handleDeleteFamilyInfo(
+      const result = await userProgressStore.handleDeleteMember(
         inputPassword.current.value
       );
 
@@ -33,9 +33,7 @@ export default function DeleteFamily() {
         // 가족 삭제 성공
         alert("가족 모임 삭제 성공");
         userProgressStore.handleCloseModal();
-
         inputPassword.current.value = "";
-
         navigate("/accounts");
       } else {
         console.error("가족 모임 삭제 실패:", result.error);
@@ -51,15 +49,15 @@ export default function DeleteFamily() {
 
   return (
     <Modal
-      open={userProgressStore.modalProgress === "delete-family"}
+      open={userProgressStore.modalProgress === "delete-member"}
       onClose={
-        userProgressStore.modalProgress === "delete-family"
+        userProgressStore.modalProgress === "delete-member"
           ? userProgressStore.handleCloseModal
           : null
       }
     >
       <div className="signup-header">
-        <h2>가족 모임 삭제</h2>
+        <h2>연결된 가족 모임 삭제 {userProgressStore.selectedModalId}</h2>
         <button type="button" onClick={userProgressStore.handleCloseModal}>
           X
         </button>
@@ -72,8 +70,8 @@ export default function DeleteFamily() {
             <p>비밀번호는 8자 이상입니다.</p>{" "}
           </div>
         )}
-        <button className="logout-btn" onClick={handleDeleteFamily}>
-          모임 삭제
+        <button className="logout-btn" onClick={handleDeleteMember}>
+          연결 해제
         </button>
       </p>
     </Modal>

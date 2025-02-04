@@ -21,7 +21,7 @@
         
         <!-- Move Base 파라미터 -->
         <param name="controller_frequency" value="10.0" />
-        <param name="controller_patience" value="5.0" />    <!-- 유효한 제어 명령 대기 시간-->
+        <param name="controller_patience" value="1.5" />    <!-- 유효한 제어 명령 대기 시간-->
         <param name="shutdown_costmaps" value="false" />    
         <param name="base_global_planner" value="navfn/NavfnROS"/>
         <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>

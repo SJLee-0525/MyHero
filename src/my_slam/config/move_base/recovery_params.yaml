@@ -1,14 +1,28 @@
 recovery_behaviors:
   - name: 'conservative_reset'    
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
-
+  
+  - name: 'backoff_slow'           # 첫 번째 후진 시도 (천천히)
+    type: 'backoff_recovery/BackoffRecovery'
+  
   - name: 'aggressive_reset'      
     type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+  - name: 'backoff_fast'           # 두 번째 후진 시도 (빠르게)
+    type: 'backoff_recovery/BackoffRecovery'
 
 # recovery 세부 설정
 conservative_reset:
   reset_distance: 4.0
   layer_names: ["laser_scan"]
+
+backoff_slow:                      # 첫 번째 후진 파라미터
+  backoff_distance: 0.5    
+  vel: 1.0
+
+backoff_fast:                      # 두 번째 후진 파라미터
+  backoff_distance: 1.0    
+  vel: 1.0
 
 aggressive_reset:
   reset_distance: 0.0            

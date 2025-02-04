@@ -10,4 +10,4 @@ global_costmap:
   rolling_window: true           # 글로벌도 rolling_window 사용
   width: 50.0
   height: 50.0
-  resolution: 0.05
+  resolution: 0.02

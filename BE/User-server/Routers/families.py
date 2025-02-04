@@ -5,7 +5,7 @@
 Parts of Families
 """
 
-# Libarary
+# Library
 from fastapi import HTTPException, APIRouter, status
 from fastapi.encoders import jsonable_encoder
 

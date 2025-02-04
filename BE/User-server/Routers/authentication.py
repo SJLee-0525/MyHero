@@ -6,7 +6,7 @@ Parts of Members
 """
 
 # Libarary
-from fastapi import HTTPException, APIRouter, status, Response, Request
+from fastapi import HTTPException, APIRouter, status, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
 import Database
@@ -35,21 +35,21 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 # 사용자가 로그인하는 기능
 @router.post("/login", status_code=status.HTTP_200_OK)
 async def login(response: Response, login_data: Login):
-    # 필요한 정보가 입력되었는지 확인
+    # 필요한 정보가 입력되었는지 확인 (ver2)
     if login_data.email is None or login_data.email == "" or \
             login_data.password is None or login_data.password == "":
-        location: list = ["body"]
+        missing_location: list = ["body"]
 
         if login_data.email is None or login_data.email == "":
-            location.append("email")
+            missing_location.append("email")
         if login_data.password is None or login_data.password == "":
-            location.append("password")
+            missing_location.append("password")
 
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
-                "loc": location,
+                "loc": missing_location,
                 "message": "Login data is required",
                 "input": {"email": login_data.email, "password": "<PASSWORD>"}
             }
@@ -161,3 +161,110 @@ async def logout(request: Request, response: Response):
     return {
         "message": "Logout successful"
     }
+
+# 사용자의 비밀번호를 변경하는 기능
+@router.patch("/change-password", status_code=status.HTTP_200_OK)
+async def change_password(change_password_data: ChangePassword, request_id = Depends(Database.check_current_user)):
+    target_user_id: str = change_password_data.user_id
+
+    # 필수 입력 정보를 입력했는지 점검 (ver3) -> 다른 부분도 이것으로 변경할 예정
+    missing_location: list = ["body"]
+
+    if change_password_data.user_id is None or change_password_data.user_id == "":
+        missing_location.append("user_id")
+    if change_password_data.current_password is None or change_password_data.current_password == "":
+        missing_location.append("current_password")
+    if change_password_data.new_password is None or change_password_data.new_password == "":
+        missing_location.append("new_password")
+
+    if len(missing_location) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Change password data is required",
+                "input": {
+                    "user_id": target_user_id,
+                    "current_password": "<PASSWORD>",
+                    "new_password": "<PASSWORD>"
+                }
+            }
+        )
+
+    # 시스템 계정을 제외한 사용자는 자신의 계정 비밀번호만 변경할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and target_user_id != request_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": {
+                    "user_id": change_password_data.user_id,
+                    "current_password": "<PASSWORD>",
+                    "new_password": "<PASSWORD>"
+                }
+            }
+        )
+
+    # 존재하는 사용자인지 확인
+    user_data: dict = Database.get_one_account(target_user_id)
+
+    if not user_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "User not found",
+                "input": {
+                    "user_id": target_user_id,
+                    "current_password": "<PASSWORD>",
+                    "new_password": "<PASSWORD>"
+                }
+            }
+        )
+
+    if request_data["role"] is not Role.SYSTEM:
+        # 현재 비밀번호 검증
+        input_current_password: str = change_password_data.current_password
+        hashed_current_password: str = Database.get_hashed_password(target_user_id)
+        is_verified_current: bool = verify_password(input_current_password, hashed_current_password)
+
+        if not is_verified_current:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "type": "unauthorized",
+                    "message": "Invalid password",
+                    "input": {
+                        "user_id": target_user_id,
+                        "current_password": "<PASSWORD>",
+                        "new_password": "<PASSWORD>"
+                    }
+                }
+            )
+
+    # 새로운 비밀번호로 설정
+    new_password: str = change_password_data.new_password
+    hashed_new_password: str = hash_password(new_password)
+    result: bool = Database.change_password(target_user_id, hashed_new_password)
+
+    if result:
+        return {
+            "message": "Password changed successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to change password",
+                "input": {
+                    "user_id": target_user_id,
+                    "current_password": "<PASSWORD>",
+                    "new_password": "<PASSWORD>"
+                }
+            }
+        )

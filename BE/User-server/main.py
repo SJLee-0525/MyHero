@@ -9,7 +9,7 @@ version : 0.4.2
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from Routers import accounts, families, members
+from Routers import accounts, families, members, authentication
 
 app = FastAPI()
 
@@ -39,3 +39,4 @@ app.add_middleware(  # type: ignore
 app.include_router(accounts.router)
 app.include_router(families.router)
 app.include_router(members.router)
+app.include_router(authentication.router)

@@ -203,12 +203,13 @@ async def get_all_accounts():
 async def get_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
     request_data: dict = Database.get_one_account(request_id)
 
+    # 시스템 계정을 제외한 사용자는 자신의 계정 정보만 불러올 수 있음
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "type": "can not access",
-                "message": "You do not have access to this account",
+                "message": "You do not have permission",
                 "input": {
                     "user_id": user_id,
                     "request_id": request_id

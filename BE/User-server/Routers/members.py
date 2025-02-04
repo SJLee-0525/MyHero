@@ -21,7 +21,7 @@ router = APIRouter(prefix="/members", tags=["Members"])
 # ========== Member 부분 ==========
 
 # 새로운 가족 관계를 생성하는 기능
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_member(member_data: Member):
     # 필수 입력 정보 점검 (Family ID and User ID)
     if member_data.family_id is None or member_data.family_id == "":
@@ -122,7 +122,7 @@ async def create_member(member_data: Member):
         )
 
 # 조건에 따른 모든 가족 관계 정보 불러오는 기능
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 async def get_all_members(
         familyId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
         userId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):

@@ -54,7 +54,7 @@ async def check_family_from_main_id(family_check: IDCheck):
         }
 
 # 주 사용자를 기반으로 새로운 가족을 생성하는 기능
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_family(family_data: Family):
     # 필수 입력 정보 점검 (Main User)
     if family_data.main_user is None or family_data.main_user == "":
@@ -132,7 +132,7 @@ async def create_family(family_data: Family):
         )
 
 # 모든 가족의 정보를 불러오는 기능
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("", status_code=status.HTTP_200_OK)
 async def get_all_families():
     family_list: list = Database.get_all_families()
 

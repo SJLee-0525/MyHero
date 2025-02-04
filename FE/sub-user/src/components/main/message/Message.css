@@ -161,4 +161,6 @@
 
   border: 0;
   border-radius: 0px 8px 8px 0px;
+
+  cursor: pointer;
 }

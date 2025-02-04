@@ -113,6 +113,7 @@
 
   padding: 5px;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -181,11 +182,15 @@
   width: 100%;
 }
 
-#public-emergency-notifications .public-emergency-notification-footer .public-emergency-notification-loc {
+#public-emergency-notifications
+  .public-emergency-notification-footer
+  .public-emergency-notification-loc {
   margin: 0;
 }
 
-#public-emergency-notifications .public-emergency-notification-footer .public-emergency-notification-date {
+#public-emergency-notifications
+  .public-emergency-notification-footer
+  .public-emergency-notification-date {
   margin: 0;
 }
 

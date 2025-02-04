@@ -114,6 +114,8 @@
 
   font-weight: bold;
   color: white;
+
+  cursor: pointer;
 }
 
 #emergency-alert-box .button-container .report {
@@ -166,6 +168,8 @@
 
   font-weight: bold;
   color: white;
+
+  cursor: pointer;
 }
 
 #emergency-alert-box .widget-button-container .report {
@@ -234,9 +238,15 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -256,9 +266,15 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -405,6 +421,7 @@
 
   background: white;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 

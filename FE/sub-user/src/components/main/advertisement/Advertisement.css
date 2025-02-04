@@ -46,6 +46,7 @@
 
   background: white;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -147,9 +148,9 @@
   color: #ff5a33;
 
   font-size: larger;
-
   text-align: center;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 

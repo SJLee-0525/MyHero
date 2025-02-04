@@ -13,7 +13,12 @@ h5 {
   border-radius: 0px 10px 10px 0px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(163, 163, 163, 0.2) 97.65%
+    ),
+    rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
 
@@ -40,6 +45,8 @@ h5 {
 
 .side-nav-elems {
   padding-left: 6px;
+
+  cursor: pointer;
 }
 
 #side-bar:hover .side-nav-elems {
@@ -57,6 +64,8 @@ h5 {
   border: 0;
   border-radius: 12px;
   background: transparent;
+
+  cursor: pointer;
 }
 
 #side-bar:hover .side-nav-elem {
@@ -72,6 +81,7 @@ h5 {
   border-radius: 12px;
   background: transparent;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -88,7 +98,12 @@ h5 {
   border-radius: 12px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(163, 163, 163, 0.2) 97.65%
+    ),
+    rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
@@ -111,6 +126,7 @@ h5 {
 
   font-weight: bold;
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -128,6 +144,7 @@ h5 {
   background: #ff9500;
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
 
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 
@@ -141,6 +158,8 @@ h5 {
 
   transition: none; /* 아이콘에 애니메이션 없음 */
   flex-shrink: 0; /* 사이드바 크기가 변해도 아이콘 크기 고정 */
+
+  cursor: pointer;
 }
 
 #side-bar:hover .side-nav-icon {
@@ -181,7 +200,12 @@ h5 {
   padding: 0 20px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(163, 163, 163, 0.2) 97.65%
+    ),
+    rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
   color: white;
@@ -212,7 +236,12 @@ h5 {
   width: 300px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(163, 163, 163, 0.2) 97.65%
+    ),
+    rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
 
@@ -304,7 +333,12 @@ h5 {
   border: 0;
   border-radius: 12px;
 
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
 }
 

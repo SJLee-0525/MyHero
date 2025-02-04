@@ -22,11 +22,13 @@ import os
 from dotenv import load_dotenv
 from typing import Literal
 
-# 개발 서버 여부 확인
+# 개발 및 배포 서버 여부 확인
 load_dotenv()
 isDev: bool = bool(int(os.getenv("IS_DEV", 0)))
-SECURE_SET: bool = not isDev
-SAME_SET: Literal["lax", "strict", "none"] = "lax" if isDev else "none"
+isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
+SECURE_SET: bool = True
+SAME_SET: Literal["lax", "strict", "none"] = "none"
+DOMAIN_SET: str = ".itdice.net" if isDeploy else None
 
 app = FastAPI()
 
@@ -1012,7 +1014,14 @@ async def login(response: Response, login_data: Login):
         )
 
     # 식별용 쿠키 설정
-    response.set_cookie("session_id", new_xid, httponly=True, secure=SECURE_SET, samesite=SAME_SET)
+    response.set_cookie(
+        key="session_id",
+        value=new_xid,
+        httponly=True,
+        secure=SECURE_SET,
+        samesite=SAME_SET,
+        domain=DOMAIN_SET,
+    )
 
     return {
         "message": "Login successful",

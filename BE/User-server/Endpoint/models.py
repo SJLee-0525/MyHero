@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-Body Data Blocks
+Endpoint Data Models
 """
 
 # Library
@@ -69,3 +69,11 @@ class Login(BaseModel):
     """
     email: Optional[str] = None  # 로그인에 사용할 이메일 주소
     password: Optional[str] = None  # 로그인에 사용할 비밀번호
+
+class ChangePassword(BaseModel):
+    """
+    사용자의 비밀번호를 변경하기 위해서 client가 보내는 데이터
+    """
+    user_id: Optional[str] = None  # 사용자의 ID
+    current_password: Optional[str] = None  # 기존의 비밀번호
+    new_password: Optional[str] = None  # 새로운 비밀번호

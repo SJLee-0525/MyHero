@@ -39,5 +39,6 @@ from .members import (
 from .authentication import (
     create_session,
     delete_session,
-    check_current_user
+    check_current_user,
+    change_password
 )

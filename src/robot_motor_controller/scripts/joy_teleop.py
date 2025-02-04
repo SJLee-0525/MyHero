@@ -25,7 +25,7 @@ class JoyTeleop:
         self.cmd_vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
         rospy.Subscriber('joy', Joy, self.joy_callback)
         rospy.loginfo("Joy Teleop Ready!")
-        self.publish_rate = rospy.Rate(20)  # 20Hz로 publish
+        self.publish_rate = rospy.Rate(10)  # 10Hz로 publish
         self.manual_mode = False  # 수동 모드 플래그
         self.mode_button = rospy.get_param('~mode_button', 0)  # A버튼을 모드 전환으로 사용
         
@@ -35,22 +35,25 @@ class JoyTeleop:
 
     def run(self):
         while not rospy.is_shutdown():
-            # 마지막 조향값으로 계속 publish
-            twist = Twist()
-            twist.linear.x = self.scale_linear * self.forward  # forward 값 저장 필요
-            twist.angular.z = self.last_steering
-            self.cmd_vel_pub.publish(twist)
+            # manual 모드일 때만 publish
+            if self.manual_mode:
+                twist = Twist()
+                twist.linear.x = self.scale_linear * self.forward
+                twist.angular.z = self.scale_angular * self.last_steering
+                self.cmd_vel_pub.publish(twist)
             self.publish_rate.sleep()
 
     def joy_callback(self, joy_msg):
         # 모드 전환 버튼 확인
-        if joy_msg.buttons[self.mode_button] == 1:  # 버튼이 눌렸을 때
+        if joy_msg.buttons[self.mode_button] == 1:
             self.manual_mode = not self.manual_mode
             if self.manual_mode:
-                # 자율주행 취소
                 self.move_base_client.cancel_all_goals()
                 rospy.loginfo("Manual Control Mode")
             else:
+                # autonomous 모드 전환시 값 초기화
+                self.forward = 0.0
+                self.last_steering = 0.0
                 rospy.loginfo("Autonomous Mode")
                 
         # 수동 모드일 때만 조이스틱 입력 처리
@@ -72,7 +75,7 @@ class JoyTeleop:
             else:
                 self.last_steering = 0.0
                 
-            twist.angular.z = self.last_steering
+            twist.angular.z = self.scale_angular * self.last_steering
             self.cmd_vel_pub.publish(twist)
         else:
             twist = Twist()
@@ -91,7 +94,7 @@ class JoyTeleop:
                 self.last_steering = 0.0  # 중립 복귀
         
             # 정지 상태에서도 조향각 유지
-            twist.angular.z = self.last_steering
+            twist.angular.z = self.scale_angular * self.last_steering
         
             self.cmd_vel_pub.publish(twist)
         

@@ -31,6 +31,7 @@ export const UserProgressContext = createContext({
   setLoginUserInfo: () => {},
   setFamilyInfo: () => {},
   setMemberInfo: () => {},
+  handleUpdateSessionLoginInfo: (userInfo) => {},
   handleActiveSideBarElem: (identifier) => {},
   handleToggleStatus: (toggle) => {},
   handleSidebarToggle: () => {},
@@ -88,19 +89,31 @@ export default function UserProgressContextProvider({ children }) {
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
-    const storedUserInfo = localStorage.getItem("loginUserInfo");
-    const storedActiveSideBarElem = localStorage.getItem("isActiveSideBarElem");
+    const storedUserInfo = sessionStorage.getItem("loginUserInfo");
 
-    try {
-      if (storedUserInfo) {
+    console.log("storedUserInforodtls:", storedUserInfo);
+    const storedActiveSideBarElem = sessionStorage.getItem(
+      "isActiveSideBarElem"
+    );
+
+    if (storedUserInfo) {
+      try {
+        const parsedUserInfo = JSON.parse(storedUserInfo);
+
         setLoginUserInfo({
           login: true,
-          userInfo: JSON.parse(storedUserInfo),
+          userInfo: parsedUserInfo.userInfo,
         });
+
+        // 사용자 정보 최신화
+        handleGetUserInfo(parsedUserInfo.userInfo.id);
+      } catch (error) {
+        console.error(
+          "Error parsing loginUserInfo from sessionStorage:",
+          error
+        );
+        sessionStorage.removeItem("loginUserInfo"); // 손상된 데이터 제거
       }
-    } catch (error) {
-      console.error("Error parsing loginUserInfo from localStorage:", error);
-      localStorage.removeItem("loginUserInfo"); // 데이터 손상 시 제거
     }
 
     try {
@@ -109,12 +122,31 @@ export default function UserProgressContextProvider({ children }) {
       }
     } catch (error) {
       console.error(
-        "Error parsing isActiveSideBarElem from localStorage:",
+        "Error parsing isActiveSideBarElem from sessionStorage:",
         error
       );
-      localStorage.removeItem("isActiveSideBarElem"); // 데이터 손상 시 제거
+      sessionStorage.removeItem("isActiveSideBarElem"); // 데이터 손상 시 제거
     }
   }, []);
+
+  // loginUserInfo가 업데이트된 후에 handleCheckFamilyList 호출
+  // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
+  // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
+  useEffect(() => {
+    try {
+      if (!loginUserInfo.login) return;
+
+      if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+        if (loginUserInfo.userInfo.role === "main") {
+          handleCheckFamilyExist(loginUserInfo.userInfo.id);
+        } else if (loginUserInfo.userInfo.role === "sub") {
+          handleCheckFamilyList();
+        }
+      }
+    } catch (error) {
+      console.error("Error checking family list:", error);
+    }
+  }, [loginUserInfo]);
 
   // ======================================================================
   // env 관련
@@ -130,10 +162,20 @@ export default function UserProgressContextProvider({ children }) {
   if (MAIN_KEY === undefined) MAIN_KEY = getEnvironments("MAIN_KEY");
   // ======================================================================
 
+  function handleUpdateSessionLoginInfo(userInfo) {
+    setLoginUserInfo({
+      login: userInfo.login,
+      userInfo: userInfo.userInfo,
+    });
+
+    // 로그인 정보 저장
+    sessionStorage.setItem("loginUserInfo", JSON.stringify(userInfo));
+  }
+
   // 사이드 바 요소 활성화
   function handleActiveSideBarElem(identifier) {
     setIsActiveSideBarElem(identifier);
-    localStorage.setItem("isActiveSideBarElem", identifier); // 활성화된 요소 저장
+    sessionStorage.setItem("isActiveSideBarElem", identifier); // 활성화된 요소 저장
 
     setSidebarIsOpened(false); // 모바일 환경일 경우 사이드 바 닫음
   }
@@ -165,7 +207,7 @@ export default function UserProgressContextProvider({ children }) {
     try {
       const response = await fetch(`${DEV_API_URL}/auth/login`, {
         method: "POST",
-        credentials: "include",  // 로그인을 시도할때나 정보를 요청할때 모두 추가해야함
+        credentials: "include", // 로그인을 시도할때나 정보를 요청할때 모두 추가해야함
         body: JSON.stringify({ email, password }),
         headers: {
           "Content-Type": "application/json",
@@ -178,18 +220,10 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "Login successful") {
           console.log("로그인 성공");
 
-          // 로그인 성공 시 session_id 저장
-          // sessionStorage.setItem("session_id", resData.result.session_id);
-
-          // 로그인 후 쿠키 저장
-          // document.cookie = `session_id=${resData.result.session_id}; path=/; Secure; SameSite=Strict`;
-
           // 로그인 정보 저장
-          const userInfo = resData.result.user_data;
-
-          setLoginUserInfo({
+          handleUpdateSessionLoginInfo({
             login: true,
-            userInfo: userInfo,
+            userInfo: resData.result.user_data,
           });
 
           return { success: true, data: resData };
@@ -216,67 +250,42 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
-  // loginUserInfo가 업데이트된 후에 handleCheckFamilyList 호출
-  // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
-  // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
-  useEffect(() => {
-    if (loginUserInfo.login && loginUserInfo.userInfo.id) {
-      handleCheckFamilyList();
-    }
-  }, [loginUserInfo]);
-
   // 최신 회원 정보 조회
   async function handleGetUserInfo(id) {
-    // API 요청 시 session_id 추가
-    const sessionId = sessionStorage.getItem("session_id");
-
     try {
       const response = await fetch(
         `${DEV_API_URL}/accounts/${encodeURIComponent(id)}`,
         {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionId}`,
-          },
+          headers: { "Content-Type": "application/json" },
           credentials: "include", // 쿠키 자동 전송
         }
       );
 
       const resData = await response.json();
+      console.log("회원 정보 조회 응답:", resData);
 
       if (response.ok) {
-        if (resData.message === "Account updated successfully") {
-          console.log("회원 정보 조회 성공");
-          setLoginUserInfo({
-            login: true,
-            userInfo: {
-              id: resData.result.id,
-              email: resData.result.email,
-              role: resData.result.role,
-              user_name: resData.result.user_name,
-              birth_date: resData.result.birth_date,
-              gender: resData.result.gender,
-              address: resData.result.address,
-            },
-          });
-          return { success: true, data: resData };
-        }
+        console.log("회원 정보 조회 성공");
+
+        handleUpdateSessionLoginInfo({
+          login: true,
+          userInfo: resData.result, // 전체 result 객체 저장
+        });
+
+        return { success: true, data: resData };
       } else {
-        // 서버에서 반환된 에러 정보 처리
-        console.error("에러 유형:", resData.detail.type);
-        console.error("에러 메시지:", resData.detail.message);
+        console.error("회원 정보 조회 실패:", resData.detail);
         return {
           success: false,
           error: {
-            type: resData.detail.type,
-            message: resData.detail.message,
-            input: resData.detail.input,
+            type: resData.detail?.type || "unknown_error",
+            message: resData.detail?.message || "알 수 없는 오류 발생",
+            input: resData.detail?.input,
           },
         };
       }
     } catch (error) {
-      // 네트워크 오류 처리
       console.error("네트워크 오류 또는 기타 예외:", error);
       return {
         success: false,
@@ -314,7 +323,7 @@ export default function UserProgressContextProvider({ children }) {
           });
 
           // 로컬 스토리지에서 로그인 정보 삭제
-          localStorage.removeItem("loginUserInfo");
+          sessionStorage.removeItem("loginUserInfo");
 
           // 세션에서 session_id 삭제
           sessionStorage.removeItem("session_id");
@@ -332,7 +341,7 @@ export default function UserProgressContextProvider({ children }) {
           setSidebarIsOpened(false);
 
           // 기기 활성화 요소 초기화
-          localStorage.removeItem("isActiveSideBarElem");
+          sessionStorage.removeItem("isActiveSideBarElem");
         }
       } else {
         console.error("로그아웃 실패:", resData.detail.message);
@@ -344,11 +353,6 @@ export default function UserProgressContextProvider({ children }) {
 
   // 이메일 중복 확인
   async function handleCheckEmail(email) {
-    ///디버깅
-    // console.log("Email value before sending request:", email);
-    // console.log("DEV_API_URL:", DEV_API_URL);
-    // console.log("import.meta.env.VITE_DEV_API:", import.meta.env.VITE_DEV_API);
-
     try {
       const response = await fetch(`${DEV_API_URL}/accounts/check-email`, {
         method: "POST",
@@ -439,55 +443,52 @@ export default function UserProgressContextProvider({ children }) {
       };
     }
 
-    // // API 요청 시 session_id 추가
-    const sessionId = sessionStorage.getItem("session_id");
-
     try {
       const response = await fetch(
         `${DEV_API_URL}/accounts/${loginUserInfo.userInfo.id}`,
         {
           method: "PATCH",
           body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionId}`,
-          },
-          credentials: "include", // 쿠키 자동 전송
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         }
       );
 
       const resData = await response.json();
 
-      if (response.ok) {
-        if (resData.message === "Account updated successfully") {
-          console.log("회원 정보 수정 성공");
+      if (response.ok && resData.message === "Account updated successfully") {
+        console.log("회원 정보 수정 성공, 최신 정보 조회 시작");
 
-          // 최신 회원 정보 갱신
-          console.log(
-            "세션 스토리지 데이터:",
-            sessionStorage.getItem("session_id")
-          ); // sessionStorage 확인
-          console.log("쿠키 데이터:", document.cookie); // 쿠키에 저장된 내용 확인
+        // 최신 회원 정보 가져오기
+        const updatedUser = await handleGetUserInfo(loginUserInfo.userInfo.id);
+        console.log("최신 회원 정보 응답:", updatedUser);
 
-          handleGetUserInfo(loginUserInfo.userInfo.id);
-
-          return { success: true, data: resData };
+        if (!updatedUser || !updatedUser.success) {
+          console.error("회원 정보 갱신 실패:", updatedUser);
+          return { success: false, error: { message: "회원 정보 조회 실패" } };
         }
+
+        // 상태 업데이트
+        const newUserInfo = {
+          login: true,
+          userInfo: updatedUser.data.result,
+        };
+        setLoginUserInfo(newUserInfo);
+        sessionStorage.setItem("loginUserInfo", JSON.stringify(newUserInfo));
+
+        return { success: true, data: resData };
       } else {
-        // 서버에서 반환된 에러 정보 처리
-        console.error("에러 유형:", resData.detail.type);
-        console.error("에러 메시지:", resData.detail.message);
+        console.error("에러 유형:", resData.detail?.type);
+        console.error("에러 메시지:", resData.detail?.message);
         return {
           success: false,
           error: {
-            type: resData.detail.type,
-            message: resData.detail.message,
-            input: resData.detail.input,
+            type: resData.detail?.type,
+            message: resData.detail?.message,
           },
         };
       }
     } catch (error) {
-      // 네트워크 오류 처리
       console.error("네트워크 오류 또는 기타 예외:", error);
       return {
         success: false,
@@ -575,14 +576,14 @@ export default function UserProgressContextProvider({ children }) {
           console.log("가족 존재함");
 
           // 가족 정보 조회
-          const familyId = resData.result.family_id;
-          handleGetFamilyInfo(familyId);
+          // const familyId = resData.result.family_id;
+          handleGetFamilyInfo(resData.result.family_id);
 
           return { success: true, data: resData };
-        } else {
-          console.log("가족 존재하지 않음");
-          return { success: false, data: resData };
         }
+      } else {
+        console.log("가족 모임 존재하지 않음");
+        return { success: false, data: resData };
       }
     } catch (error) {
       console.error("네트워크 오류 또는 기타 예외:", error);
@@ -937,6 +938,7 @@ export default function UserProgressContextProvider({ children }) {
     setLoginUserInfo,
     setFamilyInfo,
     setMemberInfo,
+    handleUpdateSessionLoginInfo,
     handleActiveSideBarElem,
     handleToggleStatus,
     handleSidebarToggle,

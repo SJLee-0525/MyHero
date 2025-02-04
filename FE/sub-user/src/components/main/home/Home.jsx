@@ -1,6 +1,6 @@
 import "../Main.css";
 
-import { useContext } from "react";
+// import { useContext } from "react";
 
 import Widget from "../../widget/Widget.jsx";
 
@@ -9,10 +9,10 @@ import EmergencyWidget from "../emergency/EmergencyWidget.jsx";
 import KeywordsWidget from "../mental/KeywordsWidget.jsx";
 import ToggleGroup from "../../toggle/ToggleGroup.jsx";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx";
+// import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function Main() {
-  const userProgressStore = useContext(UserProgressContext);
+  // const userProgressStore = useContext(UserProgressContext);
 
   const mainUserName = "박순자123";
 

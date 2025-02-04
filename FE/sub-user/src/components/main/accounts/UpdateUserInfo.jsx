@@ -280,12 +280,9 @@ export default function UpdateUserInfo() {
   });
 
   const userInformation = userProgressStore.loginUserInfo.userInfo;
+  console.log("userInformation:", userInformation);
 
   const emailInput = useRef("");
-
-  useEffect(() => {
-    emailInput.current.value = userInformation.email;
-  }, []);
 
   const addressParts = userInformation.address
     ? userInformation.address.toString().split(" ")
@@ -304,6 +301,11 @@ export default function UpdateUserInfo() {
   async function handleEmailCheck() {
     const enteredEmail = emailInput.current.value;
 
+    // 이메일이 입력되지 않았을 때 중단
+    if (enteredEmail.length === 0) {
+      return;
+    }
+
     // 이메일 형식 유효성 검사
     const emailIsInvalid = !enteredEmail.includes("@");
 
@@ -318,16 +320,8 @@ export default function UpdateUserInfo() {
       return; // 이메일 형식이 잘못되면 중단
     }
 
-    // 만약 이메일이 변경되지 않았다면, 중복 확인을 하지 않고 바로 사용 가능하다고 표시
-    if (enteredEmail === userInformation.email) {
-      setFormIsInvalid((prevForm) => ({
-        ...prevForm,
-        emailCheck: "verified",
-      }));
-      return;
-    }
-
     try {
+      console.log("확인 호출");
       const isEmailAvailable = await userProgressStore.handleCheckEmail(
         enteredEmail
       );
@@ -380,30 +374,32 @@ export default function UpdateUserInfo() {
     let isValid = true;
     let newFormState = { ...formIsInvalid };
 
-    // 이메일 유효성 검사
-    if (!data.email.includes("@")) {
-      newFormState.email = true;
-      isValid = false;
-    } else {
-      newFormState.email = false;
-    }
+    // 이메일 수정을 할 경우 유효성 검사
+    if (data.email.length > 0) {
+      if (!data.email.includes("@")) {
+        newFormState.email = true;
+        isValid = false;
+      } else {
+        newFormState.email = false;
+      }
 
-    // 이메일 중복 확인 여부 검사
-    if (formIsInvalid.emailCheck !== "verified") {
-      newFormState.emailCheck = "not-verified";
-      isValid = false;
-    } else {
-      newFormState.emailCheck = "verified";
-    }
+      // 이메일 중복 확인 여부 검사
+      if (formIsInvalid.emailCheck !== "verified") {
+        newFormState.emailCheck = "not-verified";
+        isValid = false;
+      } else {
+        newFormState.emailCheck = "verified";
+      }
 
-    if (!isValid) {
-      setFormIsInvalid(newFormState);
-      return;
+      if (!isValid) {
+        setFormIsInvalid(newFormState);
+        return;
+      }
     }
 
     // 입력받은 데이터 객체화
     const payload = {
-      email: data.email,
+      ...(data.email && { email: data.email }), // email이 있으면 추가
       role: data.role,
       user_name: data["user_name"],
       birth_date: {
@@ -463,7 +459,6 @@ export default function UpdateUserInfo() {
               type="email"
               name="email"
               ref={emailInput}
-              required
             />
             {formIsInvalid.emailCheck === "" && (
               <button
@@ -497,7 +492,9 @@ export default function UpdateUserInfo() {
           )}
           {formIsInvalid.emailCheck === "" && (
             <div className="signup-control-confirm">
-              <p>이메일을 변경하지 않는 경우에도, 중복 확인을 해 주세요.</p>
+              <p>
+                이메일을 변경하시려면 이메일 입력 후, 중복 확인을 해 주세요.
+              </p>
             </div>
           )}
           {formIsInvalid.emailCheck === "not-verified" && (

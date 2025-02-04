@@ -18,6 +18,7 @@ import DeleteFamily from "./DeleteFamily.jsx";
 import CreateMember from "./CreateMember.jsx";
 import UpdateMember from "./UpdateMember.jsx";
 import DeleteMember from "./DeleteMember.jsx";
+import ChangePassword from "./ChangePassword.jsx";
 
 export default function UserInfo() {
   const userProgressStore = useContext(UserProgressContext);
@@ -90,6 +91,7 @@ export default function UserInfo() {
       <CreateMember />
       <UpdateMember />
       <DeleteMember />
+      <ChangePassword />
     </PageContainer>
   );
 }

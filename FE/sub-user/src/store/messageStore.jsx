@@ -1,6 +1,6 @@
 import { useState, useContext, createContext } from "react";
 
-import { UserProgressContext } from "./userProgressStore";
+// import { UserProgressContext } from "./userProgressStore";
 
 export const MessageContext = createContext({
   messageLog: [],
@@ -12,7 +12,7 @@ export const MessageContext = createContext({
 let id = 0;
 
 export default function MessageContextProvider({ children }) {
-  const userProgressStore = useContext(UserProgressContext);
+  // const userProgressStore = useContext(UserProgressContext);
 
   const [messageLog, setMessageLog] = useState([]);
 

@@ -12,11 +12,18 @@ export default function LoginUserInfo() {
     userProgressStore.handleOpenModal("update-user-info");
   }
 
+  function handleShowChangePassword() {
+    userProgressStore.handleOpenModal("change-password");
+  }
+
   return (
     <div id="login-user-info">
       <div className="login-user-info-header">
         <h3>로그인 유저 정보</h3>
-        <button onClick={handleShowUpdateUserInfo}>회원 정보 수정</button>
+        <div className="login-user-info-buttons">
+          <button onClick={handleShowChangePassword}>비밀번호 변경</button>
+          <button onClick={handleShowUpdateUserInfo}>회원 정보 수정</button>
+        </div>
       </div>
       <table>
         <tbody>

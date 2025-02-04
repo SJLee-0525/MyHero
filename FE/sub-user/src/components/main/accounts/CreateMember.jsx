@@ -168,7 +168,7 @@ export default function CreateFamily() {
             </div>
           )}
           <button className="signup-btn" onClick={handleCreateMember}>
-            모임 생성
+            가입하기
           </button>
         </p>
       </div>

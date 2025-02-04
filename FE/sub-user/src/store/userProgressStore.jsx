@@ -56,6 +56,7 @@ export const UserProgressContext = createContext({
   handleCreateMember: (familyId, nickname) => {},
   handleUpdateMember: (nickname) => {},
   handleDeleteMember: (password) => {},
+  handleChangePassword: (password, newPassword) => {},
 });
 
 export default function UserProgressContextProvider({ children }) {
@@ -402,6 +403,7 @@ export default function UserProgressContextProvider({ children }) {
         body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json", // 추가
         },
       });
 
@@ -530,6 +532,7 @@ export default function UserProgressContextProvider({ children }) {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         }
       );
 
@@ -1121,6 +1124,65 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  async function handleChangePassword(password, newPassword) {
+    const isConfirmed = window.confirm(
+      "정말 비밀번호를 변경하시겠습니까?\n변경 시 로그아웃됩니다."
+    );
+    if (!isConfirmed) {
+      console.log("비밀번호 변경 취소");
+      return {
+        success: false,
+        error: { type: "canceled", message: "사용자가 취소했습니다." },
+      };
+    }
+
+    try {
+      const response = await fetch(`${DEV_API_URL}/auth/change-password`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          user_id: loginUserInfo.userInfo.id,
+          current_password: password,
+          new_password: newPassword,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Password changed successfully") {
+          console.log("비밀번호 변경 성공");
+
+          // 로그아웃
+          handleLogout();
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("비밀번호 변경 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   const ctxValue = {
     isActiveSideBarElem,
     toggleStatus,
@@ -1165,6 +1227,7 @@ export default function UserProgressContextProvider({ children }) {
     handleCreateMember,
     handleUpdateMember,
     handleDeleteMember,
+    handleChangePassword,
   };
 
   return (

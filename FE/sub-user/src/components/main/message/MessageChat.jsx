@@ -18,7 +18,7 @@ export default function MessageChat() {
 
   console.log(messageStore.messageLog);
   return (
-    <>
+    <div id="message-chat">
       {/* 메시지 기록 출력 */}
       {messageStore.messageLog.length === 0 && (
         <div id="no-chat">
@@ -47,6 +47,6 @@ export default function MessageChat() {
           })}
         </div>
       )}
-    </>
+    </div>
   );
 }

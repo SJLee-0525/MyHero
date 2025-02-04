@@ -50,8 +50,10 @@
 }
 
 .login-control-error {
-  color: #ffca99;
+  color: #ff5a33;
   font-size: 0.8rem;
+  height: 2rem;
+  padding: 0.5rem 0;
 }
 
 .login-control-error p {
@@ -107,6 +109,29 @@
   background-color: #ff9500;
 
   filter: brightness(1.1);
+
+  transition: all 0.3s ease;
+}
+
+#login-form .login-form-action .update-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff9500;
+
+  color: white;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-form .login-form-action .update-btn:hover {
+  filter: brightness(0.8);
 
   transition: all 0.3s ease;
 }
@@ -535,6 +560,14 @@ hr {
   padding: 0;
 
   color: white;
+}
+
+#login-user-info .login-user-info-buttons {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  gap: 10px;
 }
 
 #login-user-info .login-user-info-header p {

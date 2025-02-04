@@ -46,9 +46,7 @@ export default function SideNav() {
   return ReactDOM.createPortal(
     <aside id="side-bar">
       <div>
-        <h5>
-          <img src={catIcon} alt="logo" />
-        </h5>
+        <h5>영웅이</h5>
         <ul className="side-nav-elems">
           <SideNavElems
             imgSrc={homeIcon}

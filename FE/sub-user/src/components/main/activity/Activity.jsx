@@ -2,7 +2,7 @@ import "./Activity.css";
 
 import PageContainer from "../container/PageContainer";
 
-import Toggle from "../../toggle/Toggle.jsx";
+// import Toggle from "../../toggle/Toggle.jsx";
 
 import ActivityToggles from "./ActivityToggles.jsx";
 import ActivityChartContainer from "./ActiviyChartContainer";

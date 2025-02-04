@@ -1,6 +1,6 @@
 import "./Widget.css";
 
-export default function Widget({ title, content, children }) {
+export default function Widget({ title, children }) {
   return (
     <div id="widget">
       <div id="widget-top">

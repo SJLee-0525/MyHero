@@ -1,4 +1,4 @@
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 import { CalendarStoreContext } from "../../../store/calendarStore";
 
 export default function SelectedDate() {

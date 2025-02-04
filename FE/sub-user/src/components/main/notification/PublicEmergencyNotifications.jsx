@@ -1,11 +1,11 @@
-import "./Notification.css"
+import "./Notification.css";
 
-import { useContext } from "react"
+import { useContext } from "react";
 
-import { EmergencyContext } from "../../../store/emergencyStore"
+import { EmergencyContext } from "../../../store/emergencyStore";
 
 export default function PublicEmergencyNotifications() {
-  const emergencyStore = useContext(EmergencyContext)
+  const emergencyStore = useContext(EmergencyContext);
 
   // {
   //     SN: 205163,
@@ -27,15 +27,21 @@ export default function PublicEmergencyNotifications() {
               <p>{notification.EMRG_STEP_NM}</p>
             </div>
             <div className="public-emergency-notification-content">
-              <div className="public-emergency-notification-description">{notification.MSG_CN}</div>
+              <div className="public-emergency-notification-description">
+                {notification.MSG_CN}
+              </div>
             </div>
             <div className="public-emergency-notification-footer">
-              <p className="public-emergency-notification-loc">{notification.RCPTN_RGN_NM}</p>
-              <p className="public-emergency-notification-date">{notification.CRT_DT}</p>
+              <p className="public-emergency-notification-loc">
+                {notification.RCPTN_RGN_NM}
+              </p>
+              <p className="public-emergency-notification-date">
+                {notification.CRT_DT}
+              </p>
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

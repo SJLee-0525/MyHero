@@ -5,8 +5,8 @@ import {
   BarChart,
   Bar,
   XAxis,
-  YAxis,
-  CartesianGrid,
+  // YAxis,
+  // CartesianGrid,
   Tooltip,
   ResponsiveContainer,
 } from "recharts";

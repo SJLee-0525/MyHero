@@ -1,6 +1,6 @@
 import { useState, useContext, createContext } from "react";
 
-import { UserProgressContext } from "./userProgressStore";
+// import { UserProgressContext } from "./userProgressStore";
 
 export const HomeStatusContext = createContext({
   homeStatus: {
@@ -16,7 +16,7 @@ export const HomeStatusContext = createContext({
 });
 
 export default function HomeStatusContextProvider({ children }) {
-  const userProgressStore = useContext(UserProgressContext);
+  // const userProgressStore = useContext(UserProgressContext);
 
   const [homeStatus, setHomeStatus] = useState({
     data: {

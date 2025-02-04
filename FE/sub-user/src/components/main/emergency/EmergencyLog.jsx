@@ -5,7 +5,7 @@ import Modal from "../../modal/Modal.jsx";
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import { EmergencyContext } from "../../../store/emergencyStore.jsx";
 
-import tempImg from "/lim.png";
+// import tempImg from "/lim.png";
 
 export default function EmergencyLog() {
   const userProgressStore = useContext(UserProgressContext);

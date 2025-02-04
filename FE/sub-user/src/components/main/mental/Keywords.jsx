@@ -4,7 +4,7 @@ import { useContext } from "react";
 
 import { HealthContext } from "../../../store/healthStore";
 
-import Widget from "../../widget/Widget";
+// import Widget from "../../widget/Widget";
 
 export default function Keywords() {
   const healthStore = useContext(HealthContext);

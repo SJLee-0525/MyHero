@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 
 import { getEnvironments } from "./environmentsStore.jsx";
+import { set } from "date-fns";
 // import { set } from "date-fns"
 
 export const UserProgressContext = createContext({
@@ -8,6 +9,7 @@ export const UserProgressContext = createContext({
   toggleStatus: {},
   sidebarIsOpened: false,
   modalProgress: "",
+  selectedModalId: "",
   loginUserInfo: {
     login: false,
     userInfo: undefined,
@@ -28,6 +30,7 @@ export const UserProgressContext = createContext({
   setToggleStatus: () => {},
   setSidebarIsOpened: () => {},
   setModalProgress: () => {},
+  setSelectedModalId: () => {},
   setLoginUserInfo: () => {},
   setFamilyInfo: () => {},
   setMemberInfo: () => {},
@@ -35,7 +38,7 @@ export const UserProgressContext = createContext({
   handleActiveSideBarElem: (identifier) => {},
   handleToggleStatus: (toggle) => {},
   handleSidebarToggle: () => {},
-  handleOpenModal: () => {},
+  handleOpenModal: (identifier, id) => {},
   handleCloseModal: () => {},
   handleLogin: (userInfo) => {},
   handleGetUserInfo: (id) => {},
@@ -50,6 +53,8 @@ export const UserProgressContext = createContext({
   handleUpdateFamilyInfo: (newFamilyName) => {},
   handleDeleteFamilyInfo: (password) => {},
   handleCreateMember: (familyId, nickname) => {},
+  handleUpdateMember: (nickname) => {},
+  handleDeleteMember: (password) => {},
 });
 
 export default function UserProgressContextProvider({ children }) {
@@ -69,6 +74,9 @@ export default function UserProgressContextProvider({ children }) {
 
   // 모달 열림 여부 관련
   const [modalProgress, setModalProgress] = useState("");
+
+  // 모달 선택된 아이디 관련
+  const [selectedModalId, setSelectedModalId] = useState("");
 
   // 로그인 정보 관리
   const [loginUserInfo, setLoginUserInfo] = useState({
@@ -91,7 +99,6 @@ export default function UserProgressContextProvider({ children }) {
   useEffect(() => {
     const storedUserInfo = sessionStorage.getItem("loginUserInfo");
 
-    console.log("storedUserInforodtls:", storedUserInfo);
     const storedActiveSideBarElem = sessionStorage.getItem(
       "isActiveSideBarElem"
     );
@@ -193,13 +200,15 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   // 모달 열기
-  function handleOpenModal(identifier) {
+  function handleOpenModal(identifier, id) {
     setModalProgress(identifier);
+    setSelectedModalId(id);
   }
 
   // 모달 초기화
   function handleCloseModal() {
     setModalProgress("");
+    setSelectedModalId("");
   }
 
   // 로그인
@@ -263,11 +272,8 @@ export default function UserProgressContextProvider({ children }) {
       );
 
       const resData = await response.json();
-      console.log("회원 정보 조회 응답:", resData);
 
       if (response.ok) {
-        console.log("회원 정보 조회 성공");
-
         handleUpdateSessionLoginInfo({
           login: true,
           userInfo: resData.result, // 전체 result 객체 저장
@@ -457,8 +463,6 @@ export default function UserProgressContextProvider({ children }) {
       const resData = await response.json();
 
       if (response.ok && resData.message === "Account updated successfully") {
-        console.log("회원 정보 수정 성공, 최신 정보 조회 시작");
-
         // 최신 회원 정보 가져오기
         const updatedUser = await handleGetUserInfo(loginUserInfo.userInfo.id);
         console.log("최신 회원 정보 응답:", updatedUser);
@@ -910,6 +914,7 @@ export default function UserProgressContextProvider({ children }) {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
       });
 
       const resData = await response.json();
@@ -945,11 +950,108 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  // 가족 구성원 닉네임 수정
+  async function handleUpdateMember(nickname) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/members/${encodeURIComponent(selectedModalId)}`,
+        {
+          method: "PATCH",
+          body: JSON.stringify({ nickname: nickname }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Member updated successfully") {
+          console.log("구성원 정보 수정 성공");
+
+          // 정보 갱신
+          handleCheckFamilyList();
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("구성원 정보 수정 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 구성원 삭제
+  async function handleDeleteMember(password) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/members/${selectedModalId}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ password: password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "Member deleted successfully") {
+          console.log("구성원 삭제 성공");
+
+          // 정보 갱신
+          handleCheckFamilyList();
+
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("구성원 삭제 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   const ctxValue = {
     isActiveSideBarElem,
     toggleStatus,
     sidebarIsOpened,
     modalProgress,
+    selectedModalId,
     loginUserInfo,
     familyInfo,
     memberInfo,
@@ -961,6 +1063,7 @@ export default function UserProgressContextProvider({ children }) {
     setToggleStatus,
     setSidebarIsOpened,
     setModalProgress,
+    setSelectedModalId,
     setLoginUserInfo,
     setFamilyInfo,
     setMemberInfo,
@@ -984,6 +1087,8 @@ export default function UserProgressContextProvider({ children }) {
     handleDeleteFamilyInfo,
     handleCheckFamilyList,
     handleCreateMember,
+    handleUpdateMember,
+    handleDeleteMember,
   };
 
   return (

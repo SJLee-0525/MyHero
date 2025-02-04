@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- YDLidar X4 실행 -->
+    <include file="$(find ydlidar_ros_driver)/launch/X4.launch" />
+
+    <!-- Static Transform Publishers -->
+    <node pkg="tf" type="static_transform_publisher" name="base_to_laser"
+        args="0 0 0 0 0 0 base_link laser_frame 100" />
+    
+    <node pkg="tf" type="static_transform_publisher" name="base_footprint_to_base"
+        args="0 0 0 0 0 0 base_footprint base_link 100" />
+
+    <!-- Map Server -->
+    <node name="map_server" pkg="map_server" type="map_server" 
+          args="$(find my_slam)/maps/my_map.yaml" />
+
+    <!-- AMCL -->
+    <node name="amcl" pkg="amcl" type="amcl" output="screen">
+        <param name="odom_frame_id" value="odom"/>
+        <param name="base_frame_id" value="base_footprint"/>
+        <param name="global_frame_id" value="map"/>
+        
+        <param name="initial_pose_x" value="0.0"/>
+        <param name="initial_pose_y" value="0.0"/>
+        <param name="initial_pose_a" value="0.0"/>
+        
+        <param name="min_particles" value="500"/>
+        <param name="max_particles" value="2000"/>
+        <param name="update_min_d" value="0.1"/>
+        <param name="update_min_a" value="0.1"/>
+        
+        <param name="laser_max_range" value="12.0"/>
+        <param name="laser_min_range" value="0.2"/>
+    </node>
+
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom" 
+        args="0 0 0 0 0 0 map odom 100" />
+        
+    <!-- Navigation -->
+    <include file="$(find my_slam)/launch/amcl_navigation.launch" />
+</launch>

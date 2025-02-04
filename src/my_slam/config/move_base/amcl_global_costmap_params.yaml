@@ -1,0 +1,11 @@
+global_costmap:
+  global_frame: "map"
+  robot_base_frame: "base_footprint"
+  update_frequency: 2.0
+  publish_frequency: 2.0
+  transform_tolerance: 0.5
+  static_map: true               # AMCL을 사용하므로 static_map을 true로 설정
+  rolling_window: false           # 글로벌 맵은 rolling_window 사용 안함
+  width: 50.0
+  height: 50.0
+  resolution: 0.02

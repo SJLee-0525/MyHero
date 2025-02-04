@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 모터 컨트롤러 실행 -->
+    <include file="$(find robot_motor_controller)/launch/motor_controller.launch" />
+
+    <!-- move_base 노드 -->
+    <node pkg="move_base" type="move_base" name="move_base" output="screen">
+        <!-- costmap/planner 설정 -->
+        <rosparam file="$(find my_slam)/config/move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find my_slam)/config/move_base/amcl_global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find my_slam)/config/move_base/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find my_slam)/config/move_base/dwa_local_planner.yaml" command="load" />
+
+        <!-- Planner 선택 -->
+        <param name="base_global_planner" value="navfn/NavfnROS"/>
+        <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+
+        <!-- Recovery Behaviors -->
+        <rosparam file="$(find my_slam)/config/move_base/recovery_params.yaml" command="load" />
+        <param name="recovery_behavior_enabled" value="true" />
+        <param name="clearing_rotation_allowed" value="false" />
+        
+        <!-- Move Base 파라미터 -->
+        <param name="controller_frequency" value="10.0" />
+        <param name="controller_patience" value="3.0" />
+        <param name="recovery_behavior_enabled" value="true" />
+        <param name="clearing_rotation_allowed" value="false" />
+        <param name="shutdown_costmaps" value="false" />
+    </node>
+
+    <!-- 조이스틱 노드 -->
+    <node pkg="joy" type="joy_node" name="joy_node">
+        <param name="dev" value="/dev/input/js0"/>
+        <param name="deadzone" value="0.12"/>
+    </node>
+
+    <!-- 조이스틱-cmd_vel 변환 노드 -->
+    <node pkg="robot_motor_controller" 
+          type="joy_teleop.py" 
+          name="joy_teleop" 
+          output="screen">
+        <param name="axis_linear" value="1"/>  <!-- 왼쪽 스틱 상하 -->
+        <param name="axis_angular" value="3"/>  <!-- 오른쪽 스틱 좌우 -->
+        <param name="scale_linear" value="0.4"/>
+        <param name="scale_angular" value="1.0"/>
+        <param name="mode_button" value="0"/>  <!-- A 버튼 -->
+        <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
+    </node>
+    
+    <!-- RViz 설정 -->
+    <node pkg="rviz" type="rviz" name="rviz" 
+          args="-d $(find my_slam)/rviz/nav2.rviz"
+          respawn="true"
+          output="screen"/>
+</launch>

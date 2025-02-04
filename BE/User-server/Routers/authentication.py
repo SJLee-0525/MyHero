@@ -5,7 +5,7 @@
 Parts of Members
 """
 
-# Libarary
+# Library
 from fastapi import HTTPException, APIRouter, status, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
@@ -167,7 +167,7 @@ async def logout(request: Request, response: Response):
 async def change_password(change_password_data: ChangePassword, request_id = Depends(Database.check_current_user)):
     target_user_id: str = change_password_data.user_id
 
-    # 필수 입력 정보를 입력했는지 점검 (ver3) -> 다른 부분도 이것으로 변경할 예정
+    # 필수 입력 정보를 전달했는지 점검
     missing_location: list = ["body"]
 
     if change_password_data.user_id is None or change_password_data.user_id == "":
@@ -183,7 +183,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
             detail={
                 "type": "no data",
                 "loc": missing_location,
-                "message": "Change password data is required",
+                "message": "Password data is required",
                 "input": {
                     "user_id": target_user_id,
                     "current_password": "<PASSWORD>",

@@ -5,7 +5,7 @@
 Parts of Accounts
 """
 
-# Libarary
+# Library
 from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 
@@ -25,18 +25,28 @@ router = APIRouter(prefix="/accounts", tags=["Accounts"])
 @router.post("/check-email", status_code=status.HTTP_200_OK)
 async def check_email(email_check: EmailCheck):
     target_email: str = email_check.email
-    email_list: list = [data["email"] for data in Database.get_all_email()]
 
-    if target_email is None or target_email == "":  # 필요한 정보 없이 요청하려는지 점검
+    # 필수 입력 정보를 입력했는지 점검
+    missing_location: list = ["body"]
+
+    if target_email is None or target_email == "":
+        missing_location.append("email")
+
+    if len(missing_location) > 1:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
+                "loc": missing_location,
                 "message": "Email is required",
                 "input": jsonable_encoder(email_check)
             }
         )
-    elif target_email in email_list:  # 모든 사용자 이메일 주소와 비교하여 겹치는지 점검
+
+    # 모든 사용자 이메일 주소와 비교하여 겹치는지 점검
+    email_list: list = [data["email"] for data in Database.get_all_email()]
+
+    if target_email in email_list:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -53,35 +63,24 @@ async def check_email(email_check: EmailCheck):
 # 새로운 계정을 생성하는 기능
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_account(account_data: Account):
-    # 필수 입력 정보 점검 (비밀번호, 역할, 이메일)
+    # 필수 입력 정보를 전달했는지 점검
+    missing_location: list = ["body"]
+
     if account_data.password is None or account_data.password == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "password"],
-                "message": "Password is required",
-                "input": jsonable_encoder(account_data)
-            }
-        )
+        missing_location.append("password")
     elif account_data.role is None or account_data.role == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "role"],
-                "message": "Role is required",
-                "input": jsonable_encoder(account_data, exclude={"password"})
-            }
-        )
+        missing_location.append("role")
     elif account_data.email is None or account_data.email == "":
+        missing_location.append("email")
+
+    if len(missing_location) > 1:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
-                "loc": ["body", "email"],
-                "message": "Email is required",
-                "input": jsonable_encoder(account_data, exclude={"password"})
+                "loc": missing_location,
+                "message": "User data is required",
+                "input": jsonable_encoder(account_data)
             }
         )
 
@@ -184,7 +183,20 @@ async def create_account(account_data: Account):
 
 # 모든 사용자 계정의 정보를 불러오는 기능
 @router.get("/", status_code=status.HTTP_200_OK)
-async def get_all_accounts():
+async def get_all_accounts(request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 모든 사용자가 이 항목에 직접 접근 불가능
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or request_data["role"] != Role.SYSTEM:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 모든 사용자 불러오기
     account_list: list = Database.get_all_accounts()
 
     if account_list:
@@ -201,9 +213,9 @@ async def get_all_accounts():
 # 사용자 계정 정보를 불러오는 기능
 @router.get("/{user_id}", status_code=status.HTTP_200_OK)
 async def get_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 사용자는 자신의 계정 정보만 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
 
-    # 시스템 계정을 제외한 사용자는 자신의 계정 정보만 불러올 수 있음
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -217,6 +229,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
             }
         )
 
+    # 사용자 정보 불러오기
     account_data: dict = Database.get_one_account(user_id)
 
     if account_data:
@@ -236,17 +249,30 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
 
 # 사용자 계정 정보를 수정하는 기능
 @router.patch("/{user_id}", status_code=status.HTTP_200_OK)
-async def update_account(user_id: str, updated_account: Account):
-    previous_account: dict = Database.get_one_account(user_id)
+async def update_account(user_id: str, updated_account: Account, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 사용자는 자신의 계정 정보만 변경할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+            }
+        )
 
     # 없는 계정을 변경하려는지 확인
+    previous_account: dict = Database.get_one_account(user_id)
+
     if not previous_account:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "type": "not found",
                 "message": "Account not found",
-                "input": {"user_id": user_id}
+                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
             }
         )
 
@@ -257,7 +283,7 @@ async def update_account(user_id: str, updated_account: Account):
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (role)",
-                "input": jsonable_encoder(updated_account)
+                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
             }
         )
     elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
@@ -266,7 +292,7 @@ async def update_account(user_id: str, updated_account: Account):
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (gender)",
-                "input": jsonable_encoder(updated_account)
+                "input": { **jsonable_encoder(updated_account), "user_id": user_id }
             }
         )
 
@@ -279,7 +305,7 @@ async def update_account(user_id: str, updated_account: Account):
                 detail={
                     "type": "already exists",
                     "message": "Email is already in use",
-                    "input": jsonable_encoder(updated_account)
+                    "input": { **jsonable_encoder(updated_account), "user_id": user_id }
                 }
             )
 
@@ -295,7 +321,7 @@ async def update_account(user_id: str, updated_account: Account):
                 detail={
                     "type": "invalid value",
                     "message": "Invalid value provided for account details (birth date)",
-                    "input": jsonable_encoder(updated_account)
+                    "input": { **jsonable_encoder(updated_account), "user_id": user_id }
                 }
             )
         converted_birth_date = date(
@@ -336,28 +362,46 @@ async def update_account(user_id: str, updated_account: Account):
 
 # 사용자 계정을 삭제하는 기능 (사용자의 비밀번호 필요)
 @router.delete("/{user_id}", status_code=status.HTTP_200_OK)
-async def delete_account(user_id: str, checker: PasswordCheck):
-    previous_account: dict = Database.get_one_account(user_id)
+async def delete_account(user_id: str, checker: PasswordCheck, request_id: str = Depends(Database.check_current_user)):
+    # 필수 입력 정보를 전달했는지 점검
+    missing_location: list = ["body"]
+
+    if checker.password is None or checker.password == "":
+        missing_location.append("password")
+
+    if len(missing_location) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Password is required",
+                "input": {"user_id": user_id}
+            }
+        )
+
+    # 시스템 계정을 제외한 사용자는 자신의 계정만 삭제할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": {"user_id": user_id}
+            }
+        )
 
     # 없는 계정을 삭제하려는지 확인
+    previous_account: dict = Database.get_one_account(user_id)
+
     if not previous_account:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "type": "not found",
                 "message": "Account not found",
-                "input": {"user_id": user_id}
-            }
-        )
-
-    # 비밀번호 없이 요청한 경우
-    if checker.password is None or checker.password == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "password"],
-                "message": "Password is required",
                 "input": {"user_id": user_id}
             }
         )

@@ -139,7 +139,11 @@ def check_current_user(request: Request) -> str:
                     )
 
             # 최근 접근 기록 갱신하기
-            login_data.last_active = func.now()
+            session.query(LoginSessionsTable).filter(
+                LoginSessionsTable.xid == session_id
+            ).update({
+                LoginSessionsTable.last_active: func.now()
+            })
         except SQLAlchemyError as error:
             session.rollback()
             print(f"[DB] Error checking current user: {str(error)}")

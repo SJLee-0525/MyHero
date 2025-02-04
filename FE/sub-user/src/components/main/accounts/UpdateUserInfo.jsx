@@ -280,7 +280,6 @@ export default function UpdateUserInfo() {
   });
 
   const userInformation = userProgressStore.loginUserInfo.userInfo;
-  console.log("userInformation:", userInformation);
 
   const emailInput = useRef("");
 
@@ -586,7 +585,12 @@ export default function UpdateUserInfo() {
           <div className="signup-wrapper">
             <div className="signup-control">
               <label htmlFor="gender">성별</label>
-              <select id="gender" name="gender" required>
+              <select
+                id="gender"
+                name="gender"
+                defaultValue={userInformation.gender}
+                required
+              >
                 <option value="male">남성</option>
                 <option value="female">여성</option>
               </select>
@@ -594,7 +598,12 @@ export default function UpdateUserInfo() {
 
             <div className="signup-control">
               <label htmlFor="role">사용자 유형</label>
-              <select id="role" name="role" required>
+              <select
+                id="role"
+                name="role"
+                defaultValue={userInformation.role}
+                required
+              >
                 <option value="main">주 사용자</option>
                 <option value="sub">보조 사용자</option>
               </select>

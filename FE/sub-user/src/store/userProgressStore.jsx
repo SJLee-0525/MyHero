@@ -531,7 +531,33 @@ export default function UserProgressContextProvider({ children }) {
       if (response.ok) {
         // 회원 탈퇴 성공
         if (resData.message === "Account deleted successfully") {
-          handleLogout(); // 로그아웃 처리
+          setLoginUserInfo({
+            login: false,
+            userInfo: undefined,
+          });
+
+          // 로컬 스토리지에서 로그인 정보 삭제
+          sessionStorage.removeItem("loginUserInfo");
+
+          // 세션에서 session_id 삭제
+          sessionStorage.removeItem("session_id");
+
+          // 사이드바 관리
+          setIsActiveSideBarElem("accounts");
+
+          // 기본 경로로 이동
+          window.location.href = "/";
+
+          // 모달 초기화
+          handleCloseModal();
+
+          // 사이드바 닫기
+          setSidebarIsOpened(false);
+
+          // 기기 활성화 요소 초기화
+          sessionStorage.removeItem("isActiveSideBarElem");
+
+          console.log("회원 탈퇴 성공");
           return { success: true };
         }
       } else {

@@ -45,7 +45,7 @@ export default function MemberUserInfo() {
           <div>
             {memberUserInfo.registerData.map((info) => {
               return (
-                <div>
+                <div key={info.id}>
                   <p>id: {info.id}</p>
                   <p>family_id: {info.family_id}</p>
                   <p>user_id: {info.user_id}</p>

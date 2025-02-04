@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   dev-api:
-    image: dev-api:latest
+    build: .
     container_name: dev-api
     hostname: dev-api
     ports:

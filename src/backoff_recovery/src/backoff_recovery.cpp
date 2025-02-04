@@ -21,11 +21,13 @@ namespace backoff_recovery
         if (!initialized_)
         {
 
-            ros::NodeHandle private_nh("~");
+            ros::NodeHandle private_nh("~/" + name);
 
             private_nh.param("backoff_distance", backoff_distance_, 0.2);
             private_nh.param("frequency", frequency_, 20.0);
             private_nh.param("vel", vel_, 0.1);
+
+            ROS_INFO("Initialized BackoffRecovery with velocity: %.2f, distance: %.2f", vel_, backoff_distance_);
 
             initialized_ = true;
         }

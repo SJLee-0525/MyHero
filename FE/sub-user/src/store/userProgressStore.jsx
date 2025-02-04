@@ -165,6 +165,7 @@ export default function UserProgressContextProvider({ children }) {
     try {
       const response = await fetch(`${DEV_API_URL}/auth/login`, {
         method: "POST",
+        credentials: "include",  // 로그인을 시도할때나 정보를 요청할때 모두 추가해야함
         body: JSON.stringify({ email, password }),
         headers: {
           "Content-Type": "application/json",
@@ -178,10 +179,10 @@ export default function UserProgressContextProvider({ children }) {
           console.log("로그인 성공");
 
           // 로그인 성공 시 session_id 저장
-          sessionStorage.setItem("session_id", resData.result.session_id);
+          // sessionStorage.setItem("session_id", resData.result.session_id);
 
           // 로그인 후 쿠키 저장
-          document.cookie = `session_id=${resData.result.session_id}; path=/; Secure; SameSite=Strict`;
+          // document.cookie = `session_id=${resData.result.session_id}; path=/; Secure; SameSite=Strict`;
 
           // 로그인 정보 저장
           const userInfo = resData.result.user_data;

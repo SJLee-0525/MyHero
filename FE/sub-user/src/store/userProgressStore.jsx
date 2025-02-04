@@ -402,6 +402,7 @@ export default function UserProgressContextProvider({ children }) {
         body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json", // 추가
         },
       });
 
@@ -530,6 +531,7 @@ export default function UserProgressContextProvider({ children }) {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         }
       );
 

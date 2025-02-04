@@ -33,6 +33,9 @@ export default function DeleteFamily() {
         // 가족 삭제 성공
         alert("가족 모임 삭제 성공");
         userProgressStore.handleCloseModal();
+
+        inputPassword.current.value = "";
+
         navigate("/accounts");
       } else {
         console.error("가족 모임 삭제 실패:", result.error);

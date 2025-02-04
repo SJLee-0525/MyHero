@@ -71,13 +71,15 @@ export default function UserInfo() {
           loginUserInfo.userInfo.role === "sub" && <MemberUserInfo />}
 
         <p className="login-form-action">
-          <button className="logout-btn" onClick={handleLogout}>
-            Log Out
-          </button>
+          <div className="danger-zone">
+            <button className="logout-btn" onClick={handleLogout}>
+              Log Out
+            </button>
 
-          <button className="logout-btn" onClick={handleShowSignOut}>
-            회원 탈퇴
-          </button>
+            <button className="logout-btn" onClick={handleShowSignOut}>
+              회원 탈퇴
+            </button>
+          </div>
         </p>
       </div>
       <UpdateUserInfo />

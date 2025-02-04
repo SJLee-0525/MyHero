@@ -389,6 +389,39 @@
   transition: all 0.3s ease;
 }
 
+.danger-zone {
+  display: flex;
+  justify-content: end;
+  align-items: end;
+
+  gap: 10px;
+
+  width: 100%;
+}
+
+.danger-zone .logout-btn {
+  width: 100px;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+
+  color: white;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+.danger-zone .logout-btn:hover {
+  filter: brightness(0.8);
+
+  transition: all 0.3s ease;
+}
+
 .signout-form label {
   display: block;
 
@@ -492,16 +525,26 @@ hr {
 #login-user-info .login-user-info-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
 
-  margin-bottom: 15px;
+  margin-bottom: 25px;
 }
 
 #login-user-info .login-user-info-header h3 {
   margin: 0 0 10px 0;
   padding: 0;
 
-  color: #ff9500;
+  color: white;
+}
+
+#login-user-info .login-user-info-header p {
+  margin: 0 0 10px 0;
+  padding: 2px 5px;
+
+  border-radius: 5px;
+
+  font-weight: bold;
+  background-color: #ff9500;
 }
 
 #login-user-info .login-user-info-header button {
@@ -584,6 +627,134 @@ hr {
   color: white;
 
   font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .member-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-radius: 8px;
+
+  margin: 10px 0px;
+  padding: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+  color: black;
+}
+
+#login-user-info .member-container table {
+  width: 75%;
+}
+
+#login-user-info .member-btn-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: end;
+
+  gap: 10px;
+
+  width: 25%;
+}
+
+#login-user-info .member-btn-container .update {
+  width: 100px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: white;
+  color: black;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .member-btn-container .update:hover {
+  background-color: #dfdfdf;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .member-btn-container .delete {
+  width: 100px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+  color: white;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .member-btn-container .delete:hover {
+  background-color: #e43710;
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .family-btn-container {
+  display: flex;
+
+  justify-content: center;
+  align-items: end;
+
+  gap: 10px;
+}
+
+#login-user-info .family-btn-container .update {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: white;
+  color: black;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .family-btn-container .update:hover {
+  background-color: #dfdfdf;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .family-btn-container .delete {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+  color: white;
+
+  text-align: center;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#login-user-info .family-btn-container .delete:hover {
+  background-color: #e43710;
+  color: white;
 
   transition: all 0.3s ease;
 }

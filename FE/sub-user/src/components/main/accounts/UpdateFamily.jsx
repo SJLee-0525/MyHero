@@ -34,7 +34,11 @@ export default function UpdateFamily() {
       if (result.success === true) {
         // 가족 정보 수정 성공
         alert("가족 모임 정보 수정 성공");
+
         userProgressStore.handleCloseModal();
+
+        inputName.current.value = "";
+
         navigate("/accounts");
       } else {
         console.error("가족 모임 정보 수정 실패:", result.error);

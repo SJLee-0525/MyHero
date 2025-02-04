@@ -36,8 +36,9 @@ export default function MemberUserInfo() {
         </div>
       )}
       {memberUserInfo.isExist && (
-        <div>
-          <div id="login-user-info">
+        <div id="login-user-info">
+          <div className="login-user-info-header">
+            <h3>연결된 가족 모임 정보</h3>
             <button onClick={handleShowCreateMemberUserInfo}>
               가족 모임 연결
             </button>
@@ -46,21 +47,35 @@ export default function MemberUserInfo() {
             {memberUserInfo.registerData.map((info) => {
               return (
                 <div key={info.id}>
-                  <p>id: {info.id}</p>
-                  <p>family_id: {info.family_id}</p>
-                  <p>user_id: {info.user_id}</p>
-                  <p>nickname: {info.nickname}</p>
-                  <button
-                    onClick={() => handleShowUpdateMemberUserInfo(info.id)}
-                  >
-                    닉네임 수정
-                  </button>
-                  <button
-                    onClick={() => handleShowDeleteMemberUserInfo(info.id)}
-                  >
-                    연결 해제
-                  </button>
-                  <hr />
+                  <div className="member-container">
+                    <table>
+                      <tbody>
+                        <tr>
+                          <td>모임 ID</td>
+                          <td>{info.family_id}</td>
+                        </tr>
+                        <tr>
+                          <td>등록 닉네임</td>
+                          <td>{info.nickname}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                    <div className="member-btn-container">
+                      <button
+                        className="update"
+                        onClick={() => handleShowUpdateMemberUserInfo(info.id)}
+                      >
+                        닉네임 수정
+                      </button>
+                      <button
+                        className="delete"
+                        onClick={() => handleShowDeleteMemberUserInfo(info.id)}
+                      >
+                        연결 해제
+                      </button>
+                    </div>
+                  </div>
                 </div>
               );
             })}

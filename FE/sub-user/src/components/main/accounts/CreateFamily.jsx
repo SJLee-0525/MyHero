@@ -38,7 +38,11 @@ export default function CreateFamily() {
       if (result.success === true) {
         // 가족 생성 성공
         alert("가족 모임 생성 성공");
+
         userProgressStore.handleCloseModal();
+
+        inputName.current.value = "";
+
         navigate("/accounts");
       } else {
         console.error("가족 모임 생성 실패:", result.error);

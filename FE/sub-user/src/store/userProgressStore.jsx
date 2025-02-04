@@ -1,8 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 
 import { getEnvironments } from "./environmentsStore.jsx";
-import { set } from "date-fns";
-// import { set } from "date-fns"
+// import { set } from "date-fns";
 
 export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
@@ -17,6 +16,7 @@ export const UserProgressContext = createContext({
   familyInfo: {
     isExist: false,
     familyInfo: undefined,
+    familyMember: [],
   },
   memberInfo: {
     isExist: false,
@@ -52,6 +52,7 @@ export const UserProgressContext = createContext({
   handleGetFamilyInfo: (familyId) => {},
   handleUpdateFamilyInfo: (newFamilyName) => {},
   handleDeleteFamilyInfo: (password) => {},
+  handleGetFamilyMemberInfo: (familyId) => {},
   handleCreateMember: (familyId, nickname) => {},
   handleUpdateMember: (nickname) => {},
   handleDeleteMember: (password) => {},
@@ -88,6 +89,7 @@ export default function UserProgressContextProvider({ children }) {
   const [familyInfo, setFamilyInfo] = useState({
     isExist: false,
     familyInfo: undefined,
+    familyMember: undefined,
   });
 
   const [memberInfo, setMemberInfo] = useState({
@@ -102,6 +104,7 @@ export default function UserProgressContextProvider({ children }) {
     const storedActiveSideBarElem = sessionStorage.getItem(
       "isActiveSideBarElem"
     );
+    if (!storedUserInfo) return;
 
     if (storedUserInfo) {
       try {
@@ -698,6 +701,8 @@ export default function UserProgressContextProvider({ children }) {
             familyInfo: resData.result,
           });
 
+          handleGetFamilyMemberInfo(resData.result.id);
+
           return { success: true, data: resData };
         }
       } else {
@@ -876,9 +881,79 @@ export default function UserProgressContextProvider({ children }) {
           });
 
           return { success: true, data: resData };
+        } else if (resData.message === "No members found") {
+          console.log("가족 목록 없음");
+
+          // 정보 갱신
+          setMemberInfo({
+            isExist: false,
+            registerData: undefined,
+          });
         }
+        return { success: true, data: resData };
       } else {
         console.error("가족 목록 조회 실패:", resData.detail.message);
+        return {
+          success: false,
+          error: {
+            type: resData.detail.type,
+            message: resData.detail.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 구성원 조회
+  async function handleGetFamilyMemberInfo(familyId) {
+    try {
+      const response = await fetch(
+        `${DEV_API_URL}/members?familyId=${encodeURIComponent(familyId)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const resData = await response.json();
+
+      if (response.ok) {
+        if (resData.message === "All members retrieved successfully") {
+          console.log("가족 구성원 조회 성공");
+          console.log(resData.result);
+
+          // 정보 갱신
+          setFamilyInfo((prev) => {
+            return {
+              ...prev,
+              familyMember: resData.result,
+            };
+          });
+        } else if (resData.message === "No members found") {
+          console.log("가족 구성원 없음");
+
+          // 정보 갱신
+          setFamilyInfo((prev) => {
+            return {
+              ...prev,
+              familyMember: [],
+            };
+          });
+        }
+        return { success: true, data: resData };
+      } else {
+        console.error("가족 구성원 조회 실패:", resData.detail.message);
         return {
           success: false,
           error: {
@@ -1086,6 +1161,7 @@ export default function UserProgressContextProvider({ children }) {
     handleUpdateFamilyInfo,
     handleDeleteFamilyInfo,
     handleCheckFamilyList,
+    handleGetFamilyMemberInfo,
     handleCreateMember,
     handleUpdateMember,
     handleDeleteMember,

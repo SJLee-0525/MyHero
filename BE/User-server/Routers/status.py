@@ -108,3 +108,22 @@ async def get_latest_mental_status():
 async def delete_latest_mental_status():
     pass
 
+# 새로운 정신건강 리포트 요청하는 기능
+@router.post("/mental/reports/new")
+async def create_mental_reports():
+    pass
+
+# 조건에 따른 모든 정신건강 리포트를 불러오는 기능
+@router.get("/mental/reports")
+async def get_mental_reports():
+    pass
+
+# 가장 최신의 정신건강 리포트를 불러오는 기능
+@router.get("/mental/reports/latest")
+async def get_latest_mental_reports():
+    pass
+
+# 가장 최신의 정신건강 리포트를 삭제하는 기능
+@router.delete("/mental/reports/latest")
+async def delete_latest_mental_reports():
+    pass

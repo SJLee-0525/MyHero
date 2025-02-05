@@ -1,2 +1,0 @@
-import "./Health.css";
-

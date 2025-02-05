@@ -1,6 +1,6 @@
 import "./Modal.css";
 
-export default function HealthModal({ title, onCloseConfirm }) {
+export default function CalendarModal({ title, onCloseConfirm }) {
   return (
     <div id="modal-body">
       <div id="modal-bar">

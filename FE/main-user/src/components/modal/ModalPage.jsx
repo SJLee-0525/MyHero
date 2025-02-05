@@ -6,7 +6,7 @@ import Emergency from "../emergency/Emergency.jsx";
 import EmergencyModal from "./EmergencyModal.jsx";
 import MessageModal from "./MessageModal.jsx";
 import NoticeModal from "./NoticeModal.jsx";
-import HealthModal from "./HealthModal.jsx";
+import CalendarModal from "./CalendarModal.jsx";
 import ModalSettingBox from "./ModalSettingBox.jsx";
 import SettingModal from "./SettingModal.jsx";
 
@@ -42,11 +42,11 @@ export default function ModalPage() {
           />
         )}
       </Modal>
-      <Modal open={store.openHealthState} onClose={store.handleModalClose}>
-        {store.openHealthState && (
-          <HealthModal
-            title="건강"
-            message="Check your health"
+      <Modal open={store.openCalendarState} onClose={store.handleModalClose}>
+        {store.openCalendarState && (
+          <CalendarModal
+            title="달력"
+            message="Check your schedule"
             onCloseConfirm={store.handleModalClose}
           />
         )}

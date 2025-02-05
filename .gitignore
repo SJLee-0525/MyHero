@@ -1,0 +1,10 @@
+CMakeFiles/
+*.make
+*.internal
+*.depend
+*.o
+*.a
+*.so
+*.exe
+CMakeCache.txt
+cmake_install.cmake

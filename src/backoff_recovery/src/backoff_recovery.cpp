@@ -11,8 +11,9 @@ PLUGINLIB_EXPORT_CLASS(backoff_recovery::BackoffRecovery, nav_core::RecoveryBeha
 
 namespace backoff_recovery
 {
-    BackoffRecovery::BackoffRecovery() : initialized_(false)
+    BackoffRecovery::BackoffRecovery() : initialized_(false), should_stop_(false)
     {
+        nh_ = new ros::NodeHandle();
     }
 
     void BackoffRecovery::initialize(std::string name, tf2_ros::Buffer *,
@@ -27,6 +28,9 @@ namespace backoff_recovery
             private_nh.param("frequency", frequency_, 20.0);
             private_nh.param("vel", vel_, 0.1);
 
+            goal_sub_ = nh_->subscribe("/move_base_simple/goal", 1,
+                                       &BackoffRecovery::goalCallback, this);
+
             ROS_INFO("Initialized BackoffRecovery with velocity: %.2f, distance: %.2f", vel_, backoff_distance_);
 
             initialized_ = true;
@@ -37,8 +41,37 @@ namespace backoff_recovery
         }
     }
 
+    /////////////////////
+    bool BackoffRecovery::hasGoalChanged(const geometry_msgs::PoseStamped::ConstPtr &new_goal)
+    {
+        double position_diff = std::hypot(
+            new_goal->pose.position.x - current_goal_.pose.position.x,
+            new_goal->pose.position.y - current_goal_.pose.position.y);
+
+        if (position_diff > 0.1)
+        { // 10cm 이상 차이
+            current_goal_ = *new_goal;
+            return true;
+        }
+        return false;
+    }
+
+    void BackoffRecovery::goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
+    {
+        if (hasGoalChanged(msg))
+        {
+            ROS_INFO("Goal position changed, stopping backoff recovery");
+            should_stop_ = true;
+        }
+    }
+
+    /////////////////////
     BackoffRecovery::~BackoffRecovery()
     {
+        if (nh_)
+        {
+            delete nh_;
+        }
     }
 
     void BackoffRecovery::runBehavior()
@@ -99,6 +132,19 @@ namespace backoff_recovery
 
         while (n.ok() && euclidean_distance_ < backoff_distance_)
         {
+            // 새로운 목표점 수신 시 중단
+            if (should_stop_)
+            {
+                // 정지 명령 발행
+                geometry_msgs::Twist stop_cmd;
+                stop_cmd.linear.x = 0;
+                stop_cmd.linear.y = 0;
+                stop_cmd.angular.z = 0;
+                vel_pub.publish(stop_cmd);
+
+                ROS_INFO("Backoff recovery interrupted by new goal");
+                return;
+            }
             try
             {
                 currentPose = tfBuffer.lookupTransform("map", "base_link", ros::Time(0.0));
@@ -122,4 +168,5 @@ namespace backoff_recovery
             r.sleep();
         }
     }
+
 }

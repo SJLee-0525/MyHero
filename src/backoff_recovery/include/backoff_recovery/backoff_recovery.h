@@ -1,3 +1,5 @@
+#ifndef BACKOFF_RECOVERY_H
+#define BACKOFF_RECOVERY_H
 
 #include <nav_core/recovery_behavior.h>
 #include <costmap_2d/costmap_2d_ros.h>
@@ -22,5 +24,16 @@ namespace backoff_recovery
     private:
         bool initialized_;
         double backoff_distance_, frequency_, euclidean_distance_, vel_;
+
+        // 골 콜백함수 호출 시 중지하기 위함
+        bool should_stop_;
+        geometry_msgs::PoseStamped previous_goal_;
+        geometry_msgs::PoseStamped current_goal_;
+        bool hasGoalChanged(const geometry_msgs::PoseStamped::ConstPtr &new_goal);
+
+        ros::Subscriber goal_sub_;
+        ros::NodeHandle *nh_;
+        void goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
     };
 };
+#endif

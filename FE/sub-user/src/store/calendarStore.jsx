@@ -1,5 +1,5 @@
 import { useState, createContext, useEffect } from "react";
-import useCalander from "../hooks/useCalendar";
+import useCalendar from "../hooks/useCalendar";
 
 export const CalendarStoreContext = createContext({
   currentDate: {
@@ -31,7 +31,7 @@ export const CalendarStoreContext = createContext({
 });
 
 export default function CalendarStoreContextProvider({ children }) {
-  const context = useCalander();
+  const context = useCalendar();
 
   // 상태 관리
   const [schedules, setSchedules] = useState(() => {

@@ -32,6 +32,8 @@ export default function CreateFamily() {
         }
       );
 
+      console.log("가족 구성원 조회 요청:", response);
+
       const resData = await response.json();
 
       if (response.ok) {
@@ -45,14 +47,20 @@ export default function CreateFamily() {
         }
       } else {
         // 서버에서 반환된 에러 정보 처리
-        console.error("에러 유형:", resData.detail.type);
-        console.error("에러 메시지:", resData.detail.message);
+        if (resData.detail.type === "not found") {
+          console.error("에러 유형:", resData.detail.type);
+          console.error("에러 메시지:", resData.detail.message);
+          alert("가족 모임 ID를 확인해주세요.");
+        } else {
+          // console.error("/는 사용 불가합니다.");
+          alert("사용 불가능한 문자가 사용되었습니다.");
+        }
         return {
           success: false,
           error: {
-            type: resData.detail.type,
-            message: resData.detail.message,
-            input: resData.detail.input,
+            type: resData.detail?.type,
+            message: resData.detail?.message,
+            input: resData.detail?.input,
           },
         };
       }

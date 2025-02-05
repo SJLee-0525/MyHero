@@ -7,21 +7,17 @@ export default function CalendarBody() {
   const { daysInMonth, selectedDate, currentDate, schedules } = useContext(CalendarStoreContext)
 
   if (!Array.isArray(daysInMonth)) {
-    return <p>날짜 데이터를 불러오는 중...</p>;
+    return <p>날짜 데이터를 불러오는 중...</p>
   }
-  
-  console.log(daysInMonth);
 
-  const weeks = ["일", "월", "화", "수", "목", "금", "토"];
+  const weeks = ["일", "월", "화", "수", "목", "금", "토"]
 
   return (
     <div className="calendar-container">
       {/* 요일 표시 */}
       <div className="calendar-day-wrapper">
         {weeks.map((week, index) => (
-          <div 
-            key={week} 
-            className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}>
+          <div key={week} className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}>
             {week}
           </div>
         ))}
@@ -29,7 +25,7 @@ export default function CalendarBody() {
 
       {/* Days */}
       <div className="calendar-day-wrapper">
-        {daysInMonth.map((date) =>
+        {daysInMonth.map((date) => (
           <div
             key={date.date}
             onClick={() => selectedDate.selectDate(date.date)}
@@ -53,7 +49,7 @@ export default function CalendarBody() {
               </li>
             )}
           </div>
-        )}
+        ))}
       </div>
     </div>
   )

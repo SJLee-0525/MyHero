@@ -19,7 +19,7 @@ export default function Login() {
   const emailInput = useRef("");
   const passwordInput = useRef("");
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     // 이메일 유효성 검사
@@ -48,17 +48,15 @@ export default function Login() {
       });
     }
 
-    ////////////////////////// 입력받은 데이터 객체화 (임시)
-    // const userInfo = {
-    //   email: emailInput.current.value,
-    //   password: passwordInput.current.value,
-    //   id: emailInput.current.value,
-    // }
-
     const email = emailInput.current.value;
     const password = passwordInput.current.value;
 
-    userProgressStore.handleLogin(email, password);
+    const response = await userProgressStore.handleLogin(email, password);
+
+    // 로그인 실패 시
+    if (!response.success) {
+      alert(`로그인 실패:\n${response.error.message}`);
+    }
   }
 
   function handleShowSignUp() {

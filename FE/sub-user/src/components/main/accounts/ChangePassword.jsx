@@ -68,7 +68,7 @@ export default function ChangePassword() {
             X
           </button>
         </div>
-        <p className="login-control">
+        <div className="login-control">
           <div className="login-form-row">
             <div className="login-control">
               <label htmlFor="text">현재 비밀번호</label>
@@ -89,7 +89,7 @@ export default function ChangePassword() {
               수정
             </button>
           </p>
-        </p>
+        </div>
       </div>
     </Modal>
   );

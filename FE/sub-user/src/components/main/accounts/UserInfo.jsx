@@ -71,7 +71,7 @@ export default function UserInfo() {
         {selectedUserInfo === "familyUserInfo" &&
           loginUserInfo.userInfo.role === "sub" && <MemberUserInfo />}
 
-        <p className="login-form-action">
+        <div className="login-form-action">
           <div className="danger-zone">
             <button className="logout-btn" onClick={handleLogout}>
               Log Out
@@ -81,7 +81,7 @@ export default function UserInfo() {
               회원 탈퇴
             </button>
           </div>
-        </p>
+        </div>
       </div>
       <UpdateUserInfo />
       <CreateFamily />

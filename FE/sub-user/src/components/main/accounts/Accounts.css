@@ -429,6 +429,7 @@
   justify-content: end;
   align-items: end;
 
+  margin-bottom: 8px;
   gap: 10px;
 
   width: 100%;

@@ -19,7 +19,8 @@ export default function CreateFamily() {
     event.preventDefault();
 
     // 가족 이름 유효성 검사
-    const invalid = inputName.current.value.length < 2;
+    const invalid =
+      inputName.current.value.length < 2 || inputName.current.value.length > 32;
     if (invalid) {
       setNameIsInvalid(true);
       return;
@@ -79,7 +80,7 @@ export default function CreateFamily() {
           <input type="text" ref={inputName} />
           {nameIsInvalid && (
             <div className="signup-control-error">
-              <p>가족 모임 이름은 2글자 이상이어야 합니다.</p>
+              <p>가족 모임 이름은 2글자 이상 32글자 이하여야 합니다.</p>
             </div>
           )}
           <button className="signup-btn" onClick={handleCreateFamily}>

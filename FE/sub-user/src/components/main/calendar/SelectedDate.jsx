@@ -12,9 +12,11 @@ export default function SelectedDate() {
       </div>
       <ul>
         {schedules.schedules[selectedDate.date] ? (
-          schedules.schedules[selectedDate.date].map((schedule, index) => (
-            <li key={index}>- {schedule}</li>
-          ))
+          schedules.schedules[selectedDate.date].map((schedule, index) => {
+            const truncatedText =
+              schedule.length > 25 ? schedule.slice(0, 25) + "..." : schedule;
+            return <li key={index}>- {truncatedText}</li>;
+          })
         ) : (
           <li>There were no activities on this date.</li>
         )}

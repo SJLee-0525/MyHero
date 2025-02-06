@@ -22,9 +22,12 @@ export default function CalendarSchedules() {
         {/* 해당 날짜 일정 출력력 */}
         <ul>
           {schedules.schedules[selectedDate.date] ? (
-            schedules.schedules[selectedDate.date].map((schedule, index) => (
-              <li key={index}>- {schedule}</li>
-            ))
+            schedules.schedules[selectedDate.date].map((schedule, index) => {
+              const truncatedText =
+                schedule.length > 25 ? schedule.slice(0, 25) + "..." : schedule;
+
+              return <li key={index}>- {truncatedText} </li>;
+            })
           ) : (
             <li>There were no activities on this date.</li>
           )}

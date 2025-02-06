@@ -156,3 +156,33 @@ def change_password(user_id: str, new_hased_password: str) -> bool:
             session.commit()
             return result
 
+def get_login_session(session_id: str) -> dict:
+    """
+    해당 로그인 세션이 존재하는지 확인하는 기능
+    :param session_id: 세션 ID
+    :return: 세션의 데이터 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            login_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.xid == session_id).first()
+
+            if login_data is not None:
+                serialized_data: dict = {
+                    "xid": login_data.xid,
+                    "user_id": login_data.user_id,
+                    "last_active": login_data.last_active,
+                    "is_main_user": login_data.is_main_user
+                }
+
+                result = serialized_data
+            else:
+                result = {}
+        except SQLAlchemyError as error:
+            session.rollback()
+            print(f"[DB] Error getting login session: {str(error)}")
+            result = {}
+        finally:
+            return result

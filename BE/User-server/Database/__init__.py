@@ -37,7 +37,8 @@ from .authentication import (
     create_session,
     delete_session,
     check_current_user,
-    change_password
+    change_password,
+    get_login_session
 )
 
 from .status import (

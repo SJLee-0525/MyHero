@@ -49,9 +49,9 @@ class AccountsTable(Base):
     gender = Column(Enum(Gender), nullable=True)
     address = Column(String(128), nullable=True)
 
-    family_relations = relationship("FamiliesTable", backref="back_family_relations", cascade="all, delete")
-    member_relations = relationship("MemberRelationsTable", backref="back_member_relations", cascade="all, delete")
-    login_sessions = relationship("LoginSessionsTable", backref="back_login_session", cascade="all, delete")
+    family_relations = relationship("FamiliesTable", cascade="all, delete")
+    member_relations = relationship("MemberRelationsTable", cascade="all, delete")
+    login_sessions = relationship("LoginSessionsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -75,12 +75,12 @@ class FamiliesTable(Base):
     main_user = Column(String(16), ForeignKey('accounts.id'), nullable=False)
     family_name = Column(String(128), nullable=True)
 
-    member_relations = relationship("MemberRelationsTable", backref="back_member_relations", cascade="all, delete")
-    home_status = relationship("HomeStatusTable", backref="back_home_status", cascade="all, delete")
-    health_status = relationship("HealthStatusTable", backref="back_health_status", cascade="all, delete")
-    active_status = relationship("ActiveStatusTable", backref="back_active_status", cascade="all, delete")
-    mental_status = relationship("MentalStatusTable", backref="back_mental_status", cascade="all, delete")
-    mental_reports = relationship("MentalReportsTable", backref="back_mental_reports", cascade="all, delete")
+    member_relations = relationship("MemberRelationsTable", cascade="all, delete")
+    home_status = relationship("HomeStatusTable", cascade="all, delete")
+    health_status = relationship("HealthStatusTable", cascade="all, delete")
+    active_status = relationship("ActiveStatusTable", cascade="all, delete")
+    mental_status = relationship("MentalStatusTable", cascade="all, delete")
+    mental_reports = relationship("MentalReportsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +

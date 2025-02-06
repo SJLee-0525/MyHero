@@ -6,6 +6,7 @@
 #include <tf2/utils.h>
 #include <ros/ros.h>
 #include <string>
+#include <std_msgs/Bool.h> // 추가
 
 PLUGINLIB_EXPORT_CLASS(backoff_recovery::BackoffRecovery, nav_core::RecoveryBehavior)
 
@@ -30,6 +31,9 @@ namespace backoff_recovery
 
             goal_sub_ = nh_->subscribe("/move_base_simple/goal", 1,
                                        &BackoffRecovery::goalCallback, this);
+
+            stop_sub_ = nh_->subscribe("/stop_recovery", 1,
+                                       &BackoffRecovery::stopCallback, this);
 
             ROS_INFO("Initialized BackoffRecovery with velocity: %.2f, distance: %.2f", vel_, backoff_distance_);
 
@@ -58,10 +62,19 @@ namespace backoff_recovery
 
     void BackoffRecovery::goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
     {
-        if (false)
-        // if (hasGoalChanged(msg))
+        // if (false)
+        if (hasGoalChanged(msg))
         {
             ROS_INFO("Goal position changed, stopping backoff recovery");
+            should_stop_ = true;
+        }
+    }
+
+    void BackoffRecovery::stopCallback(const std_msgs::Bool::ConstPtr &msg)
+    {
+        if (msg->data)
+        {
+            ROS_INFO("Stop signal received from gamepad");
             should_stop_ = true;
         }
     }
@@ -77,6 +90,7 @@ namespace backoff_recovery
 
     void BackoffRecovery::runBehavior()
     {
+        should_stop_ = false;
         euclidean_distance_ = 0.0;
 
         if (!initialized_)
@@ -143,7 +157,7 @@ namespace backoff_recovery
                 stop_cmd.angular.z = 0;
                 vel_pub.publish(stop_cmd);
 
-                ROS_INFO("Backoff recovery interrupted by new goal");
+                ROS_INFO("Backoff recovery interrupted by User");
                 return;
             }
             try
@@ -168,6 +182,6 @@ namespace backoff_recovery
 
             r.sleep();
         }
+        should_stop_ = false;
     }
-
 }

@@ -6,6 +6,7 @@
 #include <tf2_ros/buffer.h>
 #include <base_local_planner/costmap_model.h>
 #include <string>
+#include <std_msgs/Bool.h> // 추가
 
 namespace backoff_recovery
 {
@@ -34,6 +35,9 @@ namespace backoff_recovery
         ros::Subscriber goal_sub_;
         ros::NodeHandle *nh_;
         void goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg);
+
+        ros::Subscriber stop_sub_;                              // 추가
+        void stopCallback(const std_msgs::Bool::ConstPtr &msg); // 추가
     };
 };
 #endif

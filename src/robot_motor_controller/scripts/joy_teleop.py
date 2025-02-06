@@ -6,6 +6,7 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction
+from std_msgs.msg import Bool
 M_PI = 3.141592
 
 class JoyTeleop:
@@ -28,9 +29,13 @@ class JoyTeleop:
         self.publish_rate = rospy.Rate(10)  # 10Hz로 publish
         self.manual_mode = False  # 수동 모드 플래그
         self.mode_button = rospy.get_param('~mode_button', 0)  # A버튼을 모드 전환으로 사용
+        self.stop_button = rospy.get_param('~stop_button', 1)  # B버튼
+        self.prev_stop_button = 0
         
         # move_base enable/disable을 위한 서비스 클라이언트
         self.move_base_client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
+        self.stop_pub = rospy.Publisher('/stop_recovery', Bool, queue_size=1)
+        self.prev_mode_button = 0
         self.run()
 
     def run(self):
@@ -55,7 +60,17 @@ class JoyTeleop:
                 self.forward = 0.0
                 self.last_steering = 0.0
                 rospy.loginfo("Autonomous Mode")
-                
+
+        # B버튼 상태 확인 (rising edge 검출)
+        stop_button = joy_msg.buttons[self.stop_button]
+        if stop_button == 1 and self.prev_stop_button == 0:
+            stop_msg = Bool()
+            stop_msg.data = True
+            self.stop_pub.publish(stop_msg)
+            rospy.loginfo("Stop signal sent to recovery behavior")
+        
+        self.prev_stop_button = stop_button
+        
         # 수동 모드일 때만 조이스틱 입력 처리
         if self.manual_mode:
             twist = Twist()

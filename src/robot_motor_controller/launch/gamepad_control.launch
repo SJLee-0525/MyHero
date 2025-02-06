@@ -22,6 +22,7 @@
         <param name="scale_linear" value="0.4"/>
         <param name="scale_angular" value="1.0"/>
         <param name="mode_button" value="0"/>  <!-- A 버튼 -->
+        <param name="stop_button" value="1"/>  <!-- B버튼: recovery 중지 -->
         <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
     </node>
 </launch>

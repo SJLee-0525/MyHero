@@ -33,27 +33,6 @@ def get_all_email() -> list[dict]:
         finally:
             return result
 
-# 모든 사용자의 ID 불러오기
-# DEPRECATED : 사용하지 않아서 삭제될 예정
-def get_all_account_id() -> list[dict]:
-    """
-    등록된 사용자 계정 ID를 모두 불러오는 기능
-    :return: 등록된 사용자의 모든 ID list[dict]
-    """
-    result: list[dict] = []
-
-    database_pre_session = database.get_pre_session()
-    with database_pre_session() as session:
-        try:
-            id_list = session.query(AccountsTable.id).all()
-            result = [{"id": data[0]} for data in id_list]
-        except SQLAlchemyError as error:
-            session.rollback()
-            print(f"[DB] Error getting all account id: {str(error)}")
-            result = []
-        finally:
-            return result
-
 # 새로운 사용자 계정 추가하기
 def create_account(account_data: AccountsTable) -> bool:
     """

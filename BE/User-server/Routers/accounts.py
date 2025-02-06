@@ -222,9 +222,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
             detail={
                 "type": "can not access",
                 "message": "You do not have permission",
-                "input": {
-                    "user_id": user_id
-                }
+                "input": {"user_id": user_id}
             }
         )
 

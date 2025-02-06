@@ -13,50 +13,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 database: Database = Database()
 
-# 모든 가족의 ID 불러오기
-# DEPRECATED : 사용하지 않아서 삭제될 예정
-def get_all_family_id() -> list[dict]:
-    """
-    등록된 모든 가족의 ID를 불러오는 기능
-    :return: 등록된 모든 가족의 ID list[dict]
-    """
-    result: list[dict] = []
-
-    database_pre_session = database.get_pre_session()
-    with database_pre_session() as session:
-        try:
-            id_list = session.query(FamiliesTable.id).all()
-            result = [{"id": data[0]} for data in id_list]
-        except SQLAlchemyError as error:
-            session.rollback()
-            print(f"[DB] Error getting all family id: {str(error)}")
-            result = []
-        finally:
-            return result
-
-
-# 모든 가족의 Main User ID 불러오기
-# DEPRECATED : 사용하지 않아서 삭제될 예정
-def get_all_family_main() -> list[dict]:
-    """
-    등록된 모든 가족의 Main User ID를 불러오는 기능
-    :return: 등록된 모든 가족의 Main User ID list[dict]
-    """
-    result: list[dict] = []
-
-    database_pre_session = database.get_pre_session()
-    with database_pre_session() as session:
-        try:
-            main_id_list = session.query(FamiliesTable.main_user).all()
-            result = [{"main_id": data[0]} for data in main_id_list]
-        except SQLAlchemyError as error:
-            session.rollback()
-            print(f"[DB] Error getting all family main id: {str(error)}")
-            result = []
-        finally:
-            return result
-
-
 # 주 사용자 ID로 가족 ID를 불러오기
 def main_id_to_family_id(main_id: str) -> str:
     """

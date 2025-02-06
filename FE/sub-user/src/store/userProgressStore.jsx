@@ -71,7 +71,7 @@ export const UserProgressContext = createContext({
 });
 
 export default function UserProgressContextProvider({ children }) {
-  const { request, loading, error } = useHttp();
+  const { request, loading } = useHttp();
 
   // 사이드 바 메뉴 요소 활성화 관련
   const [isActiveSideBarElem, setIsActiveSideBarElem] = useState("home");
@@ -1143,6 +1143,7 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   const ctxValue = {
+    loading,
     isActiveSideBarElem,
     toggleStatus,
     subUserSettings,

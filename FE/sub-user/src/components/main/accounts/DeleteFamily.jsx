@@ -24,6 +24,8 @@ export default function DeleteFamily() {
       return;
     }
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleDeleteFamilyInfo(
         inputPassword.current.value
@@ -32,12 +34,13 @@ export default function DeleteFamily() {
       if (result.success === true) {
         // 가족 삭제 성공
         alert("가족 모임 삭제 성공");
-        userProgressStore.handleCloseModal();
 
         inputPassword.current.value = "";
 
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("delete-family");
+
         console.error("가족 모임 삭제 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

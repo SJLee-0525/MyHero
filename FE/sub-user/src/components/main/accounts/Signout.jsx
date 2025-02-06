@@ -24,6 +24,8 @@ export default function Signout() {
       return;
     }
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleSignOut(
         inputPassword.current.value
@@ -32,9 +34,10 @@ export default function Signout() {
       if (result.success === true) {
         // 회원 탈퇴 성공
         alert("회원 탈퇴 성공");
-        userProgressStore.handleCloseModal();
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("sign-out");
+
         console.error("회원 탈퇴 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

@@ -410,6 +410,8 @@ export default function UpdateUserInfo() {
       address: data.state + " " + data.city,
     };
 
+    userProgressStore.handleCloseModal();
+
     // 백 요청 전송
     try {
       const result = await userProgressStore.handleUpdateUserInfo(payload);
@@ -418,8 +420,9 @@ export default function UpdateUserInfo() {
         console.log("회원 정보 수정 성공:", result.data);
         alert("회원 정보 수정이 완료되었습니다.");
         navigate("/accounts"); // 유저 정보 페이지 이동
-        userProgressStore.handleCloseModal();
       } else {
+        userProgressStore.handleOpenModal("update-user-info");
+
         console.error("회원 정보 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

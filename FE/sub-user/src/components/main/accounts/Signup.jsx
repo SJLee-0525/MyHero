@@ -409,6 +409,8 @@ export default function Signup() {
       address: data.state + " " + data.city,
     };
 
+    userProgressStore.handleCloseModal();
+
     // 백 요청 전송
     try {
       const result = await userProgressStore.handleSignUp(payload);
@@ -416,10 +418,11 @@ export default function Signup() {
       if (result.success) {
         console.log("회원 가입 성공:", result.data);
         alert("회원가입이 완료되었습니다.");
-        userProgressStore.handleCloseModal();
         userProgressStore.setIsActiveSideBarElem("home");
         navigate("/"); // 메인 페이지 이동
       } else {
+        userProgressStore.handleOpenModal("sign-up");
+
         console.error("회원 가입 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

@@ -1,12 +1,14 @@
 import "./App.css";
 
 import { useContext } from "react";
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { UserProgressContext } from "./store/userProgressStore.jsx";
 
 import TopNav from "./components/nav/TopNav";
 import SideNav from "./components/nav/SideNav";
+import LoadingSpinner from "./components/spinner/LoadingSpinner.jsx";
 
 import Home from "./components/main/home/Home.jsx";
 import Notification from "./components/main/notification/Notification.jsx";
@@ -27,6 +29,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      {userProgressStore.loading && <LoadingSpinner />}
       {userProgressStore.loginUserInfo.login ? (
         <div id="app">
           <nav id="top-nav">

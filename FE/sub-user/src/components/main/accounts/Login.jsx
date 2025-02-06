@@ -51,10 +51,14 @@ export default function Login() {
     const email = emailInput.current.value;
     const password = passwordInput.current.value;
 
+    userProgressStore.handleCloseModal();
+
     const response = await userProgressStore.handleLogin(email, password);
 
     // 로그인 실패 시
     if (!response.success) {
+      userProgressStore.setModalProgress("login");
+
       alert(`로그인 실패:\n${response.error.message}`);
     }
   }

@@ -33,18 +33,20 @@ export default function CreateFamily() {
       family_name: inputName.current.value,
     };
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleCreateFamily(payload);
       if (result.success === true) {
         // 가족 생성 성공
         alert("가족 모임 생성 성공");
 
-        userProgressStore.handleCloseModal();
-
         inputName.current.value = "";
 
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("create-family-user-info");
+
         console.error("가족 모임 생성 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

@@ -27,6 +27,8 @@ export default function UpdateMember() {
       setNameIsInvalid(false);
     }
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleUpdateMember(
         inputName.current.value
@@ -34,10 +36,11 @@ export default function UpdateMember() {
       if (result.success === true) {
         // 닉네임 수정 성공
         alert("닉네임 수정 성공");
-        userProgressStore.handleCloseModal();
         inputName.current.value = "";
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("update-member-user-info");
+
         console.error("닉네임 수정 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

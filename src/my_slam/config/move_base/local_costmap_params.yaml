@@ -7,7 +7,7 @@ local_costmap:
   publish_frequency: 5.0
   width: 3.0
   height: 3.0
-  resolution: 0.03
+  resolution: 0.05
   transform_tolerance: 0.5
 
   # 중요: clearing 관련 파라미터 추가
@@ -18,6 +18,9 @@ local_costmap:
   static_map: false
   rolling_window: true            # 로봇을 중심으로 로컬 윈도우가 움직이는 방식
   always_send_full_costmap: true # 전체 코스트맵 항상 publish
+
+  # 키키
+  robot_radius: 0.0
 
 plugins:
   - {name: static_layer, type: "costmap_2d::StaticLayer"}

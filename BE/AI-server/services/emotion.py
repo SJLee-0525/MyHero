@@ -143,7 +143,7 @@ class EmotionService:
         score = self._calculate_score(analysis_result)
         return 1 if score <= 30 else 0
     
-    async def generate_periodic_report(self, family_id: str, start_date: date, end_date: date) -> Dict:
+    async def generate_periodic_report(self, family_id: str, start_date: datetime, end_date: datetime) -> Dict:
         try:
             reports = self.db.query(MentalStatus)\
                 .filter(MentalStatus.family_id == family_id)\
@@ -164,8 +164,8 @@ class EmotionService:
             # 분석 결과 계산
             average_score = round(sum(r.score for r in reports) / len(reports), 1)
             critical_days = len([r for r in reports if r.is_critical == 1])
-            best_day = max(reports, key=lambda x: x.score).reported_at.date()
-            worst_day = min(reports, key=lambda x: x.score).reported_at.date()
+            best_day = max(reports, key=lambda x: x.score).reported_at
+            worst_day = min(reports, key=lambda x: x.score).reported_at
             improvement_needed = len([r for r in reports if r.score < 50]) / len(reports) > 0.3
             summary = self._generate_period_summary(reports)
 
@@ -175,8 +175,8 @@ class EmotionService:
                 end_time=datetime.combine(end_date, datetime.max.time()),
                 average_score=average_score,
                 critical_days=critical_days,
-                best_day=best_day,
-                worst_day=worst_day,
+                best_day=best_day.date(),
+                worst_day=worst_day.date(),
                 improvement_needed=improvement_needed,
                 summary=summary
             )

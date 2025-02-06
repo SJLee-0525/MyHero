@@ -9,7 +9,7 @@ Database Status Part
 from Database.connector import Database
 from Database.models import *
 
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 
 from datetime import datetime
@@ -42,9 +42,10 @@ def create_home_status(home_status_data: HomeStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 집 환경 정보 불러오기
-def get_home_status(start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_home_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 집 환경 정보를 불러오는 기능
+    :param family_id: 대상의 가족 ID
     :param start_time: 검색 범위의 시작 값 datetime
     :param end_time: 검색 범위의 끝 값 datetime (기본은 현재)
     :param time_order: 데이터의 정렬 순서 (시간 기반)
@@ -67,7 +68,8 @@ def get_home_status(start_time: datetime, end_time: datetime = datetime.now(), t
                     HomeStatusTable.dust_level,
                     HomeStatusTable.ethanol,
                     HomeStatusTable.others
-                ).filter(HomeStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(HomeStatusTable.reported_at.between(start_time, end_time),
+                              HomeStatusTable.family_id == family_id)
                 ).order_by(
                     HomeStatusTable.reported_at.asc()
                 ).all()
@@ -81,7 +83,8 @@ def get_home_status(start_time: datetime, end_time: datetime = datetime.now(), t
                     HomeStatusTable.dust_level,
                     HomeStatusTable.ethanol,
                     HomeStatusTable.others
-                ).filter(HomeStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(HomeStatusTable.reported_at.between(start_time, end_time),
+                              HomeStatusTable.family_id == family_id)
                 ).order_by(
                     HomeStatusTable.reported_at.desc()
                 ).all()
@@ -106,9 +109,10 @@ def get_home_status(start_time: datetime, end_time: datetime = datetime.now(), t
             return result
 
 # 가장 최신의 집 환경 정보 불러오기
-def get_latest_home_status() -> dict:
+def get_latest_home_status(family_id: str) -> dict:
     """
     가장 최신의 집 환경 정보를 불러오기
+    :param family_id: 대상의 가족 ID
     :return: 최신의 집 환경 정보 dict
     """
     result: dict = {}
@@ -125,6 +129,7 @@ def get_latest_home_status() -> dict:
                 HomeStatusTable.dust_level,
                 HomeStatusTable.ethanol,
                 HomeStatusTable.others
+            ).filter(HealthStatusTable.family_id == family_id
             ).order_by(HomeStatusTable.reported_at.desc()).first()
 
             if home_status_data is not None:
@@ -149,9 +154,10 @@ def get_latest_home_status() -> dict:
             return result
 
 # 가장 최신의 집 환경 정보 삭제하기
-def delete_latest_home_status() -> bool:
+def delete_latest_home_status(family_id: str) -> bool:
     """
     가장 최신의 집 환경 정보를 삭제하는 기능
+    :param family_id: 대상의 가족 ID
     :return: 집 환경 정보가 성공적으로 삭제되었는지 여부 bool
     """
     result: bool = False
@@ -159,7 +165,11 @@ def delete_latest_home_status() -> bool:
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            home_status_data = session.query(HomeStatusTable).order_by(HomeStatusTable.reported_at.desc()).first()
+            home_status_data = session.query(
+                HomeStatusTable
+            ).filter(HealthStatusTable.family_id == family_id
+            ).order_by(HomeStatusTable.reported_at.desc()).first()
+
             if home_status_data is not None:
                 session.delete(home_status_data)
                 result = True
@@ -199,9 +209,10 @@ def create_health_status(health_status_data: HealthStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 건강 정보 불러오기
-def get_health_status(start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_health_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 건강 정보를 불러오는 기능
+    :param family_id: 대상의 가족 ID
     :param start_time: 검색 범위의 시작 값 datetime
     :param end_time: 검색 범위의 끝 값 datetime (기본은 현재)
     :param time_order: 데이터의 정렬 순서 (시간 기반)
@@ -220,7 +231,8 @@ def get_health_status(start_time: datetime, end_time: datetime = datetime.now(),
                     HealthStatusTable.family_id,
                     HealthStatusTable.reported_at,
                     HealthStatusTable.heart_rate
-                ).filter(HealthStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(HealthStatusTable.reported_at.between(start_time, end_time),
+                              HealthStatusTable.family_id == family_id)
                 ).order_by(
                     HealthStatusTable.reported_at.asc()
                 ).all()
@@ -230,7 +242,8 @@ def get_health_status(start_time: datetime, end_time: datetime = datetime.now(),
                     HealthStatusTable.family_id,
                     HealthStatusTable.reported_at,
                     HealthStatusTable.heart_rate
-                ).filter(HealthStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(HealthStatusTable.reported_at.between(start_time, end_time),
+                              HealthStatusTable.family_id == family_id)
                 ).order_by(
                     HealthStatusTable.reported_at.desc()
                 ).all()
@@ -251,9 +264,10 @@ def get_health_status(start_time: datetime, end_time: datetime = datetime.now(),
             return result
 
 # 가장 최신의 건강 정보 불러오기
-def get_latest_health_status() -> dict:
+def get_latest_health_status(family_id: str) -> dict:
     """
     가장 최신의 건강 정보를 불러오기
+    :param family_id: 대상의 가족 ID
     :return: 최신의 건강 정보 dict
     """
     result: dict = {}
@@ -266,6 +280,7 @@ def get_latest_health_status() -> dict:
                 HealthStatusTable.family_id,
                 HealthStatusTable.reported_at,
                 HealthStatusTable.heart_rate
+            ).filter(HealthStatusTable.family_id == family_id
             ).order_by(HealthStatusTable.reported_at.desc()).first()
 
             if health_status_data is not None:
@@ -286,9 +301,10 @@ def get_latest_health_status() -> dict:
             return result
 
 # 가장 최신의 건강 정보 삭제하기
-def delete_latest_health_status() -> bool:
+def delete_latest_health_status(family_id: str) -> bool:
     """
     가장 최신의 건강 정보를 삭제하는 기능
+    :param family_id: 대상의 가족 ID
     :return: 건강 정보가 성공적으로 삭제되었는지 여부 bool
     """
     result: bool = False
@@ -296,7 +312,11 @@ def delete_latest_health_status() -> bool:
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            health_status_data = session.query(HealthStatusTable).order_by(HealthStatusTable.reported_at.desc()).first()
+            health_status_data = session.query(
+                HealthStatusTable
+            ).filter(HealthStatusTable.family_id == family_id
+            ).order_by(HealthStatusTable.reported_at.desc()).first()
+
             if health_status_data is not None:
                 session.delete(health_status_data)
                 result = True
@@ -336,9 +356,10 @@ def create_active_status(active_status_data: ActiveStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 활동 정보 불러오기
-def get_active_status(start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_active_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 활동 정보를 불러오는 기능
+    :param family_id: 대상의 가족 ID
     :param start_time: 검색 범위의 시작 값 datetime
     :param end_time: 검색 범위의 끝 값 datetime (기본은 현재)
     :param time_order: 데이터의 정렬 순서 (시간 기반)
@@ -360,7 +381,8 @@ def get_active_status(start_time: datetime, end_time: datetime = datetime.now(),
                     ActiveStatusTable.action,
                     ActiveStatusTable.is_critical,
                     ActiveStatusTable.description
-                ).filter(ActiveStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
+                              ActiveStatusTable.family_id == family_id)
                 ).order_by(
                     ActiveStatusTable.reported_at.asc()
                 ).all()
@@ -373,7 +395,8 @@ def get_active_status(start_time: datetime, end_time: datetime = datetime.now(),
                     ActiveStatusTable.action,
                     ActiveStatusTable.is_critical,
                     ActiveStatusTable.description
-                ).filter(ActiveStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
+                              ActiveStatusTable.family_id == family_id)
                 ).order_by(
                     ActiveStatusTable.reported_at.desc()
                 ).all()
@@ -397,9 +420,10 @@ def get_active_status(start_time: datetime, end_time: datetime = datetime.now(),
             return result
 
 # 가장 최신의 활동 정보 불러오기
-def get_latest_active_status() -> dict:
+def get_latest_active_status(family_id: str) -> dict:
     """
     가장 최신의 활동 정보를 불러오기
+    :param family_id: 대상의 가족 ID
     :return: 최신의 활동 정보 dict
     """
     result: dict = {}
@@ -415,6 +439,7 @@ def get_latest_active_status() -> dict:
                 ActiveStatusTable.action,
                 ActiveStatusTable.is_critical,
                 ActiveStatusTable.description
+            ).filter(ActiveStatusTable.family_id == family_id
             ).order_by(ActiveStatusTable.reported_at.desc()).first()
 
             if active_status_data is not None:
@@ -438,9 +463,10 @@ def get_latest_active_status() -> dict:
             return result
 
 # 가장 최신의 활동 정보 삭제하기
-def delete_latest_active_status() -> bool:
+def delete_latest_active_status(family_id: str) -> bool:
     """
     가장 최신의 활동 정보를 삭제하는 기능
+    :param family_id: 대상의 가족 ID
     :return: 활동 정보가 성공적으로 삭제되었는지 여부 bool
     """
     result: bool = False
@@ -448,7 +474,11 @@ def delete_latest_active_status() -> bool:
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            active_status_data = session.query(ActiveStatusTable).order_by(ActiveStatusTable.reported_at.desc()).first()
+            active_status_data = session.query(
+                ActiveStatusTable
+            ).filter(ActiveStatusTable.family_id == family_id
+            ).order_by(ActiveStatusTable.reported_at.desc()).first()
+
             if active_status_data is not None:
                 session.delete(active_status_data)
                 result = True
@@ -465,9 +495,10 @@ def delete_latest_active_status() -> bool:
 # ========== Mental 부분 ==========
 
 # 조건에 따른 모든 정신건강 정보 불러오기
-def get_mental_status(start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_mental_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 정신건강 정보를 불러오는 기능
+    :param family_id: 대상의 가족 ID
     :param start_time: 검색 범위의 시작 값 datetime
     :param end_time: 검색 범위의 끝 값 datetime (기본은 현재)
     :param time_order: 데이터의 정렬 순서 (시간 기반)
@@ -488,7 +519,8 @@ def get_mental_status(start_time: datetime, end_time: datetime = datetime.now(),
                     MentalStatusTable.score,
                     MentalStatusTable.is_critical,
                     MentalStatusTable.description
-                ).filter(MentalStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(MentalStatusTable.reported_at.between(start_time, end_time),
+                              MentalStatusTable.family_id == family_id)
                 ).order_by(
                     MentalStatusTable.reported_at.asc()
                 ).all()
@@ -500,7 +532,8 @@ def get_mental_status(start_time: datetime, end_time: datetime = datetime.now(),
                     MentalStatusTable.score,
                     MentalStatusTable.is_critical,
                     MentalStatusTable.description
-                ).filter(MentalStatusTable.reported_at.between(start_time, end_time)
+                ).filter(and_(MentalStatusTable.reported_at.between(start_time, end_time),
+                              MentalStatusTable.family_id == family_id)
                 ).order_by(
                     MentalStatusTable.reported_at.desc()
                 ).all()
@@ -523,9 +556,10 @@ def get_mental_status(start_time: datetime, end_time: datetime = datetime.now(),
             return result
 
 # 가장 최신의 정신건강 정보 불러오기
-def get_latest_mental_status() -> dict:
+def get_latest_mental_status(family_id: str) -> dict:
     """
     가장 최신의 정신건강 정보를 불러오기
+    :param family_id: 대상의 가족 ID
     :return: 최신의 정신건강 정보 dict
     """
     result: dict = {}
@@ -540,6 +574,7 @@ def get_latest_mental_status() -> dict:
                 MentalStatusTable.score,
                 MentalStatusTable.is_critical,
                 MentalStatusTable.description
+            ).filter(MentalStatusTable.family_id == family_id
             ).order_by(MentalStatusTable.reported_at.desc()).first()
 
             if mental_status_data is not None:
@@ -562,9 +597,10 @@ def get_latest_mental_status() -> dict:
             return result
 
 # 가장 최신의 정신건강 정보 삭제하기
-def delete_latest_mental_status() -> bool:
+def delete_latest_mental_status(family_id: str) -> bool:
     """
     가장 최신의 정신건강 정보를 삭제하는 기능
+    :param family_id: 대상의 가족 ID
     :return: 정신건강 정보가 성공적으로 삭제되었는지 여부 bool
     """
     result: bool = False
@@ -572,7 +608,11 @@ def delete_latest_mental_status() -> bool:
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            mental_status_data = session.query(MentalStatusTable).order_by(MentalStatusTable.reported_at.desc()).first()
+            mental_status_data = session.query(
+                MentalStatusTable
+            ).filter(MentalStatusTable.family_id == family_id
+            ).order_by(MentalStatusTable.reported_at.desc()).first()
+
             if mental_status_data is not None:
                 session.delete(mental_status_data)
                 result = True
@@ -587,9 +627,10 @@ def delete_latest_mental_status() -> bool:
             return result
 
 # 조건에 따른 모든 정신건강 리포트 불러오기
-def get_mental_reports(start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list:
+def get_mental_reports(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list:
     """
     조건에 따른 모든 정신건강 리포트를 불러오는 기능
+    :param family_id: 대상의 가족 ID
     :param start_time: 검색 범위의 시작 값 datetime
     :param end_time: 검색 범위의 끝 값 datetime (기본은 현재)
     :param time_order: 데이터의 정렬 순서 (시간 기반)
@@ -615,8 +656,9 @@ def get_mental_reports(start_time: datetime, end_time: datetime = datetime.now()
                     MentalReportsTable.worst_day,
                     MentalReportsTable.improvement_needed,
                     MentalReportsTable.summary
-                ).filter(or_(MentalReportsTable.start_time.between(start_time, end_time),
-                             MentalReportsTable.end_time.between(start_time, end_time))
+                ).filter(and_(or_(MentalReportsTable.start_time.between(start_time, end_time),
+                             MentalReportsTable.end_time.between(start_time, end_time)),
+                              MentalReportsTable.family_id == family_id)
                 ).order_by(
                     MentalReportsTable.start_time.asc()
                 ).all()
@@ -633,8 +675,9 @@ def get_mental_reports(start_time: datetime, end_time: datetime = datetime.now()
                     MentalReportsTable.worst_day,
                     MentalReportsTable.improvement_needed,
                     MentalReportsTable.summary
-                ).filter(or_(MentalReportsTable.start_time.between(start_time, end_time),
-                             MentalReportsTable.end_time.between(start_time, end_time))
+                ).filter(and_(or_(MentalReportsTable.start_time.between(start_time, end_time),
+                             MentalReportsTable.end_time.between(start_time, end_time)),
+                              MentalReportsTable.family_id == family_id)
                 ).order_by(
                     MentalReportsTable.start_time.desc()
                 ).all()
@@ -662,9 +705,10 @@ def get_mental_reports(start_time: datetime, end_time: datetime = datetime.now()
             return result
 
 # 가장 최신의 정신건강 리포트 불러오기
-def get_latest_mental_reports() -> dict:
+def get_latest_mental_reports(family_id: str) -> dict:
     """
     가장 최신의 정신건강 리포트를 불러오기
+    :param family_id: 대상의 가족 ID
     :return: 최신의 정신건강 리포트 dict
     """
     result: dict = {}
@@ -684,6 +728,7 @@ def get_latest_mental_reports() -> dict:
                 MentalReportsTable.worst_day,
                 MentalReportsTable.improvement_needed,
                 MentalReportsTable.summary
+            ).filter(MentalReportsTable.family_id == family_id
             ).order_by(MentalReportsTable.reported_at.desc()).first()
 
             if mental_reports_data is not None:
@@ -711,9 +756,10 @@ def get_latest_mental_reports() -> dict:
             return result
 
 # 가장 최신의 정신건강 리포트 삭제하기
-def delete_latest_mental_reports() -> bool:
+def delete_latest_mental_reports(family_id: str) -> bool:
     """
     가장 최신의 정신건강 리포트를 삭제하는 기능
+    :param family_id: 대상의 가족 ID
     :return: 정신건강 리포트가 성공적으로 삭제되었는지 여부 bool
     """
     result: bool = False
@@ -721,7 +767,11 @@ def delete_latest_mental_reports() -> bool:
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            mental_reports_data = session.query(MentalReportsTable).order_by(MentalReportsTable.reported_at.desc()).first()
+            mental_reports_data = session.query(
+                MentalReportsTable
+            ).filter(MentalReportsTable.family_id == family_id
+            ).order_by(MentalReportsTable.reported_at.desc()).first()
+
             if mental_reports_data is not None:
                 session.delete(mental_reports_data)
                 result = True

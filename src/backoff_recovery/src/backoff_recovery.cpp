@@ -58,7 +58,8 @@ namespace backoff_recovery
 
     void BackoffRecovery::goalCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
     {
-        if (hasGoalChanged(msg))
+        if (false)
+        // if (hasGoalChanged(msg))
         {
             ROS_INFO("Goal position changed, stopping backoff recovery");
             should_stop_ = true;

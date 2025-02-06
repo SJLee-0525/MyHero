@@ -1,0 +1,5 @@
+<launch>
+    <node name="yolo_detection" pkg="yolo_pkg" type="yolo_main.py" output="screen">
+        <rosparam command="load" file="$(find yolo_pkg)/config/yolo_params.yaml" />
+    </node>
+</launch>

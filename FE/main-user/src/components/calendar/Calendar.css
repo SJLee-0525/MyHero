@@ -3,10 +3,9 @@
     flex-direction: column;
   
     min-width: 400px;
-    width: 800px;
+    width: 600px;
   
     margin: 0 auto 10px auto;
-    gap: 8px;
   }
   
   /* HEADER */
@@ -27,6 +26,7 @@
   
     background-color: transparent;
     font-size: 20px;
+    font-weight: bold;
     line-height: 25.6px;
   }
   
@@ -107,7 +107,7 @@
   
   .calendar-day:hover {
     border-radius: 10px;
-    background-color: rgba(255, 170, 0, 0.562);
+    background-color: rgba(68, 128, 63, 0.562);
   
     transition: all 0.3s ease;
   }
@@ -122,7 +122,7 @@
   
   .calendar-day.selected-date {
     color: white;
-    background-color: #ff9500;
+    background-color: #44803F;
     border-radius: 12px;
   
     font-weight: bold;
@@ -161,18 +161,6 @@
     text-overflow: ellipsis; /* ...으로 표시 */
   }
   
-  .calendar-day-schedules-widget {
-    background-color: rgba(206, 5, 5, 0.79);
-    color: white;
-  
-    border-radius: 100%;
-  
-    aspect-ratio: 1; /* 너비와 높이를 동일하게 설정 */
-  
-    text-align: center;
-    font-size: x-small;
-  }
-  
   .calender-schedule {
     margin: 20px 10px 0px;
   
@@ -188,11 +176,12 @@
     margin: 0px;
     padding: 8px;
   
-    background-color: #ff9500;
+    background-color: #44803F;
     border-radius: 10px;
   
     font-size: small;
     font-weight: bold;
+    color: white;
   }
   
   .calender-schedule ul {
@@ -235,14 +224,14 @@
   }
   
   .calendar-form input:focus {
-    outline: 1px #ff9500 solid;
+    outline: 1px #44803F solid;
   }
   
   .calendar-form button {
     width: 10%;
     height: 50px;
   
-    background-color: #ff9500;
+    background-color: #44803F;
   
     border: 0;
     border-radius: 0px 8px 8px 0px;

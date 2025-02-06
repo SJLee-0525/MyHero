@@ -465,7 +465,9 @@ export default function UpdateUserInfo() {
                 onClick={handleEmailCheck}
                 className="email-check"
               >
-                중복 확인
+                중복
+                <br />
+                확인
               </button>
             )}
             {formIsInvalid.emailCheck === "verified" && (
@@ -480,7 +482,9 @@ export default function UpdateUserInfo() {
                 onClick={handleEmailCheck}
                 className="email-not-verified"
               >
-                중복 확인
+                중복
+                <br />
+                확인
               </button>
             )}
           </div>

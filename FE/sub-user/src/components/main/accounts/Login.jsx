@@ -65,6 +65,12 @@ export default function Login() {
   return (
     <>
       <form id="login-form" onSubmit={handleLogin}>
+        <div className="login-header">
+          <h2>영웅이네 오신 것을 환영합니다.</h2>
+          <button onClick={() => userProgressStore.handleCloseModal()}>
+            X
+          </button>
+        </div>
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="email">이메일 아이디</label>

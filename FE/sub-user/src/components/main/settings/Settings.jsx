@@ -4,7 +4,6 @@ import PageContainer from "../container/PageContainer.jsx";
 
 import ToggleGroup from "../../toggle/ToggleGroup.jsx";
 import SubUserToggleGroup from "../../toggle/SubUserToggleGroup.jsx";
-import BackgroundChanger from "./BackgroundChanger.jsx";
 import SensitiveData from "./SensitiveData.jsx";
 
 export default function Settings() {
@@ -16,9 +15,6 @@ export default function Settings() {
           <div id="settings-elem-left">
             <PageContainer title="영웅이 제어">
               <ToggleGroup />
-            </PageContainer>
-            <PageContainer title="배경화면 변경">
-              <BackgroundChanger />
             </PageContainer>
           </div>
           <div id="settings-elem-right">

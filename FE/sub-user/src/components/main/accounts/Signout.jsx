@@ -55,24 +55,26 @@ export default function Signout() {
           : null
       }
     >
-      <div className="signup-header">
-        <h2>회원 탈퇴</h2>
-        <button type="button" onClick={userProgressStore.handleCloseModal}>
-          X
-        </button>
+      <div id="signout-form">
+        <div className="signup-header">
+          <h2>회원 탈퇴</h2>
+          <button type="button" onClick={userProgressStore.handleCloseModal}>
+            X
+          </button>
+        </div>
+        <p className="signout-control">
+          <label htmlFor="password">비밀번호</label>
+          <input type="password" ref={inputPassword} />
+          {passwordIsInvalid && (
+            <div className="login-control-error">
+              <p>비밀번호는 8자 이상입니다.</p>{" "}
+            </div>
+          )}
+          <button className="logout-btn" onClick={handleSignOut}>
+            회원 탈퇴
+          </button>
+        </p>
       </div>
-      <p className="signout-form">
-        <label htmlFor="password">비밀번호</label>
-        <input type="password" ref={inputPassword} />
-        {passwordIsInvalid && (
-          <div className="login-control-error">
-            <p>비밀번호는 8자 이상입니다.</p>{" "}
-          </div>
-        )}
-        <button className="logout-btn" onClick={handleSignOut}>
-          회원 탈퇴
-        </button>
-      </p>
     </Modal>
   );
 }

@@ -60,7 +60,7 @@ export default function UpdateMember() {
     >
       <div id="signup-form">
         <div className="signup-header">
-          <h2>닉네임 정보 수정 {userProgressStore.selectedModalId}</h2>
+          <h2>닉네임 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
             X
           </button>

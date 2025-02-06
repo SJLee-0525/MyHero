@@ -157,7 +157,9 @@ export default function CreateFamily() {
                 onClick={handleCheckFamily}
                 className="email-check"
               >
-                모임 확인
+                모임
+                <br />
+                확인
               </button>
             )}
           </div>

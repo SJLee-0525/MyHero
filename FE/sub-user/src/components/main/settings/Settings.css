@@ -111,22 +111,80 @@
   color: #44803f;
 }
 
-#weekly-stats-container {
+#sensitive-data-group {
   display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  gap: 10px;
+
+  color: black;
+}
+
+#sensitive-data {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+
+  padding: 12px;
+
+  background-color: #d9d9d9ac;
+  border-radius: 8px;
+}
+
+#sensitive-data h3 {
+  margin: 0 0 8px 0;
+}
+
+#sensitive-data-content {
+  display: flex;
+  flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  gap: 10px;
+}
+
+#sensitive-data-content p {
+  margin: 0;
+}
+
+#sensitive-data-content button {
+  width: 70px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff5a33;
+
+  font-weight: bold;
+  color: white;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+#sensitive-data-content button:hover {
+  background-color: #da4f30;
+
+  transition: all 0.3s ease;
 }
 
 @media screen and (max-width: 1200px) {
-  #activity-container {
+  #settings-container {
     display: flex;
     flex-direction: column;
   }
 
-  #activity-elem-left {
+  #settings-elem-left {
     width: 100%;
   }
 
-  #activity-elem-right {
+  #settings-elem-right {
     width: 100%;
   }
 }

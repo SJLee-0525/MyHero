@@ -3,6 +3,9 @@ import "./Settings.css";
 import PageContainer from "../container/PageContainer.jsx";
 
 import ToggleGroup from "../../toggle/ToggleGroup.jsx";
+import SubUserToggleGroup from "../../toggle/SubUserToggleGroup.jsx";
+import BackgroundChanger from "./BackgroundChanger.jsx";
+import SensitiveData from "./SensitiveData.jsx";
 
 export default function Settings() {
   return (
@@ -14,9 +17,17 @@ export default function Settings() {
             <PageContainer title="영웅이 제어">
               <ToggleGroup />
             </PageContainer>
+            <PageContainer title="배경화면 변경">
+              <BackgroundChanger />
+            </PageContainer>
           </div>
           <div id="settings-elem-right">
-            <PageContainer title="주간 건강 리포트"></PageContainer>
+            <PageContainer title="사이트 제어">
+              <SubUserToggleGroup />
+            </PageContainer>
+            <PageContainer title="민감한 정보 관리">
+              <SensitiveData />
+            </PageContainer>
           </div>
         </div>
       </div>

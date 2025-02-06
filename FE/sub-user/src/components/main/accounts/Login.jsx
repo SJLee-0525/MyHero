@@ -26,6 +26,7 @@ export default function Login() {
     const emailIsInvalid = !emailInput.current.value.includes("@");
     if (emailIsInvalid) {
       setFormIsInvalid((prevForm) => {
+        alert("유효한 이메일을 입력해 주세요.");
         return { ...prevForm, email: true };
       });
       return;
@@ -39,6 +40,7 @@ export default function Login() {
     const passwordIsInvalid = passwordInput.current.value.length < 8;
     if (passwordIsInvalid) {
       setFormIsInvalid((prevForm) => {
+        alert("비밀번호는 8자 이상입니다.");
         return { ...prevForm, password: true };
       });
       return;
@@ -59,7 +61,11 @@ export default function Login() {
     if (!response.success) {
       userProgressStore.setModalProgress("login");
 
-      alert(`로그인 실패:\n${response.error.message}`);
+      if (response.error.message === "Invalid email or password") {
+        alert("이메일 또는 비밀번호가 일치하지 않습니다.");
+      } else {
+        alert(`로그인 실패:\n${response.error.message}`);
+      }
     }
   }
 
@@ -80,11 +86,11 @@ export default function Login() {
             <label htmlFor="email">이메일 아이디</label>
             <input type="email" name="email" ref={emailInput} />
 
-            {formIsInvalid.email && (
+            {/* {formIsInvalid.email && (
               <div className="login-control-error">
                 <p>유효한 이메일을 입력해 주세요.</p>
               </div>
-            )}
+            )} */}
           </div>
 
           <div className="login-control">
@@ -96,12 +102,11 @@ export default function Login() {
               ref={passwordInput}
             />
           </div>
-
-          {formIsInvalid.password && (
+          {/* {formIsInvalid.password && (
             <div className="login-control-error">
               <p>비밀번호는 8자 이상입니다.</p>{" "}
             </div>
-          )}
+          )} */}
         </div>
 
         <p className="login-form-action">

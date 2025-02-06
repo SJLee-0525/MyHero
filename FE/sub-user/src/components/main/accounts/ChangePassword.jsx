@@ -45,9 +45,13 @@ export default function ChangePassword() {
         userProgressStore.handleOpenModal("change-password");
 
         console.error("비밀번호 변경 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
+        if (result.error.message === "Invalid password") {
+          alert("비밀번호가 일치하지 않습니다.");
+        } else {
+          alert(
+            `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
+          );
+        }
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
@@ -82,7 +86,12 @@ export default function ChangePassword() {
               <input type="password" ref={inputNewPassword} />
               {newPasswordIsInvalid && (
                 <div className="login-control-error">
-                  <p>새 비밀번호는 8자 이상이어야 합니다.</p>{" "}
+                  <p>새 비밀번호는 8자 이상이어야 합니다.</p>
+                </div>
+              )}
+              {!newPasswordIsInvalid && (
+                <div className="login-control-error">
+                  <p> </p>
                 </div>
               )}
             </div>

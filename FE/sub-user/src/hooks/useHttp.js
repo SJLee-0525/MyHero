@@ -20,10 +20,24 @@ export function useHttp() {
           credentials: "include", // 필요한 경우 포함
         });
 
+        console.log("hook:", response);
         const resData = await response.json().catch(() => null); // JSON 변환 실패 방지
-        // console.log("hook:", resData);
 
         if (!response.ok) {
+          if (response.status === 403) {
+            // 권한 없음
+            console.error("세션 만료", response.error);
+            sessionStorage.removeItem("loginUserInfo");
+            window.location.href = "/";
+            return {
+              success: false,
+              error: {
+                type: response.status,
+                message: "세션이 만료되었습니다. 다시 로그인해주세요.",
+              },
+              data: null,
+            };
+          }
           return {
             success: false,
             error: resData?.detail || "요청 실패",

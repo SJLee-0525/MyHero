@@ -394,6 +394,11 @@ export default function Signup() {
       return;
     }
 
+    if (data.user_name.length < 2 || data.user_name.length > 32) {
+      alert("이름은 2자 이상 32자 이하로 입력해주세요.");
+      return;
+    }
+
     // 입력받은 데이터 객체화
     const payload = {
       email: data.email,
@@ -498,6 +503,11 @@ export default function Signup() {
               <p>올바른 이메일 양식을 작성해주세요.</p>
             </div>
           )}
+          {formIsInvalid.emailCheck === "" && (
+            <div className="signup-control-confirm">
+              <p>사용하실 이메일 입력 후, 중복 확인을 해 주세요.</p>
+            </div>
+          )}
           {formIsInvalid.emailCheck === "not-verified" && (
             <div className="signup-control-error">
               <p>이메일 중복 확인을 해 주세요.</p>
@@ -506,6 +516,11 @@ export default function Signup() {
           {formIsInvalid.emailCheck === "not-available" && (
             <div className="signup-control-error">
               <p>이미 사용 중인 이메일입니다.</p>
+            </div>
+          )}
+          {formIsInvalid.emailCheck === "verified" && (
+            <div className="signup-control-confirm">
+              <p>입력하신 이메일은 사용 가능합니다.</p>
             </div>
           )}
         </div>

@@ -40,9 +40,13 @@ export default function DeleteMember() {
         userProgressStore.handleOpenModal("delete-member");
 
         console.error("가족 모임 삭제 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
+        if (result.error.message === "Invalid password") {
+          alert("비밀번호가 일치하지 않습니다.");
+        } else {
+          alert(
+            `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
+          );
+        }
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);

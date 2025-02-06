@@ -308,16 +308,16 @@ export default function UpdateUserInfo() {
     // 이메일 형식 유효성 검사
     const emailIsInvalid = !enteredEmail.includes("@");
 
+    if (emailIsInvalid) {
+      return; // 이메일 형식이 잘못되면 중단
+    }
+
     // 이메일 상태 업데이트
     setFormIsInvalid((prevForm) => ({
       ...prevForm,
       email: emailIsInvalid,
       emailCheck: emailIsInvalid ? null : prevForm.emailCheck,
     }));
-
-    if (emailIsInvalid) {
-      return; // 이메일 형식이 잘못되면 중단
-    }
 
     try {
       console.log("확인 호출");
@@ -396,6 +396,11 @@ export default function UpdateUserInfo() {
       }
     }
 
+    if (data.user_name.length < 2 || data.user_name.length > 32) {
+      alert("이름은 2자 이상 32자 이하로 입력해주세요.");
+      return;
+    }
+
     // 입력받은 데이터 객체화
     const payload = {
       ...(data.email && { email: data.email }), // email이 있으면 추가
@@ -424,9 +429,16 @@ export default function UpdateUserInfo() {
         userProgressStore.handleOpenModal("update-user-info");
 
         console.error("회원 정보 수정 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
+        if (
+          result.error.message ===
+          "Invalid value provided for account details (birth date)"
+        ) {
+          alert("생년월일을 다시 확인해 주세요.");
+        } else {
+          alert(
+            `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
+          );
+        }
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
@@ -498,9 +510,7 @@ export default function UpdateUserInfo() {
           )}
           {formIsInvalid.emailCheck === "" && (
             <div className="signup-control-confirm">
-              <p>
-                이메일을 변경하시려면 이메일 입력 후, 중복 확인을 해 주세요.
-              </p>
+              <p>변경하시려면 이메일 입력 후, 중복 확인을 해 주세요.</p>
             </div>
           )}
           {formIsInvalid.emailCheck === "not-verified" && (
@@ -511,6 +521,11 @@ export default function UpdateUserInfo() {
           {formIsInvalid.emailCheck === "not-available" && (
             <div className="signup-control-error">
               <p>이미 사용 중인 이메일입니다.</p>
+            </div>
+          )}
+          {formIsInvalid.emailCheck === "verified" && (
+            <div className="signup-control-confirm">
+              <p>입력하신 이메일은 사용 가능합니다.</p>
             </div>
           )}
         </div>

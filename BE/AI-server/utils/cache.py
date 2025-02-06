@@ -4,7 +4,6 @@ from typing import Dict, Any, Optional
 class CacheManager:
     def __init__(self):
         self.weather_cache: Dict[str, Dict[str, Any]] = {}
-        self.disaster_cache: Dict[str, Dict[str, Any]] = {}
         self.durations = {
             'weather': 3600,  # 1시간
             'disaster': 300   # 5분
@@ -15,12 +14,6 @@ class CacheManager:
 
     def set_weather(self, user_id: str, data: Dict):
         self._set_in_cache(self.weather_cache, user_id, data)
-
-    def get_disaster(self, user_id: str) -> Optional[Dict]:
-        return self._get_from_cache(self.disaster_cache, user_id, self.durations['disaster'])
-
-    def set_disaster(self, user_id: str, data: Dict):
-        self._set_in_cache(self.disaster_cache, user_id, data)
 
     def _get_from_cache(self, cache: Dict, key: str, duration: int) -> Optional[Dict]:
         if key not in cache:

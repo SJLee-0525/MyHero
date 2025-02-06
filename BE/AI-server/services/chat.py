@@ -14,15 +14,15 @@ class ChatService:
         self.client = openai_client
         self.db = db
 
-    async def process_chat(self, user_message: str, session_id: Optional[str] = None) -> Dict:
+    async def process_chat(self, user_id: str, user_message: str, session_id: Optional[str] = None) -> Dict:
         try:
-            session_id = await self._get_or_create_session(session_id)
+            session_id = await self._get_or_create_session(user_id, session_id)
             history = await self._get_chat_history(session_id)
             
             messages = self._prepare_messages(history, user_message)
             response = await self._get_gpt_response(messages)
             
-            await self._save_chat_history(session_id, user_message, response)
+            await self._save_chat_history(session_id, user_id, user_message, response)
             
             return {
                 "session_id": session_id,
@@ -32,14 +32,14 @@ class ChatService:
             logger.error(f"Chat processing error: {str(e)}")
             raise
 
-    async def _get_or_create_session(self, session_id: Optional[str]) -> str:
+    async def _get_or_create_session(self, user_id: str, session_id: Optional[str]) -> str:
         try:
             current_time = datetime.now()
             
             if not session_id:
                 new_session = ChatSession(
                     uid=str(uuid.uuid4()),
-                    user_id='test_user',
+                    user_id=user_id,
                     created_at=current_time,
                     last_active=current_time
                 )
@@ -55,7 +55,7 @@ class ChatService:
 
             new_session = ChatSession(
                 uid=session_id,
-                user_id='test_user',
+                user_id=user_id,
                 created_at=current_time,
                 last_active=current_time
             )
@@ -79,7 +79,7 @@ class ChatService:
         response = self.client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=100,
+            max_tokens=120,
             temperature=0.7
         )
         return response.choices[0].message.content.strip()
@@ -89,8 +89,8 @@ class ChatService:
             "role": "system",
             "content": """
             이모티몬은 넣지 말고 텍스트로만 대화하세요.
-            max_tokens는 100으로 설정하세요.
-            당신은 독거노인을 위한 따뜻하고 친절한 AI 돌봄 도우미 영웅이 입니다. 
+            3문장 이상으로 대답하지 마세요.
+            당신은 독거노인을 위한 따뜻한 돌봄 도우미 영웅이 입니다. 
             노인분들의 외로움을 달래주고 편안한 대화를 나누며, 
             존댓말을 사용하고 너무 어렵지 않은 쉬운 말로 대화하세요. 
             노인분들의 감정을 이해하고 공감하는 대화를 하세요.
@@ -104,11 +104,11 @@ class ChatService:
         messages.append({"role": "user", "content": user_message})
         return messages
 
-    async def _save_chat_history(self, session_id: str, user_message: str, bot_message: str):
+    async def _save_chat_history(self, session_id: str, user_id: str, user_message: str, bot_message: str):
         try:
             chat_history = ChatHistory(
                 session_id=session_id,
-                user_id='test_user',
+                user_id=user_id,
                 user_message=user_message,
                 bot_message=bot_message,
                 created_at=datetime.now()

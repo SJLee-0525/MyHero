@@ -1,6 +1,6 @@
 import os
 import logging
-from sqlalchemy import create_engine, event, Column, String, DateTime, Integer, Text, ForeignKey, Date, Enum
+from sqlalchemy import create_engine, event, Column, String, DateTime, Integer, Text, ForeignKey, Date, Enum, Float, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, Session
 from sqlalchemy.pool import Pool
@@ -114,8 +114,44 @@ class Account(Base):
 
 class FallDetection(Base):
     __tablename__ = 'falldetections'
-    
     index = Column(Integer, primary_key=True, autoincrement=True)
     timestamp = Column(DateTime, default=datetime.now)
     image_path = Column(String(255), nullable=True)
     user_id = Column(String(16), ForeignKey('accounts.id'))
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    index = Column(Integer, primary_key=True, autoincrement=True)
+    family_id = Column(String(16))
+    created_at = Column(DateTime, default=datetime.now)
+    notification_grade = Column(Enum('INFO', 'WARN', 'CRIT', 'NONE', name='notification_grade'))
+    descriptions = Column(Text)
+    message_sn = Column(Integer)
+
+class Family(Base):
+    __tablename__ = 'families'
+    id = Column(String(16), primary_key=True)
+    main_user = Column(String(16))
+    family_name = Column(String(128))
+
+class ChatKeywords(Base):
+    __tablename__ = 'chatkeywords'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    family_id = Column(String(16), ForeignKey('families.id'))
+    created_at = Column(DateTime, default=datetime.now)
+    keywords = Column(Text)
+
+
+class MentalReport(Base):
+    __tablename__ = 'mentalreports'
+    index = Column(Integer, primary_key=True, autoincrement=True)
+    family_id = Column(String(16))
+    reported_at = Column(DateTime, default=datetime.now)
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
+    average_score = Column(Float)
+    critical_days = Column(Integer)
+    best_day = Column(Date)
+    worst_day = Column(Date)
+    improvement_needed = Column(Boolean)
+    summary = Column(Text)

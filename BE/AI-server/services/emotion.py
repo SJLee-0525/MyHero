@@ -3,8 +3,9 @@ from datetime import datetime, timedelta
 from typing import Dict, List
 from sqlalchemy.orm import Session
 import json
+from datetime import date
 
-from models import MentalStatus, ChatHistory, ChatSession
+from models import MentalStatus, ChatHistory, ChatSession, Family, MentalReport
 
 logger = logging.getLogger(__name__)
 
@@ -14,16 +15,17 @@ class EmotionService:
         self.db = db
 
     # 사용자 대화 내용을 분석하여 감정 상태를 분석하고 결과를 반환
-    async def generate_report(self, user_id: str) -> Dict:
+    async def generate_report(self, family_id: str) -> Dict:
         try:
             today = datetime.now().date()
             conversations = self.db.query(ChatHistory)\
-                .filter(ChatHistory.user_id == user_id)\
+                .join(Family, Family.main_user == ChatHistory.user_id)\
+                .filter(Family.id == family_id)\
                 .filter(ChatHistory.created_at >= today)\
                 .all()
 
             if not conversations:
-                logger.warning(f"No conversations found for user {user_id}")
+                logger.warning(f"No conversations found for user {family_id}")
                 return None
 
             # 감정 분석
@@ -31,7 +33,7 @@ class EmotionService:
             
             # 결과 저장
             mental_status = MentalStatus(
-                family_id='test_family_id',
+                family_id=family_id,
                 reported_at=datetime.now(),
                 score=self._calculate_score(analysis_result),
                 is_critical=self._is_critical(analysis_result),
@@ -141,47 +143,65 @@ class EmotionService:
         score = self._calculate_score(analysis_result)
         return 1 if score <= 30 else 0
     
-    async def generate_periodic_report(self, user_id: str, period: str = 'weekly') -> Dict:
+    async def generate_periodic_report(self, family_id: str, start_date: datetime, end_date: datetime) -> Dict:
         try:
-            today = datetime.now().date()
-            if period == 'weekly':
-                start_date = today - timedelta(days=7)
-            else:
-                start_date = today - timedelta(days=30)
-
             reports = self.db.query(MentalStatus)\
-                .filter(MentalStatus.family_id == 'test_family_id')\
+                .filter(MentalStatus.family_id == family_id)\
                 .filter(MentalStatus.reported_at >= start_date)\
+                .filter(MentalStatus.reported_at <= end_date)\
                 .all()
             
             if not reports:
                 return {
-                    'period': period,
                     'average_score': 0,
-                    'critical_count': 0,
+                    'critical_days': 0,
                     'best_day': None,
                     'worst_day': None,
                     'improvement_needed': False,
                     'summary': "아직 충분한 데이터가 없습니다."
                 }
+
+            # 분석 결과 계산
+            average_score = round(sum(r.score for r in reports) / len(reports), 1)
+            critical_days = len([r for r in reports if r.is_critical == 1])
+            best_day = max(reports, key=lambda x: x.score).reported_at
+            worst_day = min(reports, key=lambda x: x.score).reported_at
+            improvement_needed = len([r for r in reports if r.score < 50]) / len(reports) > 0.3
+            summary = self._generate_period_summary(reports)
+
+            mental_report = MentalReport(
+                family_id=family_id,
+                start_time=datetime.combine(start_date, datetime.min.time()),
+                end_time=datetime.combine(end_date, datetime.max.time()),
+                average_score=average_score,
+                critical_days=critical_days,
+                best_day=best_day.date(),
+                worst_day=worst_day.date(),
+                improvement_needed=improvement_needed,
+                summary=summary
+            )
             
+            self.db.add(mental_report)
+            self.db.commit()
+            
+            # 결과 반환
             return {
-                'period': period,
-                'average_score': sum(r.score for r in reports) / len(reports),
-                'critical_days': len([r for r in reports if r.is_critical == 1]),
-                'best_day': max(reports, key=lambda x: x.score).reported_at.strftime('%Y-%m-%d'),
-                'worst_day': min(reports, key=lambda x: x.score).reported_at.strftime('%Y-%m-%d'),
-                'improvement_needed': len([r for r in reports if r.score < 50]) / len(reports) > 0.3, 
-                'summary': self._generate_period_summary(reports)
+                'average_score': average_score,
+                'critical_days': critical_days,
+                'best_day': best_day.isoformat(),
+                'worst_day': worst_day.isoformat(),
+                'improvement_needed': improvement_needed,
+                'summary': summary
             }
 
         except Exception as e:
+            self.db.rollback()
             logger.error(f"Periodic report generation error: {str(e)}")
             raise
 
     def _generate_period_summary(self, reports: List[MentalStatus]) -> str:
         try:
-            avg_score = sum(r.score for r in reports) / len(reports)
+            avg_score = round(sum(r.score for r in reports) / len(reports),1)
             critical_days = len([r for r in reports if r.is_critical == 1])
             best_day = max(reports, key=lambda x: x.score).reported_at.strftime('%Y-%m-%d')
             worst_day = min(reports, key=lambda x: x.score).reported_at.strftime('%Y-%m-%d')

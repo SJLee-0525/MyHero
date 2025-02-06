@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import os
 import logging
 import asyncio
-from datetime import datetime
+from datetime import datetime, date
 from dotenv import load_dotenv
 from typing import Optional
 from openai import OpenAI
@@ -16,7 +16,7 @@ from services.emotion import EmotionService
 from services.disaster import DisasterService
 from services.news import NewsService
 from utils.cache import CacheManager
-from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection
+from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport
 
 # 환경 변수 로드
 load_dotenv()
@@ -52,6 +52,7 @@ news_service = NewsService(api_key=os.getenv("NEWS_API_KEY"))
 cache_manager = CacheManager()
 
 class ChatRequest(BaseModel):
+    user_id: str
     session_id: Optional[str] = None
     user_message: str
 
@@ -59,38 +60,34 @@ class ChatResponse(BaseModel):
     session_id: str
     bot_message: str
 
+class PeriodRequest(BaseModel):
+    start_date: date
+    end_date: date
+
+
 async def update_cache_periodically():
     while True:
         try:
             db = next(get_db())
-            # 모든 사용자의 날씨 정보 업데이트 (1시간마다)
             users = db.query(Account).all()
             for user in users:
                 if user.address:
                     weather_data = await weather_service.get_weather_for_user(user.id, db)
                     if weather_data:
                         cache_manager.set_weather(user.id, weather_data)
-            
-                    # 재난문자 정보 업데이트 (5분마다)
-                    messages = await disaster_service.get_disaster_messages(user.id, db)
-                    cache_manager.set_disaster(user.id, {"messages": messages})
 
-            await asyncio.sleep(300)  # 5분 대기
+            await asyncio.sleep(3600)  # 1시간 대기 
         except Exception as e:
             logger.error(f"Cache update error: {str(e)}")
         finally:
             db.close()
 
-@app.on_event("startup")
-async def startup_event():
-    asyncio.create_task(update_cache_periodically())
-    logger.info("Application startup completed")
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
     try:
         chat_service = ChatService(openai_client, db)
-        response = await chat_service.process_chat(request.user_message, request.session_id)
+        response = await chat_service.process_chat(request.id, request.user_message, request.session_id)
         return response
     except Exception as e:
         logger.error(f"Chat processing error: {str(e)}")
@@ -111,6 +108,7 @@ async def get_weather(user_id: str, db: Session = Depends(get_db)):
 
         # 캐시 업데이트
         cache_manager.set_weather(user_id, weather_data)
+        print(weather_data)
         return weather_data
 
     except Exception as e:
@@ -128,32 +126,23 @@ async def get_news():
         logger.error(f"News error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# 재난문자 noti save
+async def update_notifications_periodically():
+    while True:
+        try:
+            db = next(get_db())
+            await disaster_service.update_disaster_notifications(db)
+            await asyncio.sleep(300)  # 5분 대기
+        except Exception as e:
+            logger.error(f"Notification update error: {str(e)}")
+        finally:
+            db.close()
 
-@app.get("/check-disaster/{user_id}")
-async def check_disaster(user_id: str, db: Session = Depends(get_db)):
-    try:
-        # 캐시 확인
-        cached_data = cache_manager.get_disaster(user_id)
-        if cached_data:
-            return cached_data
-
-        # 새로운 재난문자 데이터 조회
-        messages = await disaster_service.get_disaster_messages(user_id, db)
-        result = {"messages": messages}
-        
-        # 캐시 업데이트
-        cache_manager.set_disaster(user_id, result)
-        return result
-
-    except Exception as e:
-        logger.error(f"Disaster message error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.post("/generate-emotional-report/{user_id}")
-async def generate_emotional_report(user_id: str, db: Session = Depends(get_db)):
+@app.post("/generate-emotional-report/{family_id}")
+async def generate_emotional_report(family_id: str, db: Session = Depends(get_db)):
     try:
         emotion_service = EmotionService(openai_client, db)
-        report = await emotion_service.generate_report(user_id)
+        report = await emotion_service.generate_report(family_id)
         
         if not report:
             raise HTTPException(status_code=404, detail="감정 분석을 위한 대화 내용이 충분하지 않습니다")
@@ -164,26 +153,27 @@ async def generate_emotional_report(user_id: str, db: Session = Depends(get_db))
         logger.error(f"Emotion report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     
-@app.post("/generate-emotional-report/{user_id}/{period}")
+@app.post("/generate-emotional-report/period/{family_id}")
 async def gnerate_periodic_report(
-    user_id: str,
-    period: str = Path(..., enum=['weekly', 'monthly']),
+    family_id: str,
+    period: PeriodRequest,
     db: Session = Depends(get_db)
 ):
     try:
         emotion_service = EmotionService(openai_client, db)
-        report = await emotion_service.generate_periodic_report(user_id, period)
+        report = await emotion_service.generate_periodic_report(family_id, period.start_date, period.end_date)
         return report
     
     except Exception as e:
         logger.error(f"Periodic report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/generate-keyword/{user_id}")
-async def generate_keywords(user_id: str, db: Session = Depends(get_db)):
+@app.get("/generate-keyword/{family_id}")
+async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
     try:
         chat_history = db.query(ChatHistory)\
-            .filter(ChatHistory.user_id == user_id)\
+            .join(Family, Family.main_user == ChatHistory.user_id)\
+            .filter(Family.id == family_id)\
             .filter(ChatHistory.created_at >= datetime.now().date())\
             .all()
             
@@ -208,39 +198,39 @@ async def generate_keywords(user_id: str, db: Session = Depends(get_db)):
             ]
         )
 
-        keywords = response.choices[0].message.content.strip().split(',')
-        keywords = [keyword.strip() for keyword in keywords]
+        keywords = response.choices[0].message.content.strip()
+        keyword_list = keywords.split(',')
+        keyword_list = [keyword.strip() for keyword in keyword_list]
+
+        existing_keywords = db.query(ChatKeywords)\
+            .filter(ChatKeywords.family_id == family_id)\
+            .filter(ChatKeywords.created_at >= datetime.now().date())\
+            .first()
         
-        return {"keywords": keywords}
+        if existing_keywords:
+            existing_keywords.keywords = keywords
+        
+        else:
+            new_keywords = ChatKeywords(
+                family_id=family_id,
+                keywords=keywords
+            )
+            db.add(new_keywords)
+
+        db.commit()
+
+        
+        return {"keywords": keyword_list}
     
     except Exception as e:
         logger.error(f"키워드 생성 오류: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# 낙상감지
-@app.post("/fall-alert")
-async def handle_fall_alert(alert_data: dict, db: Session = Depends(get_db)):
-    try:
-        # 테이블 구조에 맞게 데이터 저장
-        fall_detection = FallDetection(
-            image_path=alert_data.get('image_path'),
-            user_id=alert_data.get('user_id', 'test_user')
-        )
-        
-        db.add(fall_detection)
-        db.commit()
-        
-        logger.info(f"낙상 감지 저장 완료 - 시간: {fall_detection.timestamp}")
-        return {
-            "status": "success", 
-            "message": "낙상 감지 기록이 저장되었습니다.",
-            "timestamp": fall_detection.timestamp
-        }
-        
-    except Exception as e:
-        db.rollback()
-        logger.error(f"낙상 감지 저장 실패: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(update_notifications_periodically())
+    asyncio.create_task(update_cache_periodically())
+    logger.info("Application startup completed")
 
 if __name__ == "__main__":
     import uvicorn

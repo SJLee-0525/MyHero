@@ -124,11 +124,10 @@ async def create_member(member_data: Member):
 # 조건에 따른 모든 가족 관계 정보 불러오는 기능
 @router.get("", status_code=status.HTTP_200_OK)
 async def get_all_members(
-        familyId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
-        userId: str = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")):
+        familyId: Optional[str] = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$"),
+        userId: Optional[str] = Query(None, min_length=16, max_length=16, regex=r"^[a-zA-Z0-9]+$")
+):
     member_list: list = Database.get_all_members(family_id=familyId, user_id=userId)
-
-    print(familyId, userId)
 
     if member_list:
         return {

@@ -404,19 +404,20 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
         )
 
     # 비밀번호 검증
-    input_password: str = checker.password
-    hashed_password: str = Database.get_hashed_password(user_id)
-    is_verified: bool = verify_password(input_password, hashed_password)
+    if request_data["role"] is not Role.SYSTEM:
+        input_password: str = checker.password
+        hashed_password: str = Database.get_hashed_password(user_id)
+        is_verified: bool = verify_password(input_password, hashed_password)
 
-    if not is_verified:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "type": "unauthorized",
-                "message": "Invalid password",
-                "input": {"user_id": user_id, "password": "<PASSWORD>"}
-            }
-        )
+        if not is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "type": "unauthorized",
+                    "message": "Invalid password",
+                    "input": {"user_id": user_id, "password": "<PASSWORD>"}
+                }
+            )
 
     # 사용자 계정 삭제 진행
     result: bool = Database.delete_one_account(user_id)

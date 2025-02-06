@@ -62,3 +62,4 @@ def verify_password(input_password: str, hashed_password: str) -> bool:
     """
     result: bool = bcrypt.checkpw(input_password.encode('utf-8'), hashed_password.encode('utf-8'))
     return result
+

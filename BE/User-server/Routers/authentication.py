@@ -140,8 +140,9 @@ async def login(response: Response, login_data: Login):
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(request: Request, response: Response):
     session_id: str = request.cookies.get("session_id")
+    session_data: dict = Database.get_login_session(session_id)
 
-    if session_id:
+    if session_id and session_data:
         # Session 삭제하기
         result: bool = Database.delete_session(session_id)
 

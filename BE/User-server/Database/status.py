@@ -12,7 +12,7 @@ from Database.models import *
 from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 database: Database = Database()
 
@@ -42,7 +42,12 @@ def create_home_status(home_status_data: HomeStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 집 환경 정보 불러오기
-def get_home_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_home_status(
+        family_id: str,
+        start_time: datetime,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC
+) -> list[dict]:
     """
     조건에 따른 모든 집 환경 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -209,7 +214,12 @@ def create_health_status(health_status_data: HealthStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 건강 정보 불러오기
-def get_health_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_health_status(
+        family_id: str,
+        start_time: datetime,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC
+) -> list[dict]:
     """
     조건에 따른 모든 건강 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -356,7 +366,12 @@ def create_active_status(active_status_data: ActiveStatusTable) -> bool:
             return result
 
 # 조건에 따른 모든 활동 정보 불러오기
-def get_active_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_active_status(
+        family_id: str,
+        start_time: datetime,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC
+) -> list[dict]:
     """
     조건에 따른 모든 활동 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -495,7 +510,12 @@ def delete_latest_active_status(family_id: str) -> bool:
 # ========== Mental 부분 ==========
 
 # 조건에 따른 모든 정신건강 정보 불러오기
-def get_mental_status(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list[dict]:
+def get_mental_status(
+        family_id: str,
+        start_time: datetime,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC
+) -> list[dict]:
     """
     조건에 따른 모든 정신건강 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -627,7 +647,12 @@ def delete_latest_mental_status(family_id: str) -> bool:
             return result
 
 # 조건에 따른 모든 정신건강 리포트 불러오기
-def get_mental_reports(family_id: str, start_time: datetime, end_time: datetime = datetime.now(), time_order: Order = Order.ASC) -> list:
+def get_mental_reports(
+        family_id: str,
+        start_time: datetime,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC
+) -> list:
     """
     조건에 따른 모든 정신건강 리포트를 불러오는 기능
     :param family_id: 대상의 가족 ID

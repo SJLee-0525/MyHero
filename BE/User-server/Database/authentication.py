@@ -12,11 +12,13 @@ from Database.models import *
 
 from fastapi import Request, HTTPException, status
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.exc import SQLAlchemyError
 
-from datetime import timezone
+from datetime import timezone, datetime, timedelta
 from time import time
+
+from asyncio import sleep
 
 import os
 from dotenv import load_dotenv
@@ -26,6 +28,7 @@ database: Database = Database()
 # 세션 만료 시간 불러오기
 load_dotenv()
 session_expire_time: int = int(os.getenv("SESSION_EXPIRE_TIME", 1800))
+session_cleanup_interval: int = int(os.getenv("SESSION_CLEANUP_INTERVAL", 600))
 
 # 로그인을 위해 Session을 생성하는 기능
 def create_session(session_data: LoginSessionsTable) -> bool:
@@ -156,3 +159,71 @@ def change_password(user_id: str, new_hased_password: str) -> bool:
             session.commit()
             return result
 
+# 세션 ID가 존재하는지 확인
+def get_login_session(session_id: str) -> dict:
+    """
+    해당 로그인 세션이 존재하는지 확인하는 기능
+    :param session_id: 세션 ID
+    :return: 세션의 데이터 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            login_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.xid == session_id).first()
+
+            if login_data is not None:
+                serialized_data: dict = {
+                    "xid": login_data.xid,
+                    "user_id": login_data.user_id,
+                    "last_active": login_data.last_active,
+                    "is_main_user": login_data.is_main_user
+                }
+
+                result = serialized_data
+            else:
+                result = {}
+        except SQLAlchemyError as error:
+            session.rollback()
+            print(f"[DB] Error getting login session: {str(error)}")
+            result = {}
+        finally:
+            return result
+
+# 불필요한 세션 정보를 정리하는 기능
+async def cleanup_login_sessions() -> None:
+    while True:
+        result: bool = False
+
+        # 지정된 시간 간격으로 수행하기
+        await sleep(session_cleanup_interval)
+
+        database_pre_session = database.get_pre_session()
+        with database_pre_session() as session:
+            try:
+                current_time: datetime = datetime.now(tz=timezone.utc)
+                expired_time: datetime = current_time - timedelta(seconds=session_expire_time)
+
+                expired_sessions = session.query(
+                    LoginSessionsTable
+                ).filter(and_(
+                    LoginSessionsTable.last_active < expired_time,
+                    LoginSessionsTable.is_main_user == False
+                )
+                ).all()
+
+                for session_data in expired_sessions:
+                    session.delete(session_data)
+
+                result = True
+            except SQLAlchemyError as error:
+                session.rollback()
+                print(f"[DB] Error cleaning up login sessions: {str(error)}")
+                result = False
+            finally:
+                session.commit()
+                if result:
+                    print(f"[DB] Cleaned up login sessions")
+                else:
+                    print(f"[DB] Failed to clean up login sessions")

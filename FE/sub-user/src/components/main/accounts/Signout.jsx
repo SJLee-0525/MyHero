@@ -24,6 +24,8 @@ export default function Signout() {
       return;
     }
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleSignOut(
         inputPassword.current.value
@@ -32,9 +34,10 @@ export default function Signout() {
       if (result.success === true) {
         // 회원 탈퇴 성공
         alert("회원 탈퇴 성공");
-        userProgressStore.handleCloseModal();
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("sign-out");
+
         console.error("회원 탈퇴 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
@@ -55,24 +58,26 @@ export default function Signout() {
           : null
       }
     >
-      <div className="signup-header">
-        <h2>회원 탈퇴</h2>
-        <button type="button" onClick={userProgressStore.handleCloseModal}>
-          X
-        </button>
+      <div id="signout-form">
+        <div className="signup-header">
+          <h2>회원 탈퇴</h2>
+          <button type="button" onClick={userProgressStore.handleCloseModal}>
+            X
+          </button>
+        </div>
+        <p className="signout-control">
+          <label htmlFor="password">비밀번호</label>
+          <input type="password" ref={inputPassword} />
+          {passwordIsInvalid && (
+            <div className="login-control-error">
+              <p>비밀번호는 8자 이상입니다.</p>{" "}
+            </div>
+          )}
+          <button className="logout-btn" onClick={handleSignOut}>
+            회원 탈퇴
+          </button>
+        </p>
       </div>
-      <p className="signout-form">
-        <label htmlFor="password">비밀번호</label>
-        <input type="password" ref={inputPassword} />
-        {passwordIsInvalid && (
-          <div className="login-control-error">
-            <p>비밀번호는 8자 이상입니다.</p>{" "}
-          </div>
-        )}
-        <button className="logout-btn" onClick={handleSignOut}>
-          회원 탈퇴
-        </button>
-      </p>
     </Modal>
   );
 }

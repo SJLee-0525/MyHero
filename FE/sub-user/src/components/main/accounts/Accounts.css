@@ -4,11 +4,11 @@
 }
 
 #login-form {
-  margin: 3rem auto;
+  margin: 0 auto;
   padding: 2rem;
 
   width: 100%;
-  /* min-width: 400px; */
+  min-width: 450px;
   max-width: 600px;
 
   border-radius: 8px;
@@ -49,6 +49,43 @@
   font-size: 0.8rem;
 }
 
+#login-form .login-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1rem;
+}
+
+#login-form .login-header h2 {
+  margin: 0;
+}
+
+#login-form .login-header button {
+  width: 40px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 12px;
+
+  background-color: transparent;
+  color: #ff5a33;
+
+  font-size: larger;
+  text-align: center;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#login-form .login-header button:hover {
+  background-color: #ff5a33;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
 .login-control-error {
   color: #ff5a33;
   font-size: 0.8rem;
@@ -63,6 +100,8 @@
 #login-form .login-form-action {
   display: flex;
   flex-direction: column;
+
+  margin-bottom: 0;
 }
 
 #login-form .login-form-action .login-btn {
@@ -144,8 +183,9 @@
   padding: 2rem;
 
   width: 100%;
-  /* min-width: 400px; */
-  max-width: 600px;
+  min-width: 400px;
+
+  height: 100%;
 
   border-radius: 8px;
 }
@@ -161,6 +201,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.signup-header h2 {
+  margin: 0;
 }
 
 .signup-header button {
@@ -459,7 +503,16 @@
   transition: all 0.3s ease;
 }
 
-.signout-form label {
+#signout-form {
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  min-width: 400px;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.signout-control label {
   display: block;
 
   margin-bottom: 0.2rem;
@@ -470,7 +523,7 @@
   font-size: 0.8rem;
 }
 
-.signout-form input {
+.signout-control input {
   display: block;
 
   width: 100%;
@@ -698,6 +751,10 @@ hr {
   width: 75%;
 }
 
+#login-user-info .member-container table td {
+  border: 0;
+}
+
 #login-user-info .member-btn-container {
   display: flex;
   flex-direction: column;
@@ -812,9 +869,38 @@ hr {
   transition: all 0.3s ease;
 }
 
-/* @media screen and (max-width: 720px) {
+@media screen and (max-width: 720px) {
   #accounts-main {
     min-width: 400px;
     margin: 20px 20px;
   }
-} */
+
+  #login-user-info .login-user-info-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #login-user-info .login-user-info-buttons {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+  #login-user-info .login-user-info-buttons button {
+    width: 100%;
+  }
+
+  #login-user-info .family-btn-container {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+  #login-user-info .family-btn-container .update {
+    width: 100%;
+  }
+
+  #login-user-info .family-btn-container .delete {
+    width: 100%;
+  }
+}

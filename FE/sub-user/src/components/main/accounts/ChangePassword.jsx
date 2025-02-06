@@ -25,6 +25,8 @@ export default function ChangePassword() {
       return;
     }
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleChangePassword(
         inputPassword.current.value,
@@ -34,13 +36,14 @@ export default function ChangePassword() {
       if (result.success === true) {
         // 비번 변경 성공
         alert("비밀번호 변경 성공");
-        userProgressStore.handleCloseModal();
 
         inputPassword.current.value = "";
         inputNewPassword.current.value = "";
 
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("change-password");
+
         console.error("비밀번호 변경 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`

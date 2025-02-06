@@ -5,7 +5,16 @@ import { getEnvironments } from "./environmentsStore.jsx";
 
 export const UserProgressContext = createContext({
   isActiveSideBarElem: "",
-  toggleStatus: {},
+  toggleStatus: {
+    notification: false,
+    camera: false,
+    microphone: false,
+    car: false,
+  },
+  subUserSettings: {
+    auto_login: false,
+    emergency_notification: false,
+  },
   sidebarIsOpened: false,
   modalProgress: "",
   selectedModalId: "",
@@ -28,6 +37,7 @@ export const UserProgressContext = createContext({
   MAIN_KEY: "",
   setIsActiveSideBarElem: () => {},
   setToggleStatus: () => {},
+  setSubUserSettings: () => {},
   setSidebarIsOpened: () => {},
   setModalProgress: () => {},
   setSelectedModalId: () => {},
@@ -37,6 +47,7 @@ export const UserProgressContext = createContext({
   handleUpdateSessionLoginInfo: (userInfo) => {},
   handleActiveSideBarElem: (identifier) => {},
   handleToggleStatus: (toggle) => {},
+  handleSubUserSettings: (toggle) => {},
   handleSidebarToggle: () => {},
   handleOpenModal: (identifier, id) => {},
   handleCloseModal: () => {},
@@ -60,7 +71,7 @@ export const UserProgressContext = createContext({
 });
 
 export default function UserProgressContextProvider({ children }) {
-  const { request, loading, error } = useHttp();
+  const { request, loading } = useHttp();
 
   // 사이드 바 메뉴 요소 활성화 관련
   const [isActiveSideBarElem, setIsActiveSideBarElem] = useState("home");
@@ -71,6 +82,12 @@ export default function UserProgressContextProvider({ children }) {
     camera: true,
     microphone: true,
     car: false,
+  });
+
+  // 보조 사용자 관리 관련
+  const [subUserSettings, setSubUserSettings] = useState({
+    auto_login: false,
+    emergency_notification: false,
   });
 
   // 모바일 환경에서 사이드 바 열림 여부 관련
@@ -197,6 +214,12 @@ export default function UserProgressContextProvider({ children }) {
   function handleToggleStatus(toggle) {
     setToggleStatus((prevStatus) => {
       return { ...prevStatus, [toggle]: !prevStatus[toggle] };
+    });
+  }
+
+  function handleSubUserSettings(toggle) {
+    setSubUserSettings((prevSettings) => {
+      return { ...prevSettings, [toggle]: !prevSettings[toggle] };
     });
   }
 
@@ -1120,8 +1143,10 @@ export default function UserProgressContextProvider({ children }) {
   }
 
   const ctxValue = {
+    loading,
     isActiveSideBarElem,
     toggleStatus,
+    subUserSettings,
     sidebarIsOpened,
     modalProgress,
     selectedModalId,
@@ -1134,6 +1159,7 @@ export default function UserProgressContextProvider({ children }) {
     MAIN_KEY,
     setIsActiveSideBarElem,
     setToggleStatus,
+    setSubUserSettings,
     setSidebarIsOpened,
     setModalProgress,
     setSelectedModalId,
@@ -1143,6 +1169,7 @@ export default function UserProgressContextProvider({ children }) {
     handleUpdateSessionLoginInfo,
     handleActiveSideBarElem,
     handleToggleStatus,
+    handleSubUserSettings,
     handleSidebarToggle,
     handleOpenModal,
     handleCloseModal,

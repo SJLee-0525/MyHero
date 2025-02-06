@@ -51,10 +51,14 @@ export default function Login() {
     const email = emailInput.current.value;
     const password = passwordInput.current.value;
 
+    userProgressStore.handleCloseModal();
+
     const response = await userProgressStore.handleLogin(email, password);
 
     // 로그인 실패 시
     if (!response.success) {
+      userProgressStore.setModalProgress("login");
+
       alert(`로그인 실패:\n${response.error.message}`);
     }
   }
@@ -65,6 +69,12 @@ export default function Login() {
   return (
     <>
       <form id="login-form" onSubmit={handleLogin}>
+        <div className="login-header">
+          <h2>영웅이네 오신 것을 환영합니다.</h2>
+          <button onClick={() => userProgressStore.handleCloseModal()}>
+            X
+          </button>
+        </div>
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="email">이메일 아이디</label>

@@ -100,12 +100,13 @@ export default function CreateFamily() {
       nickname: inputName.current.value,
     };
 
+    userProgressStore.handleCloseModal();
+
     try {
       const result = await userProgressStore.handleCreateMember(payload);
       if (result.success === true) {
         // 가족 모임 등록 성공
         alert("가족 모임 등록 성공");
-        userProgressStore.handleCloseModal();
 
         inputFamilyId.current.value = "";
         inputName.current.value = "";
@@ -113,6 +114,8 @@ export default function CreateFamily() {
 
         navigate("/accounts");
       } else {
+        userProgressStore.handleOpenModal("create-member-user-info");
+
         console.error("가족 모임 등록 실패:", result.error);
         alert(
           `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
@@ -157,7 +160,9 @@ export default function CreateFamily() {
                 onClick={handleCheckFamily}
                 className="email-check"
               >
-                모임 확인
+                모임
+                <br />
+                확인
               </button>
             )}
           </div>

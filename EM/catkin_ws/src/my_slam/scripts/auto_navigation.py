@@ -7,6 +7,7 @@ from nav_msgs.msg import OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from visualization_msgs.msg import Marker, MarkerArray
 from actionlib_msgs.msg import GoalStatusArray
+import tf
 
 class AutoNavigation:
     def __init__(self):
@@ -24,6 +25,9 @@ class AutoNavigation:
         self.occupancy_grid = None
         self.nav_points = []
         self.is_moving = False
+        self.current_orientation = 0.0  # 현재 로봇의 방향 (라디안)
+        self.prev_goal = None  # 이전 목표점 저장
+        self.tf_listener = tf.TransformListener()
         
     def map_callback(self, occupancy_grid):
         self.occupancy_grid = occupancy_grid
@@ -40,9 +44,32 @@ class AutoNavigation:
         
         # 목표 도달(3) 또는 실패(4)한 경우 새로운 목표점 선택
         if current_status in [3, 4]:
+            if self.nav_points:
+                # 현재 목표점의 방향을 저장
+                self.current_orientation = math.atan2(
+                    2 * self.prev_goal.pose.orientation.w * self.prev_goal.pose.orientation.z,
+                    1 - 2 * self.prev_goal.pose.orientation.z * self.prev_goal.pose.orientation.z
+                )
             self.is_moving = False
             rospy.sleep(1.0)  # 잠시 대기
             self.select_and_send_new_goal()
+
+    def get_robot_orientation(self):
+        try:
+            # map 프레임에서 base_link의 transform 정보 획득
+            (trans, rot) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+            # Quaternion을 Euler angles로 변환
+            euler = tf.transformations.euler_from_quaternion(rot)
+            # yaw 각도 반환 (z축 회전)
+            return euler[2]
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            if self.prev_goal:
+                # tf 획득 실패시 이전 방식으로 폴백
+                return math.atan2(
+                    2 * self.prev_goal.pose.orientation.w * self.prev_goal.pose.orientation.z,
+                    1 - 2 * self.prev_goal.pose.orientation.z * self.prev_goal.pose.orientation.z
+                )
+            return 0.0
 
     def select_and_send_new_goal(self):
         if self.occupancy_grid is None:
@@ -51,18 +78,60 @@ class AutoNavigation:
         # 새로운 빈 공간들 찾기
         empty_points = self.find_empty_spaces(self.occupancy_grid)
         
-        if empty_points:
-            # 랜덤하게 하나의 포인트 선택
-            selected_point = random.choice(empty_points)
-            
-            # 시각화
+        if not empty_points:
+            return
+
+        # 현재 방향을 기준으로 전방 120도 영역 내의 점들만 필터링
+        forward_points = []
+        for point in empty_points:
+            if self.prev_goal:  # 이전 목표점이 있는 경우
+                # 현재 위치에서 목표점까지의 각도 계산
+                dx = point[0] - self.prev_goal.pose.position.x
+                dy = point[1] - self.prev_goal.pose.position.y
+                angle = math.atan2(dy, dx)
+                
+                # 각도 차이 계산 (-π ~ π 범위로 정규화)
+                angle_diff = angle - self.current_orientation
+                while angle_diff > math.pi:
+                    angle_diff -= 2 * math.pi
+                while angle_diff < -math.pi:
+                    angle_diff += 2 * math.pi
+                
+                # 전방 120도 영역 내에 있는 점만 선택 (-60도 ~ +60도)
+                if abs(angle_diff) <= math.pi/3:  # π/3 = 60도
+                    forward_points.append(point)
+            else:
+                forward_points = empty_points  # 첫 목표점은 제한 없이 선택
+
+        if forward_points:
+            selected_point = random.choice(forward_points)
             self.nav_points = [selected_point]
             self.visualize_points()
             
-            # 목표점 전송
-            self.send_goal(selected_point)
+            # 목표점으로의 방향 계산
+            if self.prev_goal:
+                dx = selected_point[0] - self.prev_goal.pose.position.x
+                dy = selected_point[1] - self.prev_goal.pose.position.y
+                yaw = math.atan2(dy, dx)
+            else:
+                yaw = 0.0  # 첫 목표점은 정면 방향
+            
+            # 방향을 quaternion으로 변환
+            w = math.cos(yaw/2)
+            z = math.sin(yaw/2)
+            
+            goal = PoseStamped()
+            goal.header.frame_id = "map"
+            goal.header.stamp = rospy.Time.now()
+            goal.pose.position.x = selected_point[0]
+            goal.pose.position.y = selected_point[1]
+            goal.pose.orientation.w = w
+            goal.pose.orientation.z = z
+            
+            self.prev_goal = goal  # 현재 목표점 저장
+            self.goal_pub.publish(goal)
             self.is_moving = True
-            rospy.loginfo(f"새로운 목표점 선택: {selected_point}")
+            rospy.loginfo(f"새로운 목표점 선택: {selected_point}, 방향: {math.degrees(yaw)}도")
 
     def find_empty_spaces(self, occupancy_grid):
         empty_points = []
@@ -70,19 +139,35 @@ class AutoNavigation:
         width = occupancy_grid.info.width
         resolution = occupancy_grid.info.resolution
         
+        # 현재 위치 가져오기
+        try:
+            (current_pos, rot) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            if self.prev_goal:
+                current_pos = (self.prev_goal.pose.position.x, self.prev_goal.pose.position.y, 0)
+            else:
+                return empty_points
+
         # 격자 간격으로 샘플링 (모든 빈 칸을 검사하지 않고 일정 간격으로)
-        grid_step = 20  # 격자 간격 조절
-        
+        grid_step = 10  # 격자 간격 조절 (0.5m 간격)
+        max_distance = 5.0  # 최대 5m 거리
+
         for i in range(0, width, grid_step):
             for j in range(0, height, grid_step):
                 if occupancy_grid.data[j * width + i] == 0:  # 빈 공간
                     x = i * resolution + occupancy_grid.info.origin.position.x
                     y = j * resolution + occupancy_grid.info.origin.position.y
-                    empty_points.append((x, y))
+                    
+                    # 현재 위치에서의 거리 계산
+                    distance = math.sqrt((x - current_pos[0])**2 + (y - current_pos[1])**2)
+                    
+                    # 5m 이내의 점들만 추가
+                    if distance <= max_distance:
+                        empty_points.append((x, y))
         
         return self.filter_points(empty_points)
-    
-    def filter_points(self, points, min_distance=1.0):
+
+    def filter_points(self, points, min_distance=0.5):  # 최소 간격을 0.5m로 설정
         filtered = []
         for point in points:
             if not filtered or all(self.get_distance(point, p) > min_distance for p in filtered):

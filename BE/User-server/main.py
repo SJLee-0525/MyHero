@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from Routers import accounts, families, members, authentication, status
+from Routers import accounts, families, members, authentication, status, tools
 
 from Database import cleanup_login_sessions
 from asyncio import create_task
@@ -58,3 +58,4 @@ app.include_router(families.router)
 app.include_router(members.router)
 app.include_router(authentication.router)
 app.include_router(status.router)
+app.include_router(tools.router)

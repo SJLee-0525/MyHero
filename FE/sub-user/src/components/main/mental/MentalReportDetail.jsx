@@ -8,6 +8,10 @@ import { UserProgressContext } from "../../../store/userProgressStore";
 import Modal from "../../modal/Modal";
 
 function TimeBasedEmotions({ emotions }) {
+  if (!emotions) {
+    return null;
+  }
+
   return (
     <div>
       <h3 className="detail-report-subtitle">주요 시간대별 감정 상태</h3>
@@ -61,6 +65,10 @@ function TimeBasedEmotions({ emotions }) {
 }
 
 function Recommendations({ recommendations }) {
+  if (!recommendations) {
+    return;
+  }
+
   return (
     <div>
       <h3 className="detail-report-subtitle">추천</h3>
@@ -77,7 +85,8 @@ export default function MentalReportDetail() {
   const healthStore = useContext(HealthContext);
   const userProgressStore = useContext(UserProgressContext);
 
-  const report = healthStore.mentalReport.data[0];
+  const report =
+    healthStore.mentalStatus.length > 0 ? healthStore.mentalStatus[0] : null;
 
   const mainUserName = "박순자123";
 
@@ -93,21 +102,25 @@ export default function MentalReportDetail() {
       <h1 className="detail-report-title">
         {mainUserName}님의 감정 상태 상세 보고서
       </h1>
-      <p className="detail-report-date">{report.created_at} 발행</p>
+      <p className="detail-report-date">
+        {report ? report.created_at : null} 발행
+      </p>
       <br />
       <h3 className="detail-report-overall">
-        {report.report_content.overall_emotional_state}
+        {report ? report.description.overall_emotional_state : null}
       </h3>
       <p className="detail-report-insights">
-        {report.report_content.emotional_insights}
+        {report ? report.description.emotional_insights : null}
       </p>
 
       <hr />
-      <TimeBasedEmotions emotions={report.report_content.time_based_emotions} />
+      <TimeBasedEmotions
+        emotions={report ? report.description.time_based_emotions : null}
+      />
 
       <hr />
       <Recommendations
-        recommendations={report.report_content.recommendations}
+        recommendations={report ? report.description.recommendations : null}
       />
       <div className="emergency-alert-modal-actions">
         <button onClick={userProgressStore.handleCloseModal}>Close</button>

@@ -9,25 +9,30 @@ import MentalReportDetail from "./MentalReportDetail";
 export default function MentalReport() {
   const healthStore = useContext(HealthContext);
 
-  const report = healthStore.mentalReport.data[0];
+  const report =
+    healthStore.mentalStatus && healthStore.mentalStatus.length > 0
+      ? healthStore.mentalStatus[0]
+      : null;
 
   const mainUserName = "박순자123";
 
   return (
     <div id="mental-report">
       <h3>
-        {report.created_at.slice(0, 10)} {mainUserName}씨 감정 상태 보고서
+        {report ? report.reported_at.slice(0, 10) : null} {mainUserName}씨 감정
+        상태 보고서
       </h3>
       <div className="mental-report-overall">
         <h3 className="mental-report-subtitle">전반적 통찰 상태</h3>
-        <p>{report.report_content.overall_emotional_state}</p>
+        <p>{report ? report.description.overall_emotional_state : null}</p>
       </div>
       <div className="mental-report-recommendation">
         <h3 className="mental-report-subtitle">권고 사항</h3>
         <ol>
-          {report.report_content.recommendations.map((recommendation) => {
-            return <li key={recommendation}>{recommendation}</li>;
-          })}
+          {report &&
+            report.description.recommendations.map((recommendation) => {
+              return <li key={recommendation}>{recommendation}</li>;
+            })}
         </ol>
       </div>
       <div>

@@ -43,10 +43,37 @@ export default function SideNav() {
   // 화면 너비가 720px 초과일 때만 렌더링
   if (!isDesktop) return null;
 
+  const loginUserInfo = userProgressStore.loginUserInfo;
+
+  function handleChangeFamilyId(familyId) {
+    userProgressStore.handleChangeFamilyId(familyId);
+  }
+
   return ReactDOM.createPortal(
     <aside id="side-bar">
       <div>
-        <h5>영웅이</h5>
+        <div id="side-nav-header">
+          {loginUserInfo.userInfo.role === "sub" &&
+            userProgressStore.memberInfo.registerData && (
+              <select
+                onChange={(event) => handleChangeFamilyId(event.target.value)}
+              >
+                {userProgressStore.memberInfo.registerData.map((info) => (
+                  <option key={info.family_id} value={info.family_id}>
+                    {info.family_id}
+                  </option>
+                ))}
+              </select>
+            )}
+          {loginUserInfo.userInfo.role === "sub" &&
+            !userProgressStore.memberInfo.registerData && <h5>모임 없음</h5>}
+          {loginUserInfo.userInfo.role === "main" &&
+            userProgressStore.familyInfo.isExist && (
+              <h5>{userProgressStore.familyInfo.familyInfo.family_name}</h5>
+            )}
+          {loginUserInfo.userInfo.role === "main" &&
+            !userProgressStore.familyInfo.isExist && <h5>모임 없음</h5>}
+        </div>
         <ul className="side-nav-elems">
           <SideNavElems
             imgSrc={homeIcon}

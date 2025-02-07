@@ -414,6 +414,7 @@ export default function Signup() {
       address: data.state + " " + data.city,
     };
 
+    console.log(payload);
     userProgressStore.handleCloseModal();
 
     // 백 요청 전송

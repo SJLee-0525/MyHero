@@ -20,7 +20,7 @@ export function useHttp() {
           credentials: "include", // 필요한 경우 포함
         });
 
-        console.log("hook:", response);
+        // console.log("hook:", response);
         const resData = await response.json().catch(() => null); // JSON 변환 실패 방지
 
         if (!response.ok) {

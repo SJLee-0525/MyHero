@@ -20,8 +20,8 @@ function CustomTooltip({ payload, label, active }) {
     return (
       <div className="custom-tooltip">
         <p className="date">{label}</p>
-        <p className="health">{`health : ${payload[0].value}`}</p>
-        <p className="mental">{`mental : ${payload[1].value}`}</p>
+        <p className="health">{`health : ${payload}`}</p>
+        {/* <p className="mental">{`mental : ${payload[1].value}`}</p> */}
         <p className="desc">건강함</p>
       </div>
     );
@@ -33,6 +33,15 @@ function CustomTooltip({ payload, label, active }) {
 export default function ActivityChart() {
   const healthStore = useContext(HealthContext);
 
+  let activityStatus =
+    healthStore.activityStatus.length > 0
+      ? [...healthStore.activityStatus]
+      : [];
+  if (activityStatus.length > 7) {
+    activityStatus = activityStatus.slice(0, 7);
+  }
+  activityStatus = activityStatus.reverse();
+
   return (
     <div id="activity-chart">
       <ResponsiveContainer
@@ -43,27 +52,21 @@ export default function ActivityChart() {
         <LineChart
           width={300}
           height={100}
-          data={healthStore.healthLog}
+          data={activityStatus}
           margin={{
             top: 10,
             right: 50,
             bottom: 15,
           }}
         >
-          <XAxis dataKey="date" />
+          <XAxis dataKey="reported_at" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Line
             type="monotone"
-            dataKey="health"
+            dataKey="score"
             stroke="#44803F"
-            strokeWidth={2}
-          />
-          <Line
-            type="monotone"
-            dataKey="mental"
-            stroke="#FF5A33"
             strokeWidth={2}
           />
         </LineChart>

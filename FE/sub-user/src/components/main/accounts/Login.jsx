@@ -77,7 +77,10 @@ export default function Login() {
       <form id="login-form" onSubmit={handleLogin}>
         <div className="login-header">
           <h2>영웅이네 오신 것을 환영합니다.</h2>
-          <button onClick={() => userProgressStore.handleCloseModal()}>
+          <button
+            type="button"
+            onClick={() => userProgressStore.handleCloseModal()}
+          >
             X
           </button>
         </div>

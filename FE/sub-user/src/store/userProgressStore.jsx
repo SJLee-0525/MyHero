@@ -30,6 +30,7 @@ export const UserProgressContext = createContext({
   memberInfo: {
     isExist: false,
     registerData: undefined,
+    selectedFamilyId: "",
   },
   DEV_API_URL: "",
   MAIN_API_URL: "",
@@ -51,6 +52,7 @@ export const UserProgressContext = createContext({
   handleSidebarToggle: () => {},
   handleOpenModal: (identifier, id) => {},
   handleCloseModal: () => {},
+  handleChangeFamilyId: (familyId) => {},
   handleLogin: (userInfo) => {},
   handleGetUserInfo: (id) => {},
   handleLogout: () => {},
@@ -115,6 +117,7 @@ export default function UserProgressContextProvider({ children }) {
   const [memberInfo, setMemberInfo] = useState({
     isExist: false,
     registerData: undefined,
+    selectedFamilyId: undefined,
   });
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
@@ -163,18 +166,14 @@ export default function UserProgressContextProvider({ children }) {
   // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
   // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
   useEffect(() => {
-    try {
-      if (!loginUserInfo.login) return;
+    if (!loginUserInfo.login) return;
 
-      if (loginUserInfo.login && loginUserInfo.userInfo.id) {
-        if (loginUserInfo.userInfo.role === "main") {
-          handleCheckFamilyExist(loginUserInfo.userInfo.id);
-        } else if (loginUserInfo.userInfo.role === "sub") {
-          handleCheckFamilyList();
-        }
+    if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+      if (loginUserInfo.userInfo.role === "main") {
+        handleCheckFamilyExist(loginUserInfo.userInfo.id);
+      } else if (loginUserInfo.userInfo.role === "sub") {
+        handleCheckFamilyList();
       }
-    } catch (error) {
-      console.error("Error checking family list:", error);
     }
   }, [loginUserInfo]);
 
@@ -238,6 +237,13 @@ export default function UserProgressContextProvider({ children }) {
   function handleCloseModal() {
     setModalProgress("");
     setSelectedModalId("");
+  }
+
+  // 활성화 가족 모임 변경
+  function handleChangeFamilyId(familyId) {
+    setMemberInfo((prev) => {
+      return { ...prev, selectedFamilyId: familyId };
+    });
   }
 
   // 로그인
@@ -867,6 +873,7 @@ export default function UserProgressContextProvider({ children }) {
           setMemberInfo({
             isExist: true,
             registerData: resData.result,
+            selectedFamilyId: resData.result[0].family_id,
           });
 
           return { success: true, data: resData };
@@ -877,6 +884,7 @@ export default function UserProgressContextProvider({ children }) {
           setMemberInfo({
             isExist: false,
             registerData: undefined,
+            selectedFamilyId: undefined,
           });
         }
         return { success: true, data: resData };
@@ -1173,6 +1181,7 @@ export default function UserProgressContextProvider({ children }) {
     handleSidebarToggle,
     handleOpenModal,
     handleCloseModal,
+    handleChangeFamilyId,
     handleLogin,
     handleGetUserInfo,
     handleLogout,

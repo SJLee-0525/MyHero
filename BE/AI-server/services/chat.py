@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import logging
 from typing import Optional, Dict
 from openai import OpenAI
@@ -6,6 +6,8 @@ from sqlalchemy.orm import Session
 import uuid
 
 from models import ChatSession, ChatHistory
+
+from utils.timezone_utils import get_kst_now, to_utc
 
 logger = logging.getLogger(__name__)
 
@@ -34,14 +36,14 @@ class ChatService:
 
     async def _get_or_create_session(self, user_id: str, session_id: Optional[str]) -> str:
         try:
-            current_time = datetime.now()
+            current_time = get_kst_now()
             
             if not session_id:
                 new_session = ChatSession(
                     uid=str(uuid.uuid4()),
                     user_id=user_id,
-                    created_at=current_time,
-                    last_active=current_time
+                    created_at=to_utc(current_time),
+                    last_active=to_utc(current_time)
                 )
                 self.db.add(new_session)
                 self.db.commit()
@@ -49,15 +51,15 @@ class ChatService:
 
             session = self.db.query(ChatSession).filter(ChatSession.uid == session_id).first()
             if session:
-                session.last_active = current_time
+                session.last_active = to_utc(current_time)
                 self.db.commit()
                 return session.uid
 
             new_session = ChatSession(
                 uid=session_id,
                 user_id=user_id,
-                created_at=current_time,
-                last_active=current_time
+                created_at=to_utc(current_time),
+                last_active=to_utc(current_time)
             )
             self.db.add(new_session)
             self.db.commit()
@@ -111,7 +113,6 @@ class ChatService:
                 user_id=user_id,
                 user_message=user_message,
                 bot_message=bot_message,
-                created_at=datetime.now()
             )
             self.db.add(chat_history)
             self.db.commit()

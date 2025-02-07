@@ -7,6 +7,8 @@ import json
 
 from models import Account, Family, Notification
 
+from utils.timezone_utils import get_kst_today
+
 logger = logging.getLogger(__name__)
 
 class DisasterService:
@@ -15,6 +17,9 @@ class DisasterService:
 
     async def update_disaster_notifications(self, db: Session) -> None:
         try:
+            today_kst = get_kst_today()
+            today_str = today_kst.strftime("%Y%m%d")
+
             # 모든 unique한 주소 가져오기
             addresses = db.query(Account.address).distinct().all()
             # 모든 family_id 가져오기
@@ -26,11 +31,11 @@ class DisasterService:
                 if not address:
                     continue
                     
-                messages_local = await self._fetch_disaster_data(address)
+                messages_local = await self._fetch_disaster_data(address, today_str)
                 if messages_local:
                     all_messages.extend(messages_local)
                     
-                messages_all = await self._fetch_disaster_all_data(address)
+                messages_all = await self._fetch_disaster_all_data(address, today_str)
                 if messages_all:
                     all_messages.extend(messages_all)
 
@@ -63,10 +68,9 @@ class DisasterService:
             logger.error(f"재난문자 업데이트 오류: {str(e)}")
             db.rollback()
 
-    async def _fetch_disaster_data(self, address: str) -> List[Dict]:
+    async def _fetch_disaster_data(self, address: str, today_str: str) -> List[Dict]:
         try:
             url = "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247"
-            today = datetime.now().strftime("%Y%m%d")
             
             params = {
                 "serviceKey": self.api_key,
@@ -74,7 +78,7 @@ class DisasterService:
                 "pageNo": "1",
                 "numOfRows": "5",
                 "rgnNm": address,
-                "crtDt": today
+                "crtDt": today_str
             }
             
             response = requests.get(url, params=params, verify=True)
@@ -95,10 +99,9 @@ class DisasterService:
             logger.error(f"재난문자 API 호출 오류: {str(e)}")
             return []
         
-    async def _fetch_disaster_all_data(self, address: str) -> List[Dict]:
+    async def _fetch_disaster_all_data(self, address: str, today_str: str) -> List[Dict]:
         try:
             url = "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247"
-            today = datetime.now().strftime("%Y%m%d")
             n_add = address.split(' ')[0] + ' ' + '전체'
             params = {
                 "serviceKey": self.api_key,
@@ -106,7 +109,7 @@ class DisasterService:
                 "pageNo": "1",
                 "numOfRows": "5",
                 "rgnNm": n_add,
-                "crtDt": today
+                "crtDt": today_str
             }
             
             response = requests.get(url, params=params, verify=True)
@@ -118,7 +121,7 @@ class DisasterService:
             data = response.json()
             
             if data['body']:
-                logger.info(f'{n_add}: {data["body"]}')
+                logger.info(f'{n_add} success')
                 return data["body"]
             
             logger.info(f"No disaster messages found for address: {address}")

@@ -31,6 +31,9 @@ function App() {
   const homeStatusStore = useContext(HomeStatusContext);
   const healthStore = useContext(HealthContext);
 
+  const loading =
+    userProgressStore.loading || homeStatusStore.loading || healthStore.loading;
+
   useEffect(() => {
     console.log("🔄 useEffect 실행됨!", {
       login: userProgressStore.loginUserInfo.login,
@@ -48,9 +51,10 @@ function App() {
             userProgressStore.memberInfo.selectedFamilyId
           );
           await healthStore.handleGetHealthData();
-          await healthStore.handleGetActiveStatus();
+          await healthStore.handleGetActivityStatus();
           await healthStore.handleGetMentalStatus();
           await healthStore.handleGetMentalReports();
+          await healthStore.handleGetWeekData();
           console.log("📡 API 요청 끝!");
         };
 
@@ -64,7 +68,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      {userProgressStore.loading && <LoadingSpinner />}
+      {loading && <LoadingSpinner />}
       {userProgressStore.loginUserInfo.login ? (
         <div id="app">
           <nav id="top-nav">

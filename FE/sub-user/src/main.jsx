@@ -18,21 +18,21 @@ const startApp = async () => {
   await loadEnvironments();
 
   createRoot(document.getElementById("root")).render(
-    <StrictMode>
-      <UserProgressContextProvider>
-        <HomeStatusContextProvider>
-          <HealthContextProvider>
-            <EmergencyContextProvider>
-              <MessageContextProvider>
-                <CalendarStoreContextProvider>
-                  <App />
-                </CalendarStoreContextProvider>
-              </MessageContextProvider>
-            </EmergencyContextProvider>
-          </HealthContextProvider>
-        </HomeStatusContextProvider>
-      </UserProgressContextProvider>
-    </StrictMode>
+    // <StrictMode>
+    <UserProgressContextProvider>
+      <HomeStatusContextProvider>
+        <HealthContextProvider>
+          <EmergencyContextProvider>
+            <MessageContextProvider>
+              <CalendarStoreContextProvider>
+                <App />
+              </CalendarStoreContextProvider>
+            </MessageContextProvider>
+          </EmergencyContextProvider>
+        </HealthContextProvider>
+      </HomeStatusContextProvider>
+    </UserProgressContextProvider>
+    // </StrictMode>
   );
 };
 

@@ -61,6 +61,17 @@ export default function HomeStatusContextProvider({ children }) {
   const familyId = userProgressStore.memberInfo.selectedFamilyId;
 
   async function handleGetLatestHomeStatus() {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
     try {
       const response = await request(
         `${
@@ -121,6 +132,7 @@ export default function HomeStatusContextProvider({ children }) {
   }
 
   const ctxValue = {
+    loading,
     homeStatus,
     setHomeStatus,
     handleGetLatestHomeStatus,

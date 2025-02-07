@@ -12,7 +12,7 @@ export const HealthContext = createContext({
       heart_rate: 1,
     },
   ],
-  activeStatus: [
+  activityStatus: [
     {
       index: 1,
       family_id: "",
@@ -53,6 +53,7 @@ export const HealthContext = createContext({
       summary: "또 다른 총평 요약",
     },
   ],
+  weeklyData: [{ name: "", value: 0 }],
   keywords: [],
   keywordColors: [],
   healthLog: {
@@ -81,7 +82,7 @@ export const HealthContext = createContext({
   },
   handleShowDetailReport: () => {},
   handleGetHealthData: () => {},
-  handleGetActiveStatus: () => {},
+  handleGetActivityStatus: () => {},
   handleGetMentalStatus: () => {},
   handleGetMentalReports: () => {},
 });
@@ -89,12 +90,17 @@ export const HealthContext = createContext({
 export default function HealthContextProvider({ children }) {
   const userProgressStore = useContext(UserProgressContext);
 
-  const { request } = useHttp();
+  const { request, loading } = useHttp();
 
   const [healthStatus, setHealthStatus] = useState([]);
-  const [activeStatus, setActiveStatus] = useState([]);
+  const [activityStatus, setActivityStatus] = useState([]);
   const [mentalStatus, setMentalStatus] = useState([]);
   const [mentalReport, setMentalReport] = useState([]);
+
+  const [weeklyData, setWeeklyData] = useState([
+    { name: "health", value: 0 },
+    { name: "mental", value: 0 },
+  ]);
 
   // 대화 키워드 관련련
   const keywords = ["임영웅", "김치찌개", "두부", "여행", "병원"];
@@ -155,7 +161,7 @@ export default function HealthContextProvider({ children }) {
   //     if (userProgressStore.memberInfo.selectedFamilyId) {
   //       const fetchData = async () => {
   //         await handleGetHealthData();
-  //         await handleGetActiveStatus();
+  //         await handleGetActivityStatus();
   //         await handleGetMentalStatus();
   //         await handleGetMentalReports();
 
@@ -171,10 +177,12 @@ export default function HealthContextProvider({ children }) {
 
   const familyId = userProgressStore.memberInfo.selectedFamilyId;
 
+  // 상세 보고서 모달 열기
   function handleShowDetailReport() {
     userProgressStore.handleOpenModal("detail-mental-report");
   }
 
+  // 1년 전부터 현재 시간까지의 범위를 UTC 기준으로 출력하는 함수
   function getOneYearRangeUTC() {
     const now = new Date(); // 현재 시간 (UTC)
     const oneYearAgo = new Date();
@@ -188,11 +196,39 @@ export default function HealthContextProvider({ children }) {
     };
   }
 
+  // 7일 전부터 현재 시간까지의 범위를 UTC 기준으로 출력하는 함수
+  const getSevenDaysRangeUTC = () => {
+    const now = new Date();
+
+    // 7일 전 날짜 계산
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setUTCDate(now.getUTCDate() - 7);
+
+    // 날짜를 ISO 8601 형식으로 변환하고, 밀리초 제거 후 'Z' 추가
+    const formatUTCDate = (date) => date.toISOString().split(".")[0] + "Z";
+
+    return {
+      start: formatUTCDate(sevenDaysAgo),
+      end: formatUTCDate(now),
+    };
+  };
+
   async function handleGetHealthData(
     inputStart = null,
     inputEnd = null,
     order = "desc"
   ) {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
     const { start, end } = getOneYearRangeUTC();
 
     if (!inputStart) {
@@ -208,14 +244,22 @@ export default function HealthContextProvider({ children }) {
         `${userProgressStore.DEV_API_URL}/status/health/${familyId}?start=${start}&end=${end}&order=${order}`
       );
 
-      console.log("handleGetHealthData response", response);
+      // console.log("handleGetHealthData response", response);
       const resData = response.data;
 
       if (response.success) {
         if (resData.message === "Health status retrieved successfully") {
           setHealthStatus([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         } else if (resData.message === "No health status found") {
           setHealthStatus([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         }
       } else {
         console.error("최신 건강 정보 조회 실패:", resData.error);
@@ -241,11 +285,22 @@ export default function HealthContextProvider({ children }) {
     }
   }
 
-  async function handleGetActiveStatus(
+  async function handleGetActivityStatus(
     inputStart = null,
     inputEnd = null,
     order = "desc"
   ) {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
     const { start, end } = getOneYearRangeUTC();
 
     if (!inputStart) {
@@ -261,18 +316,31 @@ export default function HealthContextProvider({ children }) {
         `${userProgressStore.DEV_API_URL}/status/active/${familyId}?start=${inputStart}&end=${inputEnd}&order=${order}`
       );
 
-      console.log("handleGetActiveStatus response", response);
+      // console.log("handleGetActivityStatus response", response);
       const resData = response.data;
 
       if (response.success) {
         if (resData.message === "Active status retrieved successfully") {
-          setActiveStatus([...resData.data]);
+          setActivityStatus(
+            resData.data.map((item) => ({
+              ...item,
+              description: JSON.parse(item.description.replace(/'/g, '"')),
+            }))
+          );
+          return {
+            success: true,
+            data: resData.data,
+          };
         } else if (resData.message === "No active status found") {
-          setActiveStatus([...resData.data]);
+          setActivityStatus([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         }
       } else {
         console.error("최신 활동 정보 조회 실패:", resData.error);
-        setActiveStatus([]);
+        setActivityStatus([]);
         return {
           success: false,
           error: {
@@ -283,7 +351,7 @@ export default function HealthContextProvider({ children }) {
       }
     } catch (error) {
       console.error(error);
-      setActiveStatus([]);
+      setActivityStatus([]);
       return {
         success: false,
         error: {
@@ -299,6 +367,17 @@ export default function HealthContextProvider({ children }) {
     inputEnd = null,
     order = "desc"
   ) {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
     const { start, end } = getOneYearRangeUTC();
 
     if (!inputStart) {
@@ -314,7 +393,7 @@ export default function HealthContextProvider({ children }) {
         `${userProgressStore.DEV_API_URL}/status/mental/${familyId}?start=${inputStart}&end=${inputEnd}&order=${order}`
       );
 
-      console.log("handleGetMentalStatus response", response);
+      // console.log("handleGetMentalStatus response", response);
       const resData = response.data;
 
       if (response.success) {
@@ -322,11 +401,19 @@ export default function HealthContextProvider({ children }) {
           setMentalStatus(
             resData.data.map((item) => ({
               ...item,
-              description: JSON.parse(item.description.replace(/'/g, '"')), // 🔥 description을 객체로 변환
+              description: JSON.parse(item.description.replace(/'/g, '"')),
             }))
           );
+          return {
+            success: true,
+            data: resData.data,
+          };
         } else if (resData.message === "No mental status found") {
           setMentalStatus([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         }
       } else {
         console.error("최신 정신 정보 조회 실패:", resData.error);
@@ -357,6 +444,17 @@ export default function HealthContextProvider({ children }) {
     inputEnd = null,
     order = "desc"
   ) {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
     const { start, end } = getOneYearRangeUTC();
 
     if (!inputStart) {
@@ -372,14 +470,22 @@ export default function HealthContextProvider({ children }) {
         `${userProgressStore.DEV_API_URL}/status/mental-reports/${familyId}?start=${inputStart}&end=${inputEnd}&order=${order}`
       );
 
-      console.log("handleGetMentalReports response", response);
+      // console.log("handleGetMentalReports response", response);
       const resData = response.data;
 
       if (response.success) {
         if (resData.message === "Mental reports retrieved successfully") {
           setMentalReport([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         } else if (resData.message === "No mental reports found") {
           setMentalReport([...resData.data]);
+          return {
+            success: true,
+            data: resData.data,
+          };
         }
       } else {
         console.error("최신 정신 보고서 조회 실패:", resData.error);
@@ -405,19 +511,77 @@ export default function HealthContextProvider({ children }) {
     }
   }
 
+  const handleGetWeekData = async () => {
+    if (!userProgressStore.memberInfo.selectedFamilyId) return;
+
+    const { start, end } = getSevenDaysRangeUTC();
+
+    try {
+      // 첫 번째 API 호출: 활동 상태
+      const response = await handleGetActivityStatus(start, end, "desc");
+
+      if (response.success && response.data.length > 0) {
+        const health =
+          response.data.reduce((acc, entry) => acc + entry.score, 0) /
+          response.data.length;
+        // health 값 업데이트
+        setWeeklyData((prev) =>
+          prev.map((item) =>
+            item.name === "health" ? { ...item, value: health } : item
+          )
+        );
+      } else {
+        // 데이터가 없을 경우 초기화
+        setWeeklyData((prev) =>
+          prev.map((item) =>
+            item.name === "health" ? { ...item, value: 0 } : item
+          )
+        );
+      }
+
+      // 두 번째 API 호출: 정신 상태
+      const secResponse = await handleGetMentalStatus(start, end, "desc");
+
+      if (secResponse.success && secResponse.data.length > 0) {
+        const mental =
+          secResponse.data.reduce((acc, entry) => acc + entry.score, 0) /
+          secResponse.data.length;
+
+        // mental 값 업데이트
+        setWeeklyData((prev) =>
+          prev.map((item) =>
+            item.name === "mental" ? { ...item, value: mental } : item
+          )
+        );
+      } else {
+        // 데이터가 없을 경우 초기화
+        setWeeklyData((prev) =>
+          prev.map((item) =>
+            item.name === "mental" ? { ...item, value: 0 } : item
+          )
+        );
+      }
+    } catch (error) {
+      console.error("활동 상태 데이터를 불러오는 데 실패했습니다.", error);
+    }
+  };
+
   const ctxValue = {
+    loading,
     healthStatus,
-    activeStatus,
+    activityStatus,
     mentalStatus,
     mentalReport,
+    weeklyData,
     keywords,
     keywordColors,
     healthLog,
     handleShowDetailReport,
     handleGetHealthData,
-    handleGetActiveStatus,
+    handleGetActivityStatus,
     handleGetMentalStatus,
     handleGetMentalReports,
+    handleGetWeekData,
   };
 
   return (

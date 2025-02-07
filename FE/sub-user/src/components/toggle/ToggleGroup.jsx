@@ -38,7 +38,8 @@ export default function ToggleGroup() {
     (healthStore.healthStatus && healthStore.healthStatus[0]?.heart_rate) ||
     null;
 
-  console.log(dustLevel, ethanol, heartRate);
+  // console.log(dustLevel, ethanol, heartRate);
+
   return (
     <>
       <div id="toggle-group">

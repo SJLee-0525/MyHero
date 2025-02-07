@@ -19,6 +19,7 @@ from .accounts import (
 from .families import (
     main_id_to_family_id,
     create_family,
+    find_family,
     get_all_families,
     get_one_family,
     update_one_family,

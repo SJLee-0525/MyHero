@@ -37,3 +37,4 @@ private:
     bool readData();
     bool validateChecksum() const;
 };
+

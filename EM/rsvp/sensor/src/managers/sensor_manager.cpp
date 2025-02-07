@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <cmath>
 
 // static constexpr 변수 정의
 constexpr int SensorManager::DHT11_PIN;
@@ -29,10 +30,17 @@ bool SensorManager::initialize() {
         // 에탄올 센서 초기화 (SPI0, CS0)
         ethanolSensor_ = std::make_unique<EthanolSensor>(0);
 
-        // 심박 센서 초기화 (SPI0, CS1)
+        // 심박 센서 초기화 (SPI0, CS0)
         pulseSensor_ = std::make_unique<PulseSensor>(1);
         if (!pulseSensor_->startReading()) {
             updateError(std::string("Failed to start pulse sensor: ") + pulseSensor_->getErrorMessage());
+            return false;
+        }
+
+		 // 먼지 센서 초기화
+        dustSensor_ = std::make_unique<DustSensor>();
+        if (!dustSensor_->initialize() || !dustSensor_->startReading()) {
+            updateError(std::string("Failed to initialize dust sensor: ") + dustSensor_->getErrorMessage());
             return false;
         }
 
@@ -72,6 +80,19 @@ SensorData SensorManager::readAllSensors() {
     }
     else {
         currentReadings.heartrate = lastReadings_.heartrate;
+    }
+
+
+	 // 먼지 센서 읽기
+    if (!readDust()) {
+        if (currentReadings.error_message.empty()) {
+            currentReadings.error_message = getLastError();
+        } else {
+            currentReadings.error_message += "; " + getLastError();
+        }
+    }
+    else {
+        currentReadings.dust = lastReadings_.dust;
     }
 
     return currentReadings;
@@ -139,6 +160,36 @@ bool SensorManager::readPulse() {
     }
 }
 
+bool SensorManager::readDust() {
+    if (!dustSensor_) {
+        updateError("Dust sensor not initialized");
+        return false;
+    }
+
+    if (!dustSensor_->isRunning()) {
+        updateError("Dust sensor is not running");
+        return false;
+    }
+
+    float density = dustSensor_->getDustDensity();
+    if (std::isnan(density) || density < 0.0f) {
+        updateError("Invalid dust sensor reading");
+        return false;
+    }
+
+    lastReadings_.dust = density;
+
+    const std::string& errorMsg = dustSensor_->getErrorMessage();
+    if (errorMsg.empty()) {
+        clearError();
+        return true;
+    }
+    else {
+        updateError(std::string("Dust sensor error: ") + errorMsg);
+        return false;
+    }
+}
+
 void SensorManager::updateError(const std::string& error) {
     lastError_ = error;
     lastReadings_.error_message = error;
@@ -148,3 +199,4 @@ void SensorManager::clearError() {
     lastError_.clear();
     lastReadings_.error_message.clear();
 }
+

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/ssafy/project/S12P11A102/EM/rsvp/include
+CXX_INCLUDES = -I/home/ssafy/project/dev/include
 
 CXX_FLAGS = -std=gnu++17
 

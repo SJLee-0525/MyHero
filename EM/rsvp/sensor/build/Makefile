@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ssafy/project/S12P11A102/EM/rsvp
+CMAKE_SOURCE_DIR = /home/ssafy/project/dev
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ssafy/project/S12P11A102/EM/rsvp/build
+CMAKE_BINARY_DIR = /home/ssafy/project/dev/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles /home/ssafy/project/S12P11A102/EM/rsvp/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/dev/build/CMakeFiles /home/ssafy/project/dev/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/dev/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -155,29 +155,29 @@ test_runner/fast:
 	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/build
 .PHONY : test_runner/fast
 
-src/drivers/adc.o: src/drivers/adc.cpp.o
-.PHONY : src/drivers/adc.o
+src/DataSender.o: src/DataSender.cpp.o
+.PHONY : src/DataSender.o
 
 # target to build an object file
-src/drivers/adc.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/drivers/adc.cpp.o
-.PHONY : src/drivers/adc.cpp.o
+src/DataSender.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/DataSender.cpp.o
+.PHONY : src/DataSender.cpp.o
 
-src/drivers/adc.i: src/drivers/adc.cpp.i
-.PHONY : src/drivers/adc.i
+src/DataSender.i: src/DataSender.cpp.i
+.PHONY : src/DataSender.i
 
 # target to preprocess a source file
-src/drivers/adc.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/drivers/adc.cpp.i
-.PHONY : src/drivers/adc.cpp.i
+src/DataSender.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/DataSender.cpp.i
+.PHONY : src/DataSender.cpp.i
 
-src/drivers/adc.s: src/drivers/adc.cpp.s
-.PHONY : src/drivers/adc.s
+src/DataSender.s: src/DataSender.cpp.s
+.PHONY : src/DataSender.s
 
 # target to generate assembly for a file
-src/drivers/adc.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/drivers/adc.cpp.s
-.PHONY : src/drivers/adc.cpp.s
+src/DataSender.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/DataSender.cpp.s
+.PHONY : src/DataSender.cpp.s
 
 src/drivers/gpio.o: src/drivers/gpio.cpp.o
 .PHONY : src/drivers/gpio.o
@@ -299,30 +299,6 @@ src/sensors/dht11.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/dht11.cpp.s
 .PHONY : src/sensors/dht11.cpp.s
 
-src/sensors/dht11_w.o: src/sensors/dht11_w.cpp.o
-.PHONY : src/sensors/dht11_w.o
-
-# target to build an object file
-src/sensors/dht11_w.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/dht11_w.cpp.o
-.PHONY : src/sensors/dht11_w.cpp.o
-
-src/sensors/dht11_w.i: src/sensors/dht11_w.cpp.i
-.PHONY : src/sensors/dht11_w.i
-
-# target to preprocess a source file
-src/sensors/dht11_w.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/dht11_w.cpp.i
-.PHONY : src/sensors/dht11_w.cpp.i
-
-src/sensors/dht11_w.s: src/sensors/dht11_w.cpp.s
-.PHONY : src/sensors/dht11_w.s
-
-# target to generate assembly for a file
-src/sensors/dht11_w.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/dht11_w.cpp.s
-.PHONY : src/sensors/dht11_w.cpp.s
-
 src/sensors/dust_sensor.o: src/sensors/dust_sensor.cpp.o
 .PHONY : src/sensors/dust_sensor.o
 
@@ -346,30 +322,6 @@ src/sensors/dust_sensor.s: src/sensors/dust_sensor.cpp.s
 src/sensors/dust_sensor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/dust_sensor.cpp.s
 .PHONY : src/sensors/dust_sensor.cpp.s
-
-src/sensors/ethanol_sensor.o: src/sensors/ethanol_sensor.cpp.o
-.PHONY : src/sensors/ethanol_sensor.o
-
-# target to build an object file
-src/sensors/ethanol_sensor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/ethanol_sensor.cpp.o
-.PHONY : src/sensors/ethanol_sensor.cpp.o
-
-src/sensors/ethanol_sensor.i: src/sensors/ethanol_sensor.cpp.i
-.PHONY : src/sensors/ethanol_sensor.i
-
-# target to preprocess a source file
-src/sensors/ethanol_sensor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/ethanol_sensor.cpp.i
-.PHONY : src/sensors/ethanol_sensor.cpp.i
-
-src/sensors/ethanol_sensor.s: src/sensors/ethanol_sensor.cpp.s
-.PHONY : src/sensors/ethanol_sensor.s
-
-# target to generate assembly for a file
-src/sensors/ethanol_sensor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/rsvp_project.dir/build.make CMakeFiles/rsvp_project.dir/src/sensors/ethanol_sensor.cpp.s
-.PHONY : src/sensors/ethanol_sensor.cpp.s
 
 src/sensors/mq3.o: src/sensors/mq3.cpp.o
 .PHONY : src/sensors/mq3.o
@@ -430,9 +382,9 @@ help:
 	@echo "... clean-all"
 	@echo "... rsvp_project"
 	@echo "... test_runner"
-	@echo "... src/drivers/adc.o"
-	@echo "... src/drivers/adc.i"
-	@echo "... src/drivers/adc.s"
+	@echo "... src/DataSender.o"
+	@echo "... src/DataSender.i"
+	@echo "... src/DataSender.s"
 	@echo "... src/drivers/gpio.o"
 	@echo "... src/drivers/gpio.i"
 	@echo "... src/drivers/gpio.s"
@@ -448,15 +400,9 @@ help:
 	@echo "... src/sensors/dht11.o"
 	@echo "... src/sensors/dht11.i"
 	@echo "... src/sensors/dht11.s"
-	@echo "... src/sensors/dht11_w.o"
-	@echo "... src/sensors/dht11_w.i"
-	@echo "... src/sensors/dht11_w.s"
 	@echo "... src/sensors/dust_sensor.o"
 	@echo "... src/sensors/dust_sensor.i"
 	@echo "... src/sensors/dust_sensor.s"
-	@echo "... src/sensors/ethanol_sensor.o"
-	@echo "... src/sensors/ethanol_sensor.i"
-	@echo "... src/sensors/ethanol_sensor.s"
 	@echo "... src/sensors/mq3.o"
 	@echo "... src/sensors/mq3.i"
 	@echo "... src/sensors/mq3.s"

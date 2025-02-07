@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ssafy/project/S12P11A102/EM/rsvp
+CMAKE_SOURCE_DIR = /home/ssafy/project/dev
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ssafy/project/S12P11A102/EM/rsvp/build
+CMAKE_BINARY_DIR = /home/ssafy/project/dev/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles /home/ssafy/project/S12P11A102/EM/rsvp/build/test//CMakeFiles/progress.marks
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles 0
+	cd /home/ssafy/project/dev/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/dev/build/CMakeFiles /home/ssafy/project/dev/build/test//CMakeFiles/progress.marks
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ssafy/project/dev/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/clean
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/preinstall
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/preinstall
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/ssafy/project/dev/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 test/CMakeFiles/test_runner.dir/rule:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/test_runner.dir/rule
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/test_runner.dir/rule
 .PHONY : test/CMakeFiles/test_runner.dir/rule
 
 # Convenience name for target.
@@ -127,39 +127,39 @@ test_runner: test/CMakeFiles/test_runner.dir/rule
 
 # fast build rule for target.
 test_runner/fast:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/build
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/build
 .PHONY : test_runner/fast
 
-__/src/drivers/adc.o: __/src/drivers/adc.cpp.o
-.PHONY : __/src/drivers/adc.o
+__/src/DataSender.o: __/src/DataSender.cpp.o
+.PHONY : __/src/DataSender.o
 
 # target to build an object file
-__/src/drivers/adc.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o
-.PHONY : __/src/drivers/adc.cpp.o
+__/src/DataSender.cpp.o:
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o
+.PHONY : __/src/DataSender.cpp.o
 
-__/src/drivers/adc.i: __/src/drivers/adc.cpp.i
-.PHONY : __/src/drivers/adc.i
+__/src/DataSender.i: __/src/DataSender.cpp.i
+.PHONY : __/src/DataSender.i
 
 # target to preprocess a source file
-__/src/drivers/adc.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.i
-.PHONY : __/src/drivers/adc.cpp.i
+__/src/DataSender.cpp.i:
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.i
+.PHONY : __/src/DataSender.cpp.i
 
-__/src/drivers/adc.s: __/src/drivers/adc.cpp.s
-.PHONY : __/src/drivers/adc.s
+__/src/DataSender.s: __/src/DataSender.cpp.s
+.PHONY : __/src/DataSender.s
 
 # target to generate assembly for a file
-__/src/drivers/adc.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.s
-.PHONY : __/src/drivers/adc.cpp.s
+__/src/DataSender.cpp.s:
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.s
+.PHONY : __/src/DataSender.cpp.s
 
 __/src/drivers/gpio.o: __/src/drivers/gpio.cpp.o
 .PHONY : __/src/drivers/gpio.o
 
 # target to build an object file
 __/src/drivers/gpio.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o
 .PHONY : __/src/drivers/gpio.cpp.o
 
 __/src/drivers/gpio.i: __/src/drivers/gpio.cpp.i
@@ -167,7 +167,7 @@ __/src/drivers/gpio.i: __/src/drivers/gpio.cpp.i
 
 # target to preprocess a source file
 __/src/drivers/gpio.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i
 .PHONY : __/src/drivers/gpio.cpp.i
 
 __/src/drivers/gpio.s: __/src/drivers/gpio.cpp.s
@@ -175,7 +175,7 @@ __/src/drivers/gpio.s: __/src/drivers/gpio.cpp.s
 
 # target to generate assembly for a file
 __/src/drivers/gpio.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s
 .PHONY : __/src/drivers/gpio.cpp.s
 
 __/src/drivers/spi.o: __/src/drivers/spi.cpp.o
@@ -183,7 +183,7 @@ __/src/drivers/spi.o: __/src/drivers/spi.cpp.o
 
 # target to build an object file
 __/src/drivers/spi.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o
 .PHONY : __/src/drivers/spi.cpp.o
 
 __/src/drivers/spi.i: __/src/drivers/spi.cpp.i
@@ -191,7 +191,7 @@ __/src/drivers/spi.i: __/src/drivers/spi.cpp.i
 
 # target to preprocess a source file
 __/src/drivers/spi.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i
 .PHONY : __/src/drivers/spi.cpp.i
 
 __/src/drivers/spi.s: __/src/drivers/spi.cpp.s
@@ -199,7 +199,7 @@ __/src/drivers/spi.s: __/src/drivers/spi.cpp.s
 
 # target to generate assembly for a file
 __/src/drivers/spi.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s
 .PHONY : __/src/drivers/spi.cpp.s
 
 __/src/managers/sensor_manager.o: __/src/managers/sensor_manager.cpp.o
@@ -207,7 +207,7 @@ __/src/managers/sensor_manager.o: __/src/managers/sensor_manager.cpp.o
 
 # target to build an object file
 __/src/managers/sensor_manager.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o
 .PHONY : __/src/managers/sensor_manager.cpp.o
 
 __/src/managers/sensor_manager.i: __/src/managers/sensor_manager.cpp.i
@@ -215,7 +215,7 @@ __/src/managers/sensor_manager.i: __/src/managers/sensor_manager.cpp.i
 
 # target to preprocess a source file
 __/src/managers/sensor_manager.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i
 .PHONY : __/src/managers/sensor_manager.cpp.i
 
 __/src/managers/sensor_manager.s: __/src/managers/sensor_manager.cpp.s
@@ -223,7 +223,7 @@ __/src/managers/sensor_manager.s: __/src/managers/sensor_manager.cpp.s
 
 # target to generate assembly for a file
 __/src/managers/sensor_manager.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s
 .PHONY : __/src/managers/sensor_manager.cpp.s
 
 __/src/sensors/dht11.o: __/src/sensors/dht11.cpp.o
@@ -231,7 +231,7 @@ __/src/sensors/dht11.o: __/src/sensors/dht11.cpp.o
 
 # target to build an object file
 __/src/sensors/dht11.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o
 .PHONY : __/src/sensors/dht11.cpp.o
 
 __/src/sensors/dht11.i: __/src/sensors/dht11.cpp.i
@@ -239,7 +239,7 @@ __/src/sensors/dht11.i: __/src/sensors/dht11.cpp.i
 
 # target to preprocess a source file
 __/src/sensors/dht11.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i
 .PHONY : __/src/sensors/dht11.cpp.i
 
 __/src/sensors/dht11.s: __/src/sensors/dht11.cpp.s
@@ -247,39 +247,15 @@ __/src/sensors/dht11.s: __/src/sensors/dht11.cpp.s
 
 # target to generate assembly for a file
 __/src/sensors/dht11.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s
 .PHONY : __/src/sensors/dht11.cpp.s
-
-__/src/sensors/dht11_w.o: __/src/sensors/dht11_w.cpp.o
-.PHONY : __/src/sensors/dht11_w.o
-
-# target to build an object file
-__/src/sensors/dht11_w.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o
-.PHONY : __/src/sensors/dht11_w.cpp.o
-
-__/src/sensors/dht11_w.i: __/src/sensors/dht11_w.cpp.i
-.PHONY : __/src/sensors/dht11_w.i
-
-# target to preprocess a source file
-__/src/sensors/dht11_w.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.i
-.PHONY : __/src/sensors/dht11_w.cpp.i
-
-__/src/sensors/dht11_w.s: __/src/sensors/dht11_w.cpp.s
-.PHONY : __/src/sensors/dht11_w.s
-
-# target to generate assembly for a file
-__/src/sensors/dht11_w.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.s
-.PHONY : __/src/sensors/dht11_w.cpp.s
 
 __/src/sensors/dust_sensor.o: __/src/sensors/dust_sensor.cpp.o
 .PHONY : __/src/sensors/dust_sensor.o
 
 # target to build an object file
 __/src/sensors/dust_sensor.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o
 .PHONY : __/src/sensors/dust_sensor.cpp.o
 
 __/src/sensors/dust_sensor.i: __/src/sensors/dust_sensor.cpp.i
@@ -287,7 +263,7 @@ __/src/sensors/dust_sensor.i: __/src/sensors/dust_sensor.cpp.i
 
 # target to preprocess a source file
 __/src/sensors/dust_sensor.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i
 .PHONY : __/src/sensors/dust_sensor.cpp.i
 
 __/src/sensors/dust_sensor.s: __/src/sensors/dust_sensor.cpp.s
@@ -295,39 +271,15 @@ __/src/sensors/dust_sensor.s: __/src/sensors/dust_sensor.cpp.s
 
 # target to generate assembly for a file
 __/src/sensors/dust_sensor.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s
 .PHONY : __/src/sensors/dust_sensor.cpp.s
-
-__/src/sensors/ethanol_sensor.o: __/src/sensors/ethanol_sensor.cpp.o
-.PHONY : __/src/sensors/ethanol_sensor.o
-
-# target to build an object file
-__/src/sensors/ethanol_sensor.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o
-.PHONY : __/src/sensors/ethanol_sensor.cpp.o
-
-__/src/sensors/ethanol_sensor.i: __/src/sensors/ethanol_sensor.cpp.i
-.PHONY : __/src/sensors/ethanol_sensor.i
-
-# target to preprocess a source file
-__/src/sensors/ethanol_sensor.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.i
-.PHONY : __/src/sensors/ethanol_sensor.cpp.i
-
-__/src/sensors/ethanol_sensor.s: __/src/sensors/ethanol_sensor.cpp.s
-.PHONY : __/src/sensors/ethanol_sensor.s
-
-# target to generate assembly for a file
-__/src/sensors/ethanol_sensor.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.s
-.PHONY : __/src/sensors/ethanol_sensor.cpp.s
 
 __/src/sensors/mq3.o: __/src/sensors/mq3.cpp.o
 .PHONY : __/src/sensors/mq3.o
 
 # target to build an object file
 __/src/sensors/mq3.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o
 .PHONY : __/src/sensors/mq3.cpp.o
 
 __/src/sensors/mq3.i: __/src/sensors/mq3.cpp.i
@@ -335,7 +287,7 @@ __/src/sensors/mq3.i: __/src/sensors/mq3.cpp.i
 
 # target to preprocess a source file
 __/src/sensors/mq3.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i
 .PHONY : __/src/sensors/mq3.cpp.i
 
 __/src/sensors/mq3.s: __/src/sensors/mq3.cpp.s
@@ -343,7 +295,7 @@ __/src/sensors/mq3.s: __/src/sensors/mq3.cpp.s
 
 # target to generate assembly for a file
 __/src/sensors/mq3.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s
 .PHONY : __/src/sensors/mq3.cpp.s
 
 __/src/sensors/pulse_sensor.o: __/src/sensors/pulse_sensor.cpp.o
@@ -351,7 +303,7 @@ __/src/sensors/pulse_sensor.o: __/src/sensors/pulse_sensor.cpp.o
 
 # target to build an object file
 __/src/sensors/pulse_sensor.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o
 .PHONY : __/src/sensors/pulse_sensor.cpp.o
 
 __/src/sensors/pulse_sensor.i: __/src/sensors/pulse_sensor.cpp.i
@@ -359,7 +311,7 @@ __/src/sensors/pulse_sensor.i: __/src/sensors/pulse_sensor.cpp.i
 
 # target to preprocess a source file
 __/src/sensors/pulse_sensor.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i
 .PHONY : __/src/sensors/pulse_sensor.cpp.i
 
 __/src/sensors/pulse_sensor.s: __/src/sensors/pulse_sensor.cpp.s
@@ -367,7 +319,7 @@ __/src/sensors/pulse_sensor.s: __/src/sensors/pulse_sensor.cpp.s
 
 # target to generate assembly for a file
 __/src/sensors/pulse_sensor.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s
 .PHONY : __/src/sensors/pulse_sensor.cpp.s
 
 test.o: test.cpp.o
@@ -375,7 +327,7 @@ test.o: test.cpp.o
 
 # target to build an object file
 test.cpp.o:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.o
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.o
 .PHONY : test.cpp.o
 
 test.i: test.cpp.i
@@ -383,7 +335,7 @@ test.i: test.cpp.i
 
 # target to preprocess a source file
 test.cpp.i:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.i
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.i
 .PHONY : test.cpp.i
 
 test.s: test.cpp.s
@@ -391,7 +343,7 @@ test.s: test.cpp.s
 
 # target to generate assembly for a file
 test.cpp.s:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.s
+	cd /home/ssafy/project/dev/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/test_runner.dir/build.make test/CMakeFiles/test_runner.dir/test.cpp.s
 .PHONY : test.cpp.s
 
 # Help Target
@@ -403,9 +355,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test_runner"
-	@echo "... __/src/drivers/adc.o"
-	@echo "... __/src/drivers/adc.i"
-	@echo "... __/src/drivers/adc.s"
+	@echo "... __/src/DataSender.o"
+	@echo "... __/src/DataSender.i"
+	@echo "... __/src/DataSender.s"
 	@echo "... __/src/drivers/gpio.o"
 	@echo "... __/src/drivers/gpio.i"
 	@echo "... __/src/drivers/gpio.s"
@@ -418,15 +370,9 @@ help:
 	@echo "... __/src/sensors/dht11.o"
 	@echo "... __/src/sensors/dht11.i"
 	@echo "... __/src/sensors/dht11.s"
-	@echo "... __/src/sensors/dht11_w.o"
-	@echo "... __/src/sensors/dht11_w.i"
-	@echo "... __/src/sensors/dht11_w.s"
 	@echo "... __/src/sensors/dust_sensor.o"
 	@echo "... __/src/sensors/dust_sensor.i"
 	@echo "... __/src/sensors/dust_sensor.s"
-	@echo "... __/src/sensors/ethanol_sensor.o"
-	@echo "... __/src/sensors/ethanol_sensor.i"
-	@echo "... __/src/sensors/ethanol_sensor.s"
 	@echo "... __/src/sensors/mq3.o"
 	@echo "... __/src/sensors/mq3.i"
 	@echo "... __/src/sensors/mq3.s"
@@ -447,6 +393,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/ssafy/project/dev/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

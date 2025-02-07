@@ -16,8 +16,19 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # Create executable
 add_executable(${PROJECT_NAME} ${SOURCES})
 
+find_package(CURL REQUIRED)
+find_package(nlohmann_json REQUIRED)
+
 # Link wiringPi library
-target_link_libraries(${PROJECT_NAME} wiringPi)
+target_link_libraries(${PROJECT_NAME} 
+	wiringPi
+	${CURL_LIBRARIES}
+	nlohmann_json::nlohmann_json
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CURL_INCLUDE_DIRS}
+)
 
 # Add clean target
 add_custom_target(clean-all

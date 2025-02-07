@@ -13,6 +13,7 @@ int main() {
 		cout << "습도: " << Data.humidity << " %\n";
 		cout << "ethanol : " << Data.ethanol << " %\n";
 		cout << "BPM : " << Data.heartrate << "\n";
+		cout << "dust dentisy: " << Data.dust << " ㎍/㎥\n";
 		this_thread::sleep_for(chrono::seconds(2));
 	}
     return 0;

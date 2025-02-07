@@ -9,6 +9,7 @@
 #include "sensors/dht11.hpp"
 #include "sensors/mq3.hpp"
 #include "sensors/pulse_sensor.hpp"
+#include "sensors/dust_sensor.hpp"
 
 struct SensorData {
     float temperature;
@@ -43,7 +44,7 @@ public:
     const std::string& getLastError() const { return lastError_; }
 
 private:
-    static constexpr int DHT11_PIN = 2;     // DHT11 센서 핀
+    static constexpr int DHT11_PIN = 14;     // DHT11 센서 핀
     static constexpr int DUST_PIN = 22;      // 먼지 센서 핀
     static constexpr int ETHANOL_PIN = 27;   // 에탄올 센서 핀
     static constexpr int HEARTRATE_PIN = 23; // 심박 센서 핀
@@ -52,7 +53,7 @@ private:
     std::unique_ptr<DHT11> dht11_;
     std::unique_ptr<EthanolSensor> ethanolSensor_;
     std::unique_ptr<PulseSensor> pulseSensor_;
-    // std::unique_ptr<DustSensor> dustSensor_;  // 향후 구현 예정
+    std::unique_ptr<DustSensor> dustSensor_;  // 향후 구현 예정
 
     mutable std::mutex mutex_;           // 데이터 접근 보호
     SensorData lastReadings_;            // 마지막으로 읽은 센서 값들
@@ -62,6 +63,8 @@ private:
     bool readDHT11();
     bool readEthanol();
     bool readPulse();
+	bool readDust();
     void updateError(const std::string& error);
     void clearError();
 };
+

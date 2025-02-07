@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/ssafy/project/S12P11A102/EM/rsvp
+CMAKE_SOURCE_DIR = /home/ssafy/project/dev
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/ssafy/project/S12P11A102/EM/rsvp/build
+CMAKE_BINARY_DIR = /home/ssafy/project/dev/build
 
 # Include any dependencies generated for this target.
 include test/CMakeFiles/test_runner.dir/depend.make
@@ -70,170 +70,140 @@ include test/CMakeFiles/test_runner.dir/progress.make
 include test/CMakeFiles/test_runner.dir/flags.make
 
 test/CMakeFiles/test_runner.dir/test.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/test.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/test/test.cpp
+test/CMakeFiles/test_runner.dir/test.cpp.o: /home/ssafy/project/dev/test/test.cpp
 test/CMakeFiles/test_runner.dir/test.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object test/CMakeFiles/test_runner.dir/test.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/test.cpp.o -MF CMakeFiles/test_runner.dir/test.cpp.o.d -o CMakeFiles/test_runner.dir/test.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/test/test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object test/CMakeFiles/test_runner.dir/test.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/test.cpp.o -MF CMakeFiles/test_runner.dir/test.cpp.o.d -o CMakeFiles/test_runner.dir/test.cpp.o -c /home/ssafy/project/dev/test/test.cpp
 
 test/CMakeFiles/test_runner.dir/test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/test.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/test/test.cpp > CMakeFiles/test_runner.dir/test.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/test/test.cpp > CMakeFiles/test_runner.dir/test.cpp.i
 
 test/CMakeFiles/test_runner.dir/test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/test.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/test/test.cpp -o CMakeFiles/test_runner.dir/test.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/test/test.cpp -o CMakeFiles/test_runner.dir/test.cpp.s
 
-test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/adc.cpp
-test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o -MF CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/adc.cpp
+test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
+test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o: /home/ssafy/project/dev/src/DataSender.cpp
+test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o -MF CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o -c /home/ssafy/project/dev/src/DataSender.cpp
 
-test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/adc.cpp > CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.i
+test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/DataSender.cpp.i"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/DataSender.cpp > CMakeFiles/test_runner.dir/__/src/DataSender.cpp.i
 
-test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/adc.cpp -o CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.s
+test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/DataSender.cpp.s"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/DataSender.cpp -o CMakeFiles/test_runner.dir/__/src/DataSender.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/gpio.cpp
+test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o: /home/ssafy/project/dev/src/drivers/gpio.cpp
 test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o -MF CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/gpio.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o -MF CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o -c /home/ssafy/project/dev/src/drivers/gpio.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/gpio.cpp > CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/drivers/gpio.cpp > CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/gpio.cpp -o CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/drivers/gpio.cpp -o CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/spi.cpp
+test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o: /home/ssafy/project/dev/src/drivers/spi.cpp
 test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o -MF CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/spi.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o -MF CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o -c /home/ssafy/project/dev/src/drivers/spi.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/spi.cpp > CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/drivers/spi.cpp > CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/drivers/spi.cpp -o CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/drivers/spi.cpp -o CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/managers/sensor_manager.cpp
+test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o: /home/ssafy/project/dev/src/managers/sensor_manager.cpp
 test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o -MF CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/managers/sensor_manager.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o -MF CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o -c /home/ssafy/project/dev/src/managers/sensor_manager.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/managers/sensor_manager.cpp > CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/managers/sensor_manager.cpp > CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/managers/sensor_manager.cpp -o CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/managers/sensor_manager.cpp -o CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11.cpp
+test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o: /home/ssafy/project/dev/src/sensors/dht11.cpp
 test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o -c /home/ssafy/project/dev/src/sensors/dht11.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11.cpp > CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/sensors/dht11.cpp > CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11_w.cpp
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11_w.cpp
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11_w.cpp > CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.i
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dht11_w.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/sensors/dht11.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dust_sensor.cpp
+test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o: /home/ssafy/project/dev/src/sensors/dust_sensor.cpp
 test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dust_sensor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o -c /home/ssafy/project/dev/src/sensors/dust_sensor.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dust_sensor.cpp > CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/sensors/dust_sensor.cpp > CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/dust_sensor.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/ethanol_sensor.cpp
-test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/ethanol_sensor.cpp
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/ethanol_sensor.cpp > CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.i
-
-test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/ethanol_sensor.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/sensors/dust_sensor.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/mq3.cpp
+test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o: /home/ssafy/project/dev/src/sensors/mq3.cpp
 test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/mq3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o -c /home/ssafy/project/dev/src/sensors/mq3.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/mq3.cpp > CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/sensors/mq3.cpp > CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/mq3.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/sensors/mq3.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.s
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o: test/CMakeFiles/test_runner.dir/flags.make
-test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o: /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/pulse_sensor.cpp
+test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o: /home/ssafy/project/dev/src/sensors/pulse_sensor.cpp
 test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o: test/CMakeFiles/test_runner.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o -c /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/pulse_sensor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o"
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o -MF CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o.d -o CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o -c /home/ssafy/project/dev/src/sensors/pulse_sensor.cpp
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/pulse_sensor.cpp > CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/ssafy/project/dev/src/sensors/pulse_sensor.cpp > CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.i
 
 test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/S12P11A102/EM/rsvp/src/sensors/pulse_sensor.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s
+	cd /home/ssafy/project/dev/build/test && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/ssafy/project/dev/src/sensors/pulse_sensor.cpp -o CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.s
 
 # Object files for target test_runner
 test_runner_OBJECTS = \
 "CMakeFiles/test_runner.dir/test.cpp.o" \
-"CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o" \
+"CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o" \
-"CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o" \
-"CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o" \
 "CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o"
 
@@ -241,30 +211,29 @@ test_runner_OBJECTS = \
 test_runner_EXTERNAL_OBJECTS =
 
 test/test_runner: test/CMakeFiles/test_runner.dir/test.cpp.o
-test/test_runner: test/CMakeFiles/test_runner.dir/__/src/drivers/adc.cpp.o
+test/test_runner: test/CMakeFiles/test_runner.dir/__/src/DataSender.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/drivers/gpio.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/drivers/spi.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/managers/sensor_manager.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/dht11.cpp.o
-test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/dht11_w.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/dust_sensor.cpp.o
-test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/ethanol_sensor.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/mq3.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/__/src/sensors/pulse_sensor.cpp.o
 test/test_runner: test/CMakeFiles/test_runner.dir/build.make
+test/test_runner: /usr/lib/aarch64-linux-gnu/libcurl.so
 test/test_runner: test/CMakeFiles/test_runner.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ssafy/project/S12P11A102/EM/rsvp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable test_runner"
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_runner.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/ssafy/project/dev/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable test_runner"
+	cd /home/ssafy/project/dev/build/test && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_runner.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 test/CMakeFiles/test_runner.dir/build: test/test_runner
 .PHONY : test/CMakeFiles/test_runner.dir/build
 
 test/CMakeFiles/test_runner.dir/clean:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build/test && $(CMAKE_COMMAND) -P CMakeFiles/test_runner.dir/cmake_clean.cmake
+	cd /home/ssafy/project/dev/build/test && $(CMAKE_COMMAND) -P CMakeFiles/test_runner.dir/cmake_clean.cmake
 .PHONY : test/CMakeFiles/test_runner.dir/clean
 
 test/CMakeFiles/test_runner.dir/depend:
-	cd /home/ssafy/project/S12P11A102/EM/rsvp/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ssafy/project/S12P11A102/EM/rsvp /home/ssafy/project/S12P11A102/EM/rsvp/test /home/ssafy/project/S12P11A102/EM/rsvp/build /home/ssafy/project/S12P11A102/EM/rsvp/build/test /home/ssafy/project/S12P11A102/EM/rsvp/build/test/CMakeFiles/test_runner.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/ssafy/project/dev/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/ssafy/project/dev /home/ssafy/project/dev/test /home/ssafy/project/dev/build /home/ssafy/project/dev/build/test /home/ssafy/project/dev/build/test/CMakeFiles/test_runner.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : test/CMakeFiles/test_runner.dir/depend
 

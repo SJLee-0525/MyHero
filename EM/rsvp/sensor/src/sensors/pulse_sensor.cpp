@@ -4,7 +4,7 @@
 #include <chrono>
 
 PulseSensor::PulseSensor(int adcChannel)
-    : spi_(std::make_shared<SPI>(SPI::CHANNEL_0, SPI::CS1))
+    : spi_(std::make_shared<SPI>(SPI::CHANNEL_0, SPI::CS0))
     , adcChannel_(adcChannel)
     , BPM_(0)
     , running_(false)

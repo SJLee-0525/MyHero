@@ -73,3 +73,4 @@ bool DHT11::readData() {
 bool DHT11::validateChecksum() const {
     return data_[4] == ((data_[0] + data_[1] + data_[2] + data_[3]) & 0xFF);
 }
+

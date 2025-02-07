@@ -1,4 +1,4 @@
-# Install script for directory: /home/ssafy/project/S12P11A102/EM/rsvp/test
+# Install script for directory: /home/ssafy/project/dev/test
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

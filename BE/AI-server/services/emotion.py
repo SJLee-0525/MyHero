@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List
 from sqlalchemy.orm import Session
 import json
@@ -7,15 +7,10 @@ from datetime import date
 
 from models import MentalStatus, ChatHistory, ChatSession, Family, MentalReport
 
+from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now
+
 logger = logging.getLogger(__name__)
 
-def get_kst_today():
-    """한국 시간 기준의 날짜를 반환"""
-    return (datetime.now() + timedelta(hours=9)).date()
-
-def get_kst_now():
-    """한국 시간 기준의 현재 시간을 반환"""
-    return datetime.now() + timedelta(hours=9)
 
 class EmotionService:
     def __init__(self, openai_client, db: Session):
@@ -25,11 +20,13 @@ class EmotionService:
     # 사용자 대화 내용을 분석하여 감정 상태를 분석하고 결과를 반환
     async def generate_report(self, family_id: str) -> Dict:
         try:
-            today = datetime.now().date()
+            today = get_kst_today()
+            today_utc = to_utc_start_of_day(today)
+
             conversations = self.db.query(ChatHistory)\
                 .join(Family, Family.main_user == ChatHistory.user_id)\
                 .filter(Family.id == family_id)\
-                .filter(ChatHistory.created_at >= today)\
+                .filter(ChatHistory.created_at >= today_utc)\
                 .all()
 
             if not conversations:
@@ -152,10 +149,13 @@ class EmotionService:
     
     async def generate_periodic_report(self, family_id: str, start_date: datetime, end_date: datetime) -> Dict:
         try:
+            start_utc = to_utc_start_of_day(start_date.date())
+            end_utc = to_utc_start_of_day(end_date.date() + timedelta(days=1))
+
             reports = self.db.query(MentalStatus)\
                 .filter(MentalStatus.family_id == family_id)\
-                .filter(MentalStatus.reported_at >= start_date)\
-                .filter(MentalStatus.reported_at <= end_date)\
+                .filter(MentalStatus.reported_at >= start_utc)\
+                .filter(MentalStatus.reported_at <= end_utc)\
                 .all()
             
             if not reports:

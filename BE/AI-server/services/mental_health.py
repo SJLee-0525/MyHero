@@ -1,5 +1,5 @@
 # services/mental_health.py
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional, List
 from sqlalchemy.orm import Session
 import logging
@@ -8,16 +8,9 @@ from models import ChatHistory, Family
 from openai import OpenAI
 import json
 
+from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc_end_of_day, get_kst_now
+
 logger = logging.getLogger(__name__)
-
-def get_kst_today():
-    """한국 시간 기준의 날짜를 반환"""
-    return (datetime.now() + timedelta(hours=9)).date()
-
-def get_kst_now():
-    """한국 시간 기준의 현재 시간을 반환"""
-    return datetime.now() + timedelta(hours=9)
-
 
 class MentalHealthService:
     def __init__(self, openai_client: OpenAI, db: Session):
@@ -120,13 +113,17 @@ class MentalHealthService:
                 .filter(Family.id == family_id)
 
             if start_date and end_date:
+                start_utc = to_utc_start_of_day(start_date.date())
+                end_utc = to_utc_end_of_day(end_date.date())
+
                 query = query.filter(
-                    ChatHistory.created_at >= start_date,
-                    ChatHistory.created_at <= end_date
+                    ChatHistory.created_at >= start_utc,
+                    ChatHistory.created_at <= end_utc
                 )
             else:
                 today = get_kst_today()
-                query = query.filter(ChatHistory.created_at >= today)
+                today_utc = to_utc_start_of_day(today)
+                query = query.filter(ChatHistory.created_at >= today_utc)
 
             conversations = query.all()
             if not conversations:
@@ -138,8 +135,8 @@ class MentalHealthService:
             # 추가 정보 포함
             analysis_result.update({
                 "analysis_period": {
-                    "start": start_date.isoformat() if start_date else datetime.now().date().isoformat(),
-                    "end": end_date.isoformat() if end_date else datetime.now().date().isoformat()
+                    "start": start_date.isoformat() if start_date else get_kst_today().isoformat(),
+                    "end": end_date.isoformat() if end_date else get_kst_today().isoformat()
                 },
                 "data_stats": {
                     "total_conversations": len(conversations),

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import aiohttp
 import logging
 from typing import Optional, Dict, Any
@@ -63,7 +63,7 @@ class WeatherService:
             return None
 
     def _get_base_time(self) -> tuple[str, str]:
-        now = datetime.now()
+        now = datetime.now(timezone.utc) + timedelta(hours=9)
         if now.minute < 45:
             now = now.replace(hour=now.hour - 1)
         base_date = now.strftime("%Y%m%d")

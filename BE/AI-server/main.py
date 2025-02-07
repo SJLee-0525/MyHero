@@ -19,6 +19,7 @@ from services.mental_health import MentalHealthService
 from utils.cache import CacheManager
 from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport
 
+from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now
 
 # 환경 변수 로드
 load_dotenv()
@@ -179,10 +180,13 @@ async def gnerate_periodic_report(
 @app.get("/generate-keyword/{family_id}")
 async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
     try:
+        today = get_kst_today()
+        today_utc = to_utc_start_of_day(today)
+
         chat_history = db.query(ChatHistory)\
             .join(Family, Family.main_user == ChatHistory.user_id)\
             .filter(Family.id == family_id)\
-            .filter(ChatHistory.created_at >= datetime.now().date())\
+            .filter(ChatHistory.created_at >= today_utc)\
             .all()
             
         if not chat_history:

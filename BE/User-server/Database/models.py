@@ -223,3 +223,46 @@ class MentalReportsTable(Base):
     worst_day = Column(Date, nullable=True)
     improvement_needed = Column(Boolean, nullable=True)
     summary = Column(TEXT, nullable=True)
+
+    def __repr__(self):
+        return (f"" +
+                f"<MentalReport(index='{self.index}', " +
+                f"family_id='{self.family_id}', " +
+                f"reported_at='{self.reported_at}', " +
+                f"start_time='{self.start_time}', " +
+                f"end_time='{self.end_time}', " +
+                f"average_score='{self.average_score}', " +
+                f"critical_days='{self.critical_days}', " +
+                f"best_day='{self.best_day}', " +
+                f"worst_day='{self.worst_day}', " +
+                f"improvement_needed='{self.improvement_needed}', " +
+                f"summary='{self.summary}')>"
+        )
+
+class MasterRegionsTable(Base):
+    __tablename__ = "masterregions"
+
+    region_name = Column(String(32), primary_key=True, nullable=False)
+    region_type = Column(String(32), nullable=True)
+
+    master_relation = relationship("SubRegionsTable", cascade="all, delete")
+
+    def __repr__(self):
+        return (f"" +
+                f"<MasterRegion(region_name='{self.region_name}', " +
+                f"region_type='{self.region_type}')>"
+        )
+
+class SubRegionsTable(Base):
+    __tablename__ = "subregions"
+
+    main_region = Column(String(32), ForeignKey('masterregions.region_name'), primary_key=True, nullable=False)
+    sub_region_name = Column(String(32), primary_key=True, nullable=False)
+    region_type = Column(String(32), nullable=True)
+
+    def __repr__(self):
+        return (f"" +
+                f"<SubRegion(main_region='{self.main_region}', " +
+                f"sub_region='{self.sub_region_name}', " +
+                f"region_type='{self.region_type}')>"
+        )

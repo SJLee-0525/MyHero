@@ -15,6 +15,7 @@ from Database.models import *
 from Endpoint.models import *
 
 from Utilities.auth_tools import *
+from Utilities.check_tools import *
 from datetime import date
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
@@ -100,6 +101,7 @@ async def create_account(account_data: Account):
             detail={
                 "type": "invalid value",
                 "message": "Invalid value provided for account details (gender)",
+                "input": jsonable_encoder(account_data, exclude={"password"})
             }
         )
 
@@ -130,12 +132,9 @@ async def create_account(account_data: Account):
     # 새로운 Account 정보 생성
     hashed_password = hash_password(account_data.password)  # 암호화된 비밀번호
 
-    if account_data.birth_date is None:  # 입력받은 생년월일을 date 타입으로 변환
-        converted_birth_date = None
-    else:
-        if account_data.birth_date.year < 1900 or account_data.birth_date.year > 2022 or \
-            account_data.birth_date.day < 1 or account_data.birth_date.day > 31 or \
-            account_data.birth_date.month < 1 or account_data.birth_date.month > 12:
+    converted_birth_date = None
+    if account_data.birth_date is not None:
+        if is_valid_date(account_data.birth_date) is False:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
@@ -144,11 +143,12 @@ async def create_account(account_data: Account):
                     "input": jsonable_encoder(account_data, exclude={"password"})
                 }
             )
-        converted_birth_date = date(
-            year=account_data.birth_date.year,
-            month=account_data.birth_date.month,
-            day=account_data.birth_date.day
-        )
+        else:
+            converted_birth_date = date(
+                year=account_data.birth_date.year,
+                month=account_data.birth_date.month,
+                day=account_data.birth_date.day
+            )
 
     new_account: AccountsTable = AccountsTable(
         id=new_id,

@@ -73,6 +73,15 @@ class Family(BaseModel):
             return value[:32]
         return value
 
+class FindFamily(BaseModel):
+    """
+    해당하는 가족을 찾기위해 client가 보내는 데이터
+    """
+    user_name: Optional[str] = None  # 사용자 이름
+    birth_date: Optional[Date] = None  # 사용자의 생년월일
+    gender: Optional[str] = None  # 사용자의 성별 ("male" or "female")
+    address: Optional[str] = None  # 사용자의 거주지
+
 class Member(BaseModel):
     """
     가족 관계 생성을 위해 client가 보내는 데이터

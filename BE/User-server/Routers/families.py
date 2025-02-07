@@ -6,7 +6,7 @@ Parts of Families
 """
 
 # Library
-from fastapi import HTTPException, APIRouter, status
+from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 
 import Database
@@ -15,6 +15,9 @@ from Database.models import *
 from Endpoint.models import *
 
 from Utilities.auth_tools import *
+from Utilities.check_tools import *
+
+from datetime import date
 
 router = APIRouter(prefix="/families", tags=["Families"])
 
@@ -146,6 +149,106 @@ async def get_all_families():
             "message": "No families found",
             "result": jsonable_encoder(family_list)
         }
+
+@router.post("/find", status_code=status.HTTP_200_OK)
+async def find_family(find_data: FindFamily, request_id: str = Depends(Database.check_current_user)):
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
+    if find_data.user_name is None or find_data.user_name == "":
+        missing_location.append("user_name")
+    if find_data.birth_date is None:
+        missing_location.append("birth_date")
+    if find_data.birth_date.year is None or find_data.birth_date.year == 0:
+        missing_location.append("birth_date.year")
+    if find_data.birth_date.month is None or find_data.birth_date.month == 0:
+        missing_location.append("birth_date.month")
+    if find_data.birth_date.day is None or find_data.birth_date.day == 0:
+        missing_location.append("birth_date.day")
+    if find_data.gender is None:
+        missing_location.append("gender")
+    if find_data.address is None or find_data.address == "":
+        missing_location.append("address")
+
+    if len(missing_location) > 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Required fields are missing",
+                "input": jsonable_encoder(find_data)
+            }
+        )
+
+    # 계정이 있는 사용자가 가족을 검색할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": jsonable_encoder(find_data)
+            }
+        )
+
+    # 잘못된 성별을 선택했는지 점검
+    if find_data.gender is not None and find_data.gender.lower() not in Gender._value2member_map_:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "type": "invalid value",
+                "message": "Invalid value provided for find option (gender)",
+                "input": jsonable_encoder(find_data)
+            }
+        )
+
+    # 성별 변환하기
+    find_gender: Gender = Gender(find_data.gender)
+
+    # 날짜 변환하기
+    find_birthday = None
+    if find_data.birth_date is not None:
+        if is_valid_date(find_data.birth_date) is False:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail={
+                    "type": "invalid value",
+                    "message": "Invalid value provided for find option (birth_date)",
+                    "input": jsonable_encoder(find_data)
+                }
+            )
+        else:
+            find_birthday = date(
+                year=find_data.birth_date.year,
+                month=find_data.birth_date.month,
+                day=find_data.birth_date.day
+            )
+
+    # 가족 찾기
+    result: list[dict] = Database.find_family(
+        user_name=find_data.user_name,
+        birth_date=find_birthday,
+        gender=find_gender,
+        address=find_data.address,
+    )
+
+    if result:
+        return {
+            "message": "Families found successfully",
+            "result": jsonable_encoder(result)
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "No families found",
+                "input": jsonable_encoder(find_data)
+            }
+        )
 
 # 가족 정보를 불러오는 기능
 @router.get("/{family_id}", status_code=status.HTTP_200_OK)

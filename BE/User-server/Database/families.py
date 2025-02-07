@@ -9,7 +9,10 @@ Database Families Part
 from Database.connector import Database
 from Database.models import *
 
+from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
+
+from datetime import date
 
 database: Database = Database()
 
@@ -93,6 +96,70 @@ def get_all_families() -> list[dict]:
         finally:
             return result
 
+# 계정 정보로 가족을 찾는 기능
+def find_family(
+        user_name: str = None,
+        birth_date: date = None,
+        gender: Gender = None,
+        address: str = None) -> list[dict]:
+    """
+    계정 정보를 이용해서 Family를 찾는 기능
+    :param user_name: 사용자 이름
+    :param birth_date: 사용자 생년월일
+    :param gender: 사용자 성별
+    :param address: 사용자 주소
+    :return: 필터 조건에 해당하는 가족의 가족 및 계정 정보 데이터 list[dict]
+    """
+    result: list[dict] = []
+
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            family_account_data = session.query(
+                FamiliesTable.id.label('family_id'),
+                FamiliesTable.family_name.label('family_name'),
+                AccountsTable.id.label('account_id'),
+                AccountsTable.user_name.label('account_name'),
+                AccountsTable.birth_date.label('account_birth_date'),
+                AccountsTable.gender.label('account_gender'),
+                AccountsTable.address.label('account_address')
+            ).join(
+                FamiliesTable,
+                FamiliesTable.main_user == AccountsTable.id
+            )
+
+            # 필터링 조건 추가
+            filter_list = []
+            if user_name:
+                filter_list.append(AccountsTable.user_name == user_name)
+            if birth_date:
+                filter_list.append(AccountsTable.birth_date == birth_date)
+            if gender:
+                filter_list.append(AccountsTable.gender == gender)
+            if address:
+                filter_list.append(AccountsTable.address == address)
+
+            # 조건에 맞는 데이터 불러오기
+            found_family_data = family_account_data.filter(and_(*filter_list)).all()
+
+            serialized_data: list[dict] = [{
+                "family_id": data[0],
+                "family_name": data[1],
+                "account_id": data[2],
+                "account_name": data[3],
+                "account_birth_date": data[4],
+                "account_gender": data[5],
+                "account_address": data[6]
+            } for data in found_family_data]
+
+            result = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            print(f"[DB] Error getting all family data: {str(error)}")
+            result = []
+        finally:
+            return result
 
 # 가족 정보를 불러오는 기능
 def get_one_family(family_id: str) -> dict:

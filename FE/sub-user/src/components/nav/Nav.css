@@ -29,6 +29,32 @@ h5 {
   transition: all 0.3s ease;
 }
 
+#side-bar #side-nav-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 50px;
+
+  margin: 12px 0px;
+}
+
+#side-bar #side-nav-header select {
+  display: block;
+
+  width: 92%;
+  height: 80%;
+
+  padding: 0.5rem;
+
+  border: 0;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.568);
+
+  font-size: 1rem;
+  color: #142020;
+}
+
 #side-bar:hover {
   width: 200px;
 }
@@ -45,6 +71,7 @@ h5 {
 
 .side-nav-elems {
   padding-left: 6px;
+  margin: 0 0 10px 0;
 
   cursor: pointer;
 }

@@ -30,6 +30,7 @@ export const UserProgressContext = createContext({
   memberInfo: {
     isExist: false,
     registerData: undefined,
+    selectedFamilyId: "",
   },
   DEV_API_URL: "",
   MAIN_API_URL: "",
@@ -51,6 +52,7 @@ export const UserProgressContext = createContext({
   handleSidebarToggle: () => {},
   handleOpenModal: (identifier, id) => {},
   handleCloseModal: () => {},
+  handleChangeFamilyId: (familyId) => {},
   handleLogin: (userInfo) => {},
   handleGetUserInfo: (id) => {},
   handleLogout: () => {},
@@ -115,6 +117,7 @@ export default function UserProgressContextProvider({ children }) {
   const [memberInfo, setMemberInfo] = useState({
     isExist: false,
     registerData: undefined,
+    selectedFamilyId: undefined,
   });
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
@@ -238,6 +241,13 @@ export default function UserProgressContextProvider({ children }) {
   function handleCloseModal() {
     setModalProgress("");
     setSelectedModalId("");
+  }
+
+  // 활성화 가족 모임 변경
+  function handleChangeFamilyId(familyId) {
+    setMemberInfo((prev) => {
+      return { ...prev, selectedFamilyId: familyId };
+    });
   }
 
   // 로그인
@@ -867,6 +877,7 @@ export default function UserProgressContextProvider({ children }) {
           setMemberInfo({
             isExist: true,
             registerData: resData.result,
+            selectedFamilyId: resData.result[0].family_id,
           });
 
           return { success: true, data: resData };
@@ -877,6 +888,7 @@ export default function UserProgressContextProvider({ children }) {
           setMemberInfo({
             isExist: false,
             registerData: undefined,
+            selectedFamilyId: undefined,
           });
         }
         return { success: true, data: resData };
@@ -1173,6 +1185,7 @@ export default function UserProgressContextProvider({ children }) {
     handleSidebarToggle,
     handleOpenModal,
     handleCloseModal,
+    handleChangeFamilyId,
     handleLogin,
     handleGetUserInfo,
     handleLogout,

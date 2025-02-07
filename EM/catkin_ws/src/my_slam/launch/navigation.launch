@@ -13,6 +13,7 @@
         <rosparam file="$(find my_slam)/config/move_base/global_costmap_params.yaml" command="load" />
         <rosparam file="$(find my_slam)/config/move_base/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find my_slam)/config/move_base/dwa_local_planner.yaml" command="load" />
+        <rosparam file="$(find my_slam)/config/move_base/global_planner_params.yaml" command="load" ns="global_planner" />
 
         <!-- Recovery Behaviors -->
         <rosparam file="$(find my_slam)/config/move_base/recovery_params.yaml" command="load" />

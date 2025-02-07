@@ -12,9 +12,12 @@ export default function ChangePassword() {
   const navigate = useNavigate();
 
   const [newPasswordIsInvalid, setNewPasswordIsInvalid] = useState(false);
+  const [confirmPasswordIsInvalid, setConfirmPasswordIsInvalid] =
+    useState(false);
 
   const inputPassword = useRef("");
   const inputNewPassword = useRef("");
+  const confirmPassword = useRef("");
 
   // 가족 삭제 로직
   async function handleChangePassword() {
@@ -23,6 +26,16 @@ export default function ChangePassword() {
     if (inputIsInvalid) {
       setNewPasswordIsInvalid(true);
       return;
+    } else {
+      setNewPasswordIsInvalid(false);
+    }
+
+    // 비밀번호 확인 유효성 검사
+    if (inputNewPassword.current.value !== confirmPassword.current.value) {
+      setConfirmPasswordIsInvalid(true);
+      return;
+    } else {
+      setConfirmPasswordIsInvalid(false);
     }
 
     userProgressStore.handleCloseModal();
@@ -81,17 +94,38 @@ export default function ChangePassword() {
               <label htmlFor="text">현재 비밀번호</label>
               <input type="password" ref={inputPassword} />
             </div>
+
             <div className="login-control">
               <label htmlFor="password">변경 비밀번호</label>
               <input type="password" ref={inputNewPassword} />
+            </div>
+
+            {/* 비밀번호 확인 입력 */}
+            <div className="login-control">
+              <label htmlFor="confirm-password">비밀번호 확인</label>
+              <input
+                id="confirm-password"
+                type="password"
+                name="confirm-password"
+                ref={confirmPassword}
+                required
+              />
+            </div>
+            <div>
+              {!newPasswordIsInvalid ||
+                (!confirmPasswordIsInvalid && (
+                  <div className="login-control-error">
+                    <p> </p>
+                  </div>
+                ))}
               {newPasswordIsInvalid && (
                 <div className="login-control-error">
                   <p>새 비밀번호는 8자 이상이어야 합니다.</p>
                 </div>
               )}
-              {!newPasswordIsInvalid && (
+              {confirmPasswordIsInvalid && (
                 <div className="login-control-error">
-                  <p> </p>
+                  <p>확인 비밀번호가 일치하지 않습니다.</p>
                 </div>
               )}
             </div>

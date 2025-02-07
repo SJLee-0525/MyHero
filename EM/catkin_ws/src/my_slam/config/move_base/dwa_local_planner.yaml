@@ -8,14 +8,14 @@ DWAPlannerROS:
   max_vel_y: 0.0             # 기본값: 0.1  | 최대 y축 속도 (m/s, 차동구동 아님)
   min_vel_y: 0.0             # 기본값: -0.1 | 최소 y축 속도 (m/s, 차동구동 아님)
   
-  max_rot_theta: 1.2         # 기본값: 1.0  | 회전 시 최대 각속도 제한 (rad/s)
-  min_rot_theta: -1.2        # 기본값: -1.0 | 회전 시 최소 각속도 제한 (rad/s)
+  max_rot_theta: 1.0         # 기본값: 1.0  | 회전 시 최대 각속도 제한 (rad/s)
+  min_rot_theta: -1.0        # 기본값: -1.0 | 회전 시 최소 각속도 제한 (rad/s)
   
   max_vel_theta: 1.2         # 기본값: 1.0  | 최대 회전 속도 (rad/s)
   min_vel_theta: 0.1         # 기본값: 0.05 | 최소 회전 속도 (rad/s)
   
-  acc_lim_x: 3.0             # 기본값: 2.5  | x축 가속도 제한 (m/s²)
-  dec_lim_x: 3.0             # 기본값: 2.5  | x축 감속도 제한 (m/s²)
+  acc_lim_x: 2.5             # 기본값: 2.5  | x축 가속도 제한 (m/s²)
+  dec_lim_x: 2.5             # 기본값: 2.5  | x축 감속도 제한 (m/s²)
   acc_lim_theta: 10.0        # 기본값: 3.2  | 회전 가속도 제한 (rad/s²)
   dec_lim_theta: 10.0        # 기본값: 3.2  | 회전 감속도 제한 (rad/s²)
   
@@ -34,15 +34,15 @@ DWAPlannerROS:
 
   # === Oscillation Prevention Parameters ===
   oscillation_reset_dist: 0.1  # 기본값: 0.05 | Oscillation 리셋 최소 이동 거리 (m)
-  oscillation_timeout: 3.0     # 기본값: (예: 2.0) | Oscillation 타임아웃 (초)
+  oscillation_timeout: 2.0     # 기본값: (예: 2.0) | Oscillation 타임아웃 (초)
 
   # === Trajectory Scoring Parameters ===
   path_distance_bias: 32.0     # 기본값: 32.0 | 경로 추종 가중치
   goal_distance_bias: 20.0     # 기본값: 24.0 | 목표 도달 가중치
-  occdist_scale: 1.5           # 기본값: 0.01 or 1.0 | 장애물 회피 가중치
+  occdist_scale: 1.0           # 기본값: 0.01 or 1.0 | 장애물 회피 가중치
   forward_point_distance: 0.4  # 기본값: 0.325| 추가 평가 포인트까지의 거리 (m)
   stop_time_buffer: 0.2        # 기본값: 0.2  | 정지 전 버퍼 시간 (초)
-  scaling_speed: 0.4           # 기본값: 0.25 | 감속 시작 속도 (m/s) - 장애물 근접 시
+  scaling_speed: 0.3           # 기본값: 0.25 | 감속 시작 속도 (m/s) - 장애물 근접 시
   max_scaling_factor: 0.9      # 기본값: 0.2  | 최대 footprint 스케일링 비율
 
   # === Global Plan Parameters ===

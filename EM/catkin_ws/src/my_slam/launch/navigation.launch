@@ -46,6 +46,9 @@
         <param name="stop_button" value="1"/>  <!-- B버튼: recovery 중지 -->
         <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
     </node>
+
+    <!-- Auto Navigation Node -->
+    <node pkg="my_slam" type="auto_navigation.py" name="auto_navigation" output="screen"/>
     
     <!-- RViz 설정 -->
     <node pkg="rviz" type="rviz" name="rviz" 

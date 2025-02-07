@@ -15,6 +15,8 @@ load_dotenv()
 AI_HOST: str = os.getenv("AI_HOST")
 AI_PORT: int = int(os.getenv("AI_PORT"))
 AI_PATH: str = f"{AI_HOST}:{AI_PORT}"
+external_timeout: float = float(os.getenv("EXTERNAL_TIMEOUT", 60.0))
+set_timeout = httpx.Timeout(timeout=external_timeout)
 
 # 단일 정신건강 정보를 요청하는 기능
 async def request_mental_status(family_id: str) -> httpx.Response | None:
@@ -26,7 +28,7 @@ async def request_mental_status(family_id: str) -> httpx.Response | None:
     external_url = f"{AI_PATH}/generate-emotional-report/{family_id}"
 
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
             response = await client.post(external_url)
             return response
     except httpx.RequestError as error:
@@ -44,7 +46,7 @@ async def request_mental_reports(family_id: str) -> httpx.Response | None:
     external_url = f"{AI_PATH}/generate-mental-period-report/{family_id}"
 
     try:
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
             response = await client.post(external_url)
             return response
     except httpx.RequestError as error:

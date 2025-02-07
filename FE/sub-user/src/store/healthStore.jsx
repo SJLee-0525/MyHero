@@ -319,7 +319,12 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Mental status retrieved successfully") {
-          setMentalStatus([...resData.data]);
+          setMentalStatus(
+            resData.data.map((item) => ({
+              ...item,
+              description: JSON.parse(item.description.replace(/'/g, '"')), // 🔥 description을 객체로 변환
+            }))
+          );
         } else if (resData.message === "No mental status found") {
           setMentalStatus([...resData.data]);
         }

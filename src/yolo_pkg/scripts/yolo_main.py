@@ -36,7 +36,7 @@ class Config:
         self.confidence_threshold = 0.4
         self.save_dir = 'fall_detection_logs'
         self.api_url = 'http://localhost:8000/fall-alert'
-        self.display_size = (960, 540)
+        self.display_size = (960, 540)  # 너무 화면이 작으면 올려올려 
         self.skeleton_connections = [
             (0,1), (0,2), (1,3), (2,4),  # 얼굴
             (5,6), (5,7), (7,9), (6,8), (8,10),  # 팔
@@ -81,22 +81,13 @@ class MotionContext:
 
     def _calculate_confidence(self, keypoints: np.ndarray) -> float:
         try:
-            print("\n--- Confidence Calculation Debug ---")
-            print("Input keypoints shape:", keypoints.shape)
-            print("Input keypoints type:", type(keypoints))
-            
-            # keypoints가 여전히 tensor인 경우를 처리
             if torch.is_tensor(keypoints):
                 keypoints = keypoints.cpu().numpy()
                 
             values = [kp[2] for kp in keypoints]
-            print("Confidence values:", values)
             confidence = float(np.mean(values))
-            print("Calculated confidence:", confidence)
             return confidence
         except Exception as e:
-            print("Error in calculate_confidence:", str(e))
-            print("Keypoints causing error:", keypoints)
             return 0.0
 
     def _calculate_hip_center(self, keypoints: np.ndarray) -> Tuple[float, float]:
@@ -184,13 +175,7 @@ class EnhancedPoseAnalyzer:
         }
 
     def analyze_pose(self, keypoints: np.ndarray) -> Tuple[bool, Dict]:
-            print("\n--- Pose Analysis Debug ---")
-            print("Input keypoints device:", keypoints.device if hasattr(keypoints, 'device') else "No device info")
-            print("Input keypoints dtype:", keypoints.dtype)
-            
-            # CUDA tensor를 numpy로 변환하는 부분 추가
             if torch.is_tensor(keypoints):
-                print("Converting tensor to numpy")
                 keypoints = keypoints.cpu().numpy()
                 
             current_time = time.time()
@@ -484,8 +469,8 @@ async def main():
     
     try:
         # 비디오 캡처 초기화
-        # video_path = "~/catkin_ws/src/yolo_pkg/test_video/test2.mp4"
-        video_path = 0  # 웹캠 사용
+        # video_path = "test_video/test2.mp4"
+        video_path = 0 # 웹캠 사용
         cap = cv2.VideoCapture(video_path)  
         if not cap.isOpened():
             raise IOError("Cannot open video source")

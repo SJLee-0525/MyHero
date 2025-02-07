@@ -63,25 +63,41 @@ class MotionContext:
         self.activity_history = deque(maxlen=history_size)
 
     def update(self, keypoints: np.ndarray, timestamp: float):
-        print("update")
         current_pose = Pose(keypoints=keypoints, 
                           confidence=self._calculate_confidence(keypoints),
-                          timestamp=timestamp);print("c pose")
-        self.pose_history.append(current_pose);print("p history")
+                          timestamp=timestamp)
+        self.pose_history.append(current_pose)
         
-        hip_center = self._calculate_hip_center(keypoints);print("hip center")
+        hip_center = self._calculate_hip_center(keypoints)
         current_location = Location(hip_center[0], hip_center[1], timestamp)
-        self.location_history.append(current_location);print("l history")
+        self.location_history.append(current_location)
         
         if len(self.location_history) >= 2:
             velocity = self._calculate_velocity(self.location_history[-2], current_location)
             self.velocity_history.append(velocity)
-        print("fuck you")
-        current_activity = self._classify_activity(); print("damn shit")
+        
+        current_activity = self._classify_activity()
         self.activity_history.append(current_activity)
 
     def _calculate_confidence(self, keypoints: np.ndarray) -> float:
-        return float(np.mean([kp[2] for kp in keypoints]))
+        try:
+            print("\n--- Confidence Calculation Debug ---")
+            print("Input keypoints shape:", keypoints.shape)
+            print("Input keypoints type:", type(keypoints))
+            
+            # keypoints가 여전히 tensor인 경우를 처리
+            if torch.is_tensor(keypoints):
+                keypoints = keypoints.cpu().numpy()
+                
+            values = [kp[2] for kp in keypoints]
+            print("Confidence values:", values)
+            confidence = float(np.mean(values))
+            print("Calculated confidence:", confidence)
+            return confidence
+        except Exception as e:
+            print("Error in calculate_confidence:", str(e))
+            print("Keypoints causing error:", keypoints)
+            return 0.0
 
     def _calculate_hip_center(self, keypoints: np.ndarray) -> Tuple[float, float]:
         left_hip = keypoints[11][:2]
@@ -168,41 +184,46 @@ class EnhancedPoseAnalyzer:
         }
 
     def analyze_pose(self, keypoints: np.ndarray) -> Tuple[bool, Dict]:
-        print("Start analyze_pose")
-        current_time = time.time(); print("0")
-        self.motion_context.update(keypoints, current_time); print("1")
-        
-        vertical_score = self._analyze_vertical_alignment(keypoints);print("2")
-        posture_score = self._analyze_posture(keypoints);print("3")
-        angle_score = self._analyze_joint_angles(keypoints);print("4")
-        
-        motion_features = self.motion_context.get_motion_features();print("5")
-        motion_score = self._analyze_motion_context(motion_features);print("6")
-        
-        fall_score = (
-            vertical_score * self.weights['vertical'] +
-            posture_score * self.weights['posture'] +
-            angle_score * self.weights['angles'] +
-            motion_score * self.weights['motion']
-        )
-        
-        print("evaluating fall state")
-        current_fall_state = fall_score > 0.7
-        is_fall_detected = self._evaluate_fall_state(current_fall_state, current_time)
-        print("evaluating fall state done")
+            print("\n--- Pose Analysis Debug ---")
+            print("Input keypoints device:", keypoints.device if hasattr(keypoints, 'device') else "No device info")
+            print("Input keypoints dtype:", keypoints.dtype)
+            
+            # CUDA tensor를 numpy로 변환하는 부분 추가
+            if torch.is_tensor(keypoints):
+                print("Converting tensor to numpy")
+                keypoints = keypoints.cpu().numpy()
+                
+            current_time = time.time()
+            self.motion_context.update(keypoints, current_time)
+            
+            vertical_score = self._analyze_vertical_alignment(keypoints)
+            posture_score = self._analyze_posture(keypoints)
+            angle_score = self._analyze_joint_angles(keypoints)
+            
+            motion_features = self.motion_context.get_motion_features()
+            motion_score = self._analyze_motion_context(motion_features)
+            
+            fall_score = (
+                vertical_score * self.weights['vertical'] +
+                posture_score * self.weights['posture'] +
+                angle_score * self.weights['angles'] +
+                motion_score * self.weights['motion']
+            )
 
-        debug_info = {
-            'fall_score': fall_score,
-            'vertical_score': vertical_score,
-            'posture_score': posture_score,
-            'angle_score': angle_score,
-            'motion_score': motion_score,
-            'motion_features': motion_features,
-            'is_fallen': is_fall_detected
-        }
-        print("End analyze_pose")
-        
-        return is_fall_detected, debug_info
+            current_fall_state = fall_score > 0.7
+            is_fall_detected = self._evaluate_fall_state(current_fall_state, current_time)
+            
+            debug_info = {
+                'fall_score': fall_score,
+                'vertical_score': vertical_score,
+                'posture_score': posture_score,
+                'angle_score': angle_score,
+                'motion_score': motion_score,
+                'motion_features': motion_features,
+                'is_fallen': is_fall_detected
+            }
+            
+            return is_fall_detected, debug_info
 
     def _analyze_vertical_alignment(self, keypoints: np.ndarray) -> float:
         y_coords = {
@@ -343,23 +364,13 @@ class EnhancedFallDetector:
             
             for result in results:
                 if result.keypoints is None:
-                    print("No keypoints detected")
                     continue
-                
-
+                    
                 keypoints = result.keypoints.data
-
-                print(f"\n[감지된 객체 수]: {len(result.boxes)}")
-                print(f"[감지된 키포인트 수]: {len(result.keypoints)}")
                 for person_idx, kps in enumerate(keypoints):
                     is_fallen, person_debug_info = self.pose_analyzer.analyze_pose(kps)
                     debug_info[f'person_{person_idx}'] = person_debug_info
                     
-                    # 주요 관절 좌표 출력
-                    print(f"머리 좌표: ({kps[0][0]:.1f}, {kps[0][1]:.1f})")
-                    print(f"엉덩이 좌표: ({kps[11][0]:.1f}, {kps[11][1]:.1f})")
-                    print(f"낙상 감지 여부: {'예' if is_fallen else '아니오'}")
-
                     # 시각화
                     processed_frame = self.visualize_detection(
                         processed_frame, 
@@ -473,9 +484,9 @@ async def main():
     
     try:
         # 비디오 캡처 초기화
-        video_path = "test_video/test2.mp4"
-        cap = cv2.VideoCapture(0)  
-        # cap = cv2.VideoCapture(video_path)  
+        # video_path = "~/catkin_ws/src/yolo_pkg/test_video/test2.mp4"
+        video_path = 0  # 웹캠 사용
+        cap = cv2.VideoCapture(video_path)  
         if not cap.isOpened():
             raise IOError("Cannot open video source")
         

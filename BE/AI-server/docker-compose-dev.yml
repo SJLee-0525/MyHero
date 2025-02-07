@@ -5,6 +5,8 @@ services:
     build: .
     container_name: dev-ai
     hostname: dev-ai
+    cap_add:
+      - SYS_TIME
     ports:
       - "4280:8000"
     env_file:

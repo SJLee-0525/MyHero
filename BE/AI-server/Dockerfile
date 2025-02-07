@@ -14,6 +14,11 @@ COPY ./models.py /app/models.py
 COPY ./services /app/services
 COPY ./utils /app/utils
 
+# Set Time
+RUN apk add --no-cache chrony
+RUN echo "server time.google.com iburst" > /etc/chrony/chrony.conf
+CMD ["chronyd", "-d", "-s", "-f", "/etc/chorny/chorny.conf"]
+
 # Set Run
 EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

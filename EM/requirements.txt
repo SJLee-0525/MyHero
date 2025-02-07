@@ -1,2 +1,0 @@
-grpcio-status==1.66.2
-google-cloud-speech

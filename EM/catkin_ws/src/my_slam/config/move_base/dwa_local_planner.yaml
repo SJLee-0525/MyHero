@@ -1,0 +1,56 @@
+DWAPlannerROS:
+  # 로봇 최대 선속도 (m/s)
+  # throttle=1.0일 때 1.0 m/s 로 가정
+  max_vel_trans: 0.6       # 최대 속도 제한
+  min_vel_trans: 0.0        # |velocity|가 0.1 m/s 이하로 내려가지 않도록
+
+  max_vel_x: 0.6
+  min_vel_x: 0.25
+  max_vel_y: 0.0
+  min_vel_y: 0.0
+
+  # 회전(제자리 turn) 속도
+  max_rot_theta: 1.2        # 회전 속도 제한
+  min_rot_theta: -1.2
+
+  max_vel_theta: 1.2
+  min_vel_theta: 0.1
+
+  # 가속도
+  acc_lim_x: 3.0          # m/s^2
+  dec_lim_x: 3.0
+  acc_lim_theta: 10.0      # rad/s^2
+  dec_lim_theta: 10.0
+
+  acc_lim_y: 0.0
+
+  # 시뮬레이션 시간 (DWA가 여러 시뮬레이션 트젝터리를 평가)
+  sim_time: 2.0
+  vx_samples: 15
+  vy_samples: 0
+  vtheta_samples: 30
+
+  # 목표 도달시 오차 허용 범위
+  xy_goal_tolerance: 0.3
+  yaw_goal_tolerance: 0.3
+  latch_xy_goal_tolerance: false
+  
+  # 복구 동작 조정
+  oscillation_reset_dist: 0.1  # 진동 감지 거리
+  oscillation_timeout: 3.0      # 진동 감지 시간
+
+  # 로컬 경로 평가
+  path_distance_bias: 32.0 # 경로 추종 가중치
+  goal_distance_bias: 20.0 # 목표 도달 가중치
+  occdist_scale: 1.5 # 장애물 회피 가중치
+  forward_point_distance: 0.4  # 멀리 있는 점 참조
+  stop_time_buffer: 0.3
+
+  # 장애물 앞에서 감속할 것인지
+  scaling_speed: 0.4 #   
+  max_scaling_factor: 0.9 # 
+
+  # 경로 지우기
+  prune_plan: true
+
+  holonomic_robot: false   # 차동 구동 설정

@@ -1,0 +1,7 @@
+<library path="lib/libbackoff_recovery">
+    <class name="backoff_recovery/BackoffRecovery" type="backoff_recovery::BackoffRecovery" base_class_type="nav_core::RecoveryBehavior">
+      <description>
+        Backoff robot with specificed distance.
+      </description>
+    </class>
+  </library>

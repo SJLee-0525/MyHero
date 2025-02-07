@@ -1,0 +1,15 @@
+<launch>
+    <!-- SLAM -->
+    <!-- 
+	<include file="$(find my_slam)/launch/my_slam.launch" />
+
+	-->
+    
+    <!-- Motor Controller -->
+    <include file="$(find robot_motor_controller)/launch/motor_controller.launch" />
+    
+    <!-- Keyboard Control -->
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
+        <remap from="cmd_vel" to="cmd_vel"/>
+    </node>
+</launch>

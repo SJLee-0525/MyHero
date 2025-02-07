@@ -111,13 +111,13 @@
 }
 
 #status-toggle-box .toggle-name {
+  font-size: small;
   margin: 0 5px;
 }
 
 #status-toggle-box .bad-status {
   margin: 0 5px;
 
-  font-size: large;
   font-weight: bold;
   color: #ff5a33;
 }
@@ -125,7 +125,6 @@
 #status-toggle-box .good-status {
   margin: 0 5px;
 
-  font-size: large;
   font-weight: bold;
   color: #44803f;
 }

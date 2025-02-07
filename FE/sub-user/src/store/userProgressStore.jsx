@@ -166,18 +166,14 @@ export default function UserProgressContextProvider({ children }) {
   // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
   // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
   useEffect(() => {
-    try {
-      if (!loginUserInfo.login) return;
+    if (!loginUserInfo.login) return;
 
-      if (loginUserInfo.login && loginUserInfo.userInfo.id) {
-        if (loginUserInfo.userInfo.role === "main") {
-          handleCheckFamilyExist(loginUserInfo.userInfo.id);
-        } else if (loginUserInfo.userInfo.role === "sub") {
-          handleCheckFamilyList();
-        }
+    if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+      if (loginUserInfo.userInfo.role === "main") {
+        handleCheckFamilyExist(loginUserInfo.userInfo.id);
+      } else if (loginUserInfo.userInfo.role === "sub") {
+        handleCheckFamilyList();
       }
-    } catch (error) {
-      console.error("Error checking family list:", error);
     }
   }, [loginUserInfo]);
 

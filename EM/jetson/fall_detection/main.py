@@ -33,7 +33,7 @@ class Config:
         self.confidence_threshold = 0.4
         self.save_dir = 'fall_detection_logs'
         self.api_url = 'http://localhost:8000/fall-alert'
-        self.display_size = (960, 540)
+        self.display_size = (960, 540)  # 너무 화면이 작으면 올려올려 
         self.skeleton_connections = [
             (0,1), (0,2), (1,3), (2,4),  # 얼굴
             (5,6), (5,7), (7,9), (6,8), (8,10),  # 팔
@@ -77,7 +77,15 @@ class MotionContext:
         self.activity_history.append(current_activity)
 
     def _calculate_confidence(self, keypoints: np.ndarray) -> float:
-        return float(np.mean([kp[2] for kp in keypoints]))
+        try:
+            if torch.is_tensor(keypoints):
+                keypoints = keypoints.cpu().numpy()
+                
+            values = [kp[2] for kp in keypoints]
+            confidence = float(np.mean(values))
+            return confidence
+        except Exception as e:
+            return 0.0
 
     def _calculate_hip_center(self, keypoints: np.ndarray) -> Tuple[float, float]:
         left_hip = keypoints[11][:2]
@@ -164,37 +172,40 @@ class EnhancedPoseAnalyzer:
         }
 
     def analyze_pose(self, keypoints: np.ndarray) -> Tuple[bool, Dict]:
-        current_time = time.time()
-        self.motion_context.update(keypoints, current_time)
-        
-        vertical_score = self._analyze_vertical_alignment(keypoints)
-        posture_score = self._analyze_posture(keypoints)
-        angle_score = self._analyze_joint_angles(keypoints)
-        
-        motion_features = self.motion_context.get_motion_features()
-        motion_score = self._analyze_motion_context(motion_features)
-        
-        fall_score = (
-            vertical_score * self.weights['vertical'] +
-            posture_score * self.weights['posture'] +
-            angle_score * self.weights['angles'] +
-            motion_score * self.weights['motion']
-        )
+            if torch.is_tensor(keypoints):
+                keypoints = keypoints.cpu().numpy()
+                
+            current_time = time.time()
+            self.motion_context.update(keypoints, current_time)
+            
+            vertical_score = self._analyze_vertical_alignment(keypoints)
+            posture_score = self._analyze_posture(keypoints)
+            angle_score = self._analyze_joint_angles(keypoints)
+            
+            motion_features = self.motion_context.get_motion_features()
+            motion_score = self._analyze_motion_context(motion_features)
+            
+            fall_score = (
+                vertical_score * self.weights['vertical'] +
+                posture_score * self.weights['posture'] +
+                angle_score * self.weights['angles'] +
+                motion_score * self.weights['motion']
+            )
 
-        current_fall_state = fall_score > 0.7
-        is_fall_detected = self._evaluate_fall_state(current_fall_state, current_time)
-        
-        debug_info = {
-            'fall_score': fall_score,
-            'vertical_score': vertical_score,
-            'posture_score': posture_score,
-            'angle_score': angle_score,
-            'motion_score': motion_score,
-            'motion_features': motion_features,
-            'is_fallen': is_fall_detected
-        }
-        
-        return is_fall_detected, debug_info
+            current_fall_state = fall_score > 0.7
+            is_fall_detected = self._evaluate_fall_state(current_fall_state, current_time)
+            
+            debug_info = {
+                'fall_score': fall_score,
+                'vertical_score': vertical_score,
+                'posture_score': posture_score,
+                'angle_score': angle_score,
+                'motion_score': motion_score,
+                'motion_features': motion_features,
+                'is_fallen': is_fall_detected
+            }
+            
+            return is_fall_detected, debug_info
 
     def _analyze_vertical_alignment(self, keypoints: np.ndarray) -> float:
         y_coords = {
@@ -455,8 +466,8 @@ async def main():
     
     try:
         # 비디오 캡처 초기화
-        # video_path = "test_video/test4.mp4"
-        cap = cv2.VideoCapture(1)  
+        video_path = "test_video/test2.mp4"
+        cap = cv2.VideoCapture(video_path)  
         if not cap.isOpened():
             raise IOError("Cannot open video source")
         

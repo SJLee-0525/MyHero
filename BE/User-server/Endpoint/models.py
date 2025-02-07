@@ -52,6 +52,7 @@ class Account(BaseModel):
     def trim_address(cls, value):
         if value and len(value) > 128:
             return value[:128]
+        return value
 
 class IDCheck(BaseModel):
     """

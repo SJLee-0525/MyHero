@@ -8,7 +8,7 @@ Parts of Status
 from fastapi import HTTPException, APIRouter, status, Query, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
-from datetime import datetime
+from datetime import timezone
 
 import httpx
 
@@ -101,7 +101,7 @@ async def create_home_status(home_data: HomeStatus, request_id: str = Depends(Da
 async def get_home_status(
         family_id: str,
         start: Optional[datetime] = Query(None, description="Query start time"),
-        end: Optional[datetime] = Query(datetime.now(), description="Query end time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
         order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id: str = Depends(Database.check_current_user)
 ):
@@ -125,6 +125,8 @@ async def get_home_status(
                 }
             }
         )
+
+    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -321,7 +323,7 @@ async def create_health_status(health_data: HealthStatus, request_id: str = Depe
 async def get_health_status(
         family_id: str,
         start: Optional[datetime] = Query(None, description="Query start time"),
-        end: Optional[datetime] = Query(datetime.now(), description="Query end time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
         order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id: str = Depends(Database.check_current_user)
 ):
@@ -345,6 +347,8 @@ async def get_health_status(
                 }
             }
         )
+
+    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -544,7 +548,7 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
 async def get_active_status(
         family_id: str,
         start: Optional[datetime] = Query(None, description="Query start time"),
-        end: Optional[datetime] = Query(datetime.now(), description="Query end time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
         order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id: str = Depends(Database.check_current_user)
 ):
@@ -568,6 +572,8 @@ async def get_active_status(
                 }
             }
         )
+
+    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -761,7 +767,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
 async def get_mental_status(
         family_id: str,
         start: Optional[datetime] = Query(None, description="Query start time"),
-        end: Optional[datetime] = Query(datetime.now(), description="Query end time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
         order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id: str = Depends(Database.check_current_user)
 ):
@@ -785,6 +791,8 @@ async def get_mental_status(
                 }
             }
         )
+
+    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -976,7 +984,7 @@ async def create_mental_reports(family_id: str, request_id: str = Depends(Databa
 async def get_mental_reports(
         family_id: str,
         start: Optional[datetime] = Query(None, description="Query start time"),
-        end: Optional[datetime] = Query(datetime.now(), description="Query end time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
         order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id: str = Depends(Database.check_current_user)
 ):
@@ -1000,6 +1008,8 @@ async def get_mental_reports(
                 }
             }
         )
+
+    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)

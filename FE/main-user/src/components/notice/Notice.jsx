@@ -12,8 +12,8 @@ export default function Notice({ onReply }) {
 
   const notices = [
     { id: 1, text: "아들에게서 메세지가 도착했습니다.", time: "16:07", date: "오늘", type: "message" },
-    { id: 2, text: "태풍에 날아가지 않게 조심하세요.", time: "14:02", date: "어제", type: "warning" },
-    { id: 3, text: "실종자를 찾습니다.", time: "13:46", date: "어제", type: "warning" },
+    { id: 2, text: "[행정안전부] 오늘 11시 10분 부산 호우경보 산사태      ", time: "14:02", date: "어제", type: "warning" },
+    { id: 3, text: "[기장군] 호우경보 발효중.", time: "13:46", date: "어제", type: "warning" },
     { id: 4, text: "아들에게서 메세지가 도착했습니다.", time: "12:05", date: "어제", type: "message" },
     { id: 5, text: "긴급 재난 문자 발송", time: "09:15", date: "2024-01-29", type: "warning" },
     { id: 6, text: "택배가 도착했습니다.", time: "08:30", date: "2024-01-28", type: "ex" }

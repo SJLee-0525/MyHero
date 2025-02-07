@@ -13,21 +13,21 @@
 
 #icon-box {
   display: flex;
-  height: 75%;
+  height: 75vh;
   width: 100%;
   justify-content: space-around;
   align-items: center;
 }
 
-#icon-box #icon {
+#icon-box #icon, #info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   text-align: center;
-  width: 50%;
+  width: 30%;
   height: 80%;
-  margin: 5rem;
+  margin: 3rem;
   padding: 2rem;
   border-radius: 8px;
   background: #ffffff50;
@@ -53,9 +53,161 @@
 
 #icon-box #icon .icon-name {
   font-weight: bold;
-  font-size: x-large;
+  font-size: xx-large;
   color: white;
   margin-top: 3rem;
+}
+
+#info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 70%;
+  gap: 1rem;
+}
+
+#info-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  height: 50%;
+  gap: 19px;
+}
+
+#info-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: white;
+}
+
+
+#weather, #schedule {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  width: 50%;
+  padding: 1.2rem;
+  background: #ffffff50;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+#weather-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  align-self: flex-start;
+}
+
+#weather-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+#weather-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+#schedule-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  align-self: flex-start;
+}
+
+#schedule-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+  align-items: center;
+  width: 100%;
+}
+
+.widget-schedule {
+  margin: 20px 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.widget-schedule ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.widget-schedule li {
+  margin-top: 10px;
+  width: 100%;
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.widget-schedule-date {
+  margin: 0px;
+  padding: 8px;
+
+  background-color: #44803F;
+  border-radius: 10px;
+
+  font-size: large;
+  font-weight: bold;
+  color: white;
+}
+
+#environment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50%;
+  max-width: 100%;
+
+  background: #ffffff50;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+
+#environment-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+#environment-temp, #environment-hum, #environment-dust, #environment-gas {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+}
+
+#environment-temp img, #environment-hum img, #environment-dust img, #environment-gas img {
+  width: 60px;
+  margin: 0.5rem;
+  gap: 0.5rem;
 }
 
 #dock {
@@ -70,7 +222,7 @@
 }
 
 #dock #dock-icon {
-  --w: 8em;
+  --w: 10em;
   --bg: rgb(var(--rgb));
   --bga: rgba(var(--rgb), 0.4);
 
@@ -219,6 +371,15 @@
 }
 
 @media screen and (max-width: 768px) {
+  #info {
+    max-width: 90%;
+    padding: 0.5rem;
+  }
+
+  #weather, #environment {
+    padding: 0.8rem;
+  }
+
   #dock {
     padding: 0 1rem;
     gap: 1rem;

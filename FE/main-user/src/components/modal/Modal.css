@@ -140,11 +140,6 @@
   margin: 5px;
 }
 
-#setting-box #box:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
 /* 모달 전환 애니메이션 */
 @keyframes slide-down-fade-in {
   from {

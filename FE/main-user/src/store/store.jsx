@@ -4,7 +4,7 @@ export const StoreContext = createContext({
   openMessageState: "",
   openEmergencyState: "",
   openNotificationState: "",
-  openHealthState: "",
+  openCalendarState: "",
   openSettingState: "",
   alertState: "",
   cameraState: "",
@@ -13,7 +13,7 @@ export const StoreContext = createContext({
   setOpenMessageState: () => {},
   setOpenEmergencyState: () => {},
   setOpenNotificationState: () => {},
-  setOpenHealthState: () => {},
+  setOpenCalendarState: () => {},
   setOpenSettingState: () => {},
   setAlertState: () => {},
   setCameraState: () => {},
@@ -24,7 +24,7 @@ export const StoreContext = createContext({
   handleSendMessage: () => {},
   handleEmergencyState: () => {},
   handleNotificationState: () => {},
-  handleHealthState: () => {},
+  handleCalendarState: () => {},
   handleModalClose: () => {},
 });
 
@@ -32,7 +32,7 @@ export default function StoreContextProvider({ children }) {
   const [openMessageState, setOpenMessageState] = useState(false);
   const [openEmergencyState, setOpenEmergencyState] = useState(false);
   const [openNotificationState, setOpenNotificationState] = useState(false);
-  const [openHealthState, setOpenHealthState] = useState(false);
+  const [openCalendarState, setOpenCalendarState] = useState(false);
   const [openSettingState, setOpenSettingState] = useState(false);
 
   const [alertState, setAlertState] = useState(true);
@@ -65,9 +65,9 @@ export default function StoreContextProvider({ children }) {
     console.log("Notification: ", !openNotificationState);
   }
 
-  function handleHealthState() {
-    setOpenHealthState(true);
-    console.log("Health: ", !openHealthState);
+  function handleCalendarState() {
+    setOpenCalendarState(true);
+    console.log("Calendar: ", !openCalendarState);
   }
 
   function handleSettingState() {
@@ -79,7 +79,7 @@ export default function StoreContextProvider({ children }) {
     setOpenMessageState(false);
     setOpenEmergencyState(false);
     setOpenNotificationState(false);
-    setOpenHealthState(false);
+    setOpenCalendarState(false);
     setOpenSettingState(false);
   }
 
@@ -115,7 +115,7 @@ export default function StoreContextProvider({ children }) {
     openMessageState,
     openEmergencyState,
     openNotificationState,
-    openHealthState,
+    openCalendarState,
     openSettingState,
     alertState,
     cameraState,
@@ -124,7 +124,7 @@ export default function StoreContextProvider({ children }) {
     setOpenMessageState,
     setOpenEmergencyState,
     setOpenNotificationState,
-    setOpenHealthState,
+    setOpenCalendarState,
     setOpenSettingState,
     setAlertState,
     setCameraState,
@@ -135,7 +135,7 @@ export default function StoreContextProvider({ children }) {
     handleSendMessage,
     handleEmergencyState,
     handleNotificationState,
-    handleHealthState,
+    handleCalendarState,
     handleSettingState,
     handleModalClose,
     handleAlertState,

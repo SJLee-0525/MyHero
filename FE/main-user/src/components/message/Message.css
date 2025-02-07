@@ -129,6 +129,7 @@
     flex: 1;
     height: 300px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     background: #A3A3A3;
@@ -137,6 +138,11 @@
     text-align: center;
     transition: all 0.3s ease-in-out;
     overflow: auto;
+}
+
+.photo-upload img {
+    width: 100px;
+    height: 100px;
 }
 
 .reply {

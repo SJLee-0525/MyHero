@@ -1,4 +1,0 @@
-yolo:
-  model_path: "$(find yolo_pkg)/models/yolov8n-pose.pt"
-  confidence: 0.5
-  device: "cuda:0"

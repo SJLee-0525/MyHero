@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from typing import Optional, Dict
 from openai import OpenAI
@@ -8,6 +8,14 @@ import uuid
 from models import ChatSession, ChatHistory
 
 logger = logging.getLogger(__name__)
+
+def get_kst_today():
+    """한국 시간 기준의 날짜를 반환"""
+    return (datetime.now() + timedelta(hours=9)).date()
+
+def get_kst_now():
+    """한국 시간 기준의 현재 시간을 반환"""
+    return datetime.now() + timedelta(hours=9)
 
 class ChatService:
     def __init__(self, openai_client: OpenAI, db: Session):
@@ -34,7 +42,7 @@ class ChatService:
 
     async def _get_or_create_session(self, user_id: str, session_id: Optional[str]) -> str:
         try:
-            current_time = datetime.now()
+            current_time = get_kst_now()
             
             if not session_id:
                 new_session = ChatSession(
@@ -111,7 +119,6 @@ class ChatService:
                 user_id=user_id,
                 user_message=user_message,
                 bot_message=bot_message,
-                created_at=datetime.now()
             )
             self.db.add(chat_history)
             self.db.commit()

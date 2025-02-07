@@ -1,6 +1,6 @@
 import os
 import logging
-from sqlalchemy import create_engine, event, Column, String, DateTime, Integer, Text, ForeignKey, Date, Enum, Float, Boolean
+from sqlalchemy import create_engine, event, Column, String, DateTime, Integer, Text, ForeignKey, Date, Enum, Float, Boolean, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, Session
 from sqlalchemy.pool import Pool
@@ -20,7 +20,7 @@ DATABASE_URL = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD'
 
 engine = create_engine(
     DATABASE_URL,
-    pool_recycle=3600,  
+    pool_recycle=120,  
     pool_pre_ping=True  
 )
 
@@ -72,7 +72,7 @@ class ChatSession(Base):
     __tablename__ = 'chatsessions'
     uid = Column('uid', String(36), primary_key=True)
     user_id = Column('user_id', String(16))
-    created_at = Column('created_at', DateTime) 
+    created_at = Column(DateTime, server_default=func.now()) 
     last_active = Column('last_active', DateTime)  
     conversations = relationship("ChatHistory", back_populates="session")
 
@@ -83,7 +83,7 @@ class ChatHistory(Base):
     user_id = Column(String(16))
     user_message = Column(Text)
     bot_message = Column(Text)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, server_default=func.now())
     session = relationship("ChatSession", back_populates="conversations")
 
 class LocationMap(Base):
@@ -96,7 +96,7 @@ class MentalStatus(Base):
     __tablename__ = 'mentalstatus'
     index = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(String(16))
-    reported_at = Column(DateTime)
+    reported_at = Column(DateTime, server_default=func.now())
     score = Column(Integer)
     is_critical = Column(Integer)
     description = Column(Text)
@@ -115,7 +115,7 @@ class Account(Base):
 class FallDetection(Base):
     __tablename__ = 'falldetections'
     index = Column(Integer, primary_key=True, autoincrement=True)
-    timestamp = Column(DateTime, default=datetime.now)
+    timestamp = Column(DateTime, server_default=func.now())
     image_path = Column(String(255), nullable=True)
     user_id = Column(String(16), ForeignKey('accounts.id'))
 
@@ -123,7 +123,7 @@ class Notification(Base):
     __tablename__ = 'notifications'
     index = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(String(16))
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, server_default=func.now())
     notification_grade = Column(Enum('INFO', 'WARN', 'CRIT', 'NONE', name='notification_grade'))
     descriptions = Column(Text)
     message_sn = Column(Integer)
@@ -138,7 +138,7 @@ class ChatKeywords(Base):
     __tablename__ = 'chatkeywords'
     id = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(String(16), ForeignKey('families.id'))
-    created_at = Column(DateTime, default=datetime.now)
+    created_at = Column(DateTime, server_default=func.now())
     keywords = Column(Text)
 
 
@@ -146,7 +146,7 @@ class MentalReport(Base):
     __tablename__ = 'mentalreports'
     index = Column(Integer, primary_key=True, autoincrement=True)
     family_id = Column(String(16))
-    reported_at = Column(DateTime, default=datetime.now)
+    reported_at = Column(DateTime, server_default=func.now())
     start_time = Column(DateTime)
     end_time = Column(DateTime)
     average_score = Column(Float)

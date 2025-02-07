@@ -9,6 +9,14 @@ from models import MentalStatus, ChatHistory, ChatSession, Family, MentalReport
 
 logger = logging.getLogger(__name__)
 
+def get_kst_today():
+    """한국 시간 기준의 날짜를 반환"""
+    return (datetime.now() + timedelta(hours=9)).date()
+
+def get_kst_now():
+    """한국 시간 기준의 현재 시간을 반환"""
+    return datetime.now() + timedelta(hours=9)
+
 class EmotionService:
     def __init__(self, openai_client, db: Session):
         self.client = openai_client
@@ -34,7 +42,6 @@ class EmotionService:
             # 결과 저장
             mental_status = MentalStatus(
                 family_id=family_id,
-                reported_at=datetime.now(),
                 score=self._calculate_score(analysis_result),
                 is_critical=self._is_critical(analysis_result),
                 description=json.dumps(analysis_result, ensure_ascii=False)

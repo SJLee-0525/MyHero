@@ -118,7 +118,7 @@ class DisasterService:
             data = response.json()
             
             if data['body']:
-                logger.info(f'{n_add}: {data["body"]}')
+                logger.info(f'{n_add} success')
                 return data["body"]
             
             logger.info(f"No disaster messages found for address: {address}")

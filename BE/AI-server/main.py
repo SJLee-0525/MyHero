@@ -15,8 +15,10 @@ from services.chat import ChatService
 from services.emotion import EmotionService
 from services.disaster import DisasterService
 from services.news import NewsService
+from services.mental_health import MentalHealthService
 from utils.cache import CacheManager
 from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport
+
 
 # 환경 변수 로드
 load_dotenv()
@@ -61,8 +63,8 @@ class ChatResponse(BaseModel):
     bot_message: str
 
 class PeriodRequest(BaseModel):
-    start_date: date
-    end_date: date
+    start_date: datetime
+    end_date: datetime
 
 
 async def update_cache_periodically():
@@ -87,11 +89,13 @@ async def update_cache_periodically():
 async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
     try:
         chat_service = ChatService(openai_client, db)
-        response = await chat_service.process_chat(request.id, request.user_message, request.session_id)
+        response = await chat_service.process_chat(request.user_id, request.user_message, request.session_id)
         return response
     except Exception as e:
         logger.error(f"Chat processing error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close() 
 
 @app.get("/weather/{user_id}")
 async def get_weather(user_id: str, db: Session = Depends(get_db)):
@@ -152,6 +156,8 @@ async def generate_emotional_report(family_id: str, db: Session = Depends(get_db
     except Exception as e:
         logger.error(f"Emotion report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close() 
     
 @app.post("/generate-emotional-report/period/{family_id}")
 async def gnerate_periodic_report(
@@ -167,6 +173,8 @@ async def gnerate_periodic_report(
     except Exception as e:
         logger.error(f"Periodic report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close() 
 
 @app.get("/generate-keyword/{family_id}")
 async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
@@ -225,6 +233,32 @@ async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"키워드 생성 오류: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.post('/analyze-mental-health/{family_id}')
+async def analyze_mental_health(
+    family_id: str,
+    period: Optional[PeriodRequest] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    - 오늘 하루 분석시에는 POST /analyze-mental-health/{family_id}로 요청
+    - 특정 기간 분석시에는 body에 start_date, end_date 담아서 보내면 됨
+    """
+    try:
+        mental_health_service = MentalHealthService(openai_client, db)
+        result = await mental_health_service.analyze_mental_health(
+            family_id,
+            period.start_date if period else None,
+            period.end_date if period else None
+        )
+        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        logger.error(f'Mental health analysis error: {str(e)}')
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close() 
 
 @app.on_event("startup")
 async def startup_event():

@@ -26,6 +26,9 @@
         <param name="shutdown_costmaps" value="false" />    
         <param name="base_global_planner" value="navfn/NavfnROS"/>
         <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+
+        <!-- Move Base 파라미터 추가! -->
+        <param name="planner_frequency" value="0.2" />  <!-- global planner 주기 -->
     </node>
 
     <!-- 조이스틱 노드 -->

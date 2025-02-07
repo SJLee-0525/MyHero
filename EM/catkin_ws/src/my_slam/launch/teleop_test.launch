@@ -1,6 +1,9 @@
 <launch>
     <!-- SLAM -->
-    <include file="$(find my_slam)/launch/my_slam.launch" />
+    <!-- 
+	<include file="$(find my_slam)/launch/my_slam.launch" />
+
+	-->
     
     <!-- Motor Controller -->
     <include file="$(find robot_motor_controller)/launch/motor_controller.launch" />

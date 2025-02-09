@@ -1,7 +1,7 @@
-import { useState, createContext, useEffect, useContext } from "react";
-import { useHttp } from "../hooks/useHttp";
+import { useState, createContext, useEffect, useContext } from "react"
+import { useHttp } from "../hooks/useHttp"
 
-import { UserProgressContext } from "./userProgressStore";
+import { UserProgressContext } from "./userProgressStore"
 
 export const HomeStatusContext = createContext({
   homeStatus: {
@@ -16,12 +16,12 @@ export const HomeStatusContext = createContext({
     },
   },
   setHomeStatus: () => {},
-});
+})
 
 export default function HomeStatusContextProvider({ children }) {
-  const { request, loading } = useHttp();
+  const { request, loading } = useHttp()
 
-  const userProgressStore = useContext(UserProgressContext);
+  const userProgressStore = useContext(UserProgressContext)
 
   const [homeStatus, setHomeStatus] = useState({
     data: {
@@ -33,7 +33,7 @@ export default function HomeStatusContextProvider({ children }) {
       ethanol: null,
       others: { finedust: null, ultrafinedust: null },
     },
-  });
+  })
 
   // useEffect(() => {
   //   try {
@@ -58,48 +58,41 @@ export default function HomeStatusContextProvider({ children }) {
   //   userProgressStore.memberInfo.selectedFamilyId,
   // ]);
 
-  const familyId = userProgressStore.memberInfo.selectedFamilyId;
+  let familyId = ""
+  if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
+    familyId = userProgressStore.memberInfo.selectedFamilyId
+  } else if (userProgressStore.loginUserInfo.userInfo?.role === "main") {
+    familyId = userProgressStore.familyInfo.familyInfo?.id
+  }
 
   async function handleGetLatestHomeStatus() {
     if (!familyId) {
-      console.error("가족 ID가 없습니다.");
+      console.error("가족 ID가 없습니다.")
       return {
         success: false,
         error: {
           type: "no_family_id",
           message: "가족 ID가 없습니다.",
         },
-      };
+      }
     }
 
     try {
-      const response = await request(
-        `${
-          userProgressStore.DEV_API_URL
-        }/status/home/latest/${encodeURIComponent(familyId)}`
-      );
+      const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
 
-      const resData = response.data;
-
+      const resData = response.data
       if (response.success) {
         if (resData.message === "Home status retrieved successfully") {
           setHomeStatus({
-            data: {
-              family_id: resData.data.family_id,
-              reported_at: resData.data.reported_at,
-              temperature: resData.data.temperature,
-              humidity: resData.data.humidity,
-              dust_level: resData.data.dust_level,
-              ethanol: resData.data.ethanol,
-              others: {
-                finedust: resData.data.others.finedust,
-                ultrafinedust: resData.data.others.ultrafinedust,
-              },
-            },
-          });
+            data: resData.data,
+          })
+          return {
+            success: true,
+            data: resData.data,
+          }
         }
       } else {
-        console.error("최신 집 내부 정보 조회 실패:", resData.error);
+        console.error("최신 집 내부 정보 조회 실패:", response.error)
         setHomeStatus({
           data: {
             family_id: null,
@@ -110,24 +103,24 @@ export default function HomeStatusContextProvider({ children }) {
             ethanol: null,
             others: { finedust: null, ultrafinedust: null },
           },
-        });
+        })
         return {
           success: false,
           error: {
-            type: resData.error.type,
-            message: resData.error.message,
+            type: response.error.type,
+            message: response.error.message,
           },
-        };
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error(error)
       return {
         success: false,
         error: {
           type: "network_error",
           message: "네트워크 오류가 발생했습니다.",
         },
-      };
+      }
     }
   }
 
@@ -136,11 +129,7 @@ export default function HomeStatusContextProvider({ children }) {
     homeStatus,
     setHomeStatus,
     handleGetLatestHomeStatus,
-  };
+  }
 
-  return (
-    <HomeStatusContext.Provider value={ctxValue}>
-      {children}
-    </HomeStatusContext.Provider>
-  );
+  return <HomeStatusContext.Provider value={ctxValue}>{children}</HomeStatusContext.Provider>
 }

@@ -7,7 +7,12 @@ export default function ScheduleWidget() {
 
   useEffect(() => {
     // 오늘 날짜 설정 (YYYY-MM-DD 형식)
-    const currentDate = new Date().toISOString().split("T")[0];
+    const currentDate = new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "Asia/Seoul",
+    }).format(new Date());
     setToday(currentDate);
 
     console.log("오늘 날짜:", currentDate);
@@ -18,15 +23,6 @@ export default function ScheduleWidget() {
   return (
       <div className="widget-schedule">
         <a className="widget-schedule-date">{today}</a>
-        <ul>
-          {schedules.schedules[today]?.length > 0 ? (
-            schedules.schedules[today].map((schedule, index) => (
-              <li key={index}>- {schedule}</li>
-            ))
-          ) : (
-            <li>오늘은 아무 일정이 없습니다.</li>
-          )}
-        </ul>
       </div>
   );
 }

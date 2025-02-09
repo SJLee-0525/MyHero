@@ -91,7 +91,7 @@ export default function App() {
         <ScreenSaver onDismiss={() => setIsScreensaverActive(false)} />
       )}
       {loginUserInfo.login ? (
-        <main>
+        <main style={{ width: "1024px", height: "600px", overflow: "hidden" }}>
           <ModalPage />
           <NavBar />
           <Home />

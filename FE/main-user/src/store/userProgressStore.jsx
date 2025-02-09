@@ -4,7 +4,7 @@ import { getEnvironments } from "./environmentsStore.jsx";
 
 export const UserProgressContext = createContext({
   loginUserInfo: {
-    login: false,
+    login: true, //
     userInfo: undefined,
   },
   familyInfo: {
@@ -22,7 +22,7 @@ export const UserProgressContext = createContext({
 export default function UserProgressContextProvider({ children }) {
   const { request, loading } = useMainHttp();
   const [loginUserInfo, setLoginUserInfo] = useState({
-    login: false,
+    login: true, //
     userInfo: undefined,
   });
   const [familyInfo, setFamilyInfo] = useState({

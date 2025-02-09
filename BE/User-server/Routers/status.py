@@ -126,8 +126,6 @@ async def get_home_status(
             }
         )
 
-    print("start: ", start, "end: ", end)
-
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
@@ -347,8 +345,6 @@ async def get_health_status(
                 }
             }
         )
-
-    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -573,8 +569,6 @@ async def get_active_status(
             }
         )
 
-    print("start: ", start, "end: ", end)
-
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
@@ -782,8 +776,6 @@ async def get_mental_status(
                 }
             }
         )
-
-    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -999,8 +991,6 @@ async def get_mental_reports(
                 }
             }
         )
-
-    print("start: ", start, "end: ", end)
 
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)

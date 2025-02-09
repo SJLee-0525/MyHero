@@ -696,7 +696,6 @@ async def delete_latest_active_status(family_id: str, request_id: str = Depends(
 
 # ========== Status/Mental 부분 ==========
 
-# TODO - API 변경 반영 필요!
 # 새로운 정신건강 정보 요청하는 기능
 @router.get("/mental/new/{family_id}", status_code=status.HTTP_201_CREATED)
 async def create_mental_status(family_id: str, request_id: str = Depends(Database.check_current_user)):
@@ -729,38 +728,30 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
         )
 
     # 요청하기
-    # response: httpx.Response = await request_mental_status(family_id=family_id)
-    #
-    # if response is not None and response.status_code == status.HTTP_200_OK:
-    #     return {
-    #         "message": "Mental status created successfully",
-    #         "data": response.json()
-    #     }
-    # elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail={
-    #             "type": "not found",
-    #             "message": "No mental status found",
-    #             "data": {}
-    #         }
-    #     )
-    # else:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail={
-    #             "type": "server error",
-    #             "message": "Failed to create mental status"
-    #         }
-    #     )
+    response: httpx.Response = await request_mental_status(family_id=family_id)
 
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail={
-            "type": "server error",
-            "message": "This feature is not implemented yet"
+    if response is not None and response.status_code == status.HTTP_200_OK:
+        return {
+            "message": "Mental status created successfully",
+            "data": response.json()
         }
-    )
+    elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "No mental status found",
+                "data": {}
+            }
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create mental status"
+            }
+        )
 
 # 조건에 따른 모든 정신건강 정보를 불러오는 기능
 @router.get("/mental/{family_id}", status_code=status.HTTP_200_OK)

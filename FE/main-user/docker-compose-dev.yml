@@ -2,8 +2,10 @@ version: "3.8"
 
 services:
   dev-main:
-    image: dev-main:latest
+    build: .
     container_name: dev-main
     hostname: dev-main
+    cap_add:
+      - SYS_TIME
     ports:
       - "4580:3000"

@@ -14,6 +14,11 @@ COPY ./package.json /app/package.json
 COPY ./package-lock.json /app/package-lock.json
 COPY ./vite.config.js /app/vite.config.js
 
+# Set Time
+RUN apk add --no-cache chrony
+RUN echo "server time.google.com iburst" > /etc/chrony/chrony.conf
+CMD ["chronyd", "-d", "-s", "-f", "/etc/chorny/chorny.conf"]
+
 # Set Webpages Requirements
 RUN npm install
 

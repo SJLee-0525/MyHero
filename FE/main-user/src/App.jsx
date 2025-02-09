@@ -56,11 +56,19 @@ export default function App() {
 
     resetTimer();
 
+    // 🔹 드래그 방지 이벤트 추가
+    const preventDrag = (event) => event.preventDefault();
+    
+    document.addEventListener("dragstart", preventDrag); // 요소 드래그 방지
+    document.addEventListener("selectstart", preventDrag); // 텍스트 선택 방지
+
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener("mousemove", handleUserActivity);
       window.removeEventListener("keydown", handleUserActivity);
       window.removeEventListener("click", handleUserActivity);
+      document.removeEventListener("dragstart", preventDrag);
+      document.removeEventListener("selectstart", preventDrag);
     };
   }, [isScreensaverActive]);
 

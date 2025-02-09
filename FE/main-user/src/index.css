@@ -7,6 +7,11 @@
 
 * {
   box-sizing: border-box;
+  user-select: none;  /* 텍스트 선택 방지 */
+  -webkit-user-drag: none; /* 이미지 드래그 방지 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 html {

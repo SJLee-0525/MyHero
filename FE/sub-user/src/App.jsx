@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { UserProgressContext } from "./store/userProgressStore.jsx"
 import { HomeStatusContext } from "./store/homeStatusStore.jsx"
 import { HealthContext } from "./store/healthStore.jsx"
+import { CalendarStoreContext } from "./store/calendarStore.jsx"
 
 import TopNav from "./components/nav/TopNav"
 import SideNav from "./components/nav/SideNav"
@@ -31,6 +32,7 @@ function App() {
   const userProgressStore = useContext(UserProgressContext)
   const homeStatusStore = useContext(HomeStatusContext)
   const healthStore = useContext(HealthContext)
+  const calendarStore = useContext(CalendarStoreContext)
 
   const loading = userProgressStore.loading || homeStatusStore.loading || healthStore.loading
 
@@ -88,6 +90,10 @@ function App() {
   }, [userProgressStore.loginUserInfo.userInfo])
 
   useEffect(() => {
+    if (!userProgressStore.loginUserInfo.login) {
+      return
+    }
+
     const fetchData = async () => {
       console.log("🔄 useEffect 내부 실행됨!", {
         member: userProgressStore.memberInfo,
@@ -113,6 +119,28 @@ function App() {
 
     fetchData()
   }, [userProgressStore.memberInfo.selectedFamilyId, userProgressStore.familyInfo.familyInfo?.id])
+
+  useEffect(() => {
+    if (!userProgressStore.loginUserInfo.login) {
+      return
+    }
+
+    const fetchData = async () => {
+      if (healthStore.activityStatus.length > 0) {
+        await calendarStore.groupDataByKSTWithAvgScore("health", healthStore.activityStatus)
+      } else {
+        await calendarStore.groupDataByKSTWithAvgScore("health", {})
+      }
+
+      if (healthStore.mentalStatus.length > 0) {
+        await calendarStore.groupDataByKSTWithAvgScore("mental", healthStore.mentalStatus)
+      } else {
+        await calendarStore.groupDataByKSTWithAvgScore("mental", {})
+      }
+    }
+
+    fetchData()
+  }, [healthStore.activityStatus, healthStore.mentalStatus])
 
   return (
     <BrowserRouter>

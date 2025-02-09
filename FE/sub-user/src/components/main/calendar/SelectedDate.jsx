@@ -1,8 +1,14 @@
-import { useContext } from "react";
-import { CalendarStoreContext } from "../../../store/calendarStore";
+import { useContext } from "react"
+import { CalendarStoreContext } from "../../../store/calendarStore"
+
+import activityIcon from "../../../assets/icons/run.svg"
+import mindfulnessIcon from "../../../assets/icons/mindfulness.svg"
 
 export default function SelectedDate() {
-  const { selectedDate, schedules } = useContext(CalendarStoreContext);
+  const { selectedDate, schedules } = useContext(CalendarStoreContext)
+
+  const healthData = schedules.schedules.health
+  const mentalData = schedules.schedules.mental
 
   return (
     <div className="calender-schedule-widget">
@@ -10,17 +16,18 @@ export default function SelectedDate() {
       <div>
         <a className="calender-schedule-date">{selectedDate.date}</a>
       </div>
-      <ul>
-        {schedules.schedules[selectedDate.date] ? (
-          schedules.schedules[selectedDate.date].map((schedule, index) => {
-            const truncatedText =
-              schedule.length > 25 ? schedule.slice(0, 25) + "..." : schedule;
-            return <li key={index}>- {truncatedText}</li>;
-          })
-        ) : (
-          <li>There were no activities on this date.</li>
-        )}
-      </ul>
+
+      {/* 캘린더에 일정을 간략하게 표시 */}
+      <li className="calendar-day-widget-schedules">
+        <ul className="health-aver">
+          <img className="calendar-widget-icon" src={activityIcon} alt="activity" />
+          {healthData[selectedDate.date] ? healthData[selectedDate.date].averageScore : "NO DATA"}
+        </ul>
+        <ul className="mental-aver">
+          <img className="calendar-widget-icon" src={mindfulnessIcon} alt="mental" />
+          {mentalData[selectedDate.date] ? mentalData[selectedDate.date].averageScore : "NO DATA"}
+        </ul>
+      </li>
     </div>
-  );
+  )
 }

@@ -1,6 +1,6 @@
-import "./Login.css";
 import { useRef, useContext } from "react";
 import { UserProgressContext } from "../../store/userProgressStore.jsx";
+import "./Login.css";
 
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
@@ -13,8 +13,9 @@ export default function Login() {
 
     // 로그인 실패 시
     if (!response.success) {
-        alert("가족 ID가 존재하지 않습니다.");
+        alert("존재하지 않는 가족 ID입니다.");
     } 
+
   }
 
   return (
@@ -26,7 +27,7 @@ export default function Login() {
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="familyId">가족 ID</label>
-            <input type="text" name="familyId" ref={familyIdInput} />
+            <input type="text" name="familyId" placeholder="가족ID를 입력해주세요." ref={familyIdInput} />
           </div>
         </div>
         <p className="login-form-action">

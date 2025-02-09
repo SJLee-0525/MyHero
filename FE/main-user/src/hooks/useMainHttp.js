@@ -1,18 +1,17 @@
 import { useState, useCallback } from "react";
-import { getEnvironments } from "../store/environmentsStore";
 
 export function useMainHttp() {
-  const BASE_URL = getEnvironments("API_URL") || import.meta.env.VITE_API_URL || "http://localhost:3000";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const request = useCallback(
-    async (endpoint, method = "GET", body = null, headers = {}) => {
+    async (url, method = "GET", body = null, headers = {}) => {
       setLoading(true);
       setError(null);
 
       try {
-        const url = `${BASE_URL}${endpoint}`; // API URL
+        console.log(`📡 요청 시작: ${method} ${url}`, body)
+        
         const response = await fetch(url, {
           method,
           body: body ? JSON.stringify(body) : null,
@@ -23,7 +22,6 @@ export function useMainHttp() {
           credentials: "include", // 필요한 경우 포함
         });
 
-        console.log("hook:", response);
         const resData = await response.json().catch(() => null); // JSON 변환 실패 방지
 
         if (!response.ok) {

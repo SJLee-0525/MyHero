@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./App.css";
 
 import ModalPage from "./components/modal/ModalPage.jsx";
 import NavBar from "./components/nav/NavBar.jsx";
 import Home from "./components/home/Home.jsx";
 
+import { UserProgressContext } from "./store/userProgressStore.jsx";9
 import screenProtector from "./assets/screen-protector.png";
+import Login from "./components/login/Login.jsx";
 
-function ScreenSaver({ onDismiss }) {
+function ScreenSaver({}) {
   return (
     <div className="screensaver-container">
       <img
@@ -21,6 +23,7 @@ function ScreenSaver({ onDismiss }) {
 
 export default function App() {
   const [isScreensaverActive, setIsScreensaverActive] = useState(false);
+  const { loginUserInfo } = useContext(UserProgressContext);
 
   const SCREENSAVER_TIMEOUT = 500000000000;
   let timeoutId = null;
@@ -61,16 +64,33 @@ export default function App() {
     };
   }, [isScreensaverActive]);
 
+  // return (
+  //   <>
+  //     {isScreensaverActive && (
+  //       <ScreenSaver onDismiss={() => setIsScreensaverActive(false)} />
+  //     )}
+  //     <ModalPage />
+  //     <main>
+  //       <NavBar />
+  //       <Home />
+  //     </main>
+  //   </>
+  // );
+
   return (
     <>
       {isScreensaverActive && (
         <ScreenSaver onDismiss={() => setIsScreensaverActive(false)} />
       )}
-      <ModalPage />
-      <main>
-        <NavBar />
-        <Home />
-      </main>
+      {loginUserInfo.login ? (
+        <main>
+          <ModalPage />
+          <NavBar />
+          <Home />
+        </main>
+      ) : (
+        <Login />
+      )}
     </>
   );
 }

@@ -4,7 +4,7 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Parts of Status
 """
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Query, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 

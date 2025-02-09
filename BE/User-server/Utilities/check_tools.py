@@ -5,7 +5,7 @@
 Server Authentication Tools
 """
 
-# Library
+# Libraries
 from datetime import date
 from Endpoint.models import *
 

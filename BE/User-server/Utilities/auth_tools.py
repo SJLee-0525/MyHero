@@ -5,7 +5,7 @@
 Server Authentication Tools
 """
 
-# Library
+# Libraries
 import random
 import string
 import bcrypt

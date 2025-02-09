@@ -4,7 +4,7 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 External Server Connection
 """
-# Library
+# Libraries
 import httpx
 
 import os

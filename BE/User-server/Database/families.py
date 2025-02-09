@@ -5,7 +5,7 @@
 Database Families Part
 """
 
-# Library
+# Libraries
 from Database.connector import Database
 from Database.models import *
 
@@ -14,7 +14,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from datetime import date
 
+from Utilities.logging_tools import *
+
 database: Database = Database()
+logger = get_logger("DB_Families")
 
 # 주 사용자 ID로 가족 ID를 불러오기
 def main_id_to_family_id(main_id: str) -> str:
@@ -36,7 +39,7 @@ def main_id_to_family_id(main_id: str) -> str:
                 result = ""
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting family id from main id: {str(error)}")
+            logger.info(f"Error getting family id from main id: {str(error)}")
             result = ""
         finally:
             return result
@@ -55,11 +58,11 @@ def create_family(family_data: FamiliesTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(family_data)
-            print(f"[DB] New family created: {family_data}")
+            logger.info(f"New family created: {family_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new family: {str(error)}")
+            logger.critical(f" Error creating new family: {str(error)}")
         finally:
             session.commit()
             return result
@@ -91,7 +94,7 @@ def get_all_families() -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting all family data: {str(error)}")
+            logger.critical(f" Error getting all family data: {str(error)}")
             result = []
         finally:
             return result
@@ -130,7 +133,7 @@ def find_family(
             )
 
             # 필터링 조건 추가
-            filter_list = []
+            filter_list: list  = []
             if user_name:
                 filter_list.append(AccountsTable.user_name == user_name)
             if birth_date:
@@ -156,7 +159,7 @@ def find_family(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting all family data: {str(error)}")
+            logger.critical(f" Error getting all family data: {str(error)}")
             result = []
         finally:
             return result
@@ -188,7 +191,7 @@ def get_one_family(family_id: str) -> dict:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting one family data: {str(error)}")
+            logger.critical(f" Error getting one family data: {str(error)}")
             result = {}
         finally:
             return result
@@ -218,7 +221,7 @@ def update_one_family(family_id: str, updated_family: FamiliesTable) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error updating one family data: {str(error)}")
+            logger.critical(f" Error updating one family data: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -240,12 +243,13 @@ def delete_one_family(family_id: str) -> bool:
             family_data = session.query(FamiliesTable).filter(FamiliesTable.id == family_id).first()
             if family_data is not None:
                 session.delete(family_data)
+                logger.info(f"Family data deleted: {family_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting one family data: {str(error)}")
+            logger.critical(f" Error deleting one family data: {str(error)}")
             result = False
         finally:
             session.commit()

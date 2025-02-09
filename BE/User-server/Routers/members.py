@@ -5,7 +5,7 @@
 Parts of Members
 """
 
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Query
 from fastapi.encoders import jsonable_encoder
 

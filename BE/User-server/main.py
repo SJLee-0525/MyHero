@@ -2,7 +2,7 @@
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Care-bot User API Server ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-version : 0.4.2
+version : 0.7.0
 """
 
 # Libraries
@@ -28,6 +28,7 @@ async def startup(app: FastAPI):
     task.cancel()
     print("🛑 [System] Server shutdown")
 
+# ========== FastAPI 설정 ==========
 app = FastAPI(lifespan=startup)
 
 # ========== CORS 설정 ==========

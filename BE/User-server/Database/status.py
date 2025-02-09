@@ -5,7 +5,7 @@
 Database Status Part
 """
 
-# Library
+# Libraries
 from Database.connector import Database
 from Database.models import *
 
@@ -14,7 +14,10 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from datetime import datetime, timezone
 
+from Utilities.logging_tools import *
+
 database: Database = Database()
+logger = get_logger("DB_Status")
 
 # ========== Home 부분 ==========
 
@@ -31,11 +34,11 @@ def create_home_status(home_status_data: HomeStatusTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(home_status_data)
-            print(f"[DB] New home status created: {home_status_data}")
+            logger.info(f"New home status created: {home_status_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new home status: {str(error)}")
+            logger.critical(f"Error creating new home status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -108,7 +111,7 @@ def get_home_status(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting home status: {str(error)}")
+            logger.error(f"Error getting home status: {str(error)}")
             result = []
         finally:
             return result
@@ -153,7 +156,7 @@ def get_latest_home_status(family_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting latest home status: {str(error)}")
+            logger.critical(f"Error getting latest home status: {str(error)}")
             result = {}
         finally:
             return result
@@ -177,12 +180,13 @@ def delete_latest_home_status(family_id: str) -> bool:
 
             if home_status_data is not None:
                 session.delete(home_status_data)
+                logger.info(f"Latest home status deleted: {home_status_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting latest home status: {str(error)}")
+            logger.critical(f"Error deleting latest home status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -203,11 +207,11 @@ def create_health_status(health_status_data: HealthStatusTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(health_status_data)
-            print(f"[DB] New health status created: {health_status_data}")
+            logger.info(f"New health status created: {health_status_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new health status: {str(error)}")
+            logger.critical(f"Error creating new health status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -268,7 +272,7 @@ def get_health_status(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting health status: {str(error)}")
+            logger.critical(f"Error getting health status: {str(error)}")
             result = []
         finally:
             return result
@@ -305,7 +309,7 @@ def get_latest_health_status(family_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting latest health status: {str(error)}")
+            logger.critical(f"Error getting latest health status: {str(error)}")
             result = {}
         finally:
             return result
@@ -329,12 +333,13 @@ def delete_latest_health_status(family_id: str) -> bool:
 
             if health_status_data is not None:
                 session.delete(health_status_data)
+                logger.info(f"Latest health status deleted: {health_status_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting latest health status: {str(error)}")
+            logger.critical(f"Error deleting latest health status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -355,11 +360,11 @@ def create_active_status(active_status_data: ActiveStatusTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(active_status_data)
-            print(f"[DB] New active status created: {active_status_data}")
+            logger.info(f"New active status created: {active_status_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new active status: {str(error)}")
+            logger.critical(f"Error creating new active status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -429,7 +434,7 @@ def get_active_status(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting active status: {str(error)}")
+            logger.critical(f"Error getting active status: {str(error)}")
             result = []
         finally:
             return result
@@ -472,7 +477,7 @@ def get_latest_active_status(family_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting latest active status: {str(error)}")
+            logger.critical(f"Error getting latest active status: {str(error)}")
             result = {}
         finally:
             return result
@@ -496,12 +501,13 @@ def delete_latest_active_status(family_id: str) -> bool:
 
             if active_status_data is not None:
                 session.delete(active_status_data)
+                logger.info(f"Latest active status deleted: {active_status_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting latest active status: {str(error)}")
+            logger.critical(f"Error deleting latest active status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -570,7 +576,7 @@ def get_mental_status(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting mental status: {str(error)}")
+            logger.critical(f"Error getting mental status: {str(error)}")
             result = []
         finally:
             return result
@@ -611,7 +617,7 @@ def get_latest_mental_status(family_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting latest mental status: {str(error)}")
+            logger.critical(f"Error getting latest mental status: {str(error)}")
             result = {}
         finally:
             return result
@@ -635,12 +641,13 @@ def delete_latest_mental_status(family_id: str) -> bool:
 
             if mental_status_data is not None:
                 session.delete(mental_status_data)
+                logger.info(f"Latest mental status deleted: {mental_status_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting latest mental status: {str(error)}")
+            logger.critical(f"Error deleting latest mental status: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -724,7 +731,7 @@ def get_mental_reports(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting mental reports: {str(error)}")
+            logger.critical(f"Error getting mental reports: {str(error)}")
             result = []
         finally:
             return result
@@ -775,7 +782,7 @@ def get_latest_mental_reports(family_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting latest mental reports: {str(error)}")
+            logger.critical(f"Error getting latest mental reports: {str(error)}")
             result = {}
         finally:
             return result
@@ -799,12 +806,13 @@ def delete_latest_mental_reports(family_id: str) -> bool:
 
             if mental_reports_data is not None:
                 session.delete(mental_reports_data)
+                logger.info(f"Latest mental reports deleted: {mental_reports_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting latest mental reports: {str(error)}")
+            logger.critical(f"Error deleting latest mental reports: {str(error)}")
             result = False
         finally:
             session.commit()

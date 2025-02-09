@@ -5,7 +5,7 @@
 Parts of Accounts
 """
 
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 

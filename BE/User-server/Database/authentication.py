@@ -6,7 +6,7 @@ Database Authentication Part
 """
 
 
-# Library
+# Libraries
 from Database.connector import Database
 from Database.models import *
 
@@ -23,7 +23,10 @@ from asyncio import sleep
 import os
 from dotenv import load_dotenv
 
+from Utilities.logging_tools import *
+
 database: Database = Database()
+logger = get_logger("DB_Authentication")
 
 # 세션 만료 시간 불러오기
 load_dotenv()
@@ -43,11 +46,11 @@ def create_session(session_data: LoginSessionsTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(session_data)
-            print(f"[DB] New session created: {session_data}")
+            logger.info(f"New session created: {session_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new session: {str(error)}")
+            logger.critical(f"Error creating new session: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -68,12 +71,13 @@ def delete_session(session_id: str) -> bool:
             session_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.xid == session_id).first()
             if session_data is not None:
                 session.delete(session_data)
+                logger.info(f"Session deleted: {session_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting session: {str(error)}")
+            logger.critical(f"Error deleting session: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -124,7 +128,7 @@ def check_current_user(request: Request) -> str:
             user_id = login_data.user_id
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error checking current user: {str(error)}")
+            logger.critical(f"Error checking current user: {str(error)}")
             user_id = ""
         finally:
             session.commit()
@@ -153,7 +157,7 @@ def change_password(user_id: str, new_hased_password: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error changing password: {str(error)}")
+            logger.critical(f"Error changing password: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -186,7 +190,7 @@ def get_login_session(session_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting login session: {str(error)}")
+            logger.critical(f"Error getting login session: {str(error)}")
             result = {}
         finally:
             return result
@@ -219,11 +223,11 @@ async def cleanup_login_sessions() -> None:
                 result = True
             except SQLAlchemyError as error:
                 session.rollback()
-                print(f"[DB] Error cleaning up login sessions: {str(error)}")
+                logger.critical(f"Error cleaning up login sessions: {str(error)}")
                 result = False
             finally:
                 session.commit()
                 if result:
-                    print(f"[DB] Cleaned up login sessions")
+                    logger.info(f"Cleaned up login sessions")
                 else:
-                    print(f"[DB] Failed to clean up login sessions")
+                    logger.critical(f"Failed to clean up login sessions")

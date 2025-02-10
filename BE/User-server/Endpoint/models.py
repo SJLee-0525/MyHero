@@ -146,3 +146,12 @@ class AIChat(BaseModel):
     user_id: Optional[str] = None
     message: Optional[str] = None
     session_id: Optional[str] = None
+
+class Notification(BaseModel):
+    """
+    알림을 생성하기 위해 Client가 보내는 데이터
+    """
+    family_id: Optional[str] = None
+    notification_grade: Optional[str] = None
+    description: Optional[str] = None
+    is_read: Optional[bool] = None

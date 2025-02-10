@@ -45,10 +45,11 @@ def create_notification(notification_data: NotificationsTable) -> bool:
             return result
 
 # 아직 읽지 않은 알림을 가져오는 기능
-def get_new_notifications(family_id: str) -> list[dict]:
+def get_new_notifications(family_id: str, time_order: Order = Order.ASC) -> list[dict]:
     """
     아직 읽지 않은 Family의 알림을 가져오는 기능
     :param family_id: 해당하는 Family의 ID str
+    :param time_order: 데이터의 정렬 순서 (시간 기반)
     :return: 읽지 않은 Family에게 도착한 모든 알림 list[dict]
     """
     result: list[dict] = []
@@ -64,7 +65,16 @@ def get_new_notifications(family_id: str) -> list[dict]:
                 NotificationsTable.description,
                 NotificationsTable.is_read
             ).filter(and_(NotificationsTable.family_id == family_id,
-                          NotificationsTable.is_read == False)).all()
+                          NotificationsTable.is_read == False))
+
+            ordered_new_notification_list = None
+
+            if time_order == Order.ASC:
+                ordered_new_notification_list = new_notification_list.order_by(
+                    NotificationsTable.created_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_new_notification_list = new_notification_list.order_by(
+                    NotificationsTable.created_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -73,7 +83,7 @@ def get_new_notifications(family_id: str) -> list[dict]:
                 "notification_grade": data[3],
                 "description": data[4],
                 "is_read": data[5]
-            } for data in new_notification_list]
+            } for data in ordered_new_notification_list]
 
             result = serialized_data
         except SQLAlchemyError as error:
@@ -84,10 +94,11 @@ def get_new_notifications(family_id: str) -> list[dict]:
             return result
 
 # 모든 알림을 가져오는 기능
-def get_all_notifications(family_id: str) -> list[dict]:
+def get_all_notifications(family_id: str, time_order: Order = Order.ASC) -> list[dict]:
     """
     Family의 모든 알림을 가져오는 기능
     :param family_id: 해당하는 Family의 ID str
+    :param time_order: 데이터의 정렬 순서 (시간 기반)
     :return: Family ID로 필터링 된 모든 알림 list[dict]
     """
     result: list[dict] = []
@@ -102,7 +113,16 @@ def get_all_notifications(family_id: str) -> list[dict]:
                 NotificationsTable.notification_grade,
                 NotificationsTable.description,
                 NotificationsTable.is_read
-            ).filter(NotificationsTable.family_id == family_id).all()
+            ).filter(NotificationsTable.family_id == family_id)
+
+            ordered_all_notification_list = None
+
+            if time_order == Order.ASC:
+                ordered_all_notification_list = all_notification_list.order_by(
+                    NotificationsTable.created_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_all_notification_list = all_notification_list.order_by(
+                    NotificationsTable.created_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -111,7 +131,7 @@ def get_all_notifications(family_id: str) -> list[dict]:
                 "notification_grade": data[3],
                 "description": data[4],
                 "is_read": data[5]
-            } for data in all_notification_list]
+            } for data in ordered_all_notification_list]
 
             result = serialized_data
         except SQLAlchemyError as error:

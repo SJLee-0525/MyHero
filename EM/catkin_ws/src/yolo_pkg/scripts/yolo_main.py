@@ -2,14 +2,41 @@
 # -*- coding: utf-8 -*-
 
 import rospy
+import cv2
+import numpy as np
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
+from std_msgs.msg import String
+import numpy as np
 import threading
 import asyncio
 from geometry_msgs.msg import PointStamped
 
 # fall_detection 모듈에서 EnhancedFallDetector를 임포트합니다.
-from yolo_pkg.fall_detection import EnhancedFallDetector
+from yolo_pkg.fall_detection import EnhancedFallDetector  # src 디렉토리의 모듈을 import
+
+class CvBridge:
+    def imgmsg_to_cv2(self, ros_image, desired_encoding="passthrough"):
+        if ros_image.encoding != "bgr8":
+            rospy.logerr("This code expects bgr8 image encoding")
+            return None
+            
+        dtype = np.dtype("uint8")
+        dtype = dtype.newbyteorder('>' if ros_image.is_bigendian else '<')
+        image_data = np.frombuffer(ros_image.data, dtype=dtype)
+        
+        # 이미지 차원 재구성
+        image = image_data.reshape((ros_image.height, ros_image.width, 3))
+        return image
+
+    def cv2_to_imgmsg(self, cv_image, encoding="bgr8"):
+        img_msg = Image()
+        img_msg.height = cv_image.shape[0]
+        img_msg.width = cv_image.shape[1]
+        img_msg.encoding = encoding
+        img_msg.is_bigendian = 0
+        img_msg.step = cv_image.shape[1] * 3
+        img_msg.data = cv_image.tobytes()
+        return img_msg
 
 class FallDetectionNode:
     def __init__(self):

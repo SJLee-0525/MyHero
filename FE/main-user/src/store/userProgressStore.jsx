@@ -16,7 +16,9 @@ export const UserProgressContext = createContext({
   MAIN_API_URL: "",
   DEV_KEY: "",
   MAIN_KEY: "",
+  connectRasp: () => {},
   handleLogin: () => {},
+  getFamiliyId: () => {},
   handleLogout: () => {},
 });
 
@@ -63,8 +65,8 @@ export default function UserProgressContextProvider({ children }) {
 
   function handleUpdateSessionLoginInfo(userInfo) {
     setLoginUserInfo({
-      login: userInfo.login,
-      userInfo: userInfo.userInfo,
+      login: true,
+      userInfo,
     });
 
     // 로그인 정보 저장
@@ -79,19 +81,19 @@ export default function UserProgressContextProvider({ children }) {
         password,
       });
 
+      console.log(response)
+
       if (response.success) {
         const resData = response.data;
+        console.log('resData', resData)
 
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
 
           // 로그인 정보 저장
-          await handleUpdateSessionLoginInfo({
-            login: true,
-            userInfo: resData.result.user_data,
-          });
+          handleUpdateSessionLoginInfo(resData.result.user_data);
 
-          return { success: true, data: resData };
+          return { success: true, data: resData.user_id };
         }
       } else {
         console.error("로그인 실패:", response.error);
@@ -112,6 +114,54 @@ export default function UserProgressContextProvider({ children }) {
           message: "네트워크 오류가 발생했습니다.",
         },
       };
+    }
+  }
+
+  async function getFamiliyId() {
+    if (!loginUserInfo.login) {
+      return
+    }
+
+    try {
+      const response = await request(`${DEV_API_URL}/families/check-exist`, 'POST', {id: loginUserInfo.userInfo.id})
+    
+      if (response.success) {
+        const resData = response.data
+        if (resData.message === "Family exists") {
+          console.log('가족 모임 존재')
+          setFamilyInfo((prev) => {
+            return {
+              ...prev,
+              isExist:true,
+              familyId:resData.result.family_id
+            }
+          })
+        }
+      } else {
+        console.error('가족 모임이 없습니다.')
+        setFamilyInfo({
+          isExist: false,
+          familyId: undefined,
+          familyMember: undefined
+        })
+      }
+    
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async function connectRasp() {
+    try {
+      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {user_id: loginUserInfo.userInfo.id})
+
+      if (response.success) {
+        console.log("연결되었습니다.", response);
+      } else {
+        console.log("문제가 있습니다.", response);
+      }
+    } catch (error) {
+      console.error("네트워크 에러", error);
     }
   }
 
@@ -176,9 +226,11 @@ export default function UserProgressContextProvider({ children }) {
     MAIN_API_URL,
     DEV_KEY,
     MAIN_KEY,
+    connectRasp,
     setLoginUserInfo,
     setFamilyInfo,
     handleLogin,
+    getFamiliyId,
     handleLogout,
   };
 

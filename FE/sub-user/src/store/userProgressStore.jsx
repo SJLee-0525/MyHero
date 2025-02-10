@@ -61,6 +61,7 @@ export const UserProgressContext = createContext({
   handleUpdateUserInfo: (payload) => {},
   handleSignOut: (password) => {},
   handleCheckFamilyExist: (userId) => {},
+  handleGetFamilyName: (familyId) => {},
   handleCreateFamily: (payload) => {},
   handleGetFamilyInfo: (familyId) => {},
   handleUpdateFamilyInfo: (newFamilyName) => {},
@@ -863,12 +864,24 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "All members retrieved successfully") {
           console.log("가족 목록 조회 성공");
 
-          // 정보 갱신
-          setMemberInfo({
-            isExist: true,
-            registerData: resData.result,
-            selectedFamilyId: resData.result[0].family_id,
-          });
+          // 가족 이름 검색 및 저장
+          const familyIds = resData.result;
+          const newRegisterData = await handleGetFamilyName(familyIds);
+
+          if (newRegisterData) {
+            // 정보 갱신
+            setMemberInfo({
+              isExist: true,
+              registerData: newRegisterData,
+              selectedFamilyId: newRegisterData[0].family_id,
+            });
+          } else {
+            setMemberInfo({
+              isExist: true,
+              registerData: resData.result,
+              selectedFamilyId: resData.result[0].family_id,
+            });
+          }
 
           return { success: true, data: resData };
         } else if (resData.message === "No members found") {
@@ -892,6 +905,47 @@ export default function UserProgressContextProvider({ children }) {
           },
         };
       }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 이름 검색 및 저장
+  async function handleGetFamilyName(familyIds) {
+    if (!familyIds) return;
+
+    try {
+      const newRegisterData = [];
+
+      for (let i = 0; i < familyIds.length; i++) {
+        const response = await request(
+          `${DEV_API_URL}/families/${familyIds[i].family_id}`,
+          "GET"
+        );
+
+        if (response.success) {
+          const resData = response.data;
+
+          if (resData.message === "Family retrieved successfully") {
+            newRegisterData.push({
+              ...familyIds[i],
+              family_name: resData.result.family_name,
+            });
+          }
+        } else {
+          console.error("가족 이름 조회 실패:", response.error);
+          return familyIds;
+        }
+      }
+      // 반환
+      return newRegisterData;
     } catch (error) {
       console.error("네트워크 오류 또는 기타 예외:", error);
       return {
@@ -1189,6 +1243,7 @@ export default function UserProgressContextProvider({ children }) {
     handleUpdateFamilyInfo,
     handleDeleteFamilyInfo,
     handleCheckFamilyList,
+    handleGetFamilyName,
     handleGetFamilyMemberInfo,
     handleCreateMember,
     handleUpdateMember,

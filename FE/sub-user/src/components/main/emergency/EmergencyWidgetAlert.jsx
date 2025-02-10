@@ -20,7 +20,7 @@ export default function EmergencyWidgetAlert({ emergencyAlert, onCheckAlert }) {
       <div>
         <div className="title-container">
           <h1 className={res ? "answer-title" : "no-answer-title"}>
-            {emergencyAlert.location} 근처에서 낙상 감지
+            🚨 {emergencyAlert.location} 근처에서 낙상 감지
           </h1>
         </div>
         <p className="date">{emergencyAlert.date}</p>

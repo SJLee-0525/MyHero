@@ -60,7 +60,7 @@ export default function SideNav() {
               >
                 {userProgressStore.memberInfo.registerData.map((info) => (
                   <option key={info.family_id} value={info.family_id}>
-                    {info.family_id}
+                    {info.family_name}
                   </option>
                 ))}
               </select>

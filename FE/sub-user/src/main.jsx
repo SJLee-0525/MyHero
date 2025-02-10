@@ -11,6 +11,7 @@ import EmergencyContextProvider from "./store/emergencyStore.jsx";
 import CalendarStoreContextProvider from "./store/calendarStore.jsx";
 import MessageContextProvider from "./store/messageStore.jsx";
 import HealthContextProvider from "./store/healthStore.jsx";
+import EffectContextProvider from "./store/effectStore.jsx";
 
 import { loadEnvironments } from "./store/environmentsStore.jsx";
 
@@ -25,7 +26,9 @@ const startApp = async () => {
           <EmergencyContextProvider>
             <MessageContextProvider>
               <CalendarStoreContextProvider>
-                <App />
+                <EffectContextProvider>
+                  <App />
+                </EffectContextProvider>
               </CalendarStoreContextProvider>
             </MessageContextProvider>
           </EmergencyContextProvider>

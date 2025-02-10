@@ -269,14 +269,14 @@ export default function CalendarSchedules() {
       </div>
 
       {/* 일정 추가 input 그룹 */}
-      <form onSubmit={handleSubmitSchedule} className="calendar-form">
+      {/* <form onSubmit={handleSubmitSchedule} className="calendar-form">
         <input
           type="text"
           ref={inputScheduleRef}
           placeholder="Add a schedule"
         />
         <button type="submit">+</button>
-      </form>
+      </form> */}
     </>
   );
 }

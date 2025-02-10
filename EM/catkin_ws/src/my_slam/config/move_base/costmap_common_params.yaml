@@ -16,7 +16,7 @@ footprint_padding: 0.01             # 장애물과의 최소 여유(패딩)
 # 센서 업데이트 관련 (라이다만 사용)
 observation_sources: "laser_scan"
 laser_scan:
-  observation_persistence: 1  # 장애물 정보 유지 시간 (초)
+  observation_persistence: 0.0  # 장애물 정보 유지 시간 (초)
   data_type: LaserScan
   topic: scan             # 실제 LiDAR 토픽 이름
   marking: true

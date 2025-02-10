@@ -7,7 +7,7 @@ global_planner:
   use_grid_path: true          # 기본값: false | true이면 그리드 경계에 맞춘 경로 생성
   old_navfn_behavior: false     # 기본값: false | 기존 navfn과 동일한 경로 생성 여부
   lethal_cost: 253              # 기본값: 253 | 치명적 장애물로 간주할 비용 값
-  neutral_cost: 50              # 기본값: 50  | 기본 중립 비용 값
+  neutral_cost: 40              # 기본값: 50  | 기본 중립 비용 값
   cost_factor: 5.0              # 기본값: 3.0 | costmap 비용에 곱해지는 계수
   publish_potential: true       # 기본값: true | 계산된 잠재력 맵을 퍼블리시 여부
   orientation_mode: 1           # 기본값: 0 | 경로 포인트 orientation 설정 모드; 3=ForwardThenInterpolate

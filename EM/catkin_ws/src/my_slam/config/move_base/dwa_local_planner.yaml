@@ -22,7 +22,7 @@ DWAPlannerROS:
   acc_lim_y: 0.0             # 기본값: 2.5  | y축 가속도 제한 (m/s², 차동구동 아님)
 
   # === Forward Simulation Parameters ===
-  sim_time: 2.0              # 기본값: 1.7  | 시뮬레이션 시간 (초)
+  sim_time: 1.7              # 기본값: 1.7  | 시뮬레이션 시간 (초)
   vx_samples: 10             # 기본값: 3    | x축 속도 샘플 수
   vy_samples: 0              # 기본값: 10   | y축 속도 샘플 수 (차동구동이면 0)
   vtheta_samples: 30         # 기본값: 20   | 회전 속도 샘플 수
@@ -39,7 +39,7 @@ DWAPlannerROS:
   # === Trajectory Scoring Parameters ===
   path_distance_bias: 32.0     # 기본값: 32.0 | 경로 추종 가중치
   goal_distance_bias: 20.0     # 기본값: 24.0 | 목표 도달 가중치
-  occdist_scale: 1.0           # 기본값: 0.01 or 1.0 | 장애물 회피 가중치
+  occdist_scale: 0.8           # 기본값: 0.01 or 1.0 | 장애물 회피 가중치
   forward_point_distance: 0.4  # 기본값: 0.325| 추가 평가 포인트까지의 거리 (m)
   stop_time_buffer: 0.2        # 기본값: 0.2  | 정지 전 버퍼 시간 (초)
   scaling_speed: 0.3           # 기본값: 0.25 | 감속 시작 속도 (m/s) - 장애물 근접 시

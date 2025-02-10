@@ -44,9 +44,11 @@ export default function FamilyUserInfo() {
               <p>등록 ID: {familyUserInfo.familyInfo.id}</p>
               <QRCodeCanvas
                 onClick={() =>
-                  navigate(`/accounts/register/${familyUserInfo.familyInfo.id}`)
+                  navigate(
+                    `${window.location.pathname}/register/${familyUserInfo.familyInfo.id}`
+                  )
                 }
-                value={`${userProgressStore.DEV_API_URL}/accounts/register/${familyUserInfo.familyInfo.id}`}
+                value={`${window.location.origin}/accounts/register/${familyUserInfo.familyInfo.id}`}
               />
             </div>
             <div className="family-btn-container">

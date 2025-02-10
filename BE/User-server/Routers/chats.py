@@ -95,4 +95,3 @@ async def chat_with_ai(chat_data: AIChat, request_id = Depends(Database.check_cu
                 }
             }
         )
-

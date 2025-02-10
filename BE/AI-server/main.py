@@ -116,6 +116,10 @@ async def update_cache_periodically():
         except Exception as e:
             logger.error(f"Cache update error: {str(e)}")
 
+@app.get("/heartbeat", status_code=200)
+async def heartbeat():
+    return {"status": "ok"}
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     try:

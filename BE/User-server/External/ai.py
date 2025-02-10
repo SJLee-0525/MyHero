@@ -7,10 +7,10 @@ External Server Connection
 # Libraries
 import httpx
 
+from Utilities.logging_tools import *
+
 import os
 from dotenv import load_dotenv
-
-from Utilities.logging_tools import *
 
 logger = get_logger("External_AI")
 
@@ -21,6 +21,25 @@ AI_PORT: int = int(os.getenv("AI_PORT"))
 AI_PATH: str = f"{AI_HOST}:{AI_PORT}"
 external_timeout: float = float(os.getenv("EXTERNAL_TIMEOUT", 60.0))
 set_timeout = httpx.Timeout(timeout=external_timeout)
+
+# ========== Heartbeat ==========
+
+# AI Process 상태 확인기능
+async def check_connection() -> httpx.Response | None:
+    """
+    AI Process의 상태를 확인하는 기능
+    """
+    external_url = f"{AI_PATH}/heartbeat"
+
+    try:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
+            response = await client.get(external_url)
+            return response
+    except httpx.RequestError as error:
+        logger.critical("Error: Unable to check connection with AI server.")
+        return None
+
+# ========== Status 부분 ==========
 
 # 단일 정신건강 정보를 요청하는 기능
 async def request_mental_status(family_id: str) -> httpx.Response | None:
@@ -57,8 +76,17 @@ async def request_mental_reports(family_id: str) -> httpx.Response | None:
         logger.critical("Error: Unable to request mental reports from AI server.")
         return None
 
+# ========== Chats 부분 ==========
+
 # AI와 채팅하기 위해 메시지를 보내는 기능
 async def talk_with_ai(user_id: str, message: str, session_id: str = None) -> httpx.Response | None:
+    """
+    AI와 채팅을 위해 메시지를 보내는 기능
+    :param user_id: 채팅을 보내는 사용자의 ID
+    :param message: 채팅 내용
+    :param session_id: 이전 대화 내용을 확인하기 위한 Session ID
+    :return: AI Server로부터 전달받은 AI의 답장 (httpx.Response)
+    """
     external_url = f"{AI_PATH}/chat"
 
     request_data = {

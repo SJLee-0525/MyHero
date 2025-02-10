@@ -139,3 +139,10 @@ class ActiveStatus(BaseModel):
     is_critical: Optional[bool] = None  # 활동이 상태에 치명적인지 여부
     description: Optional[str] = None  # 상세한 보고 내용
 
+class AIChat(BaseModel):
+    """
+    AI와 대화를 위해 Client가 보내는 데이터
+    """
+    user_id: Optional[str] = None
+    message: Optional[str] = None
+    chat_session: Optional[str] = None

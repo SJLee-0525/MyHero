@@ -6,7 +6,38 @@
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
+#include <chrono>
+#include <signal.h>
+#include <unistd.h>
+#include <cstring>
+#include <sys/types.h>
 using namespace std;
+
+volatile sig_atomic_t gSignalStatus = 0;
+
+void signalHandler(int signum) {
+    std::cout << "Interrupt signal (" << signum << ") received.\n";
+
+    switch(signum) {
+        case SIGTERM: // systemd로부터의 종료 신호
+            std::cout << "SIGTERM received: Termination requested\n";
+            break;
+        case SIGINT:  // Ctrl+C
+            std::cout << "SIGINT received: Interactive attention signal\n";
+            break;
+        case SIGQUIT: // Ctrl+\
+            std::cout << "SIGQUIT received: Quit program\n";
+            break;
+        case SIGPWR:  // 전원 실패
+            std::cout << "SIGPWR received: Power failure\n";
+            break;
+        case SIGHUP:  // 터미널 연결 종료
+            std::cout << "SIGHUP received: Terminal disconnected\n";
+            break;
+    }
+    gSignalStatus = 1;
+}
+
 
 void load_env() {
     std::ifstream file(".env");
@@ -32,6 +63,18 @@ void load_env() {
 }
 
 int main() {
+	 struct sigaction sigIntHandler;
+    
+    sigIntHandler.sa_handler = signalHandler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+
+    sigaction(SIGTERM, &sigIntHandler, NULL);
+    sigaction(SIGINT, &sigIntHandler, NULL);
+    sigaction(SIGQUIT, &sigIntHandler, NULL);
+    sigaction(SIGPWR, &sigIntHandler, NULL);
+    sigaction(SIGHUP, &sigIntHandler, NULL);
+
 	load_env();
 	SensorManager sm;
 	CredentialsManager cm;
@@ -88,10 +131,27 @@ int main() {
 	}
 
 	sm.initialize();
-
-	SensorData Data = sm.readAllSensors();
-	sender.SendEnvironmentData(Data);
-	sender.SendHealthData(100.0);
+	auto lastTime = chrono::system_clock::now();
+	while(!gSignalStatus){
+		SensorData Data = sm.readAllSensors();
+		auto currentTime = chrono::system_clock::now();
+		auto elapsedTime = chrono::duration_cast<chrono::minutes>(currentTime - lastTime);
+		if(elapsedTime >= chrono::minutes(5)){
+			cout << "정기 환경 데이터 전송\n";
+			sender.SendEnvironmentData(Data);
+			lastTime = currentTime;
+		}
+		if(Data.ethanol > 2.0 || Data.dust > 25.0){
+			cout << "긴급 환경 데이터 전송" << Data.ethanol << "% " << Data.dust << "㎍/㎥\n";
+			sender.SendEnvironmentData(Data);
+		}
+		if(Data.heartrate > 10.0){
+			cout << "심박 데이터 전송 " << Data.heartrate << "BPM\n";
+			sender.SendHealthData(Data.heartrate);
+		}
+		this_thread::sleep_for(chrono::seconds(1));
+	}
+	cout << "Logout\n";
 	sender.Logout();
 
     return 0;

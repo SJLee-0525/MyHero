@@ -134,6 +134,23 @@ class Family(Base):
     main_user = Column(String(16))
     family_name = Column(String(128))
 
+class MemberRelations(Base):
+    __tablename__ = 'memberrelations'
+    id = Column(String(16), primary_key=True)
+    family_id = Column(String(16))
+    user_id = Column(String(16))
+    nickname = Column(String(32))
+
+class Message(Base):
+    __tablename__ = 'messages'
+    index = Column(Integer, primary_key=True, autoincrement=True)
+    from_id = Column(String(16))
+    to_id = Column(String(16))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    content = Column(Text)
+    image_id = Column(String(32))
+    is_read = Column(Integer, default=0)
+
 class ChatKeywords(Base):
     __tablename__ = 'chatkeywords'
     id = Column(Integer, primary_key=True, autoincrement=True)

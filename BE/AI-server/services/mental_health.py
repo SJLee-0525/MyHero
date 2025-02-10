@@ -23,6 +23,7 @@ class MentalHealthService:
             messages = [{
                 "role": "system",
                 "content": """사용자의 대화 내용을 언어학적으로 분석하여 정신 건강 상태를 평가하세요.
+                ex) 언어 패턴이 이상하다면 뇌졸증을 의심할 수 있고 인지력과 대화 맥략이 떨어진다면 치매를 의심할 수 있음.
                 다음 요소들을 중점적으로 분석하고 JSON 형식으로만 응답하세요:
 
                 1. 언어 패턴 분석:
@@ -52,11 +53,6 @@ class MentalHealthService:
                         "score": 0-100,
                         "topic_flow": "분석 내용",
                         "context_understanding": "분석 내용"
-                    },
-                    "emotional_patterns": {
-                        "score": 0-100,
-                        "emotion_words": "분석 내용",
-                        "intensity_changes": "분석 내용"
                     },
                     "cognitive_state": {
                         "score": 0-100,

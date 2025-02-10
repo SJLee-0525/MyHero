@@ -46,7 +46,7 @@ export default function FamilyUserInfo() {
                 onClick={() =>
                   navigate(`/accounts/register/${familyUserInfo.familyInfo.id}`)
                 }
-                value={`${userProgressStore.DEV_API_URL}/${familyUserInfo.familyInfo.id}`}
+                value={`${userProgressStore.DEV_API_URL}/accounts/register/${familyUserInfo.familyInfo.id}`}
               />
             </div>
             <div className="family-btn-container">

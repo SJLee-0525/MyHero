@@ -458,12 +458,35 @@
 }
 
 .calendar-schedule-reports-box .calendar-health-reports ul {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+  margin: 5px 0 0;
   padding: 0;
 
   min-height: 120px;
 
   list-style: none;
+}
+
+.calendar-schedule-reports-box .calendar-health-reports ul li button {
+  width: 100%;
+
+  color: white;
+  background-color: transparent;
+
+  border: 0;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendar-schedule-reports-box .calendar-health-reports ul li button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+
+  transition: all 0.3s ease;
 }
 
 .calendar-health-reports .health-report {
@@ -478,7 +501,7 @@
 
 .calendar-health-reports ul .critical-score {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   padding: 0px 8px;
@@ -494,7 +517,7 @@
 
 .calendar-health-reports ul .health-score {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   padding: 0px 8px;
@@ -509,13 +532,12 @@
 .calendar-health-reports ul .health-report-header {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: end;
 
-  margin: 5px 0px;
   padding: 0px 8px;
 
-  height: 30px;
+  height: 40px;
 }
 
 .calendar-health-reports ul .health-report-header p {
@@ -552,12 +574,35 @@
 }
 
 .calendar-schedule-reports-box .calendar-mental-reports ul {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+  margin: 5px 0 0;
   padding: 0;
 
   min-height: 120px;
 
   list-style: none;
+}
+
+.calendar-schedule-reports-box .calendar-mental-reports ul li button {
+  width: 100%;
+
+  color: white;
+  background-color: transparent;
+
+  border: 0;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.calendar-schedule-reports-box .calendar-mental-reports ul li button:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+
+  transition: all 0.3s ease;
 }
 
 .calendar-schedule-reports-box .no-data {
@@ -580,7 +625,7 @@
 
 .calendar-mental-reports ul .critical-score {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   padding: 0px 8px;
@@ -596,7 +641,7 @@
 
 .calendar-mental-reports ul .mental-score {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 
   padding: 0px 8px;
@@ -611,13 +656,12 @@
 .calendar-mental-reports ul .mental-report-header {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: end;
 
-  margin: 5px 0px;
   padding: 0px 8px;
 
-  height: 30px;
+  height: 40px;
 }
 
 .calendar-mental-reports ul .mental-report-header p {

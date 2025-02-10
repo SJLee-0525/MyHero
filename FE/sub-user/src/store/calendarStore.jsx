@@ -72,6 +72,18 @@ export default function CalendarStoreContextProvider({ children }) {
   }
 
   function groupHomeStatusDataByKSTWithAvgScore(data) {
+    // 데이터가 없을 경우 초기화
+    if (Object.keys(data).length === 0) {
+      setSchedules((prevSchedules) => {
+        return {
+          ...prevSchedules,
+          homeStatus: {},
+        };
+      });
+
+      return {};
+    }
+
     const groupedData = {};
 
     data.forEach((entry) => {

@@ -1,5 +1,9 @@
 import { useContext, useRef } from "react";
+
 import { CalendarStoreContext } from "../../../store/calendarStore";
+import { HealthContext } from "../../../store/healthStore";
+
+import MentalReportDetail from "../mental/MentalReportDetail";
 
 import activityImage from "../../../assets/icons/run.svg";
 import mindfulnessImage from "../../../assets/icons/mindfulness.svg";
@@ -10,12 +14,28 @@ import humidityImage from "../../../assets/icons/humidity.svg";
 
 export default function CalendarSchedules() {
   const { selectedDate, schedules } = useContext(CalendarStoreContext);
+  const { mentalStatus, handleShowDetailReport } = useContext(HealthContext);
 
   const healthData = schedules.schedules.health;
   const mentalData = schedules.schedules.mental;
   const homeStatusData = schedules.schedules.homeStatus;
 
   const inputScheduleRef = useRef(""); // ref 초기화
+
+  function handleOpenSpecificMentalReport(targetIndex) {
+    const copyMentalStatus = [...mentalStatus];
+
+    const arrayIndex = copyMentalStatus.findIndex(
+      (report) => report.index === targetIndex
+    );
+
+    if (arrayIndex !== -1) {
+      // 선택된 감정 보고서 출력
+      handleShowDetailReport(arrayIndex);
+    } else {
+      console.error("해당되는 감정 보고서를 찾을 수 없습니다.");
+    }
+  }
 
   function handleSubmitSchedule(event) {
     event.preventDefault();
@@ -200,23 +220,36 @@ export default function CalendarSchedules() {
                 .slice() // 원본 배열 변경 방지
                 .reverse()
                 .map((record, index) => {
+                  // UTC+9 변환
+                  const reportedAtKST = new Date(
+                    record.reported_at
+                  ).toLocaleString("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true, // 24시간제
+                  });
+
                   return (
                     <li key={index}>
-                      <div className="health-report">
-                        <span
-                          className={
-                            record.is_critical
-                              ? "critical-score"
-                              : "health-score"
-                          }
-                        >
-                          {record.score}
-                        </span>
-                        <div className="health-report-header">
-                          <span>{record.reported_at.slice(11, 19)}</span>
-                          <p>{record.action}</p>
+                      <button>
+                        <div className="health-report">
+                          <span
+                            className={
+                              record.is_critical
+                                ? "critical-score"
+                                : "health-score"
+                            }
+                          >
+                            {record.score}
+                          </span>
+                          <div className="health-report-header">
+                            <span>{reportedAtKST}</span>{" "}
+                            {/* 변환된 시간 사용 */}
+                            <p>{record.action}</p>
+                          </div>
                         </div>
-                      </div>
+                      </button>
                     </li>
                   );
                 })
@@ -241,23 +274,39 @@ export default function CalendarSchedules() {
                 .slice()
                 .reverse()
                 .map((record, index) => {
+                  // UTC+9 변환
+                  const reportedAtKST = new Date(
+                    record.reported_at
+                  ).toLocaleString("ko-KR", {
+                    timeZone: "Asia/Seoul",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true, // 24시간제
+                  });
+
                   return (
                     <li key={index}>
-                      <div className="mental-report">
-                        <span
-                          className={
-                            record.is_critical
-                              ? "critical-score"
-                              : "mental-score"
-                          }
-                        >
-                          {record.score}
-                        </span>
-                        <div className="mental-report-header">
-                          <span>{record.reported_at.slice(11, 19)}</span>
-                          <p>{record.description.overall_emotional_state}</p>
+                      <button
+                        onClick={() =>
+                          handleOpenSpecificMentalReport(record.index)
+                        }
+                      >
+                        <div className="mental-report">
+                          <span
+                            className={
+                              record.is_critical
+                                ? "critical-score"
+                                : "mental-score"
+                            }
+                          >
+                            {record.score}
+                          </span>
+                          <div className="mental-report-header">
+                            <span>{reportedAtKST}</span>
+                            <p>{record.description.overall_emotional_state}</p>
+                          </div>
                         </div>
-                      </div>
+                      </button>
                     </li>
                   );
                 })
@@ -267,6 +316,7 @@ export default function CalendarSchedules() {
           </ul>
         </div>
       </div>
+      <MentalReportDetail />
 
       {/* 일정 추가 input 그룹 */}
       {/* <form onSubmit={handleSubmitSchedule} className="calendar-form">

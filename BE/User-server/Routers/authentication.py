@@ -27,7 +27,7 @@ isDev: bool = bool(int(os.getenv("IS_DEV", 0)))
 isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
 SECURE_SET: bool = True
 SAME_SET: Literal["lax", "strict", "none"] = "none"
-DOMAIN_SET: str = ".itdice.net"
+DOMAIN_SET: str = ".itdice.net" if isDeploy else "localhost"
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 logger = get_logger("Router_Authentication")
@@ -207,7 +207,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and target_user_id != request_id):
-        logger.warning(f"Can not access this account: {request_id}")
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={

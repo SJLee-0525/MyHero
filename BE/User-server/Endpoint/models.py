@@ -145,4 +145,4 @@ class AIChat(BaseModel):
     """
     user_id: Optional[str] = None
     message: Optional[str] = None
-    chat_session: Optional[str] = None
+    session_id: Optional[str] = None

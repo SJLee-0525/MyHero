@@ -56,3 +56,21 @@ async def request_mental_reports(family_id: str) -> httpx.Response | None:
     except httpx.RequestError as error:
         logger.critical("Error: Unable to request mental reports from AI server.")
         return None
+
+# AI와 채팅하기 위해 메시지를 보내는 기능
+async def talk_with_ai(user_id: str, message: str, session_id: str = None) -> httpx.Response | None:
+    external_url = f"{AI_PATH}/chat"
+
+    request_data = {
+        "user_id": user_id,
+        "user_message": message,
+        "session_id": session_id if session_id else None
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
+            response = await client.post(external_url, json=request_data)
+            return response
+    except httpx.RequestError as error:
+        logger.critical("Error: Unable to talk with AI server.")
+        return None

@@ -41,7 +41,8 @@ origins_url = [
     "https://main.itdice.net",
     "https://sub.itdice.net",
     "https://dev-ai.itdice.net",
-    "https://ai.itdice.net"
+    "https://ai.itdice.net",
+    "https://image.itdice.net"
 ]
 
 app.add_middleware(  # type: ignore

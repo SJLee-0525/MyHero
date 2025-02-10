@@ -1,16 +1,12 @@
 #home {
   display: flex;
   flex-direction: column;
+  align-items: center;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
   width: 1024px;
   height: 600px;
   transition: width 0.3s ease-in-out;
 }
 
-@media screen and (max-width: 768px) {
-  #home {
-    width: 100%;
-  }
-}
 
 #icon-box {
   display: flex;
@@ -205,7 +201,8 @@
 
 #environment-info img {
   width: 50%;
-  margin-top: 10px;
+  height: 40px;
+  margin-top: 5px;
 }
 
 #environment-info #info-title {
@@ -232,9 +229,8 @@
   justify-content: space-evenly;
   align-items: center;
   width: 877px;
-  height: 22%;
+  height: 25%;
   padding: 1rem;
-  margin-bottom: 1rem;
   gap: 1rem;
   position: relative;
 }

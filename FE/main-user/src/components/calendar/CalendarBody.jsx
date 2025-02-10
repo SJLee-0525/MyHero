@@ -41,7 +41,7 @@ export default function CalendarBody() {
             {/* 캘린더에 일정을 간략하게 표시 */}
             {schedules.schedules[date.date] && (
               <li className="calendar-day-schedules">
-                {schedules.schedules[date.date].slice(0, 2).map((schedule, index) => (
+                {schedules.schedules[date.date].slice(0, 1).map((schedule, index) => (
                   <ul key={index} className="calendar-day-schedule">
                     {schedule}
                   </ul>

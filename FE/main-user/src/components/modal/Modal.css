@@ -1,5 +1,5 @@
 #modal {
-  width: 800px;
+  width: 900px;
   padding: 2 0;
   z-index: 2;
   background: #ffffffe7;
@@ -42,6 +42,12 @@
   padding: 20px;
 }
 
+#modal-body-thin {
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 #emergency-modal-body {
   background-color: #ffec5c79;
   padding: 20px;
@@ -56,7 +62,18 @@
   margin-bottom: 20px;
 }
 
+#modal-bar-thin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0px;
+}
+
 #modal-bar h2 {
+  margin: 0;
+}
+
+#modal-bar-thin h2 {
   margin: 0;
 }
 

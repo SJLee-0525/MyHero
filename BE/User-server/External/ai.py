@@ -10,6 +10,10 @@ import httpx
 import os
 from dotenv import load_dotenv
 
+from Utilities.logging_tools import *
+
+logger = get_logger("External_AI")
+
 # 외부 AI Process 서버 확인
 load_dotenv()
 AI_HOST: str = os.getenv("AI_HOST")
@@ -32,7 +36,7 @@ async def request_mental_status(family_id: str) -> httpx.Response | None:
             response = await client.post(external_url)
             return response
     except httpx.RequestError as error:
-        print("[External] Error: Unable to request mental status from AI server.")
+        logger.critical("Error: Unable to request mental status from AI server.")
         return None
 
 # TODO - API 변경 반영 필요!
@@ -50,5 +54,5 @@ async def request_mental_reports(family_id: str) -> httpx.Response | None:
             response = await client.post(external_url)
             return response
     except httpx.RequestError as error:
-        print("[External] Error: Unable to request mental reports from AI server.")
+        logger.critical("Error: Unable to request mental reports from AI server.")
         return None

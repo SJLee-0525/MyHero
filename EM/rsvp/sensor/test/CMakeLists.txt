@@ -16,5 +16,6 @@ target_link_libraries(test_runner
     wiringPi
     ${CURL_LIBRARIES}
     nlohmann_json::nlohmann_json
+	OpenSSL::Crypto
 )
 target_include_directories(test_runner PRIVATE ${CMAKE_SOURCE_DIR}/include)

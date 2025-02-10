@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy import create_engine
+
 import os
 import logging
 import asyncio
@@ -16,10 +18,13 @@ from services.emotion import EmotionService
 from services.disaster import DisasterService
 from services.news import NewsService
 from services.mental_health import MentalHealthService
+from services.message_service import MessageService
 from utils.cache import CacheManager
-from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport
+from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport, MemberRelations
 
 from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now
+
+from typing import List
 
 # 환경 변수 로드
 load_dotenv()
@@ -47,6 +52,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# DB 연결 설정
+DATABASE_URL = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:3306/S12P11A102"
+
+engine = create_engine(
+    DATABASE_URL,
+    pool_recycle=120,  
+    pool_pre_ping=True  
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+db = SessionLocal()
+
 # 서비스 초기화
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 weather_service = WeatherService(api_key=os.getenv("WEATHER_API_KEY"))
@@ -67,6 +85,21 @@ class PeriodRequest(BaseModel):
     start_date: datetime
     end_date: datetime
 
+class MessageRequest(BaseModel):
+    from_id: str
+    content: str
+
+class MessageRequestone(BaseModel):
+    from_id: str
+    to_id: str
+    content: str
+
+class MessageResponse(BaseModel):
+    index: int
+    sender_nickname: str
+    content: str
+    created_at: datetime
+    is_read: bool
 
 async def update_cache_periodically():
     while True:
@@ -82,12 +115,9 @@ async def update_cache_periodically():
             await asyncio.sleep(3600)  # 1시간 대기 
         except Exception as e:
             logger.error(f"Cache update error: {str(e)}")
-        finally:
-            db.close()
-
 
 @app.post("/chat", response_model=ChatResponse)
-async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
+async def chat_endpoint(request: ChatRequest):
     try:
         chat_service = ChatService(openai_client, db)
         response = await chat_service.process_chat(request.user_id, request.user_message, request.session_id)
@@ -95,11 +125,9 @@ async def chat_endpoint(request: ChatRequest, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Chat processing error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        db.close() 
-
+    
 @app.get("/weather/{user_id}")
-async def get_weather(user_id: str, db: Session = Depends(get_db)):
+async def get_weather(user_id: str):
     try:
         # 캐시 확인
         cached_data = cache_manager.get_weather(user_id)
@@ -140,11 +168,9 @@ async def update_notifications_periodically():
             await asyncio.sleep(300)  # 5분 대기
         except Exception as e:
             logger.error(f"Notification update error: {str(e)}")
-        finally:
-            db.close()
 
 @app.post("/generate-emotional-report/{family_id}")
-async def generate_emotional_report(family_id: str, db: Session = Depends(get_db)):
+async def generate_emotional_report(family_id: str):
     try:
         emotion_service = EmotionService(openai_client, db)
         report = await emotion_service.generate_report(family_id)
@@ -157,14 +183,11 @@ async def generate_emotional_report(family_id: str, db: Session = Depends(get_db
     except Exception as e:
         logger.error(f"Emotion report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        db.close() 
     
 @app.post("/generate-emotional-report/period/{family_id}")
 async def gnerate_periodic_report(
     family_id: str,
-    period: PeriodRequest,
-    db: Session = Depends(get_db)
+    period: PeriodRequest
 ):
     try:
         emotion_service = EmotionService(openai_client, db)
@@ -174,11 +197,9 @@ async def gnerate_periodic_report(
     except Exception as e:
         logger.error(f"Periodic report error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        db.close() 
 
 @app.get("/generate-keyword/{family_id}")
-async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
+async def generate_keywords(family_id: str):
     try:
         today = get_kst_today()
         today_utc = to_utc_start_of_day(today)
@@ -241,8 +262,7 @@ async def generate_keywords(family_id: str, db: Session = Depends(get_db)):
 @app.post('/analyze-mental-health/{family_id}')
 async def analyze_mental_health(
     family_id: str,
-    period: Optional[PeriodRequest] = None,
-    db: Session = Depends(get_db)
+    period: Optional[PeriodRequest] = None
 ):
     """
     - 오늘 하루 분석시에는 POST /analyze-mental-health/{family_id}로 요청
@@ -261,14 +281,102 @@ async def analyze_mental_health(
     except Exception as e:
         logger.error(f'Mental health analysis error: {str(e)}')
         raise HTTPException(status_code=500, detail=str(e))
-    finally:
-        db.close() 
+
+@app.post("/chat/message")
+async def send_message(request: MessageRequest):
+    try:
+        message_service = MessageService(db)
+        success, count = await message_service.broadcast_message(
+            from_id=request.from_id,
+            content=request.content
+        )
+        
+        if success:
+            return {
+                "status": "success",
+                "message": f"메시지가 {count}명의 가족 구성원에게 전송되었습니다"
+            }
+        raise HTTPException(status_code=500, detail="메시지 전송에 실패했습니다")
+    except Exception as e:
+        logger.error(f"메시지 전송 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/chat/message/single")
+async def send_single_message(request: MessageRequestone):
+    try:
+        message_service = MessageService(db)
+        success = await message_service.send_message(
+            from_id=request.from_id,
+            to_id=request.to_id,
+            content=request.content
+        )
+        
+        if success:
+            return {"status": "success", "message": "메시지가 전송되었습니다"}
+        raise HTTPException(status_code=500, detail="메시지 전송에 실패했습니다")
+    
+    except Exception as e:
+        logger.error(f"메시지 전송 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/chat/messages/{user_id}", response_model=List[MessageResponse])
+async def get_unread_messages(user_id: str):
+    try:
+        message_service = MessageService(db)
+        messages = message_service.get_unread_messages(user_id)
+        
+        response_messages = []
+        for msg in messages:
+            # 발신자의 가족 정보 조회
+            main_user_family = db.query(Family)\
+                .filter(Family.main_user == msg.to_id)\
+                .first()
+                
+            if main_user_family:
+                member_relation = db.query(MemberRelations)\
+                    .filter(
+                        MemberRelations.family_id == main_user_family.id,
+                        MemberRelations.user_id == msg.from_id
+                    ).first()
+                nickname = member_relation.nickname if member_relation else "가족"
+            else:
+                nickname = "가족"
+                
+            response_messages.append(MessageResponse(
+                index=msg.index,
+                sender_nickname=nickname,
+                content=msg.content,
+                created_at=msg.created_at,
+                is_read=bool(msg.is_read)
+            ))
+        
+        return response_messages
+        
+    except Exception as e:
+        logger.error(f"메시지 조회 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/chat/messages/read/{message_id}")
+async def mark_message_as_read(message_id: int):
+    try:
+        message_service = MessageService(db)
+        if message_service.mark_as_read(message_id):
+            return {"status": "success", "message": "메시지를 읽음 처리했습니다"}
+        raise HTTPException(status_code=404, detail="메시지를 찾을 수 없습니다")
+    except Exception as e:
+        logger.error(f"메시지 읽음 처리 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(update_notifications_periodically())
     asyncio.create_task(update_cache_periodically())
     logger.info("Application startup completed")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    db.close()
+    engine.dispose()
 
 if __name__ == "__main__":
     import uvicorn

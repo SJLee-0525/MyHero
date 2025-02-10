@@ -1,6 +1,5 @@
 #modal {
-  min-width: 90%;
-  min-height: 90%;
+  width: 800px;
   padding: 2 0;
   z-index: 2;
   background: #ffffffe7;

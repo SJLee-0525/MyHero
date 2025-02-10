@@ -4,6 +4,8 @@
   background: #ffffff50;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   width: 10%;
+  /* height: 600px; */
+  height: 570px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

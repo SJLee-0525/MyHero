@@ -1,7 +1,9 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import axios from "axios";
+import { useContext } from "react";
+import { useMainHttp } from "../../../hooks/useMainHttp";
+import { UserProgressContext } from "../../../store/userProgressStore";
 import "../Home.css";
 
 import Temperature from "../../../assets/stat-icons/thermostat.svg";
@@ -10,6 +12,10 @@ import Airwave from "../../../assets/stat-icons/airwave.svg";
 import Gas from "../../../assets/stat-icons/heat.svg";
 
 export default function Environment() {
+    const { request, loading, error } = useMainHttp();
+    const { familyInfo } = useContext(UserProgressContext);
+    const familyId = familyInfo?.familyId;
+
     const [environmentData, setEnvironmentData] = useState({
         temperature: "--",
         humidity: "--",
@@ -18,30 +24,30 @@ export default function Environment() {
     });
 
     useEffect(() => {
+        if (!familyId) return;
+        
         const fetchEnvironmentData = async () => {
             try {
-                const familyId = "FlcuDLxVC9SolW70";
-                const API_URL = `http://localhost:3000/status/home/latest/${familyId}`;
+                const response = await request(`/status/home/latest/${familyId}`, "GET");
 
-                const response = await axios.get(API_URL);
-                console.log(response.data);
-
-                const { temperature, humidity, dust_level, ethanol } = response.data;
-
-                setEnvironmentData({
-                    temperature,
-                    humidity,
-                    dust: dust_level,
-                    ethanol
-                });
-
+                if (response.success) {
+                    const { temperature, humidity, dust_level, ethanol } = response.data;
+                    setEnvironmentData({
+                        temperature,
+                        humidity,
+                        dust: dust_level,
+                        ethanol
+                    });
+                } else {
+                    console.error("환경 데이터를 로드 실패:", response.error);
+                }
             } catch (error) {
                 console.error("환경 데이터를 불러오는 중 오류 발생:", error);
             }
         };
 
         fetchEnvironmentData();
-    }, []);
+    }, [familyId]);
 
     return (
         <div id="environment">

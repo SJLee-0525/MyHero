@@ -1,6 +1,7 @@
 import Weather from "./information/Weather";
 import Schedule from "./information/Schedule";
 import Environment from "./information/Environment";
+import UserProgressContextProvider from "../../store/userProgressStore";
 import "./Home.css";
 
 export default function Info() {
@@ -10,7 +11,9 @@ export default function Info() {
                 <Weather /> 
                 <Schedule />
             </div>
-            <Environment />
+            <UserProgressContextProvider>
+                <Environment />
+            </UserProgressContextProvider>
         </div>
     );
 }

@@ -5,14 +5,17 @@
 Database Tools Part
 """
 
-# Library
+# Libraries
 from Database.connector import Database
 from Database.models import *
 
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
 
+from Utilities.logging_tools import *
+
 database: Database = Database()
+logger = get_logger("DB_Tools")
 
 # ========== Tool 부분 ==========
 
@@ -40,7 +43,7 @@ def get_all_master_region() -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting all master region data: {str(error)}")
+            logger.error(f"Error getting all master region data: {str(error)}")
             result = []
         finally:
             return result
@@ -85,7 +88,7 @@ def get_all_sub_region(master_region: str = None) -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting all sub region data: {str(error)}")
+            logger.error(f"Error getting all sub region data: {str(error)}")
             result = []
         finally:
             return result

@@ -5,7 +5,7 @@
 Parts of Members
 """
 
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
@@ -15,6 +15,7 @@ from Database.models import *
 from Endpoint.models import *
 
 from Utilities.auth_tools import *
+from Utilities.logging_tools import *
 
 import os
 from dotenv import load_dotenv
@@ -26,25 +27,26 @@ isDev: bool = bool(int(os.getenv("IS_DEV", 0)))
 isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
 SECURE_SET: bool = True
 SAME_SET: Literal["lax", "strict", "none"] = "none"
-DOMAIN_SET: str = ".itdice.net" if isDeploy else None
+DOMAIN_SET: str = ".itdice.net"
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
+logger = get_logger("Router_Authentication")
 
 # ========== Auth 부분 ==========
 
 # 사용자가 로그인하는 기능
 @router.post("/login", status_code=status.HTTP_200_OK)
 async def login(response: Response, login_data: Login):
-    # 필요한 정보가 입력되었는지 확인 (ver2)
-    if login_data.email is None or login_data.email == "" or \
-            login_data.password is None or login_data.password == "":
-        missing_location: list = ["body"]
+    # 필요한 정보가 입력되었는지 점검
+    missing_location: list = ["body"]
 
-        if login_data.email is None or login_data.email == "":
-            missing_location.append("email")
-        if login_data.password is None or login_data.password == "":
-            missing_location.append("password")
+    if login_data.email is None or login_data.email == "":
+        missing_location.append("email")
+    if login_data.password is None or login_data.password == "":
+        missing_location.append("password")
 
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -59,6 +61,7 @@ async def login(response: Response, login_data: Login):
     user_id: str = Database.get_id_from_email(login_data.email)
 
     if not user_id:
+        logger.warning(f"Invalid email or password: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
@@ -72,6 +75,7 @@ async def login(response: Response, login_data: Login):
     user_data: dict = Database.get_one_account(user_id)
 
     if not user_data:
+        logger.warning(f"Invalid email or password: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
@@ -87,6 +91,7 @@ async def login(response: Response, login_data: Login):
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
+        logger.warning(f"Invalid email or password: {login_data.email}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
@@ -128,6 +133,8 @@ async def login(response: Response, login_data: Login):
         domain=DOMAIN_SET,
     )
 
+    logger.info(f">>> Login successful: {new_xid} <<<")
+
     return {
         "message": "Login successful",
         "result": {
@@ -159,6 +166,8 @@ async def logout(request: Request, response: Response):
         # 식별용 쿠키 삭제
         response.delete_cookie("session_id")
 
+    logger.info(f">>> Logout successful: {session_id} <<<")
+
     return {
         "message": "Logout successful"
     }
@@ -179,6 +188,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
         missing_location.append("new_password")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -197,6 +207,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and target_user_id != request_id):
+        logger.warning(f"Can not access this account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -214,6 +225,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
     user_data: dict = Database.get_one_account(target_user_id)
 
     if not user_data:
+        logger.warning(f"User not found: {target_user_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -234,6 +246,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
         is_verified_current: bool = verify_password(input_current_password, hashed_current_password)
 
         if not is_verified_current:
+            logger.warning(f"Invalid password: {target_user_id}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail={

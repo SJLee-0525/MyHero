@@ -5,11 +5,12 @@
 Server Authentication Tools
 """
 
-# Library
+# Libraries
 import random
 import string
 import bcrypt
 from enum import Enum
+
 from secrets import token_hex
 
 class Identify(Enum):

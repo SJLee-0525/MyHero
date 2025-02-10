@@ -5,14 +5,17 @@
 Database Members Part
 """
 
-# Library
+# Libraries
 from Database.connector import Database
 from Database.models import *
 
 from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
 
+from Utilities.logging_tools import *
+
 database: Database = Database()
+logger = get_logger("DB_Members")
 
 # 새로운 가족 관계 생성하는 기능
 def create_member(member_data: MemberRelationsTable) -> bool:
@@ -27,11 +30,11 @@ def create_member(member_data: MemberRelationsTable) -> bool:
     with database_pre_session() as session:
         try:
             session.add(member_data)
-            print(f"[DB] New member created: {member_data}")
+            logger.info(f"New member created: {member_data}")
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error creating new member: {str(error)}")
+            logger.error(f"Error creating new member: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -94,7 +97,7 @@ def get_all_members(family_id: str = None, user_id: str = None) -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting all member data: {str(error)}")
+            logger.error(f"Error getting all member data: {str(error)}")
             result = []
         finally:
             return result
@@ -129,7 +132,7 @@ def get_one_member(member_id: str) -> dict:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error getting one member data: {str(error)}")
+            logger.error(f"Error getting one member data: {str(error)}")
             result = {}
         finally:
             return result
@@ -159,7 +162,7 @@ def update_one_member(member_id: str, updated_member: MemberRelationsTable) -> b
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error updating one member data: {str(error)}")
+            logger.error(f"Error updating one member data: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -181,12 +184,13 @@ def delete_one_member(member_id: str) -> bool:
             member_data = session.query(MemberRelationsTable).filter(MemberRelationsTable.id == member_id).first()
             if member_data is not None:
                 session.delete(member_data)
+                logger.info(f"Member data deleted: {member_data}")
                 result = True
             else:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            print(f"[DB] Error deleting one member data: {str(error)}")
+            logger.error(f"Error deleting one member data: {str(error)}")
             result = False
         finally:
             session.commit()

@@ -5,7 +5,7 @@
 Database Table Models
 """
 
-# Library
+# Libraries
 from sqlalchemy import Column, Date, TIMESTAMP, INT, FLOAT, Enum, TEXT, String, Boolean, ForeignKey, func
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base

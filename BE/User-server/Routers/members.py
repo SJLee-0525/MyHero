@@ -5,7 +5,7 @@
 Parts of Members
 """
 
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Query
 from fastapi.encoders import jsonable_encoder
 
@@ -15,32 +15,33 @@ from Database.models import *
 from Endpoint.models import *
 
 from Utilities.auth_tools import *
+from Utilities.logging_tools import *
 
 router = APIRouter(prefix="/members", tags=["Members"])
+logger = get_logger("Router_Members")
 
 # ========== Member 부분 ==========
 
 # 새로운 가족 관계를 생성하는 기능
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_member(member_data: Member):
-    # 필수 입력 정보 점검 (Family ID and User ID)
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
     if member_data.family_id is None or member_data.family_id == "":
+        missing_location.append("family_id")
+    if member_data.user_id is None or member_data.user_id == "":
+        missing_location.append("user_id")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
-                "loc": ["body", "family_id"],
-                "message": "Family ID is required",
+                "loc": missing_location,
+                "message": "Family ID and User ID are required",
                 "input": jsonable_encoder(member_data)
-            }
-        )
-    elif member_data.user_id is None or member_data.user_id == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "user_id"],
-                "message": "User ID is required",
             }
         )
 
@@ -48,6 +49,7 @@ async def create_member(member_data: Member):
     exist_family: dict = Database.get_one_family(member_data.family_id)
 
     if not exist_family:
+        logger.warning(f"Family not found: {member_data.family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -61,6 +63,7 @@ async def create_member(member_data: Member):
     exist_user: dict = Database.get_one_account(member_data.user_id)
 
     if not exist_user or exist_user["role"] is not Role.SUB:
+        logger.warning(f"User not found or is not a sub user: {member_data.user_id}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -74,6 +77,7 @@ async def create_member(member_data: Member):
     exist_member: list = Database.get_all_members(family_id=member_data.family_id, user_id=member_data.user_id)
 
     if exist_member:
+        logger.warning(f"Member already exists in family: {member_data.family_id}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -135,6 +139,7 @@ async def get_all_members(
             "result": jsonable_encoder(member_list)
         }
     else:
+        logger.warning("No members found.")
         return {
             "message": "No members found",
             "result": jsonable_encoder(member_list)
@@ -151,6 +156,7 @@ async def get_member(member_id: str):
             "result": jsonable_encoder(member_data)
         }
     else:
+        logger.warning(f"Member not found: {member_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -167,6 +173,7 @@ async def update_member(member_id: str, updated_member: Member):
 
     # 없는 가족 관계 정보를 변경하려는지 확인
     if not previous_member:
+        logger.warning(f"Member not found: {member_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -206,10 +213,29 @@ async def update_member(member_id: str, updated_member: Member):
 # 가족 관계 정보를 삭제하는 기능
 @router.delete("/{member_id}", status_code=status.HTTP_200_OK)
 async def delete_member(member_id: str, checker: PasswordCheck):
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
+    if checker.password is None or checker.password == "":
+        missing_location.append("password")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Password is required",
+                "input": {"member_id": member_id, "password": "<PASSWORD>"}
+            }
+        )
+
     previous_member: dict = Database.get_one_member(member_id)
 
     # 없는 가족 관계를 삭제하려는지 확인
     if not previous_member:
+        logger.warning(f"Member not found: {member_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -219,24 +245,13 @@ async def delete_member(member_id: str, checker: PasswordCheck):
             }
         )
 
-    # 비밀번호 없이 요청한 경우
-    if checker.password is None or checker.password == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "password"],
-                "message": "Password is required",
-                "input": {"member_id": member_id, "password": "<PASSWORD>"}
-            }
-        )
-
     # 비밀번호 검증
     input_password: str = checker.password
     hashed_password: str = Database.get_hashed_password(previous_member["user_id"])
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
+        logger.warning(f"Invalid password: {member_id}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={

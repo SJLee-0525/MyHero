@@ -5,7 +5,7 @@
 Parts of Accounts
 """
 
-# Library
+# Libraries
 from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 
@@ -16,9 +16,12 @@ from Endpoint.models import *
 
 from Utilities.auth_tools import *
 from Utilities.check_tools import *
+from Utilities.logging_tools import *
+
 from datetime import date
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
+logger = get_logger("Router_Accounts")
 
 # ========== Account 부분 ==========
 
@@ -34,6 +37,7 @@ async def check_email(email_check: EmailCheck):
         missing_location.append("email")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -48,6 +52,7 @@ async def check_email(email_check: EmailCheck):
     email_list: list = [data["email"] for data in Database.get_all_email()]
 
     if target_email in email_list:
+        logger.warning(f"Email is already in use: {target_email}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -57,6 +62,7 @@ async def check_email(email_check: EmailCheck):
             }
         )
     else:
+        logger.info(f"Email is available: {target_email}")
         return {
             "message": "Email is available"
         }
@@ -75,6 +81,7 @@ async def create_account(account_data: Account):
         missing_location.append("email")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -87,6 +94,7 @@ async def create_account(account_data: Account):
 
     # 잘못된 옵션을 선택했는지 점검
     if account_data.role is not None and account_data.role.lower() not in Role._value2member_map_:
+        logger.error(f"Invalid value provided for account details (role): {account_data.role}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -96,6 +104,7 @@ async def create_account(account_data: Account):
             }
         )
     elif account_data.gender is not None and account_data.gender.lower() not in Gender._value2member_map_:
+        logger.error(f"Invalid value provided for account details (gender): {account_data.gender}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -109,6 +118,7 @@ async def create_account(account_data: Account):
     email_list: list = [data["email"] for data in Database.get_all_email()]
 
     if account_data.email in email_list:
+        logger.warning(f"Email is already in use: {account_data.email}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -135,6 +145,7 @@ async def create_account(account_data: Account):
     converted_birth_date = None
     if account_data.birth_date is not None:
         if is_valid_date(account_data.birth_date) is False:
+            logger.error(f"Invalid value provided for account details (birth date): {account_data.birth_date}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
@@ -188,6 +199,7 @@ async def get_all_accounts(request_id: str = Depends(Database.check_current_user
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access all accounts: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -205,6 +217,7 @@ async def get_all_accounts(request_id: str = Depends(Database.check_current_user
             "result": jsonable_encoder(account_list)
         }
     else:
+        logger.warning("No accounts found")
         return {
             "message": "No accounts found",
             "result": jsonable_encoder(account_list)
@@ -217,6 +230,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -235,6 +249,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
             "result": jsonable_encoder(account_data)
         }
     else:
+        logger.warning(f"Account not found: {user_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -251,6 +266,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -264,6 +280,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
     previous_account: dict = Database.get_one_account(user_id)
 
     if not previous_account:
+        logger.warning(f"Account not found: {user_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -275,6 +292,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
 
     # 잘못된 옵션을 선택했는지 점검
     if updated_account.role and updated_account.role.lower() not in Role._value2member_map_:
+        logger.error(f"Invalid value provided for account details (role): {updated_account.role}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -284,6 +302,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             }
         )
     elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
+        logger.error(f"Invalid value provided for account details (gender): {updated_account.gender}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -297,6 +316,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
     if updated_account.email:
         email_list: list = [data["email"] for data in Database.get_all_email()]
         if updated_account.email in email_list:
+            logger.warning(f"Email is already in use: {updated_account.email}")
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail={
@@ -307,25 +327,24 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             )
 
     # 입력받은 생년월일을 date 타입으로 변환
-    if updated_account.birth_date is None:
-        converted_birth_date = None
-    else:
-        if updated_account.birth_date.year < 1900 or updated_account.birth_date.year > 2022 or \
-            updated_account.birth_date.day < 1 or updated_account.birth_date.day > 31 or \
-            updated_account.birth_date.month < 1 or updated_account.birth_date.month > 12:
+    converted_birth_date = None
+    if updated_account.birth_date is not None:
+        if is_valid_date(updated_account.birth_date) is False:
+            logger.error(f"Invalid value provided for account details (birth date): {updated_account.birth_date}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
                     "type": "invalid value",
                     "message": "Invalid value provided for account details (birth date)",
-                    "input": { **jsonable_encoder(updated_account), "user_id": user_id }
+                    "input": {**jsonable_encoder(updated_account), "user_id": user_id}
                 }
             )
-        converted_birth_date = date(
-            year=updated_account.birth_date.year,
-            month=updated_account.birth_date.month,
-            day=updated_account.birth_date.day
-        )
+        else:
+            converted_birth_date = date(
+                year=updated_account.birth_date.year,
+                month=updated_account.birth_date.month,
+                day=updated_account.birth_date.day
+            )
 
     # 최종적으로 변경할 데이터 생성
     total_updated_account: AccountsTable = AccountsTable(
@@ -367,6 +386,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
         missing_location.append("password")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -381,6 +401,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -394,6 +415,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
     previous_account: dict = Database.get_one_account(user_id)
 
     if not previous_account:
+        logger.warning(f"Account not found: {user_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -410,6 +432,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
         is_verified: bool = verify_password(input_password, hashed_password)
 
         if not is_verified:
+            logger.warning(f"Invalid password: {user_id}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail={

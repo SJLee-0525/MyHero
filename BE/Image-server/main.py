@@ -8,7 +8,7 @@ version : 0.1.0
 # Libraries
 from fastapi import FastAPI, UploadFile, File, HTTPException, status, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 
 import filetype
@@ -74,6 +74,7 @@ os.makedirs(image_storage, exist_ok=True)
 checker_size: int = 2048
 allowed_types: list[str] = ["image/jpeg", "image/png", "image/gif", "image/webp"]
 max_image_size: int = int(os.getenv("MAX_IMAGE_SIZE")) * 1024 * 1024
+cache_duration: int = int(os.getenv("CACHE_DURATION"))
 
 
 # ========== 이미지 관리 기능 ==========
@@ -247,12 +248,9 @@ async def get_image(user_id: str, file_name: str, request_id=Depends(Database.ch
         )
 
     try:
-        # 파일 전달 스트림 생성
-        def file_stream():
-            with open(file_path, "rb") as _buffer:
-                yield from _buffer
+        cache_headers = {"Cache-Control": f"public, max-age={cache_duration}"}
 
-        return StreamingResponse(file_stream(), media_type=file_type.mime)
+        return FileResponse(file_path, media_type=file_type.mime, headers=cache_headers)
     except Exception as error:
         logger.error(f"Image access failed: {str(error)}")
         raise HTTPException(

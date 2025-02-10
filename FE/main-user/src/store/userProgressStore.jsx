@@ -63,8 +63,8 @@ export default function UserProgressContextProvider({ children }) {
 
   function handleUpdateSessionLoginInfo(userInfo) {
     setLoginUserInfo({
-      login: userInfo.login,
-      userInfo: userInfo.userInfo,
+      login: true,
+      userInfo,
     });
 
     // 로그인 정보 저장
@@ -79,19 +79,19 @@ export default function UserProgressContextProvider({ children }) {
         password,
       });
 
+      console.log(response)
+
       if (response.success) {
         const resData = response.data;
+        console.log('resData', resData)
 
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
 
           // 로그인 정보 저장
-          await handleUpdateSessionLoginInfo({
-            login: true,
-            userInfo: resData.result.user_data,
-          });
+          handleUpdateSessionLoginInfo(resData.result.user_data);
 
-          return { success: true, data: resData };
+          return { success: true, data: resData.user_id };
         }
       } else {
         console.error("로그인 실패:", response.error);
@@ -114,6 +114,33 @@ export default function UserProgressContextProvider({ children }) {
       };
     }
   }
+
+  async function connectRasp() {
+    try {
+      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {user_id: loginUserInfo.userInfo.id})
+
+      if (response.success) {
+        console.log("연결되었습니다.", response);
+      } else {
+        console.log("문제가 있습니다.", response);
+      }
+    } catch (error) {
+      console.error("네트워크 에러", error);
+    }
+  }
+
+  useEffect(() => {
+    console.log("loginUserInfo가 변경됨:", loginUserInfo);
+    
+    const initLogin = async () => {
+      if (loginUserInfo.userInfo && loginUserInfo.userInfo.id) {
+        await connectRasp()
+      }
+    }
+
+    initLogin()
+  }, [loginUserInfo]);
+  
 
   // 로그아웃
   async function handleLogout() {

@@ -25,7 +25,7 @@ export default function App() {
   const [isScreensaverActive, setIsScreensaverActive] = useState(false);
   const { loginUserInfo } = useContext(UserProgressContext);
 
-  const SCREENSAVER_TIMEOUT = 500000000000;
+  const SCREENSAVER_TIMEOUT = 500000;
   let timeoutId = null;
 
   const resetTimer = () => {

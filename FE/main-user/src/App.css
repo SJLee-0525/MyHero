@@ -1,5 +1,5 @@
 main {
-  height: 100vh;
+  height: 600px;
   display: flex;
   flex-direction: row;
 }
@@ -8,8 +8,8 @@ main {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 1024px;
+  height: 600px;
   z-index: 9999; /* 절대 맨앞 */
   background-color: black;
 }

@@ -16,7 +16,9 @@ export const UserProgressContext = createContext({
   MAIN_API_URL: "",
   DEV_KEY: "",
   MAIN_KEY: "",
+  connectRasp: () => {},
   handleLogin: () => {},
+  getFamiliyId: () => {},
   handleLogout: () => {},
 });
 
@@ -115,6 +117,40 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  async function getFamiliyId() {
+    if (!loginUserInfo.login) {
+      return
+    }
+
+    try {
+      const response = await request(`${DEV_API_URL}/families/check-exist`, 'POST', {id: loginUserInfo.userInfo.id})
+    
+      if (response.success) {
+        const resData = response.data
+        if (resData.message === "Family exists") {
+          console.log('가족 모임 존재')
+          setFamilyInfo((prev) => {
+            return {
+              ...prev,
+              isExist:true,
+              familyId:resData.result.family_id
+            }
+          })
+        }
+      } else {
+        console.error('가족 모임이 없습니다.')
+        setFamilyInfo({
+          isExist: false,
+          familyId: undefined,
+          familyMember: undefined
+        })
+      }
+    
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   async function connectRasp() {
     try {
       const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {user_id: loginUserInfo.userInfo.id})
@@ -128,19 +164,6 @@ export default function UserProgressContextProvider({ children }) {
       console.error("네트워크 에러", error);
     }
   }
-
-  useEffect(() => {
-    console.log("loginUserInfo가 변경됨:", loginUserInfo);
-    
-    const initLogin = async () => {
-      if (loginUserInfo.userInfo && loginUserInfo.userInfo.id) {
-        await connectRasp()
-      }
-    }
-
-    initLogin()
-  }, [loginUserInfo]);
-  
 
   // 로그아웃
   async function handleLogout() {
@@ -203,9 +226,11 @@ export default function UserProgressContextProvider({ children }) {
     MAIN_API_URL,
     DEV_KEY,
     MAIN_KEY,
+    connectRasp,
     setLoginUserInfo,
     setFamilyInfo,
     handleLogin,
+    getFamiliyId,
     handleLogout,
   };
 

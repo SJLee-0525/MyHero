@@ -7,9 +7,10 @@ export default function StatusWidget({
     altSrc,
 }) {
     return (
-        <div className={status}>
+        <div id="environmnet-info">
             <div id="info-title">{name}</div>
             <img src={imgSrc} alt={altSrc} />
+            <div id="info-status">{status}</div>
         </div>
     )
 }

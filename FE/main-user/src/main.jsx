@@ -6,6 +6,7 @@ import App from "./App.jsx";
 
 import UserProgressContextProvider from "./store/userProgressStore.jsx";
 import StoreContextProvider from "./store/store.jsx";
+import EnvironmentDataContextProvider from "./store/environmentData.jsx";
 
 const startApp = async () => {
   await loadEnvironments();
@@ -14,7 +15,9 @@ const startApp = async () => {
     <StrictMode>
       <StoreContextProvider>
         <UserProgressContextProvider> 
-          <App />
+          <EnvironmentDataContextProvider>
+            <App />
+          </EnvironmentDataContextProvider>
         </UserProgressContextProvider>
       </StoreContextProvider>
     </StrictMode>

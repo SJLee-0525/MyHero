@@ -4,22 +4,22 @@ import { useContext } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
 import { UserProgressContext } from "./userProgressStore";
 
-export const EnvironmentData = createContext({
+export const EnvironmentDataContext = createContext({
     environmentData: {
         data: {
             family_id: null,
             reported_at: null,
-            temperature: "--",
-            humidity: "--",
-            dust: "--",
-            ethanol: "--",
-            others: { finedust: "--", ultrafindedust: "--" },
+            temperature: null,
+            humidity: null,
+            dust_level: null,
+            ethanol: null,
+            // others: { finedust: "--", ultrafindedust: "--" },
         },
     },
     setEnvironmentData: () => {},
 })
 
-export default function HomeStatusProvider({ children }) {
+export default function EnvironmentDataContextProvider({ children }) {
     const { request, loading, error } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
 
@@ -27,20 +27,16 @@ export default function HomeStatusProvider({ children }) {
         data: {
             family_id: null,
             reported_at: null,
-            temperature: "--",
-            humidity: "--",
-            dust: "--",
-            ethanol: "--",
-            others: { finedust: "--", ultrafindedust: "--" },
+            temperature: null,
+            humidity: null,
+            dust_level: null,
+            ethanol: null,
+            // others: { finedust: "--", ultrafindedust: "--" },
         },
     });
 
-    let familyId = ""
-    if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
-        familyId = userProgressStore.memberInfo.selectedFamilyId
-    } else if (userProgressStore.loginUserInfo.userInfo?.role === "main") {
-        familyId = userProgressStore.familyInfo.familyInfo?.id
-    }
+    let familyId = userProgressStore.familyInfo?.familyId || "";
+    console.log("familyInfo:", userProgressStore.familyInfo);
 
     async function handleGetLatestEnvironmentData() {
         if (!familyId) {
@@ -48,56 +44,62 @@ export default function HomeStatusProvider({ children }) {
         return {
             success: false,
             error: {
-            type: "no_family_id",
-            message: "가족 ID가 없습니다.",
+                type: "no_family_id",
+                message: "가족 ID가 없습니다.",
             },
         }
         }
 
         try {
-        const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
+            const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
+            const resData = response.data;
 
-        const resData = response.data
-        if (response.success) {
-            if (resData.message === "Home status retrieved successfully") {
-            setEnvironmentData({
-                data: resData.data,
-            })
-            return {
-                success: true,
-                data: resData.data,
+            console.log("환경 정보 요청 - familyId:", familyId);
+            console.log("환경 정보 요청 - API URL:", userProgressStore.DEV_API_URL);
+
+            if (response.success) {
+                if (resData.message === "Home status retrieved successfully") {
+                setEnvironmentData({
+                    data: {
+                        family_id: resData.data.family_id,
+                        reported_at: resData.data.reported_at,
+                        temperature: resData.data.temperature,
+                        humidity: resData.data.humidity,
+                        dust_level: resData.data.dust_level,
+                        ethanol: resData.data.ethanol,
+                    } 
+                });
+                }
+            } else {
+                console.error("최신 집 내부 정보 조회 실패:", resData.error)
+                setEnvironmentData({
+                data: {
+                    family_id: null,
+                    reported_at: null,
+                    temperature: null,
+                    humidity: null,
+                    dust_level: null,
+                    ethanol: null,
+                    // others: { finedust: null, ultrafinedust: null },
+                },
+                })
+                return {
+                success: false,
+                error: {
+                    type: response.error.type,
+                    message: response.error.message,
+                },
+                }
             }
-            }
-        } else {
-            console.error("최신 집 내부 정보 조회 실패:", response.error)
-            setEnvironmentData({
-            data: {
-                family_id: null,
-                reported_at: null,
-                temperature: null,
-                humidity: null,
-                dust_level: null,
-                ethanol: null,
-                others: { finedust: null, ultrafinedust: null },
-            },
-            })
-            return {
-            success: false,
-            error: {
-                type: response.error.type,
-                message: response.error.message,
-            },
-            }
-        }
         } catch (error) {
-        console.error(error)
-        return {
-            success: false,
-            error: {
-            type: "network_error",
-            message: "네트워크 오류가 발생했습니다.",
-            },
-        }
+            console.error(error)
+            return {
+                success: false,
+                error: {
+                type: "network_error",
+                message: "네트워크 오류가 발생했습니다.",
+                },
+            }
         }
     }
 
@@ -108,5 +110,5 @@ export default function HomeStatusProvider({ children }) {
         handleGetLatestEnvironmentData,
     }
 
-    return <EnvironmentData.Provider value={ctxValue}>{children}</EnvironmentData.Provider>
+    return <EnvironmentDataContext.Provider value={ctxValue}>{children}</EnvironmentDataContext.Provider>
 }

@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  image-provider:
+    build: .
+    container_name: image-provider
+    hostname: image-provider
+    cap_add:
+      - SYS_TIME
+    ports:
+      - "4185:8000"
+    env_file:
+      - .env

@@ -16,9 +16,9 @@ from Endpoint.models import *
 
 from Utilities.auth_tools import *
 from Utilities.check_tools import *
-from datetime import date
-
 from Utilities.logging_tools import *
+
+from datetime import date
 
 router = APIRouter(prefix="/accounts", tags=["Accounts"])
 logger = get_logger("Router_Accounts")

@@ -19,7 +19,10 @@ from Endpoint.models import *
 
 from External.ai import *
 
+from Utilities.logging_tools import *
+
 router = APIRouter(prefix="/status", tags=["Status"])
+logger = get_logger("Router_Status")
 
 # ========== Status/home 부분 ==========
 
@@ -33,6 +36,7 @@ async def create_home_status(home_data: HomeStatus, request_id: str = Depends(Da
         missing_location.append("family_id")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -47,6 +51,7 @@ async def create_home_status(home_data: HomeStatus, request_id: str = Depends(Da
     family_data = Database.get_one_family(home_data.family_id)
 
     if not family_data:
+        logger.warning(f"Family not found: {home_data.family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -60,6 +65,7 @@ async def create_home_status(home_data: HomeStatus, request_id: str = Depends(Da
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -112,6 +118,7 @@ async def get_home_status(
         missing_location.append("start")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -134,6 +141,7 @@ async def get_home_status(
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -177,6 +185,7 @@ async def get_latest_home_status(family_id: str, request_id: str = Depends(Datab
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -194,6 +203,7 @@ async def get_latest_home_status(family_id: str, request_id: str = Depends(Datab
             "data": jsonable_encoder(home_status)
         }
     else:
+        logger.warning(f"No home status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -209,6 +219,7 @@ async def delete_latest_home_status(family_id: str, request_id: str = Depends(Da
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -221,6 +232,7 @@ async def delete_latest_home_status(family_id: str, request_id: str = Depends(Da
     home_status: dict = Database.get_latest_home_status(family_id=family_id)
 
     if not home_status:
+        logger.warning(f"No home status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -257,6 +269,7 @@ async def create_health_status(health_data: HealthStatus, request_id: str = Depe
         missing_location.append("family_id")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -271,6 +284,7 @@ async def create_health_status(health_data: HealthStatus, request_id: str = Depe
     family_data = Database.get_one_family(health_data.family_id)
 
     if not family_data:
+        logger.warning(f"No family found: {health_data.family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -284,6 +298,7 @@ async def create_health_status(health_data: HealthStatus, request_id: str = Depe
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -332,6 +347,7 @@ async def get_health_status(
         missing_location.append("start")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -354,6 +370,7 @@ async def get_health_status(
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -397,6 +414,7 @@ async def get_latest_health_status(family_id: str, request_id: str = Depends(Dat
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -414,6 +432,7 @@ async def get_latest_health_status(family_id: str, request_id: str = Depends(Dat
             "data": jsonable_encoder(health_status)
         }
     else:
+        logger.warning(f"No health status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -429,6 +448,7 @@ async def delete_latest_health_status(family_id: str, request_id: str = Depends(
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -441,6 +461,7 @@ async def delete_latest_health_status(family_id: str, request_id: str = Depends(
     health_status: dict = Database.get_latest_health_status(family_id=family_id)
 
     if not health_status:
+        logger.warning(f"No health status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -477,6 +498,7 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
         missing_location.append("family_id")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -491,6 +513,7 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
     family_data = Database.get_one_family(active_data.family_id)
 
     if not family_data:
+        logger.warning(f"No family found: {ActiveStatus.family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -504,6 +527,7 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -555,6 +579,7 @@ async def get_active_status(
         missing_location.append("start")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -577,6 +602,7 @@ async def get_active_status(
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -620,6 +646,7 @@ async def get_latest_active_status(family_id: str, request_id: str = Depends(Dat
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -637,6 +664,7 @@ async def get_latest_active_status(family_id: str, request_id: str = Depends(Dat
             "data": jsonable_encoder(active_status)
         }
     else:
+        logger.warning(f"No active status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -652,6 +680,7 @@ async def delete_latest_active_status(family_id: str, request_id: str = Depends(
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -664,6 +693,7 @@ async def delete_latest_active_status(family_id: str, request_id: str = Depends(
     active_status: dict = Database.get_latest_active_status(family_id=family_id)
 
     if not active_status:
+        logger.warning(f"No active status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -697,6 +727,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
     family_data = Database.get_one_family(family_id)
 
     if not family_data:
+        logger.warning(f"No family found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -713,6 +744,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -730,6 +762,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
             "data": response.json()
         }
     elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
+        logger.warning(f"Can not create mental status: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -763,6 +796,7 @@ async def get_mental_status(
         missing_location.append("start")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -785,6 +819,7 @@ async def get_mental_status(
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -828,6 +863,7 @@ async def get_latest_mental_status(family_id: str, request_id: str = Depends(Dat
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -845,6 +881,7 @@ async def get_latest_mental_status(family_id: str, request_id: str = Depends(Dat
             "data": jsonable_encoder(mental_status)
         }
     else:
+        logger.warning(f"No mental status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -860,6 +897,7 @@ async def delete_latest_mental_status(family_id: str, request_id: str = Depends(
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -872,6 +910,7 @@ async def delete_latest_mental_status(family_id: str, request_id: str = Depends(
     mental_status: dict = Database.get_latest_mental_status(family_id=family_id)
 
     if not mental_status:
+        logger.warning(f"No mental status found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -904,6 +943,7 @@ async def create_mental_reports(family_id: str, request_id: str = Depends(Databa
     family_data: dict = Database.get_one_family(family_id)
 
     if not family_data:
+        logger.warning(f"No family found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -920,6 +960,7 @@ async def create_mental_reports(family_id: str, request_id: str = Depends(Databa
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -937,6 +978,7 @@ async def create_mental_reports(family_id: str, request_id: str = Depends(Databa
     #         "data": response.json()
     #     }
     # elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
+    #     logger.warning(f"No mental reports found: {family_id}")
     #     raise HTTPException(
     #         status_code=status.HTTP_404_NOT_FOUND,
     #         detail={
@@ -978,6 +1020,7 @@ async def get_mental_reports(
         missing_location.append("start")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -1000,6 +1043,7 @@ async def get_mental_reports(
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -1043,6 +1087,7 @@ async def get_latest_mental_reports(family_id: str, request_id: str = Depends(Da
                                 [user_data["user_id"] for user_data in member_data])
 
     if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -1060,6 +1105,7 @@ async def get_latest_mental_reports(family_id: str, request_id: str = Depends(Da
             "data": jsonable_encoder(mental_reports)
         }
     else:
+        logger.warning(f"No mental reports found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -1075,6 +1121,7 @@ async def delete_latest_mental_reports(family_id: str, request_id: str = Depends
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -1087,6 +1134,7 @@ async def delete_latest_mental_reports(family_id: str, request_id: str = Depends
     mental_reports: dict = Database.get_latest_mental_reports(family_id=family_id)
 
     if not mental_reports:
+        logger.warning(f"No mental reports found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={

@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProgressContext } from "./store/userProgressStore.jsx";
 import { HomeStatusContext } from "./store/homeStatusStore.jsx";
 import { HealthContext } from "./store/healthStore.jsx";
+import { CalendarStoreContext } from "./store/calendarStore.jsx";
 
 import TopNav from "./components/nav/TopNav";
 import SideNav from "./components/nav/SideNav";
@@ -30,41 +31,10 @@ function App() {
   const userProgressStore = useContext(UserProgressContext);
   const homeStatusStore = useContext(HomeStatusContext);
   const healthStore = useContext(HealthContext);
+  const calendarStore = useContext(CalendarStoreContext);
 
   const loading =
     userProgressStore.loading || homeStatusStore.loading || healthStore.loading;
-
-  useEffect(() => {
-    console.log("🔄 useEffect 실행됨!", {
-      login: userProgressStore.loginUserInfo.login,
-      role: userProgressStore.loginUserInfo.userInfo?.role,
-      selectedFamilyId: userProgressStore.memberInfo.selectedFamilyId,
-    });
-
-    if (!userProgressStore.loginUserInfo.login) return;
-
-    if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
-      if (userProgressStore.memberInfo.selectedFamilyId) {
-        const fetchData = async () => {
-          console.log("📡 API 요청 시작!");
-          await homeStatusStore.handleGetLatestHomeStatus(
-            userProgressStore.memberInfo.selectedFamilyId
-          );
-          await healthStore.handleGetHealthData();
-          await healthStore.handleGetActivityStatus();
-          await healthStore.handleGetMentalStatus();
-          await healthStore.handleGetMentalReports();
-          await healthStore.handleGetWeekData();
-          console.log("📡 API 요청 끝!");
-        };
-
-        fetchData();
-      }
-    }
-  }, [
-    userProgressStore.loginUserInfo.login,
-    userProgressStore.memberInfo.selectedFamilyId,
-  ]);
 
   return (
     <BrowserRouter>

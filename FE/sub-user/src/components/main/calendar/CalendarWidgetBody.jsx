@@ -8,6 +8,9 @@ export default function CalendarBody() {
 
   const weeks = ["일", "월", "화", "수", "목", "금", "토"]
 
+  const healthData = schedules.schedules.health
+  const mentalData = schedules.schedules.mental
+
   return (
     <div className="calendar-container">
       {/* 요일 표시 */}
@@ -31,11 +34,14 @@ export default function CalendarBody() {
               ${date.dayIndexOfWeek === 0 ? "sunday" : ""}
             `}
           >
-            <div>
+            <div className="calendar-day-schedules-date">
               <span>{date.day}</span>
             </div>
             {/* 캘린더에 일정을 간략하게 표시 */}
-            {schedules.schedules[date.date] && <div className="calendar-day-schedules-widget">{schedules.schedules[date.date].length}</div>}
+            <div className="calendar-day-schedules-widget">
+              {healthData[date.date] ? <div className="health"></div> : <div className="no" />}
+              {mentalData[date.date] ? <div className="mental"></div> : <div className="no" />}
+            </div>
           </div>
         ))}
       </div>

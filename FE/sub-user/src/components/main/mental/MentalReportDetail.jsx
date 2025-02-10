@@ -85,8 +85,26 @@ export default function MentalReportDetail() {
   const healthStore = useContext(HealthContext);
   const userProgressStore = useContext(UserProgressContext);
 
+  const reportIndex = userProgressStore.selectedModalId;
+
   const report =
-    healthStore.mentalStatus.length > 0 ? healthStore.mentalStatus[0] : null;
+    healthStore.mentalStatus.length > 0
+      ? healthStore.mentalStatus[reportIndex]
+      : null;
+
+  const reportedAt = report
+    ? new Date(report.reported_at + "Z") // UTC-0 기준 명시
+        .toLocaleString("ko-KR", {
+          timeZone: "Asia/Seoul",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          // second: "2-digit",
+          hour12: true,
+        })
+    : null;
 
   const mainUserName = "박순자123";
 
@@ -103,7 +121,7 @@ export default function MentalReportDetail() {
         {mainUserName}님의 감정 상태 상세 보고서
       </h1>
       <p className="detail-report-date">
-        {report ? report.created_at : null} 발행
+        {reportedAt ? reportedAt : null} 발행
       </p>
       <br />
       <h3 className="detail-report-overall">

@@ -11,6 +11,7 @@ import EmergencyContextProvider from "./store/emergencyStore.jsx";
 import CalendarStoreContextProvider from "./store/calendarStore.jsx";
 import MessageContextProvider from "./store/messageStore.jsx";
 import HealthContextProvider from "./store/healthStore.jsx";
+import EffectContextProvider from "./store/effectStore.jsx";
 
 import { loadEnvironments } from "./store/environmentsStore.jsx";
 
@@ -18,21 +19,23 @@ const startApp = async () => {
   await loadEnvironments();
 
   createRoot(document.getElementById("root")).render(
-    // <StrictMode>
-    <UserProgressContextProvider>
-      <HomeStatusContextProvider>
-        <HealthContextProvider>
-          <EmergencyContextProvider>
-            <MessageContextProvider>
-              <CalendarStoreContextProvider>
-                <App />
-              </CalendarStoreContextProvider>
-            </MessageContextProvider>
-          </EmergencyContextProvider>
-        </HealthContextProvider>
-      </HomeStatusContextProvider>
-    </UserProgressContextProvider>
-    // </StrictMode>
+    <StrictMode>
+      <UserProgressContextProvider>
+        <HomeStatusContextProvider>
+          <HealthContextProvider>
+            <EmergencyContextProvider>
+              <MessageContextProvider>
+                <CalendarStoreContextProvider>
+                  <EffectContextProvider>
+                    <App />
+                  </EffectContextProvider>
+                </CalendarStoreContextProvider>
+              </MessageContextProvider>
+            </EmergencyContextProvider>
+          </HealthContextProvider>
+        </HomeStatusContextProvider>
+      </UserProgressContextProvider>
+    </StrictMode>
   );
 };
 

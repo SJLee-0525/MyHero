@@ -61,6 +61,7 @@ export const UserProgressContext = createContext({
   handleUpdateUserInfo: (payload) => {},
   handleSignOut: (password) => {},
   handleCheckFamilyExist: (userId) => {},
+  handleGetFamilyName: (familyId) => {},
   handleCreateFamily: (payload) => {},
   handleGetFamilyInfo: (familyId) => {},
   handleUpdateFamilyInfo: (newFamilyName) => {},
@@ -121,61 +122,54 @@ export default function UserProgressContextProvider({ children }) {
   });
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
-  useEffect(() => {
-    const storedUserInfo = sessionStorage.getItem("loginUserInfo");
+  // useEffect(() => {
+  //   const storedUserInfo = sessionStorage.getItem("loginUserInfo")
 
-    const storedActiveSideBarElem = sessionStorage.getItem(
-      "isActiveSideBarElem"
-    );
-    if (!storedUserInfo) return;
+  //   const storedActiveSideBarElem = sessionStorage.getItem("isActiveSideBarElem")
+  //   if (!storedUserInfo) return
 
-    if (storedUserInfo) {
-      try {
-        const parsedUserInfo = JSON.parse(storedUserInfo);
+  //   if (storedUserInfo) {
+  //     try {
+  //       const parsedUserInfo = JSON.parse(storedUserInfo)
 
-        setLoginUserInfo({
-          login: true,
-          userInfo: parsedUserInfo.userInfo,
-        });
+  //       setLoginUserInfo({
+  //         login: true,
+  //         userInfo: parsedUserInfo.userInfo,
+  //       })
 
-        // 사용자 정보 최신화
-        handleGetUserInfo(parsedUserInfo.userInfo.id);
-      } catch (error) {
-        console.error(
-          "Error parsing loginUserInfo from sessionStorage:",
-          error
-        );
-        sessionStorage.removeItem("loginUserInfo"); // 손상된 데이터 제거
-      }
-    }
+  //       // 사용자 정보 최신화
+  //       handleGetUserInfo(parsedUserInfo.userInfo.id)
+  //     } catch (error) {
+  //       console.error("Error parsing loginUserInfo from sessionStorage:", error)
+  //       sessionStorage.removeItem("loginUserInfo") // 손상된 데이터 제거
+  //     }
+  //   }
 
-    try {
-      if (storedActiveSideBarElem) {
-        setIsActiveSideBarElem(storedActiveSideBarElem);
-      }
-    } catch (error) {
-      console.error(
-        "Error parsing isActiveSideBarElem from sessionStorage:",
-        error
-      );
-      sessionStorage.removeItem("isActiveSideBarElem"); // 데이터 손상 시 제거
-    }
-  }, []);
+  //   try {
+  //     if (storedActiveSideBarElem) {
+  //       setIsActiveSideBarElem(storedActiveSideBarElem)
+  //     }
+  //   } catch (error) {
+  //     console.error("Error parsing isActiveSideBarElem from sessionStorage:", error)
+  //     sessionStorage.removeItem("isActiveSideBarElem") // 데이터 손상 시 제거
+  //   }
+  // }, [])
 
   // loginUserInfo가 업데이트된 후에 handleCheckFamilyList 호출
   // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
   // 이는 React의 상태 관리 특성 때문에 발생하는 문제로, 상태가 비동기적으로 업데이트되기 때문에 바로 loginUserInfo 값을 사용할 수 없습니다.
-  useEffect(() => {
-    if (!loginUserInfo.login) return;
+  //
+  // useEffect(() => {
+  //   if (!loginUserInfo.login) return;
 
-    if (loginUserInfo.login && loginUserInfo.userInfo.id) {
-      if (loginUserInfo.userInfo.role === "main") {
-        handleCheckFamilyExist(loginUserInfo.userInfo.id);
-      } else if (loginUserInfo.userInfo.role === "sub") {
-        handleCheckFamilyList();
-      }
-    }
-  }, [loginUserInfo]);
+  //   if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+  //     if (loginUserInfo.userInfo.role === "main") {
+  //       handleCheckFamilyExist(loginUserInfo.userInfo.id);
+  //     } else if (loginUserInfo.userInfo.role === "sub") {
+  //       handleCheckFamilyList();
+  //     }
+  //   }
+  // }, [loginUserInfo]);
 
   // ======================================================================
   // env 관련
@@ -229,6 +223,7 @@ export default function UserProgressContextProvider({ children }) {
 
   // 모달 열기
   function handleOpenModal(identifier, id) {
+    console.log("모달 열기:", identifier, id);
     setModalProgress(identifier);
     setSelectedModalId(id);
   }
@@ -869,12 +864,24 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "All members retrieved successfully") {
           console.log("가족 목록 조회 성공");
 
-          // 정보 갱신
-          setMemberInfo({
-            isExist: true,
-            registerData: resData.result,
-            selectedFamilyId: resData.result[0].family_id,
-          });
+          // 가족 이름 검색 및 저장
+          const familyIds = resData.result;
+          const newRegisterData = await handleGetFamilyName(familyIds);
+
+          if (newRegisterData) {
+            // 정보 갱신
+            setMemberInfo({
+              isExist: true,
+              registerData: newRegisterData,
+              selectedFamilyId: newRegisterData[0].family_id,
+            });
+          } else {
+            setMemberInfo({
+              isExist: true,
+              registerData: resData.result,
+              selectedFamilyId: resData.result[0].family_id,
+            });
+          }
 
           return { success: true, data: resData };
         } else if (resData.message === "No members found") {
@@ -898,6 +905,47 @@ export default function UserProgressContextProvider({ children }) {
           },
         };
       }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  // 가족 이름 검색 및 저장
+  async function handleGetFamilyName(familyIds) {
+    if (!familyIds) return;
+
+    try {
+      const newRegisterData = [];
+
+      for (let i = 0; i < familyIds.length; i++) {
+        const response = await request(
+          `${DEV_API_URL}/families/${familyIds[i].family_id}`,
+          "GET"
+        );
+
+        if (response.success) {
+          const resData = response.data;
+
+          if (resData.message === "Family retrieved successfully") {
+            newRegisterData.push({
+              ...familyIds[i],
+              family_name: resData.result.family_name,
+            });
+          }
+        } else {
+          console.error("가족 이름 조회 실패:", response.error);
+          return familyIds;
+        }
+      }
+      // 반환
+      return newRegisterData;
     } catch (error) {
       console.error("네트워크 오류 또는 기타 예외:", error);
       return {
@@ -1195,6 +1243,7 @@ export default function UserProgressContextProvider({ children }) {
     handleUpdateFamilyInfo,
     handleDeleteFamilyInfo,
     handleCheckFamilyList,
+    handleGetFamilyName,
     handleGetFamilyMemberInfo,
     handleCreateMember,
     handleUpdateMember,

@@ -22,7 +22,6 @@ class Role(BaseEnum):
     MAIN = "main"
     SUB = "sub"
 
-
 class Gender(BaseEnum):
     MALE = "male"
     FEMALE = "female"
@@ -31,6 +30,12 @@ class Gender(BaseEnum):
 class Order(BaseEnum):
     ASC = "asc"
     DESC = "desc"
+
+class NotificationGrade(BaseEnum):
+    INFO = "info"
+    WARN = "warn"
+    CRIT = "crit"
+    NONE = "none"
 
 # ========== DB Tables ==========
 
@@ -128,6 +133,9 @@ class LoginSessionsTable(Base):
                 )
 
 class HomeStatusTable(Base):
+    """
+    집안 환경 정보
+    """
     __tablename__ = "homestatus"
 
     index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
@@ -152,6 +160,9 @@ class HomeStatusTable(Base):
         )
 
 class HealthStatusTable(Base):
+    """
+    건강 정보
+    """
     __tablename__ = "healthstatus"
 
     index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
@@ -168,6 +179,9 @@ class HealthStatusTable(Base):
         )
 
 class ActiveStatusTable(Base):
+    """
+    활동 정보
+    """
     __tablename__ = "activestatus"
 
     index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
@@ -190,6 +204,9 @@ class ActiveStatusTable(Base):
         )
 
 class MentalStatusTable(Base):
+    """
+    단일 정신 건강 정보
+    """
     __tablename__ = "mentalstatus"
 
     index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
@@ -210,6 +227,9 @@ class MentalStatusTable(Base):
         )
 
 class MentalReportsTable(Base):
+    """
+    장기 정신 건강 리포트
+    """
     __tablename__ = "mentalreports"
 
     index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
@@ -240,6 +260,9 @@ class MentalReportsTable(Base):
         )
 
 class MasterRegionsTable(Base):
+    """
+    광역자치단체 정보
+    """
     __tablename__ = "masterregions"
 
     region_name = Column(String(32), primary_key=True, nullable=False)
@@ -254,6 +277,9 @@ class MasterRegionsTable(Base):
         )
 
 class SubRegionsTable(Base):
+    """
+    기초자치단체 정보
+    """
     __tablename__ = "subregions"
 
     main_region = Column(String(32), ForeignKey('masterregions.region_name'), primary_key=True, nullable=False)
@@ -265,4 +291,29 @@ class SubRegionsTable(Base):
                 f"<SubRegion(main_region='{self.main_region}', " +
                 f"sub_region='{self.sub_region_name}', " +
                 f"region_type='{self.region_type}')>"
+        )
+
+class NotificationsTable(Base):
+    """
+    알림 및 재난, 긴급 정보
+    """
+    __tablename__ = "notifications"
+
+    index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
+    family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
+    created_at = Column(TIMESTAMP, nullable=True, server_default=func.now())
+    notification_grade = Column(Enum(NotificationGrade), nullable=True)
+    description = Column(TEXT, nullable=True)
+    message_sn = Column(INT, nullable=True)
+    is_read = Column(Boolean, nullable=True)
+
+    def __repr__(self):
+        return (f"" +
+                f"<Notification(index='{self.index}', " +
+                f"family_id='{self.family_id}', " +
+                f"created_at='{self.created_at}', " +
+                f"notification_grade='{self.notification_grade}', " +
+                f"description='{self.description}', " +
+                f"message_sn='{self.message_sn}', " +
+                f"is_read='{self.is_read}')>"
         )

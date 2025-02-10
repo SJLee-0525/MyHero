@@ -18,6 +18,7 @@ import micOffImage from "../../assets/icons/mic_off.svg";
 import thermostatImage from "../../assets/icons/thermostat.svg";
 import heatImage from "../../assets/icons/heat.svg";
 import airImage from "../../assets/icons/airwave.svg";
+import fineAirImage from "../../assets/icons/fineair.svg";
 import humidityImage from "../../assets/icons/humidity.svg";
 import heartImage from "../../assets/icons/heart_plus.svg";
 
@@ -27,13 +28,13 @@ export default function ToggleGroup() {
   const healthStore = useContext(HealthContext);
 
   const dustLevel =
-    (homeStatusStore.homeStatus.data.dust_level
-      ? homeStatusStore.homeStatus.data.dust_level.toFixed(0)
-      : homeStatusStore.homeStatus.data.dust_level) || null;
+    homeStatusStore.homeStatus.length > 0
+      ? homeStatusStore.homeStatus[0].dust_level.toFixed(0)
+      : null;
   const ethanol =
-    (homeStatusStore.homeStatus.data.ethanol
-      ? (homeStatusStore.homeStatus.data.ethanol * 100).toFixed(1)
-      : homeStatusStore.homeStatus.data.ethanol) || null;
+    homeStatusStore.homeStatus.length > 0
+      ? (homeStatusStore.homeStatus[0].ethanol * 100).toFixed(1)
+      : null;
   const heartRate =
     (healthStore.healthStatus && healthStore.healthStatus[0]?.heart_rate) ||
     null;
@@ -89,60 +90,81 @@ export default function ToggleGroup() {
           imgSrc={thermostatImage}
           altSrc="temperature"
           statusLevel={
-            18 < homeStatusStore.homeStatus.data.temperature &&
-            homeStatusStore.homeStatus.data.temperature < 26
+            homeStatusStore.homeStatus.length > 0 &&
+            18 < homeStatusStore.homeStatus[0].temperature &&
+            homeStatusStore.homeStatus[0].temperature < 26
               ? "good"
               : "bad"
           }
-          status={`${homeStatusStore.homeStatus.data.temperature} ℃`}
+          status={`${
+            homeStatusStore.homeStatus.length > 0
+              ? `${homeStatusStore.homeStatus[0].temperature} ℃`
+              : null
+          }`}
         />
         <StatusToggle
           name="습도"
           imgSrc={humidityImage}
           altSrc="humidity"
           statusLevel={
-            40 < homeStatusStore.homeStatus.data.humidity &&
-            homeStatusStore.homeStatus.data.humidity < 70
+            homeStatusStore.homeStatus.length > 0 &&
+            40 < homeStatusStore.homeStatus[0].humidity &&
+            homeStatusStore.homeStatus[0].humidity < 70
               ? "good"
               : "bad"
           }
-          status={`${homeStatusStore.homeStatus.data.humidity} %`}
+          status={`${
+            homeStatusStore.homeStatus.length > 0
+              ? `${homeStatusStore.homeStatus[0].humidity} %`
+              : null
+          }`}
         />
         <StatusToggle
           name="미세 먼지"
           imgSrc={airImage}
           altSrc="dust"
           statusLevel={
-            homeStatusStore.homeStatus.data.dust_level < 40 ? "good" : "bad"
+            homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].dust_level < 40
+              ? "good"
+              : "bad"
           }
-          status={`${dustLevel}㎍/㎥`}
+          status={`${dustLevel ? `${dustLevel}㎍/㎥` : null}`}
+        />
+        <StatusToggle
+          name="초미세 먼지"
+          imgSrc={fineAirImage}
+          altSrc="finedust"
+          statusLevel={
+            homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].others?.ultrafinedust < 30
+              ? "good"
+              : "bad"
+          }
+          status={`${
+            homeStatusStore.homeStatus.length > 0
+              ? `${homeStatusStore.homeStatus[0].others.ultrafinedust}㎍/㎥`
+              : null
+          }`}
         />
         <StatusToggle
           name="가스 누출"
           imgSrc={heatImage}
           altSrc="gas"
           statusLevel={
-            homeStatusStore.homeStatus.data.ethanol < 30 ? "good" : "bad"
+            homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].ethanol < 30
+              ? "good"
+              : "bad"
           }
-          status={`${ethanol} %`}
+          status={`${ethanol ? `${ethanol} %` : null}`}
         />
         <StatusToggle
           name="심박"
           imgSrc={heartImage}
           altSrc="heartrate"
           statusLevel={60 < heartRate || heartRate < 120 ? "good" : "bad"}
-          status={`${heartRate} bpm`}
-        />
-        <StatusToggle
-          name="초미세 먼지"
-          imgSrc={heatImage}
-          altSrc="finedust"
-          statusLevel={
-            homeStatusStore.homeStatus.data.others.finedust < 30
-              ? "good"
-              : "bad"
-          }
-          status={`${homeStatusStore.homeStatus.data.ethanol} %`}
+          status={`${heartRate ? `${heartRate} bpm` : null}`}
         />
       </div>
     </>

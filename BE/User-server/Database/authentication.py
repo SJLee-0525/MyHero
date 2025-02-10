@@ -50,7 +50,7 @@ def create_session(session_data: LoginSessionsTable) -> bool:
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error creating new session: {str(error)}")
+            logger.error(f"Error creating new session: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -77,7 +77,7 @@ def delete_session(session_id: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error deleting session: {str(error)}")
+            logger.error(f"Error deleting session: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -128,7 +128,7 @@ def check_current_user(request: Request) -> str:
             user_id = login_data.user_id
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error checking current user: {str(error)}")
+            logger.error(f"Error checking current user: {str(error)}")
             user_id = ""
         finally:
             session.commit()
@@ -157,7 +157,7 @@ def change_password(user_id: str, new_hased_password: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error changing password: {str(error)}")
+            logger.error(f"Error changing password: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -190,7 +190,7 @@ def get_login_session(session_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting login session: {str(error)}")
+            logger.error(f"Error getting login session: {str(error)}")
             result = {}
         finally:
             return result
@@ -223,11 +223,11 @@ async def cleanup_login_sessions() -> None:
                 result = True
             except SQLAlchemyError as error:
                 session.rollback()
-                logger.critical(f"Error cleaning up login sessions: {str(error)}")
+                logger.error(f"Error cleaning up login sessions: {str(error)}")
                 result = False
             finally:
                 session.commit()
                 if result:
                     logger.info(f"Cleaned up login sessions")
                 else:
-                    logger.critical(f"Failed to clean up login sessions")
+                    logger.error(f"Failed to clean up login sessions")

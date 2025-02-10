@@ -34,7 +34,7 @@ def create_member(member_data: MemberRelationsTable) -> bool:
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error creating new member: {str(error)}")
+            logger.error(f"Error creating new member: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -97,7 +97,7 @@ def get_all_members(family_id: str = None, user_id: str = None) -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting all member data: {str(error)}")
+            logger.error(f"Error getting all member data: {str(error)}")
             result = []
         finally:
             return result
@@ -132,7 +132,7 @@ def get_one_member(member_id: str) -> dict:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting one member data: {str(error)}")
+            logger.error(f"Error getting one member data: {str(error)}")
             result = {}
         finally:
             return result
@@ -162,7 +162,7 @@ def update_one_member(member_id: str, updated_member: MemberRelationsTable) -> b
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error updating one member data: {str(error)}")
+            logger.error(f"Error updating one member data: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -190,7 +190,7 @@ def delete_one_member(member_id: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error deleting one member data: {str(error)}")
+            logger.error(f"Error deleting one member data: {str(error)}")
             result = False
         finally:
             session.commit()

@@ -19,7 +19,10 @@ from Utilities.check_tools import *
 
 from datetime import date
 
+from Utilities.logging_tools import *
+
 router = APIRouter(prefix="/families", tags=["Families"])
+logger = get_logger("Router_Families")
 
 # ========== Family 부분 ==========
 
@@ -27,7 +30,13 @@ router = APIRouter(prefix="/families", tags=["Families"])
 @router.post("/check-exist", status_code=status.HTTP_200_OK)
 async def check_family_from_main_id(family_check: IDCheck):
     # 필수 입력 조건 점검
+    missing_location: list = ["body"]
+
     if family_check.id is None or family_check.id == "":
+        missing_location.append("id")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -42,6 +51,7 @@ async def check_family_from_main_id(family_check: IDCheck):
     exist_family: str = Database.main_id_to_family_id(family_check.id)
 
     if exist_family == "":
+        logger.warning(f"Main ID does not have a family: {family_check.id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -51,6 +61,7 @@ async def check_family_from_main_id(family_check: IDCheck):
             }
         )
     else:
+        logger.info(f"Main ID has a family: {family_check.id}")
         return {
             "message": "Family exists",
             "result": {"family_id": exist_family}
@@ -59,14 +70,20 @@ async def check_family_from_main_id(family_check: IDCheck):
 # 주 사용자를 기반으로 새로운 가족을 생성하는 기능
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def create_family(family_data: Family):
-    # 필수 입력 정보 점검 (Main User)
-    if family_data.main_user is None or family_data.main_user == "":
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
+    if family_data.family_name is None or family_data.family_name == "":
+        missing_location.append("family_name")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
                 "type": "no data",
-                "loc": ["body", "main_user"],
-                "message": "Main user is required",
+                "loc": missing_location,
+                "message": "Family name is required",
                 "input": jsonable_encoder(family_data)
             }
         )
@@ -75,6 +92,7 @@ async def create_family(family_data: Family):
     exist_family: str = Database.main_id_to_family_id(family_data.main_user)
 
     if exist_family:
+        logger.warning(f"Main user already has a family: {family_data.main_user}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail={
@@ -88,6 +106,7 @@ async def create_family(family_data: Family):
     exist_user: dict= Database.get_one_account(family_data.main_user)
 
     if not exist_user or exist_user["role"] is not Role.MAIN:
+        logger.warning(f"Invalid User: {family_data.main_user}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -145,6 +164,7 @@ async def get_all_families():
             "result": jsonable_encoder(family_list)
         }
     else:
+        logger.warning("No families found.")
         return {
             "message": "No families found",
             "result": jsonable_encoder(family_list)
@@ -171,6 +191,7 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
         missing_location.append("address")
 
     if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -185,6 +206,7 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data:
+        logger.warning("No User")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -196,6 +218,7 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
 
     # 잘못된 성별을 선택했는지 점검
     if find_data.gender is not None and find_data.gender.lower() not in Gender._value2member_map_:
+        logger.error(f"Invalid gender: {find_data.gender}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -212,6 +235,7 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
     find_birthday = None
     if find_data.birth_date is not None:
         if is_valid_date(find_data.birth_date) is False:
+            logger.error(f"Invalid birth date: {find_data.birth_date}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
@@ -241,6 +265,7 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
             "result": jsonable_encoder(result)
         }
     else:
+        logger.warning("No family found.")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -261,6 +286,7 @@ async def get_family(family_id: str):
             "result": jsonable_encoder(family_data)
         }
     else:
+        logger.warning(f"Family not found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -277,6 +303,7 @@ async def update_family(family_id: str, updated_family: Family):
 
     # 없는 가족 정보를 변경하려는지 확인
     if not previous_family:
+        logger.warning(f"Family not found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -315,10 +342,29 @@ async def update_family(family_id: str, updated_family: Family):
 # 가족 정보를 삭제하는 기능 (주 사용자의 비밀번호 필요)
 @router.delete("/{family_id}", status_code=status.HTTP_200_OK)
 async def delete_family(family_id: str, checker: PasswordCheck):
+    # 필수 입력 조건 점검
+    missing_location: list = ["body"]
+
+    if checker.password is None or checker.password == "":
+        missing_location.append("password")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Password is required",
+                "input": {"family_id": family_id, "password": "<PASSWORD>"}
+            }
+        )
+
     previous_family: dict = Database.get_one_family(family_id)
 
     # 없는 가족을 삭제하려는지 확인
     if not previous_family:
+        logger.warning(f"Family not found: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
@@ -328,24 +374,13 @@ async def delete_family(family_id: str, checker: PasswordCheck):
             }
         )
 
-    # 비밀번호 없이 요청한 경우
-    if checker.password is None or checker.password == "":
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail={
-                "type": "no data",
-                "loc": ["body", "password"],
-                "message": "Password is required",
-                "input": {"family_id": family_id, "password": "<PASSWORD>"}
-            }
-        )
-
     # 비밀번호 검증
     input_password: str = checker.password
     hashed_password: str = Database.get_hashed_password(previous_family["main_user"])
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:
+        logger.warning(f"Invalid password: {family_id}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={

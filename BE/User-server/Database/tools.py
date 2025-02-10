@@ -43,7 +43,7 @@ def get_all_master_region() -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting all master region data: {str(error)}")
+            logger.error(f"Error getting all master region data: {str(error)}")
             result = []
         finally:
             return result
@@ -88,7 +88,7 @@ def get_all_sub_region(master_region: str = None) -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting all sub region data: {str(error)}")
+            logger.error(f"Error getting all sub region data: {str(error)}")
             result = []
         finally:
             return result

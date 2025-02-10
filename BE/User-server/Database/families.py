@@ -62,7 +62,7 @@ def create_family(family_data: FamiliesTable) -> bool:
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error creating new family: {str(error)}")
+            logger.error(f" Error creating new family: {str(error)}")
         finally:
             session.commit()
             return result
@@ -94,7 +94,7 @@ def get_all_families() -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error getting all family data: {str(error)}")
+            logger.error(f" Error getting all family data: {str(error)}")
             result = []
         finally:
             return result
@@ -159,7 +159,7 @@ def find_family(
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error getting all family data: {str(error)}")
+            logger.error(f" Error getting all family data: {str(error)}")
             result = []
         finally:
             return result
@@ -191,7 +191,7 @@ def get_one_family(family_id: str) -> dict:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error getting one family data: {str(error)}")
+            logger.error(f" Error getting one family data: {str(error)}")
             result = {}
         finally:
             return result
@@ -221,7 +221,7 @@ def update_one_family(family_id: str, updated_family: FamiliesTable) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error updating one family data: {str(error)}")
+            logger.error(f" Error updating one family data: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -249,7 +249,7 @@ def delete_one_family(family_id: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f" Error deleting one family data: {str(error)}")
+            logger.error(f" Error deleting one family data: {str(error)}")
             result = False
         finally:
             session.commit()

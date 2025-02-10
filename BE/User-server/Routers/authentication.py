@@ -28,7 +28,7 @@ isDev: bool = bool(int(os.getenv("IS_DEV", 0)))
 isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
 SECURE_SET: bool = True
 SAME_SET: Literal["lax", "strict", "none"] = "none"
-DOMAIN_SET: str = ".itdice.net" if isDeploy else None
+DOMAIN_SET: str = ".itdice.net"
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 logger = get_logger("Router_Authentication")
@@ -47,7 +47,7 @@ async def login(response: Response, login_data: Login):
         missing_location.append("password")
 
     if len(missing_location) > 1:
-        logger.critical(f"No data provided: {missing_location}")
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -189,7 +189,7 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
         missing_location.append("new_password")
 
     if len(missing_location) > 1:
-        logger.critical(f"No data provided: {missing_location}")
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={

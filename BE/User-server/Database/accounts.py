@@ -31,7 +31,7 @@ def get_all_email() -> list[dict]:
             result = [{"email": data[0]} for data in account_list]
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting all email: {str(error)}")
+            logger.error(f"Error getting all email: {str(error)}")
             result = []
         finally:
             return result
@@ -53,7 +53,7 @@ def create_account(account_data: AccountsTable) -> bool:
             result = True
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error creating new account: {str(error)}")
+            logger.error(f"Error creating new account: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -93,7 +93,7 @@ def get_all_accounts() -> list[dict]:
             result = serialized_data
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting all account data: {str(error)}")
+            logger.error(f"Error getting all account data: {str(error)}")
             result = []
         finally:
             return result
@@ -135,7 +135,7 @@ def get_one_account(account_id: str) -> dict:
                 result = {}
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting one account data: {str(error)}")
+            logger.error(f"Error getting one account data: {str(error)}")
             result = {}
         finally:
             return result
@@ -155,7 +155,7 @@ def get_id_from_email(email: str) -> str:
             user_id = session.query(AccountsTable.id).filter(AccountsTable.email == email).first()[0].__str__()
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting id from email: {str(error)}")
+            logger.error(f"Error getting id from email: {str(error)}")
             user_id = ""
         finally:
             return user_id
@@ -177,7 +177,7 @@ def get_hashed_password(account_id: str) -> str:
             result = hashed_password.__str__()
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error getting hashed password: {str(error)}")
+            logger.error(f"Error getting hashed password: {str(error)}")
             result = ""
         finally:
             return result
@@ -221,7 +221,7 @@ def update_one_account(account_id: str, updated_account: AccountsTable) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error updating one account data: {str(error)}")
+            logger.error(f"Error updating one account data: {str(error)}")
             result = False
         finally:
             session.commit()
@@ -248,7 +248,7 @@ def delete_one_account(account_id: str) -> bool:
                 result = False
         except SQLAlchemyError as error:
             session.rollback()
-            logger.critical(f"Error deleting one account data: {str(error)}")
+            logger.error(f"Error deleting one account data: {str(error)}")
             result = False
         finally:
             session.commit()

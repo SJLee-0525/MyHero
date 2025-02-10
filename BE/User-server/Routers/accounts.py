@@ -37,7 +37,7 @@ async def check_email(email_check: EmailCheck):
         missing_location.append("email")
 
     if len(missing_location) > 1:
-        logger.critical(f"No data provided: {missing_location}")
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -81,7 +81,7 @@ async def create_account(account_data: Account):
         missing_location.append("email")
 
     if len(missing_location) > 1:
-        logger.critical(f"No data provided: {missing_location}")
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
@@ -94,7 +94,7 @@ async def create_account(account_data: Account):
 
     # 잘못된 옵션을 선택했는지 점검
     if account_data.role is not None and account_data.role.lower() not in Role._value2member_map_:
-        logger.critical(f"Invalid value provided for account details (role): {account_data.role}")
+        logger.error(f"Invalid value provided for account details (role): {account_data.role}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -104,7 +104,7 @@ async def create_account(account_data: Account):
             }
         )
     elif account_data.gender is not None and account_data.gender.lower() not in Gender._value2member_map_:
-        logger.critical(f"Invalid value provided for account details (gender): {account_data.gender}")
+        logger.error(f"Invalid value provided for account details (gender): {account_data.gender}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -145,7 +145,7 @@ async def create_account(account_data: Account):
     converted_birth_date = None
     if account_data.birth_date is not None:
         if is_valid_date(account_data.birth_date) is False:
-            logger.critical(f"Invalid value provided for account details (birth date): {account_data.birth_date}")
+            logger.error(f"Invalid value provided for account details (birth date): {account_data.birth_date}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
@@ -292,7 +292,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
 
     # 잘못된 옵션을 선택했는지 점검
     if updated_account.role and updated_account.role.lower() not in Role._value2member_map_:
-        logger.critical(f"Invalid value provided for account details (role): {updated_account.role}")
+        logger.error(f"Invalid value provided for account details (role): {updated_account.role}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -302,7 +302,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
             }
         )
     elif updated_account.gender is not None and updated_account.gender.lower() not in Gender._value2member_map_:
-        logger.critical(f"Invalid value provided for account details (gender): {updated_account.gender}")
+        logger.error(f"Invalid value provided for account details (gender): {updated_account.gender}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -330,7 +330,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
     converted_birth_date = None
     if updated_account.birth_date is not None:
         if is_valid_date(updated_account.birth_date) is False:
-            logger.critical(f"Invalid value provided for account details (birth date): {updated_account.birth_date}")
+            logger.error(f"Invalid value provided for account details (birth date): {updated_account.birth_date}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail={
@@ -386,7 +386,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
         missing_location.append("password")
 
     if len(missing_location) > 1:
-        logger.critical(f"No data provided: {missing_location}")
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={

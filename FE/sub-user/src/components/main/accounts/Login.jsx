@@ -1,6 +1,7 @@
 import "./Accounts.css";
 
 import { useRef, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
@@ -9,6 +10,7 @@ import Signup from "./Signup.jsx";
 
 export default function Login() {
   const userProgressStore = useContext(UserProgressContext);
+  const navigate = useNavigate();
 
   // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
@@ -57,7 +59,10 @@ export default function Login() {
 
     const response = await userProgressStore.handleLogin(email, password);
 
-    // 로그인 실패 시
+    if (response.success) {
+      navigate("/");
+      return;
+    }
     if (!response.success) {
       userProgressStore.setModalProgress("login");
 

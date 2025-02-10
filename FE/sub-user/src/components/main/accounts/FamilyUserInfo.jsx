@@ -1,12 +1,16 @@
 import "./Accounts.css";
 
+import { QRCodeCanvas } from "qrcode.react";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function FamilyUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   const familyUserInfo = userProgressStore.familyInfo;
+
+  const navigate = useNavigate();
 
   function handleShowCreateFamilyUserInfo() {
     userProgressStore.handleOpenModal("create-family-user-info");
@@ -38,6 +42,12 @@ export default function FamilyUserInfo() {
             <div>
               <h3>{familyUserInfo.familyInfo.family_name}네 모임 정보</h3>
               <p>등록 ID: {familyUserInfo.familyInfo.id}</p>
+              <QRCodeCanvas
+                onClick={() =>
+                  navigate(`/accounts/register/${familyUserInfo.familyInfo.id}`)
+                }
+                value={`${userProgressStore.DEV_API_URL}/${familyUserInfo.familyInfo.id}`}
+              />
             </div>
             <div className="family-btn-container">
               <button

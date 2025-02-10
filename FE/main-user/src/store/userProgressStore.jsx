@@ -1,6 +1,7 @@
-import { useState, useEffect, createContext } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
 import { getEnvironments } from "./environmentsStore.jsx";
+import { StoreContext } from "./store.jsx"
 
 export const UserProgressContext = createContext({
   loginUserInfo: {
@@ -20,6 +21,8 @@ export const UserProgressContext = createContext({
 });
 
 export default function UserProgressContextProvider({ children }) {
+  const mainStore = useContext(StoreContext)
+
   const { request, loading } = useMainHttp();
   const [loginUserInfo, setLoginUserInfo] = useState({
     login: false, //
@@ -28,16 +31,22 @@ export default function UserProgressContextProvider({ children }) {
   const [familyInfo, setFamilyInfo] = useState({
     isExist: false,
     familyId: undefined,
+    familyMember: undefined,
   });
 
   // 로그인 시 sessionStorage에 저장된 정보 불러오기
-  useEffect(() => {
-    const storedFamilyId = sessionStorage.getItem("familyId");
+  // useEffect(() => {
+  //   if (!loginUserInfo.login) return;
 
-    if (storedFamilyId) {
-      handleLogin(storedFamilyId);
-    }
-  }, []);
+  //   // if (loginUserInfo.login && loginUserInfo.userInfo.id) {
+  //   //   if (loginUserInfo.userInfo.role === "main") {
+  //   //     handleCheckFamilyExist(loginUserInfo.userInfo.id);
+  //   //   } else if (loginUserInfo.userInfo.role === "sub") {
+  //   //     handleCheckFamilyList();
+  //   //   }
+  //   // }
+  // }, [loginUserInfo]);
+
 
     // ======================================================================
   // env 관련
@@ -52,14 +61,23 @@ export default function UserProgressContextProvider({ children }) {
   if (MAIN_KEY === undefined) MAIN_KEY = getEnvironments("MAIN_KEY");
   // ======================================================================
 
-  /**
-   * 🔹 가족 ID(familyId)로 로그인 요청
-   * @param {string} familyId 
-   * @returns {Promise<{success: boolean, data?: any, error?: string}>}
-   */
-  async function handleLogin(familyId) {
+  function handleUpdateSessionLoginInfo(userInfo) {
+    setLoginUserInfo({
+      login: userInfo.login,
+      userInfo: userInfo.userInfo,
+    });
+
+    // 로그인 정보 저장
+    sessionStorage.setItem("loginUserInfo", JSON.stringify(userInfo));
+  }
+
+  // 로그인
+  async function handleLogin(email, password) {
     try {
-      const response = await request(`${DEV_API_URL}/families/${familyId}`, "GET");
+      const response = await request(`${DEV_API_URL}/auth/login`, "POST", {
+        email,
+        password,
+      });
 
       if (response.success) {
         const resData = response.data;
@@ -97,9 +115,7 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
-  /**
-   * 🔹 로그아웃 기능
-   */
+  // 로그아웃
   async function handleLogout() {
     try {
       const response = await request(`${DEV_API_URL}/auth/logout`, "POST");
@@ -119,14 +135,11 @@ export default function UserProgressContextProvider({ children }) {
           sessionStorage.removeItem("loginUserInfo");
           sessionStorage.removeItem("session_id");
 
-          // 사이드바 관리
-          setIsActiveSideBarElem("accounts");
-
           // 기본 경로로 이동
           window.location.href = "/";
 
           // 모달 초기화
-          await handleCloseModal();
+          await mainStore.handleModalClose();
 
           // 기기 활성화 요소 초기화 (동기 처리)
           sessionStorage.removeItem("isActiveSideBarElem");
@@ -159,6 +172,12 @@ export default function UserProgressContextProvider({ children }) {
   const ctxValue = {
     loginUserInfo,
     familyInfo,
+    DEV_API_URL,
+    MAIN_API_URL,
+    DEV_KEY,
+    MAIN_KEY,
+    setLoginUserInfo,
+    setFamilyInfo,
     handleLogin,
     handleLogout,
   };

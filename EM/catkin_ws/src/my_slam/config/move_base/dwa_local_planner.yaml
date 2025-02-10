@@ -23,13 +23,13 @@ DWAPlannerROS:
 
   # === Forward Simulation Parameters ===
   sim_time: 2.0              # 기본값: 1.7  | 시뮬레이션 시간 (초)
-  vx_samples: 15             # 기본값: 3    | x축 속도 샘플 수
+  vx_samples: 10             # 기본값: 3    | x축 속도 샘플 수
   vy_samples: 0              # 기본값: 10   | y축 속도 샘플 수 (차동구동이면 0)
   vtheta_samples: 30         # 기본값: 20   | 회전 속도 샘플 수
 
   # === Goal Tolerance Parameters ===
   xy_goal_tolerance: 0.3     # 기본값: 0.10 | 목표 도달 x,y 허용 오차 (m)
-  yaw_goal_tolerance: 0.3    # 기본값: 0.05 | 목표 도달 회전 허용 오차 (rad)
+  yaw_goal_tolerance: 0.5    # 기본값: 0.05 | 목표 도달 회전 허용 오차 (rad)
   latch_xy_goal_tolerance: false  # 기본값: false | 목표 오차 래치 여부
 
   # === Oscillation Prevention Parameters ===

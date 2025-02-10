@@ -18,11 +18,11 @@ conservative_reset:
 
 backoff_slow:                      # 첫 번째 후진 파라미터
   backoff_distance: 0.2    
-  vel: 0.3
+  vel: 0.25
 
 backoff_fast:                      # 두 번째 후진 파라미터
   backoff_distance: 0.3    
-  vel: 0.5
+  vel: 0.3
 
 aggressive_reset:
   reset_distance: 0.0            

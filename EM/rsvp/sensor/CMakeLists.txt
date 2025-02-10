@@ -18,12 +18,14 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 
 find_package(CURL REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 # Link wiringPi library
 target_link_libraries(${PROJECT_NAME} 
 	wiringPi
 	${CURL_LIBRARIES}
 	nlohmann_json::nlohmann_json
+	OpenSSL::Crypto
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

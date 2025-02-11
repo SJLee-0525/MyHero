@@ -6,8 +6,8 @@ import CalendarStoreContextProvider from "../../store/calendarStore"
 
 export default function CalendarModal({ title, onCloseConfirm }) {
   return (
-    <div id="modal-body">
-      <div id="modal-bar">
+    <div id="modal-body-thin">
+      <div id="modal-bar-thin">
         <h2>{title}</h2>
       </div>
       <CalendarStoreContextProvider>

@@ -12,17 +12,6 @@ import Gas from "../../../assets/stat-icons/heat.svg";
 export default function Environment() {
     const environmentDataStore = useContext(EnvironmentDataContext);
 
-    // console.log(123123, environmentDataStore.environmentData);
-
-    const dustLevel =
-        (environmentDataStore.environmentData.data.dust_level
-        ? environmentDataStore.environmentData.data.dust_level.toFixed(0)
-        : environmentDataStore.environmentData.data.dust_level) || null;
-    const ethanol =
-        (environmentDataStore.environmentData.data.ethanol
-        ? (environmentDataStore.environmentData.data.ethanol * 100).toFixed(1)
-        : environmentDataStore.environmentData.data.ethanol) || null;
-
     return (
         <div id="environment">
             <div id="environment-info">
@@ -45,7 +34,7 @@ export default function Environment() {
                     status={`${environmentDataStore.environmentData.data.dust_level} ㎍/㎥`}
                 ></StatusWidget>
                 <StatusWidget
-                    name="에탄올 농도"
+                    name="일산화탄소"
                     imgSrc={Gas}
                     altSrc="ethanol"
                     status={`${environmentDataStore.environmentData.data.ethanol} %`}

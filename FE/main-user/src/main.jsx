@@ -7,6 +7,8 @@ import App from "./App.jsx";
 import UserProgressContextProvider from "./store/userProgressStore.jsx";
 import StoreContextProvider from "./store/store.jsx";
 import EnvironmentDataContextProvider from "./store/environmentData.jsx";
+import WeatherStoreContextProvider from "./store/weatherStore.jsx";
+import NewsStoreContextProvider from "./store/newsStore.jsx";
 
 const startApp = async () => {
   await loadEnvironments();
@@ -16,7 +18,11 @@ const startApp = async () => {
       <StoreContextProvider>
         <UserProgressContextProvider> 
           <EnvironmentDataContextProvider>
-            <App />
+            <WeatherStoreContextProvider>
+              <NewsStoreContextProvider>
+                <App />
+              </NewsStoreContextProvider>
+            </WeatherStoreContextProvider>  
           </EnvironmentDataContextProvider>
         </UserProgressContextProvider>
       </StoreContextProvider>

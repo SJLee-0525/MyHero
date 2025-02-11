@@ -1,4 +1,4 @@
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import { useState } from "react";
 import { useContext } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
@@ -13,7 +13,6 @@ export const EnvironmentDataContext = createContext({
             humidity: null,
             dust_level: null,
             ethanol: null,
-            // others: { finedust: "--", ultrafindedust: "--" },
         },
     },
     setEnvironmentData: () => {},
@@ -31,12 +30,10 @@ export default function EnvironmentDataContextProvider({ children }) {
             humidity: null,
             dust_level: null,
             ethanol: null,
-            // others: { finedust: "--", ultrafindedust: "--" },
         },
     });
 
     let familyId = userProgressStore.familyInfo?.familyId || "";
-    console.log("familyInfo:", userProgressStore.familyInfo);
 
     async function handleGetLatestEnvironmentData() {
         if (!familyId) {
@@ -53,9 +50,6 @@ export default function EnvironmentDataContextProvider({ children }) {
         try {
             const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
             const resData = response.data;
-
-            console.log("환경 정보 요청 - familyId:", familyId);
-            console.log("환경 정보 요청 - API URL:", userProgressStore.DEV_API_URL);
 
             if (response.success) {
                 if (resData.message === "Home status retrieved successfully") {
@@ -80,7 +74,6 @@ export default function EnvironmentDataContextProvider({ children }) {
                     humidity: null,
                     dust_level: null,
                     ethanol: null,
-                    // others: { finedust: null, ultrafinedust: null },
                 },
                 })
                 return {

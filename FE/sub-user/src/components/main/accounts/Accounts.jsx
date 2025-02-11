@@ -13,8 +13,8 @@ export default function Accounts() {
     <div id="accounts-main">
       <Routes>
         <Route path="/" element={<UserInfo />} />
-        <Route path="register" element={<RegisterMemberQr />} />
-        <Route path="register/:familyId" element={<RegisterMemberQr />} />
+        {/* <Route path="register" element={<RegisterMemberQr />} />
+        <Route path="register/:familyId" element={<RegisterMemberQr />} /> */}
       </Routes>
       <Outlet /> {/*중첩 라우트를 위한 Outlet 추가 */}
     </div>

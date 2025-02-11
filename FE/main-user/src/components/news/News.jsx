@@ -1,57 +1,53 @@
-import React from "react";
-import { useState } from "react";
+import React, { useContext, useState } from "react";
+import { NewsStoreContext } from "../../store/newsStore";
 import NewsBox from "./NewsBox";
-import NewsDetail from "./NewsDetail";
 import "./News.css";
 
+const defaultCategories = {
+  "사회": "business", 
+  "엔터": "entertainment", 
+  "환경": "environment", 
+  "건강": "health",
+  "정치": "politics", 
+  "과학": "science", 
+  "스포츠": "sports", 
+  "기술": "technology"
+};
+
 export default function News({ onReply }) {
-  const [selectedNews, setSelectedNews] = useState(null);
-  const [readNews, setReadNews] = useState(new Set());
-  // const [isMessageModalOpen, setMessageModalOpen] = useState(false);
+  const { newsData, isLoading } = useContext(NewsStoreContext);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const news = [
-    { id: 1, text: "으이잉ㅇㅇ", time: "16:07", date: "오늘" },
-    { id: 2, text: "[행정안전부] 오늘 11시 10분 부산 호우경보 산사퉤", time: "14:02", date: "어제" },
-    { id: 3, text: "[기장군] 호우경보 발효중.", time: "13:46", date: "어제" },
-    { id: 4, text: "으갸갸갸갸", time: "12:05", date: "어제" },
-  ];
+  const categories = Object.keys(newsData).length > 0 ? Object.keys(newsData) : Object.values(defaultCategories);
 
-  // 날짜별 그룹화
-  const groupedNews = news.reduce((acc, news) => {
-    if (!acc[news.date]) {
-      acc[news.date] = [];
-    }
-    acc[news.date].push(news);
-    return acc;
-  }, {});
-
-  // 선택한 공지사항을 우측에 띄우고 읽음 처리하는 함수
-  const openNews = (news) => {
-    setSelectedNews(news);
-    setReadNewss((prev) => new Set([...prev, news.id]));
-  };
+  // 카테고리 클릭 시 해당 뉴스 페이지로 전환
+  if (selectedCategory) {
+    return (
+    <NewsBox 
+      category={selectedCategory} 
+      newsData={newsData[selectedCategory] || []}
+      onBack={() => setSelectedCategory(null)} 
+      />
+    );
+  }
 
   return (
-    <div className="news-container">
-      <div className="news-list">
-        <div className="news-scroll">
-          {Object.keys(groupedNews).map((date) => (
-            <div key={date} className="news-group">
-              <h2>{date}</h2>
-              {groupedNews[date].map((news) => (
-                <NewsBox
-                  key={news.id}
-                  news={news}
-                  onClick={openNews}
-                  isRead={readNews.has(news.id)} // 읽음 여부 전달
-                />
-              ))}
-            </div>
+    <div className="news-category-container">
+      {isLoading ? (
+        <p>뉴스 데이터를 불러오는 중...</p>
+      ) : (
+        <div className="news-category-buttons">
+          {Object.entries(defaultCategories).map(([kor, eng]) => (
+            <button
+              key={eng}
+              className="news-category-button"
+              onClick={() => setSelectedCategory(eng)}
+            >
+              {kor}
+            </button>
           ))}
         </div>
-      </div>
-      <div className="divider"></div>
-      <NewsDetail news={selectedNews} onReply={onReply} />
+      )}
     </div>
   );
 }

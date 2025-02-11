@@ -34,7 +34,6 @@ export default function EnvironmentDataContextProvider({ children }) {
     });
 
     let familyId = userProgressStore.familyInfo?.familyId || "";
-    console.log("familyInfo:", userProgressStore.familyInfo);
 
     async function handleGetLatestEnvironmentData() {
         if (!familyId) {

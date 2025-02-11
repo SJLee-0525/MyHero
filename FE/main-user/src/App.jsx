@@ -72,9 +72,7 @@ export default function App() {
     };
   }, [isScreensaverActive]);
   
-  useEffect(() => {
-    console.log("loginUserInfo가 변경됨:", userProgressStore.loginUserInfo);
-    
+  useEffect(() => { 
     const initLogin = async () => {
       if (userProgressStore.loginUserInfo.userInfo?.id) {
         await userProgressStore.connectRasp();
@@ -88,8 +86,6 @@ export default function App() {
   const prevFamilyInfo = useRef(userProgressStore.familyInfo);
 
   useEffect(() => {
-    console.log('환경정보 가져오기!!!!!!!!!!!!!!!!')
-
     const getStatusData = async () => {
       if (
         userProgressStore.familyInfo.isExist && 

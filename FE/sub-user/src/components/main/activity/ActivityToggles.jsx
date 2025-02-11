@@ -25,16 +25,16 @@ export default function ActivityToggles() {
   return (
     <div id="activity-toggle-group">
       <ActivityToggle
-        name="정신 건강"
-        imgSrc={heartIcon}
-        altSrc="heart"
-        status={mentalScore}
-      />
-      <ActivityToggle
         name="활동"
         imgSrc={walkIcon}
         altSrc="activity"
         status={activityScore}
+      />
+      <ActivityToggle
+        name="정신 건강"
+        imgSrc={heartIcon}
+        altSrc="mental"
+        status={mentalScore}
       />
     </div>
   );

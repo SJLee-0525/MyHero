@@ -72,7 +72,7 @@ function App() {
                 {/* <Route path="/emergency" element={<Emergency />} /> */}
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/activity" element={<Activity />} />
-                <Route path="/mental" element={<Mental />} />
+                {/* <Route path="/mental" element={<Mental />} /> */}
                 <Route path="/accounts/*" element={<Accounts />} />
                 <Route path="/settings" element={<Settings />} />
               </>

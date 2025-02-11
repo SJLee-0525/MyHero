@@ -35,7 +35,7 @@ export default function Main() {
         <Widget title={`${mainUserName}님의 집`}>
           <ToggleGroup />
         </Widget>
-        <KeywordsWidget />
+        {/* <KeywordsWidget /> */}
       </div>
     </div>
   );

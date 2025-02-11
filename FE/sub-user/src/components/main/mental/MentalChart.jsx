@@ -13,14 +13,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { HealthContext } from "../../../store/healthStore";
+import { CalendarStoreContext } from "../../../store/calendarStore.jsx";
 
 function CustomTooltip({ payload, label, active }) {
   if (active) {
     return (
       <div className="custom-tooltip">
         <p className="date">{label}</p>
-        <p className="mental">{`mental : ${payload}`}</p>
+        <p className="mental">{`mental : ${payload[0].value}`}</p>
         <p className="desc">건강함</p>
       </div>
     );
@@ -30,15 +30,20 @@ function CustomTooltip({ payload, label, active }) {
 }
 
 export default function ActivityChart() {
-  const healthStore = useContext(HealthContext);
+  const calendarStore = useContext(CalendarStoreContext);
 
-  let mentalReport = healthStore.mentalReport
-    ? [...healthStore.mentalReport]
-    : [];
-  if (mentalReport.length > 7) {
-    mentalReport = mentalReport.slice(0, 7);
+  let mentalStatus = Object.entries(calendarStore.schedules.schedules.mental)
+    .slice()
+    .map(([date, details]) => ({
+      date,
+      averageScore: details.averageScore,
+    }));
+
+  mentalStatus = mentalStatus.reverse();
+
+  if (mentalStatus.length > 7) {
+    mentalStatus = activityStatus.slice(0, 7);
   }
-  mentalReport = mentalReport.reverse();
 
   return (
     <div id="mental-chart">
@@ -50,20 +55,20 @@ export default function ActivityChart() {
         <LineChart
           width={300}
           height={100}
-          data={mentalReport}
+          data={mentalStatus}
           margin={{
             top: 10,
             right: 50,
             bottom: 15,
           }}
         >
-          <XAxis dataKey="reported_at" />
+          <XAxis dataKey="date" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Line
             type="monotone"
-            dataKey="average_score"
+            dataKey="averageScore"
             stroke="#FF5A33"
             strokeWidth={2}
           />

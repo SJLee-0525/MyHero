@@ -135,7 +135,7 @@ export default function HomeStatusContextProvider({ children }) {
       );
 
       const resData = response.data;
-      console.log(2131231231, response);
+
       if (response.success) {
         if (resData.message === "Home status retrieved successfully") {
           // others 값이 "{'testData':123, 'ultrafinedust': 1234}"처럼 작은따옴표(' ')로 감싸져 있습니다.

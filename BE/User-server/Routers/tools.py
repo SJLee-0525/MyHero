@@ -9,7 +9,9 @@ Parts of Tools
 from fastapi import HTTPException, APIRouter, status, Depends
 from fastapi.encoders import jsonable_encoder
 
+import httpx
 import Database
+from External.ai import check_connection
 
 from Utilities.logging_tools import *
 
@@ -74,5 +76,23 @@ async def get_all_sub_regions_by_master_region(master_region: str):
             detail={
                 "type": "not found",
                 "message": "Failed to retrieve sub region data"
+            }
+        )
+
+@router.get("/ai-server", status_code=status.HTTP_200_OK)
+async def get_ai_server_status():
+    response: httpx.Response = await check_connection()
+
+    if response is not None and response.status_code == status.HTTP_200_OK:
+        return {
+            "message": "AI Process Server is running."
+        }
+    else:
+        logger.critical(f"AI Process Server is not running.")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "AI Process Server is not running."
             }
         )

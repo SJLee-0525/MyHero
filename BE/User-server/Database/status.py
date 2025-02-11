@@ -64,38 +64,26 @@ def get_home_status(
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            home_status_list: list = []
+            home_status_list = session.query(
+                    HomeStatusTable.index,
+                    HomeStatusTable.family_id,
+                    HomeStatusTable.reported_at,
+                    HomeStatusTable.temperature,
+                    HomeStatusTable.humidity,
+                    HomeStatusTable.dust_level,
+                    HomeStatusTable.ethanol,
+                    HomeStatusTable.others
+                ).filter(and_(HomeStatusTable.reported_at.between(start_time, end_time),
+                              HomeStatusTable.family_id == family_id))
 
-            if time_order is Order.ASC:
-                home_status_list = session.query(
-                    HomeStatusTable.index,
-                    HomeStatusTable.family_id,
-                    HomeStatusTable.reported_at,
-                    HomeStatusTable.temperature,
-                    HomeStatusTable.humidity,
-                    HomeStatusTable.dust_level,
-                    HomeStatusTable.ethanol,
-                    HomeStatusTable.others
-                ).filter(and_(HomeStatusTable.reported_at.between(start_time, end_time),
-                              HomeStatusTable.family_id == family_id)
-                ).order_by(
-                    HomeStatusTable.reported_at.asc()
-                ).all()
-            elif time_order is Order.DESC:
-                home_status_list = session.query(
-                    HomeStatusTable.index,
-                    HomeStatusTable.family_id,
-                    HomeStatusTable.reported_at,
-                    HomeStatusTable.temperature,
-                    HomeStatusTable.humidity,
-                    HomeStatusTable.dust_level,
-                    HomeStatusTable.ethanol,
-                    HomeStatusTable.others
-                ).filter(and_(HomeStatusTable.reported_at.between(start_time, end_time),
-                              HomeStatusTable.family_id == family_id)
-                ).order_by(
-                    HomeStatusTable.reported_at.desc()
-                ).all()
+            ordered_home_status_list = None
+
+            if time_order == Order.ASC:
+                ordered_home_status_list = home_status_list.order_by(
+                    HomeStatusTable.reported_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_home_status_list = home_status_list.order_by(
+                    HomeStatusTable.reported_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -106,7 +94,7 @@ def get_home_status(
                 "dust_level": data[5],
                 "ethanol": data[6],
                 "others": data[7]
-            } for data in home_status_list]
+            } for data in ordered_home_status_list]
 
             result = serialized_data
         except SQLAlchemyError as error:
@@ -237,37 +225,29 @@ def get_health_status(
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            health_status_list: list = []
+            health_status_list = health_status_list = session.query(
+                    HealthStatusTable.index,
+                    HealthStatusTable.family_id,
+                    HealthStatusTable.reported_at,
+                    HealthStatusTable.heart_rate
+                ).filter(and_(HealthStatusTable.reported_at.between(start_time, end_time),
+                              HealthStatusTable.family_id == family_id))
 
-            if time_order is Order.ASC:
-                health_status_list = session.query(
-                    HealthStatusTable.index,
-                    HealthStatusTable.family_id,
-                    HealthStatusTable.reported_at,
-                    HealthStatusTable.heart_rate
-                ).filter(and_(HealthStatusTable.reported_at.between(start_time, end_time),
-                              HealthStatusTable.family_id == family_id)
-                ).order_by(
-                    HealthStatusTable.reported_at.asc()
-                ).all()
-            elif time_order is Order.DESC:
-                health_status_list = session.query(
-                    HealthStatusTable.index,
-                    HealthStatusTable.family_id,
-                    HealthStatusTable.reported_at,
-                    HealthStatusTable.heart_rate
-                ).filter(and_(HealthStatusTable.reported_at.between(start_time, end_time),
-                              HealthStatusTable.family_id == family_id)
-                ).order_by(
-                    HealthStatusTable.reported_at.desc()
-                ).all()
+            ordered_health_status_list = None
+
+            if time_order == Order.ASC:
+                ordered_health_status_list = health_status_list.order_by(
+                    HealthStatusTable.reported_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_health_status_list = health_status_list.order_by(
+                    HealthStatusTable.reported_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
                 "family_id": data[1],
                 "reported_at": data[2],
                 "heart_rate": data[3]
-            } for data in health_status_list]
+            } for data in ordered_health_status_list]
 
             result = serialized_data
         except SQLAlchemyError as error:
@@ -390,36 +370,25 @@ def get_active_status(
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            active_status_list: list = []
+            active_status_list = session.query(
+                    ActiveStatusTable.index,
+                    ActiveStatusTable.family_id,
+                    ActiveStatusTable.reported_at,
+                    ActiveStatusTable.score,
+                    ActiveStatusTable.action,
+                    ActiveStatusTable.is_critical,
+                    ActiveStatusTable.description
+                ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
+                              ActiveStatusTable.family_id == family_id))
 
-            if time_order is Order.ASC:
-                active_status_list = session.query(
-                    ActiveStatusTable.index,
-                    ActiveStatusTable.family_id,
-                    ActiveStatusTable.reported_at,
-                    ActiveStatusTable.score,
-                    ActiveStatusTable.action,
-                    ActiveStatusTable.is_critical,
-                    ActiveStatusTable.description
-                ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
-                              ActiveStatusTable.family_id == family_id)
-                ).order_by(
-                    ActiveStatusTable.reported_at.asc()
-                ).all()
-            elif time_order is Order.DESC:
-                active_status_list = session.query(
-                    ActiveStatusTable.index,
-                    ActiveStatusTable.family_id,
-                    ActiveStatusTable.reported_at,
-                    ActiveStatusTable.score,
-                    ActiveStatusTable.action,
-                    ActiveStatusTable.is_critical,
-                    ActiveStatusTable.description
-                ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
-                              ActiveStatusTable.family_id == family_id)
-                ).order_by(
-                    ActiveStatusTable.reported_at.desc()
-                ).all()
+            ordered_active_status_list = None
+
+            if time_order == Order.ASC:
+                ordered_active_status_list = active_status_list.order_by(
+                    ActiveStatusTable.reported_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_active_status_list = active_status_list.order_by(
+                    ActiveStatusTable.reported_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -429,7 +398,7 @@ def get_active_status(
                 "action": data[4],
                 "is_critical": data[5],
                 "description": data[6]
-            } for data in active_status_list]
+            } for data in ordered_active_status_list]
 
             result = serialized_data
         except SQLAlchemyError as error:
@@ -535,34 +504,24 @@ def get_mental_status(
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            mental_status_list: list = []
+            mental_status_list = session.query(
+                    MentalStatusTable.index,
+                    MentalStatusTable.family_id,
+                    MentalStatusTable.reported_at,
+                    MentalStatusTable.score,
+                    MentalStatusTable.is_critical,
+                    MentalStatusTable.description
+                ).filter(and_(MentalStatusTable.reported_at.between(start_time, end_time),
+                              MentalStatusTable.family_id == family_id))
 
-            if time_order is Order.ASC:
-                mental_status_list = session.query(
-                    MentalStatusTable.index,
-                    MentalStatusTable.family_id,
-                    MentalStatusTable.reported_at,
-                    MentalStatusTable.score,
-                    MentalStatusTable.is_critical,
-                    MentalStatusTable.description
-                ).filter(and_(MentalStatusTable.reported_at.between(start_time, end_time),
-                              MentalStatusTable.family_id == family_id)
-                ).order_by(
-                    MentalStatusTable.reported_at.asc()
-                ).all()
-            elif time_order is Order.DESC:
-                mental_status_list = session.query(
-                    MentalStatusTable.index,
-                    MentalStatusTable.family_id,
-                    MentalStatusTable.reported_at,
-                    MentalStatusTable.score,
-                    MentalStatusTable.is_critical,
-                    MentalStatusTable.description
-                ).filter(and_(MentalStatusTable.reported_at.between(start_time, end_time),
-                              MentalStatusTable.family_id == family_id)
-                ).order_by(
-                    MentalStatusTable.reported_at.desc()
-                ).all()
+            ordered_mental_status_list = None
+
+            if time_order == Order.ASC:
+                ordered_mental_status_list = mental_status_list.order_by(
+                    MentalStatusTable.reported_at.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_mental_status_list = mental_status_list.order_by(
+                    MentalStatusTable.reported_at.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -571,7 +530,7 @@ def get_mental_status(
                 "score": data[3],
                 "is_critical": data[4],
                 "description": data[5]
-            } for data in mental_status_list]
+            } for data in ordered_mental_status_list]
 
             result = serialized_data
         except SQLAlchemyError as error:
@@ -673,46 +632,30 @@ def get_mental_reports(
     database_pre_session = database.get_pre_session()
     with database_pre_session() as session:
         try:
-            mental_reports_list: list = []
+            mental_reports_list = session.query(
+                    MentalReportsTable.index,
+                    MentalReportsTable.family_id,
+                    MentalReportsTable.reported_at,
+                    MentalReportsTable.start_time,
+                    MentalReportsTable.end_time,
+                    MentalReportsTable.average_score,
+                    MentalReportsTable.critical_days,
+                    MentalReportsTable.best_day,
+                    MentalReportsTable.worst_day,
+                    MentalReportsTable.improvement_needed,
+                    MentalReportsTable.summary
+                ).filter(and_(or_(MentalReportsTable.start_time.between(start_time, end_time),
+                             MentalReportsTable.end_time.between(start_time, end_time)),
+                              MentalReportsTable.family_id == family_id))
 
-            if time_order is Order.ASC:
-                mental_reports_list = session.query(
-                    MentalReportsTable.index,
-                    MentalReportsTable.family_id,
-                    MentalReportsTable.reported_at,
-                    MentalReportsTable.start_time,
-                    MentalReportsTable.end_time,
-                    MentalReportsTable.average_score,
-                    MentalReportsTable.critical_days,
-                    MentalReportsTable.best_day,
-                    MentalReportsTable.worst_day,
-                    MentalReportsTable.improvement_needed,
-                    MentalReportsTable.summary
-                ).filter(and_(or_(MentalReportsTable.start_time.between(start_time, end_time),
-                             MentalReportsTable.end_time.between(start_time, end_time)),
-                              MentalReportsTable.family_id == family_id)
-                ).order_by(
-                    MentalReportsTable.start_time.asc()
-                ).all()
-            elif time_order is Order.DESC:
-                mental_reports_list = session.query(
-                    MentalReportsTable.index,
-                    MentalReportsTable.family_id,
-                    MentalReportsTable.reported_at,
-                    MentalReportsTable.start_time,
-                    MentalReportsTable.end_time,
-                    MentalReportsTable.average_score,
-                    MentalReportsTable.critical_days,
-                    MentalReportsTable.best_day,
-                    MentalReportsTable.worst_day,
-                    MentalReportsTable.improvement_needed,
-                    MentalReportsTable.summary
-                ).filter(and_(or_(MentalReportsTable.start_time.between(start_time, end_time),
-                             MentalReportsTable.end_time.between(start_time, end_time)),
-                              MentalReportsTable.family_id == family_id)
-                ).order_by(
-                    MentalReportsTable.start_time.desc()
-                ).all()
+            ordered_mental_reports_list = None
+
+            if time_order == Order.ASC:
+                ordered_mental_reports_list = mental_reports_list.order_by(
+                    MentalReportsTable.start_time.asc()).all()
+            elif time_order == Order.DESC:
+                ordered_mental_reports_list = mental_reports_list.order_by(
+                    MentalReportsTable.start_time.desc()).all()
 
             serialized_data: list[dict] = [{
                 "index": data[0],
@@ -726,7 +669,7 @@ def get_mental_reports(
                 "worst_day": data[8],
                 "improvement_needed": data[9],
                 "summary": data[10]
-            } for data in mental_reports_list]
+            } for data in ordered_mental_reports_list]
 
             result = serialized_data
         except SQLAlchemyError as error:

@@ -8,16 +8,13 @@ Parts of Status
 from fastapi import HTTPException, APIRouter, status, Query, Response, Request, Depends
 from fastapi.encoders import jsonable_encoder
 
-from datetime import timezone
-
 import httpx
+from datetime import timezone
 
 import Database
 from Database.models import *
-
 from Endpoint.models import *
-
-from External.ai import *
+from External.ai import request_mental_status, request_mental_reports
 
 from Utilities.logging_tools import *
 

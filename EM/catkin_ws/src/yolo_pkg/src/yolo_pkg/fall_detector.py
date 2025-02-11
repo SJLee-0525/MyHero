@@ -73,6 +73,9 @@ class EnhancedFallDetector:
             color = self.config.colors['skeleton_fall'] if is_fallen else self.config.colors['skeleton_normal']
 
             for connection in self.config.skeleton_connections:
+                if max(connection) >= len(keypoints):
+                    # keypoints 개수가 부족하면, 해당 연결은 무시
+                    continue
                 pt1 = tuple(map(int, keypoints[connection[0]][:2]))
                 pt2 = tuple(map(int, keypoints[connection[1]][:2]))
                 cv2.line(frame, pt1, pt2, color, 2)

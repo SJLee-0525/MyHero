@@ -31,6 +31,29 @@ processes = {
     'rsvp': None
 }
 
+@app.post("/bluetooth/speaker/connect")
+async def connect_bluetooth_speaker():
+   try:
+       result = subprocess.run(['bluetoothctl', 'connect', '5C:FB:7C:34:59:29'], capture_output=True, text=True)
+       if result.returncode == 0:
+           return {"status": "success", "message": "bluetooth speaker connected"}
+       else:
+           return {"status": "error", "message": result.stderr}
+   except Exception as e:
+       return {"status": "error", "message": str(e)}
+   
+@app.post("/bluetooth/speaker/volume")
+async def set_bluetooth_speaker_volume(volume: int):
+   try:
+       result = subprocess.run(['pactl', 'set-sink-volume', 'bluez_output.5C_FB_7C_34_59_29.1', f'{volume}%'], 
+                               capture_output=True, text=True)
+       if result.returncode == 0:
+           return {"status": "success", "message": f" bluetooth speaker volume set to {volume}%"}
+       else:
+           return {"status": "error", "message": result.stderr}
+   except Exception as e:
+       return {"status": "error", "message": str(e)}
+
 def start_processes(user_id: str):
     try:
         stop_processes()

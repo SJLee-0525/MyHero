@@ -45,8 +45,6 @@ export default function ActivityChart() {
     activityStatus = activityStatus.slice(0, 7);
   }
 
-  console.log(activityStatus);
-
   return (
     <div id="activity-chart">
       <ResponsiveContainer

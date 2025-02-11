@@ -32,6 +32,13 @@
   max-height: 40vh;
 }
 
+#modal-notifications {
+  width: 50vw;
+  max-width: 50vw;
+  height: 75vh;
+  max-height: 75vh;
+}
+
 #home-notifications {
   display: flex;
   flex-direction: column;

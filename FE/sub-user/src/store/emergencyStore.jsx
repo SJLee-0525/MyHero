@@ -32,11 +32,14 @@ export const EmergencyContext = createContext({
     ],
     crit: [],
   },
+  newNotifications: [],
   setAllNotifications: () => {},
   setCategorizedNotifications: () => {},
   getAllNotifications: (order) => {},
   handleReadNotification: (index) => {},
   categorizeNotifications: (notifications) => {},
+  handleCheckNewNotifications: (prevNotifications, newNotifications) => {},
+  handleClearNewNotifications: () => {},
   handleCheckAlert: () => {},
   handleShowAlertLog: () => {},
   handleCheckHomeAlert: () => {},
@@ -53,6 +56,7 @@ export default function EmergencyContextProvider({ children }) {
     warn: [],
     crit: [],
   });
+  const [newNotifications, setNewNotifications] = useState([]);
 
   let familyId = "";
   if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
@@ -83,7 +87,19 @@ export default function EmergencyContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "All notifications retrieved successfully") {
-          setAllNotifications(resData.result);
+          const newNotifications = resData.result;
+
+          setAllNotifications((prevNotifications) => {
+            if (
+              prevNotifications.length > 0 &&
+              prevNotifications.length !== newNotifications.length
+            ) {
+              console.log("새로운 알림이 있습니다.");
+              handleCheckNewNotifications(prevNotifications, newNotifications);
+            }
+
+            return newNotifications;
+          });
           return {
             success: true,
             data: resData.result,
@@ -182,6 +198,26 @@ export default function EmergencyContextProvider({ children }) {
     return;
   }
 
+  // 새 알림 분류 및 알림 팝업 호출
+  function handleCheckNewNotifications(prevNotifications, newNotifications) {
+    if (prevNotifications.length === newNotifications.length) return;
+
+    const newNotificationsLength =
+      newNotifications.length - prevNotifications.length;
+
+    // 새 알림 분류
+    const needAlertNotifications = newNotifications.slice(
+      0,
+      newNotificationsLength
+    );
+    setNewNotifications(needAlertNotifications);
+    return;
+  }
+
+  function handleClearNewNotifications() {
+    setNewNotifications([]);
+  }
+
   // 한 번 확인하면 이전의 알림은 전부 읽음 처리.
   function handleCheckAlert() {
     return setEmergencyAlerts((prevAlerts) => {
@@ -216,11 +252,14 @@ export default function EmergencyContextProvider({ children }) {
     loading,
     allNotifications,
     categorizedNotifications,
+    newNotifications,
     setAllNotifications,
     setCategorizedNotifications,
     getAllNotifications,
     handleReadNotification,
     categorizeNotifications,
+    handleCheckNewNotifications,
+    handleClearNewNotifications,
     handleCheckAlert,
     handleShowAlertLog,
     handleCheckHomeAlert,

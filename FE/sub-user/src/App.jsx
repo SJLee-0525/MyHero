@@ -25,6 +25,7 @@ import Mental from "./components/main/mental/Mental.jsx";
 import Accounts from "./components/main/accounts/Accounts.jsx";
 import Settings from "./components/main/settings/Settings.jsx";
 import RegisterMemberQr from "./components/main/accounts/RegisterMemberQr.jsx";
+import NewNotiModal from "./components/main/notification/NewNotiModal.jsx";
 // import Router from "./router/router";
 
 import Advertisement from "./components/main/advertisement/Advertisement.jsx";
@@ -80,6 +81,7 @@ function App() {
               <Route path="/" element={<Advertisement />} />
             )}
           </Routes>
+          <NewNotiModal />
         </main>
       </div>
     </BrowserRouter>

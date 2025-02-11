@@ -33,7 +33,7 @@ export default function ToggleGroup() {
       : null;
   const ethanol =
     homeStatusStore.homeStatus.length > 0
-      ? (homeStatusStore.homeStatus[0].ethanol * 100).toFixed(1)
+      ? homeStatusStore.homeStatus[0].ethanol.toFixed(3)
       : null;
   const heartRate =
     (healthStore.healthStatus && healthStore.healthStatus[0]?.heart_rate) ||
@@ -153,13 +153,13 @@ export default function ToggleGroup() {
           }`}
         />
         <StatusToggle
-          name="가스 누출"
+          name="일산화탄소"
           imgSrc={heatImage}
           altSrc="gas"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
             homeStatusStore.homeStatus[0].ethanol > 0 &&
-            homeStatusStore.homeStatus[0].ethanol < 30
+            homeStatusStore.homeStatus[0].ethanol < 1.5
               ? "good"
               : "bad"
           }

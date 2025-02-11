@@ -7,7 +7,7 @@ from datetime import date
 
 from models import MentalStatus, ChatHistory, ChatSession, Family, MentalReport
 
-from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now
+from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now, to_kst
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +120,7 @@ class EmotionService:
 
             except json.JSONDecodeError:
                 logger.error("JSON 파싱 실패, 기본 형식으로 변환")
-                time_str = conversations[-1].created_at.strftime('%H:%M')
+                time_str = to_kst(conversations[-1].created_at.strftime('%H:%M'))
                 return {
                     "overall_emotional_state": "감정 상태 분석이 필요합니다.",
                     "emotional_insights": "더 많은 대화가 필요합니다.",

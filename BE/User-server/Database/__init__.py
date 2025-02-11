@@ -73,6 +73,16 @@ from .notifications import (
     delete_notifications
 )
 
+from .messages import (
+    create_message,
+    get_new_received_messages,
+    get_all_received_messages,
+    get_all_sent_messages,
+    get_one_message,
+    check_read_message,
+    delete_message
+)
+
 from .tools import (
     get_all_master_region,
     get_all_sub_region

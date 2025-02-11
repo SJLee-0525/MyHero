@@ -318,3 +318,28 @@ class NotificationsTable(Base):
                 f"message_sn='{self.message_sn}', " +
                 f"is_read='{self.is_read}')>"
         )
+
+class MessageTable(Base):
+    """
+    사용자간의 주고 받는 메시지 정보
+    """
+    __tablename__ = "messages"
+
+    index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
+    from_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    to_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    created_at = Column(TIMESTAMP, nullable=True, server_default=func.now())
+    content = Column(TEXT, nullable=True)
+    image_url = Column(TEXT, nullable=True)
+    is_read = Column(Boolean, nullable=True, server_default="FALSE")
+
+    def __repr__(self):
+        return (f"" +
+                f"<Message(index='{self.index}', " +
+                f"from_id='{self.from_id}', " +
+                f"to_id='{self.to_id}', " +
+                f"created_at='{self.created_at}', " +
+                f"content='{self.content}', " +
+                f"image_url='{self.image_url}', " +
+                f"is_read='{self.is_read}')>"
+        )

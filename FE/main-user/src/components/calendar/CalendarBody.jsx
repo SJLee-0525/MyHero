@@ -1,9 +1,8 @@
-import "./Calendar.css"
-
 import { useContext } from "react"
 import { CalendarStoreContext } from "../../store/calendarStore.jsx"
+import "./Calendar.css"
 
-export default function CalendarBody() {
+export default function CalendarBody({ openModal }) {
   const { daysInMonth, selectedDate, currentDate, schedules } = useContext(CalendarStoreContext)
 
   if (!Array.isArray(daysInMonth)) {
@@ -14,7 +13,6 @@ export default function CalendarBody() {
 
   return (
     <div className="calendar-container">
-      {/* 요일 표시 */}
       <div className="calendar-day-wrapper">
         {weeks.map((week, index) => (
           <div key={week} className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}>
@@ -23,12 +21,14 @@ export default function CalendarBody() {
         ))}
       </div>
 
-      {/* Days */}
       <div className="calendar-day-wrapper">
         {daysInMonth.map((date) => (
           <div
             key={date.date}
-            onClick={() => selectedDate.selectDate(date.date)}
+            onClick={() => {
+              selectedDate.selectDate(date.date);
+              openModal();
+            }}
             className={`calendar-day 
               ${selectedDate.date === date.date ? "selected-date" : ""}
               ${currentDate.month !== date.month ? "not-current-month" : ""}
@@ -38,7 +38,6 @@ export default function CalendarBody() {
             <div>
               <span>{date.day}</span>
             </div>
-            {/* 캘린더에 일정을 간략하게 표시 */}
             {schedules.schedules[date.date] && (
               <li className="calendar-day-schedules">
                 {schedules.schedules[date.date].slice(0, 1).map((schedule, index) => (

@@ -22,10 +22,21 @@ export const CalendarStoreContext = createContext({
     schedules: [],
     addSchedule: () => {},
   },
+  modal: {
+    isModalOpen: false,
+    openModal: () => {},
+    closeModal: () => {},
+  }
 });
 
 export default function CalendarStoreContextProvider({ children }) {
   const context = useCalendar();
+
+  const [selectedDate, setSelectedDate] = useState("");
+  const selectDate = (date) => {
+    setSelectedDate(date);
+    setIsModalOpen(true);
+  }
 
   // 상태 관리
   const [schedules, setSchedules] = useState(() => {
@@ -52,12 +63,25 @@ export default function CalendarStoreContextProvider({ children }) {
     });
   };
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const ctxValue = {
     ...context,
+    selectedDate: {
+      date: selectedDate,
+      selectDate,
+    },
     schedules: {
       schedules,
       addSchedule,
     },
+    modal: {
+      isModalOpen,
+      openModal,
+      closeModal,
+    }
   };
 
   return (

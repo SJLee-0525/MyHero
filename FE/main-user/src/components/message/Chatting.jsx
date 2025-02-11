@@ -1,7 +1,7 @@
 import React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Message from "./Message.jsx";
-import Photo from "./Photo.jsx";
+// import Photo from "./Photo.jsx";
 import ReplyBar from "./ReplyBar.jsx";
 import "./Message.css";
 
@@ -13,6 +13,7 @@ export default function Chatting() {
     ]);
 
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
+    const messageEndRef = useRef(null);
 
     const handleSendMessage = (newMessage) => {
         setMessages([...messages, newMessage]);
@@ -24,6 +25,12 @@ export default function Chatting() {
         // STT (Speech-to-Text) API 호출 로직
     };
 
+    useEffect(() => {
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [messages]);
+
     return (
         <div className="message-container">
             <div className="message-header">
@@ -34,11 +41,12 @@ export default function Chatting() {
                     {messages.map((msg) => (
                         <Message key={msg.id} text={msg.text} sender={msg.sender} time={msg.time} />
                     ))}
+                    <div ref={messageEndRef} />
                 </div>
                 {/* <div className="divider"></div>
                 <Photo /> */}
+                <ReplyBar onSend={handleSendMessage} onRetry={handleStartListening} />
             </div>
-            <ReplyBar onSend={handleSendMessage} onRetry={handleStartListening} />
         </div>
     );
 }

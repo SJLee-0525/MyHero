@@ -21,7 +21,7 @@ logger = get_logger("Router_Notifications")
 
 # 새로운 알림을 생성하는 기능
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def crate_notification(notification_data: Notification, request_id = Depends(Database.check_current_user)):
+async def crate_notification(notification_data: Notification, request_id: str = Depends(Database.check_current_user)):
     # 필수 입력 정보 점검
     missing_location: list = ["body"]
 

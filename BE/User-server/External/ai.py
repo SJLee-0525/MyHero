@@ -6,6 +6,7 @@ External Server Connection
 """
 # Libraries
 import httpx
+import datetime
 
 from Utilities.logging_tools import *
 
@@ -58,19 +59,25 @@ async def request_mental_status(family_id: str) -> httpx.Response | None:
         logger.critical("Error: Unable to request mental status from AI server.")
         return None
 
-# TODO - API 변경 반영 필요!
 # 날짜 범위로 정신 건강 리포트를 요청하는 기능
-async def request_mental_reports(family_id: str) -> httpx.Response | None:
+async def request_mental_reports(family_id: str, start: datetime, end: datetime) -> httpx.Response | None:
     """
     AI Server에게 날짜 범위에 해당하는 정신 건강 리포트를 요청하는 기능
     :param family_id: 해당하는 가족의 ID
+    :param start: 리포트를 생성할 데이터의 시작 날짜 및 시각
+    :param end: 리포트를 생성할 데이터의 마지막 날짜 및 시각
     :return: AI Server로부터 반환된 결과 값 (httpx.Response)
     """
-    external_url = f"{AI_PATH}/generate-mental-period-report/{family_id}"
+    external_url = f"{AI_PATH}/generate-emotional-report/period/{family_id}"
+
+    request_data = {
+        "start_date": start.isoformat(timespec='seconds'),
+        "end_date": end.isoformat(timespec='seconds')
+    }
 
     try:
         async with httpx.AsyncClient(timeout=set_timeout) as client:
-            response = await client.post(external_url)
+            response = await client.post(external_url, json=request_data)
             return response
     except httpx.RequestError as error:
         logger.critical("Error: Unable to request mental reports from AI server.")
@@ -101,4 +108,30 @@ async def talk_with_ai(user_id: str, message: str, session_id: str = None) -> ht
             return response
     except httpx.RequestError as error:
         logger.critical("Error: Unable to talk with AI server.")
+        return None
+
+# ========== News & Weather 부분 ==========
+
+# 한국의 최신 뉴스를 불러오는 기능
+async def korean_news() -> httpx.Response | None:
+    external_url = f"{AI_PATH}/news"
+
+    try:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
+            response = await client.get(external_url)
+            return response
+    except httpx.RequestError as error:
+        logger.critical("Error: Unable to get news from AI server.")
+        return None
+
+# 사용자의 위치의 날씨 정보를 가져오는 기는
+async def korean_weather(user_id: str) -> httpx.Response | None:
+    external_url = f"{AI_PATH}/weather/{user_id}"
+
+    try:
+        async with httpx.AsyncClient(timeout=set_timeout) as client:
+            response = await client.get(external_url)
+            return response
+    except httpx.RequestError as error:
+        logger.critical("Error: Unable to get weather from AI server.")
         return None

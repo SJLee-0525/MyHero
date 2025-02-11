@@ -9,10 +9,8 @@ Database Notifications Part
 from Database.connector import Database
 from Database.models import *
 
-from sqlalchemy import or_, and_
+from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
-
-from datetime import datetime, timezone
 
 from Utilities.logging_tools import *
 
@@ -62,7 +60,7 @@ def get_new_notifications(family_id: str, time_order: Order = Order.ASC) -> list
                 NotificationsTable.family_id,
                 NotificationsTable.created_at,
                 NotificationsTable.notification_grade,
-                NotificationsTable.description,
+                NotificationsTable.descriptions,
                 NotificationsTable.is_read
             ).filter(and_(NotificationsTable.family_id == family_id,
                           NotificationsTable.is_read == False))
@@ -111,7 +109,7 @@ def get_all_notifications(family_id: str, time_order: Order = Order.ASC) -> list
                 NotificationsTable.family_id,
                 NotificationsTable.created_at,
                 NotificationsTable.notification_grade,
-                NotificationsTable.description,
+                NotificationsTable.descriptions,
                 NotificationsTable.is_read
             ).filter(NotificationsTable.family_id == family_id)
 
@@ -138,6 +136,44 @@ def get_all_notifications(family_id: str, time_order: Order = Order.ASC) -> list
             session.rollback()
             logger.error(f"Error getting all notifications: {str(error)}")
             result = []
+        finally:
+            return result
+
+# Index 번호로 알림을 가져오는 기능
+def get_one_notification(index: int) -> dict:
+    """
+    Index 번호로 알림을 가져오는 기능
+    :param index: 알림의 Index 번호
+    :return: 불러온 알림 데이터 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            notification_data = session.query(
+                NotificationsTable.index,
+                NotificationsTable.family_id,
+                NotificationsTable.created_at,
+                NotificationsTable.notification_grade,
+                NotificationsTable.descriptions,
+                NotificationsTable.is_read
+            ).filter(NotificationsTable.index == index).first()
+
+            serialized_data: dict = {
+                "index": notification_data[0],
+                "family_id": notification_data[1],
+                "created_at": notification_data[2],
+                "notification_grade": notification_data[3],
+                "description": notification_data[4],
+                "is_read": notification_data[5]
+            }
+
+            result = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting one notification: {str(error)}")
+            result = {}
         finally:
             return result
 

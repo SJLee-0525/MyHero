@@ -153,5 +153,4 @@ class Notification(BaseModel):
     """
     family_id: Optional[str] = None
     notification_grade: Optional[str] = None
-    description: Optional[str] = None
-    is_read: Optional[bool] = None
+    descriptions: Optional[str] = None

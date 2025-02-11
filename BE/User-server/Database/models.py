@@ -303,9 +303,9 @@ class NotificationsTable(Base):
     family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
     created_at = Column(TIMESTAMP, nullable=True, server_default=func.now())
     notification_grade = Column(Enum(NotificationGrade), nullable=True)
-    description = Column(TEXT, nullable=True)
+    descriptions = Column(TEXT, nullable=True)
     message_sn = Column(INT, nullable=True)
-    is_read = Column(Boolean, nullable=True)
+    is_read = Column(Boolean, nullable=True, server_default="FALSE")
 
     def __repr__(self):
         return (f"" +
@@ -313,7 +313,7 @@ class NotificationsTable(Base):
                 f"family_id='{self.family_id}', " +
                 f"created_at='{self.created_at}', " +
                 f"notification_grade='{self.notification_grade}', " +
-                f"description='{self.description}', " +
+                f"descriptions='{self.descriptions}', " +
                 f"message_sn='{self.message_sn}', " +
                 f"is_read='{self.is_read}')>"
         )

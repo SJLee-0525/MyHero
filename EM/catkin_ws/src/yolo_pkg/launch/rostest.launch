@@ -1,0 +1,13 @@
+<launch>
+  <!-- USB 카메라 노드 실행 -->
+  <node pkg="usb_cam" type="usb_cam_node" name="usb_cam" output="screen">
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="480" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="io_method" value="mmap" />
+  </node>
+
+  <!-- 낙상 감지 노드 실행 -->
+  <node pkg="yolo_pkg" type="yolo_main.py" name="fall_detection_node" output="screen" />
+</launch>

@@ -53,7 +53,7 @@ class AutoNavigation:
                     1 - 2 * self.prev_goal.pose.orientation.z * self.prev_goal.pose.orientation.z
                 )
             self.is_moving = False
-            rospy.sleep(1.0)
+            rospy.sleep(7.0)
             self.select_and_send_new_goal()
     
     def initial_goal_timer_callback(self, event):
@@ -95,19 +95,8 @@ class AutoNavigation:
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             return
 
-        for point in empty_points:
-            dx = point[0] - current_pos[0]
-            dy = point[1] - current_pos[1]
-            angle = math.atan2(dy, dx)
-            angle_diff = angle - current_orientation
-            while angle_diff > math.pi:
-                angle_diff -= 2 * math.pi
-            while angle_diff < -math.pi:
-                angle_diff += 2 * math.pi
-            if abs(angle_diff) <= math.pi/4:
-                forward_points.append(point)
+        # ... 기존 forward_points 계산 코드 ...
 
-        # 전방에 조건에 맞는 점이 없으면 빈 영역 전체에서 임의의 점 선택 (fallback)
         if forward_points:
             selected_point = random.choice(forward_points)
         else:
@@ -117,9 +106,10 @@ class AutoNavigation:
         self.nav_points = [selected_point]
         self.visualize_points()
         
+        # 목표점의 방향 계산
         if self.prev_goal:
-            dx = selected_point[0] - self.prev_goal.pose.position.x
-            dy = selected_point[1] - self.prev_goal.pose.position.y
+            dx = selected_point[0] - current_pos[0]  # 현재 위치 기준으로 방향 계산
+            dy = selected_point[1] - current_pos[1]
             yaw = math.atan2(dy, dx)
         else:
             yaw = 0.0
@@ -139,6 +129,9 @@ class AutoNavigation:
         self.goal_pub.publish(goal)
         self.is_moving = True
         rospy.loginfo(f"새로운 목표점 선택: {selected_point}, 방향: {math.degrees(yaw)}도")
+        
+        # 5초 대기
+        rospy.sleep(7.0)
     
     def joy_callback(self, joy_msg):
         # X 버튼(index 2) 또는 Y 버튼(index 3) 눌림 감지
@@ -166,24 +159,73 @@ class AutoNavigation:
             else:
                 return empty_points
 
-        grid_step = 10  # 격자 간격 (필요시 조정)
-        max_distance = 5.0  # 최대 5m 범위 (필요시 확장 가능)
-        
-        cost_threshold = 100  # 비용 정보 임계치 (장애물과의 안전거리를 위해 필요시 조정)
+        # 파라미터 조정
+        grid_step = 10  # 격자 간격을 늘려 샘플링 포인트 수를 줄임
+        max_distance = 5.0  # 최대 거리
+        min_distance = 2.0  # 최소 거리 (너무 가까운 점은 제외)
+        cost_threshold = 50  # 비용 임계값을 낮춰 더 많은 영역을 허용
+
+        # 주변 셀 체크를 위한 범위
+        check_range = 2
 
         for i in range(0, width, grid_step):
             for j in range(0, height, grid_step):
                 index = j * width + i
-                # 인덱스가 data 범위 내에 있는지 확인
+                
+                # 인덱스 범위 체크
                 if index >= len(occupancy_grid.data) or index >= len(self.global_costmap.data):
                     continue
+
+                # 현재 셀이 빈 공간이고 비용이 임계값보다 낮은지 확인
                 if occupancy_grid.data[index] == 0 and self.global_costmap.data[index] < cost_threshold:
+                    # 주변 셀들도 확인
+                    is_safe = True
+                    for di in range(-check_range, check_range + 1):
+                        for dj in range(-check_range, check_range + 1):
+                            ni = i + di
+                            nj = j + dj
+                            if 0 <= ni < width and 0 <= nj < height:
+                                neighbor_index = nj * width + ni
+                                if (neighbor_index < len(occupancy_grid.data) and 
+                                    occupancy_grid.data[neighbor_index] > 0):  # 장애물이면
+                                    is_safe = False
+                                    break
+                        if not is_safe:
+                            break
+
+                    if is_safe:
+                        x = i * resolution + occupancy_grid.info.origin.position.x
+                        y = j * resolution + occupancy_grid.info.origin.position.y
+                        
+                        distance = math.sqrt((x - current_pos[0])**2 + (y - current_pos[1])**2)
+                        if min_distance <= distance <= max_distance:
+                            empty_points.append((x, y))
+
+        if not empty_points:
+            rospy.logwarn("빈 공간을 찾지 못했습니다. 파라미터를 조정합니다.")
+            return self.find_empty_spaces_fallback(occupancy_grid)
+        
+        return self.filter_points(empty_points)
+
+    def find_empty_spaces_fallback(self, occupancy_grid):
+        # 더 관대한 조건으로 재시도
+        empty_points = []
+        height = occupancy_grid.info.height
+        width = occupancy_grid.info.width
+        resolution = occupancy_grid.info.resolution
+        
+        grid_step = 20  # 더 큰 간격
+        cost_threshold = 80  # 더 높은 임계값
+        
+        for i in range(0, width, grid_step):
+            for j in range(0, height, grid_step):
+                index = j * width + i
+                if index >= len(occupancy_grid.data):
+                    continue
+                if occupancy_grid.data[index] == 0:  # 단순히 빈 공간인지만 체크
                     x = i * resolution + occupancy_grid.info.origin.position.x
                     y = j * resolution + occupancy_grid.info.origin.position.y
-                    
-                    distance = math.sqrt((x - current_pos[0])**2 + (y - current_pos[1])**2)
-                    if distance <= max_distance:
-                        empty_points.append((x, y))
+                    empty_points.append((x, y))
         
         return self.filter_points(empty_points)
     
@@ -218,22 +260,6 @@ class AutoNavigation:
         
         self.marker_pub.publish(marker_array)
     
-    def send_goal(self, point):
-        goal = PoseStamped()
-        goal.header.frame_id = "map"
-        goal.header.stamp = rospy.Time.now()
-        goal.pose.position.x = point[0]
-        goal.pose.position.y = point[1]
-        orientations = [
-            (1.0, 0.0),  
-            (0.707, 0.707),  
-            (0.0, 1.0),  
-            (-0.707, 0.707),
-        ]
-        w, z = random.choice(orientations)
-        goal.pose.orientation.w = w
-        goal.pose.orientation.z = z
-        self.goal_pub.publish(goal)
 
 if __name__ == '__main__':
     try:

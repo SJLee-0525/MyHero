@@ -4,8 +4,6 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Parts of Notifications
 """
-from idlelib.query import Query
-
 # Libraries
 from fastapi import HTTPException, APIRouter, status, Query, Depends
 from fastapi.encoders import jsonable_encoder

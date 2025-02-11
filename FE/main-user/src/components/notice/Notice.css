@@ -68,11 +68,11 @@
   background: #fffa8b;
 }
 
-.notice-box.warning {
+.notice-box.warn {
   background: #ffb3b3;
 }
 
-.notice-box.ex {
+.notice-box.info {
   background: #fff;
 }
 

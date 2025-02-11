@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import cv2
 import torch
 import os
@@ -6,9 +8,9 @@ import asyncio
 import aiohttp
 from datetime import datetime
 from ultralytics import YOLO
-from config import Config
-from pose_analyzer import EnhancedPoseAnalyzer
-from fps_tracker import FPSTracker
+from yolo_pkg.config import Config
+from yolo_pkg.pose_analyzer import EnhancedPoseAnalyzer
+from yolo_pkg.fps_tracker import FPSTracker
 
 class EnhancedFallDetector:
     """향상된 낙상 감지 클래스"""
@@ -71,6 +73,9 @@ class EnhancedFallDetector:
             color = self.config.colors['skeleton_fall'] if is_fallen else self.config.colors['skeleton_normal']
 
             for connection in self.config.skeleton_connections:
+                if max(connection) >= len(keypoints):
+                    # keypoints 개수가 부족하면, 해당 연결은 무시
+                    continue
                 pt1 = tuple(map(int, keypoints[connection[0]][:2]))
                 pt2 = tuple(map(int, keypoints[connection[1]][:2]))
                 cv2.line(frame, pt1, pt2, color, 2)

@@ -135,16 +135,27 @@ export default function HomeStatusContextProvider({ children }) {
       );
 
       const resData = response.data;
+      console.log(2131231231, response);
       if (response.success) {
         if (resData.message === "Home status retrieved successfully") {
           // others 값이 "{'testData':123, 'ultrafinedust': 1234}"처럼 작은따옴표(' ')로 감싸져 있습니다.
           // JavaScript의 JSON.parse()는 작은따옴표가 아닌 큰따옴표(" ")를 사용해야 정상적으로 파싱됩니다.
           setHomeStatus(
             resData.data.map((data) => {
-              return {
-                ...data,
-                others: JSON.parse(data.others.replace(/'/g, '"')), // 작은따옴표를 큰따옴표로 변환
-              };
+              if (!data.others) {
+                return {
+                  ...data,
+                  others: {
+                    testData: null,
+                    ultrafinedust: null,
+                  },
+                };
+              } else {
+                return {
+                  ...data,
+                  others: JSON.parse(data.others.replace(/'/g, '"')), // 작은따옴표를 큰따옴표로 변환
+                };
+              }
             })
           );
           return {

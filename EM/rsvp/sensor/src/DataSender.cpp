@@ -77,8 +77,7 @@ bool DataSender::SendHealthData(float heartRate) {
 
 bool DataSender::SendEnvironmentData(const SensorData& data) {
     std::stringstream othersStream;
-    othersStream << "{'testData':" << static_cast<int>(123)
-                << ", 'ultrafinedust': " << static_cast<int>(1234) << "}";
+    othersStream << "";
 
     json jsonData = {
         {"family_id", FamilyId},

@@ -21,6 +21,8 @@ router = APIRouter(prefix="/messages", tags=["Messages"])
 logger = get_logger("Router_Messages")
 
 # ========== Message 부분 ==========
+
+# 메시지를 보낼 수 있는 대상을 확인하는 기능
 @router.get("/receivable/{user_id}", status_code=status.HTTP_200_OK)
 async def get_receivable_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
     # 시스템 계정을 제외한 본인 계정에 대해서만 조회 가능
@@ -86,6 +88,7 @@ async def get_receivable_account(user_id: str, request_id: str = Depends(Databas
         )
 
 
+# 메시지를 보내는 기능
 @router.post("/send", status_code=status.HTTP_201_CREATED)
 async def send_message(message_data: Message, request_id: str = Depends(Database.check_current_user)):
     # 필수 입력 정보를 전달했는지 점검
@@ -190,6 +193,7 @@ async def send_message(message_data: Message, request_id: str = Depends(Database
             }
         )
 
+# 새로운 메시지를 불러오는 기능
 @router.get("/new", status_code=status.HTTP_200_OK)
 async def get_new_received_messages(
         start: Optional[datetime] = Query(None, description="Query start time"),
@@ -232,6 +236,7 @@ async def get_new_received_messages(
             }
         )
 
+# 받은 모든 메시지를 불러오는 기능
 @router.get("/all", status_code=status.HTTP_200_OK)
 async def get_all_received_messages(
         start: Optional[datetime] = Query(None, description="Query start time"),
@@ -274,6 +279,7 @@ async def get_all_received_messages(
             }
         )
 
+# 보낸 메시지를 불러오는 기능
 @router.get("/sent", status_code=status.HTTP_200_OK)
 async def get_all_sent_messages(
         start: Optional[datetime] = Query(None, description="Query start time"),
@@ -316,6 +322,7 @@ async def get_all_sent_messages(
             }
         )
 
+# 메시지를 읽음 처리하는 기능
 @router.patch("/read/{message_id}", status_code=status.HTTP_200_OK)
 async def read_message(message_id: int, request_id: str = Depends(Database.check_current_user)):
     # 존재하는 메시지인지 확인
@@ -366,6 +373,7 @@ async def read_message(message_id: int, request_id: str = Depends(Database.check
             }
         )
 
+# 메시지를 삭제하는 기능
 @router.delete("/delete/{message_id}", status_code=status.HTTP_200_OK)
 async def delete_message(message_id: int, request_id: str = Depends(Database.check_current_user)):
     # 시스템 관리자만 삭제할 수 있음

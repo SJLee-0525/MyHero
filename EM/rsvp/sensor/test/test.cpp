@@ -68,6 +68,7 @@ int main() {
     sigIntHandler.sa_handler = signalHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
+	bool login_flag = false;
 
     sigaction(SIGTERM, &sigIntHandler, NULL);
     sigaction(SIGINT, &sigIntHandler, NULL);
@@ -108,17 +109,19 @@ int main() {
 		cout << "Password: ";
 		cin >> password;
 		if(sender.Login(userid, password)){
+			login_flag = true;
 			cm.saveCredentials(userid, password);
 			cout << "로그인 정보가 저장되었습니다.\n";
 		}
 		else{
-			while(1){
+			while(!gSignalStatus){
 				cout << "로그인 정보가 잘못되었습니다.\n";
 				cout << "다시 로그인 하십시오\n.UserId: ";
 				cin >> userid;
 				cout << "Password: ";
 				cin >> password;
 				if(sender.Login(userid, password)){
+					login_flag = true;
 					cm.saveCredentials(userid, password);
 					cout << "로그인 정보가 저장되었습니다.\n";
 					break;
@@ -128,6 +131,7 @@ int main() {
 	}
 	else{
 		sender.Login(userid, password);
+		login_flag = true;
 	}
 
 	sm.initialize();
@@ -141,7 +145,7 @@ int main() {
 			sender.SendEnvironmentData(Data);
 			lastTime = currentTime;
 		}
-		if(Data.ethanol > 2.0 || Data.dust > 35.0){
+		if(Data.ethanol > 2.0 || Data.dust > 25.0){
 			cout << "긴급 환경 데이터 전송" << Data.ethanol << "% " << Data.dust << "㎍/㎥\n";
 			sender.SendEnvironmentData(Data);
 		}
@@ -151,8 +155,10 @@ int main() {
 		}
 		this_thread::sleep_for(chrono::seconds(1));
 	}
-	cout << "Logout\n";
-	sender.Logout();
+	if(login_flag){
+		cout << "Logout\n";
+		sender.Logout();
+	}
 
     return 0;
 }

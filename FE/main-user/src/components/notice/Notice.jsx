@@ -11,8 +11,8 @@ export default function Notice({ onReply }) {
 
   // ✅ 기존 일반 알림 (임시 데이터)
   const notices = [
-    { id: info-1, text: "택배가 도착했습니다.", created_at: "2025-02-11T08:30:00", type: "info" },
-    { id: info-2, text: "일정 알림: 병원 방문", created_at: "2025-02-11T10:15:00", type: "schedule" },
+    { id: "info-1", text: "택배가 도착했습니다.", created_at: "2025-02-11T08:30:00", type: "info" },
+    { id: "info-2", text: "일정 알림: 병원 방문", created_at: "2025-02-11T10:15:00", type: "schedule" },
   ];
 
   const disasterNotices = Array.isArray(disasterData) ? disasterData.map(notice => ({

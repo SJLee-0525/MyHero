@@ -4,8 +4,9 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Parts of Status
 """
+
 # Libraries
-from fastapi import HTTPException, APIRouter, status, Query, Response, Request, Depends
+from fastapi import HTTPException, APIRouter, status, Query, Depends
 from fastapi.encoders import jsonable_encoder
 
 import httpx
@@ -110,6 +111,7 @@ async def get_home_status(
 ):
     # 필수 입력 정보 점검
     missing_location: list = ["query"]
+    print(request_id)
 
     if start is None:
         missing_location.append("start")
@@ -123,7 +125,7 @@ async def get_home_status(
                 "loc": missing_location,
                 "message": "Query data is required",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -145,7 +147,7 @@ async def get_home_status(
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -352,7 +354,7 @@ async def get_health_status(
                 "loc": missing_location,
                 "message": "Query data is required",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -374,7 +376,7 @@ async def get_health_status(
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -606,7 +608,7 @@ async def get_active_status(
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -720,19 +722,6 @@ async def delete_latest_active_status(family_id: str, request_id: str = Depends(
 # 새로운 정신건강 정보 요청하는 기능
 @router.get("/mental/new/{family_id}", status_code=status.HTTP_201_CREATED)
 async def create_mental_status(family_id: str, request_id: str = Depends(Database.check_current_user)):
-    # 존재하는 가족 ID인지 확인
-    family_data = Database.get_one_family(family_id)
-
-    if not family_data:
-        logger.warning(f"No family found: {family_id}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "Family not found"
-            }
-        )
-
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
@@ -801,7 +790,7 @@ async def get_mental_status(
                 "loc": missing_location,
                 "message": "Query data is required",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -823,7 +812,7 @@ async def get_mental_status(
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }
@@ -932,20 +921,32 @@ async def delete_latest_mental_status(family_id: str, request_id: str = Depends(
             }
         )
 
-# TODO - API 변경 반영 필요!
 # 새로운 정신건강 리포트 요청하는 기능
 @router.get("/mental-reports/new/{family_id}", status_code=status.HTTP_201_CREATED)
-async def create_mental_reports(family_id: str, request_id: str = Depends(Database.check_current_user)):
-    # 존재하는 가족 ID인지 확인
-    family_data: dict = Database.get_one_family(family_id)
+async def create_mental_reports(
+        family_id: str,
+        start: Optional[datetime] = Query(None, description="Query start time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
+        request_id: str = Depends(Database.check_current_user)
+):
+    # 필수 입력 정보 점검
+    missing_location: list = ["query"]
 
-    if not family_data:
-        logger.warning(f"No family found: {family_id}")
+    if start is None or start == "":
+        missing_location.append("start")
+
+    if len(missing_location) > 1:
+        logger.warning(f"No data provided: {missing_location}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
-                "type": "not found",
-                "message": "Family not found"
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Query data is required",
+                "input": {
+                    "start": start.isoformat() if start else None,
+                    "end": end.isoformat()
+                }
             }
         )
 
@@ -967,39 +968,35 @@ async def create_mental_reports(family_id: str, request_id: str = Depends(Databa
         )
 
     # 요청하기
-    # response: httpx.Response = await request_mental_reports(family_id=family_id)
-    #
-    # if response is not None and response.status_code == status.HTTP_200_OK:
-    #     return {
-    #         "message": "Mental reports created successfully",
-    #         "data": response.json()
-    #     }
-    # elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
-    #     logger.warning(f"No mental reports found: {family_id}")
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail={
-    #             "type": "not found",
-    #             "message": "No mental reports found",
-    #             "data": {}
-    #         }
-    #     )
-    # else:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail={
-    #             "type": "server error",
-    #             "message": "Failed to create mental reports"
-    #         }
-    #     )
-
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail={
-            "type": "server error",
-            "message": "This feature is not implemented yet"
-        }
+    response: httpx.Response = await request_mental_reports(
+        family_id=family_id,
+        start=start,
+        end=end
     )
+
+    if response is not None and response.status_code == status.HTTP_200_OK:
+        return {
+            "message": "Mental reports created successfully",
+            "data": response.json()
+        }
+    elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
+        logger.warning(f"No mental reports found: {family_id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "No mental reports found",
+                "data": {}
+            }
+        )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create mental reports"
+            }
+        )
 
 # 조건에 따른 모든 정신건강 리포트를 불러오는 기능
 @router.get("/mental-reports/{family_id}", status_code=status.HTTP_200_OK)
@@ -1025,8 +1022,8 @@ async def get_mental_reports(
                 "loc": missing_location,
                 "message": "Query data is required",
                 "input": {
-                    "start": start.isoformat(),
-                    "end": end.isoformat(),
+                    "start": start.isoformat() if start else None,
+                "end": end.isoformat(),
                     "order": str(order)
                 }
             }
@@ -1047,7 +1044,7 @@ async def get_mental_reports(
                 "type": "can not access",
                 "message": "You do not have permission",
                 "input": {
-                    "start": start.isoformat(),
+                    "start": start.isoformat() if start else None,
                     "end": end.isoformat(),
                     "order": str(order)
                 }

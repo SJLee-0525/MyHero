@@ -1,25 +1,33 @@
 #emergency-main {
   width: 800px;
   min-width: 400px;
+
+  height: 81.6vh;
+  max-height: 81.6vh;
 }
 
 #emergency {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 
   width: 100%;
-  min-width: 400px;
-  max-width: 800px;
+  height: 100%;
 
   margin: 0 auto;
 }
 
 #emergency-alert {
-  min-height: 45vh;
+  min-height: 400px;
+  height: 90%;
+  max-height: 90%;
   margin: 15px;
 
   width: 100%;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 #emergency-alert-box {
@@ -227,7 +235,7 @@
   width: 100%;
 }
 
-#emergency-log .log-button {
+#emergency-main .log-button {
   width: 100%;
   min-width: 400px;
   height: 55px;
@@ -250,7 +258,7 @@
   transition: all 0.3s ease;
 }
 
-#emergency-log .log-button:hover {
+#emergency-main .log-button:hover {
   background-color: #ff9500;
 
   transition: all 0.3s ease;

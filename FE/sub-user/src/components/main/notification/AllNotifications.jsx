@@ -1,46 +1,72 @@
-import "./Notification.css"
+import "./Notification.css";
 
-import { useContext } from "react"
+import { useContext } from "react";
 
-import { EmergencyContext } from "../../../store/emergencyStore"
+import { UserProgressContext } from "../../../store/userProgressStore";
+import { EmergencyContext } from "../../../store/emergencyStore";
 
 export default function AllNotifications() {
-  const emergencyStore = useContext(EmergencyContext)
+  const userProgressStore = useContext(UserProgressContext);
+  const emergencyStore = useContext(EmergencyContext);
+
+  async function handleReadNotification(index) {
+    const response = await emergencyStore.handleReadNotification(index);
+  }
 
   return (
-    <div id="home-notifications">
-      {/* slice()를 사용해서 원본 배열을 복사한 후 reverse()를 적용하면 원본 homeNotifications 배열이 변하지 않고 뒤집을 수 있음. */}
-      {emergencyStore.homeNotifications
-        .slice()
-        .reverse()
-        .map((notification) => {
-          return (
-            <div key={notification.index} className={notification.check ? "home-notification-checked" : "home-notification"}>
-              {notification.notification_grade === 1 && (
-                <div className="home-notification-icon-1">
-                  <img src="" alt="" />
+    <div id="all-notifications">
+      <div id="home-notifications">
+        {emergencyStore.categorizedNotifications.info
+          .slice()
+          .filter((notification) => !notification.is_read) // is_read가 false인 항목만 남김
+          .map((notification) => {
+            // UTC+9 변환
+            const createdAtKST = new Date(
+              notification.created_at
+            ).toLocaleString("ko-KR", {
+              timeZone: "Asia/Seoul",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true, // 24시간제
+            });
+
+            return (
+              <button
+                className="notification-btn"
+                key={notification.index}
+                onClick={() => handleReadNotification(notification.index)}
+              >
+                <div
+                  className={
+                    notification.is_read
+                      ? "home-notification-checked"
+                      : "home-notification"
+                  }
+                >
+                  <div className="home-notification-icon-1">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="home-notification-content">
+                    <div className="home-notification-description">
+                      {notification.description}
+                    </div>
+                    <div className="home-notification-date">{createdAtKST}</div>
+                  </div>
                 </div>
-              )}
-              {notification.notification_grade === 2 && (
-                <div className="home-notification-icon-2">
-                  <img src="" alt="" />
-                </div>
-              )}
-              {notification.notification_grade === 3 && (
-                <div className="home-notification-icon-3">
-                  <img src="" alt="" />
-                </div>
-              )}
-              <div className="home-notification-content">
-                <div className="home-notification-description">{notification.descriptions}</div>
-                <div className="home-notification-date">{notification.date}</div>
-              </div>
-            </div>
-          )
-        })}
+              </button>
+            );
+          })}
+      </div>
+
       <div className="home-notification-btn">
-        <button onClick={emergencyStore.handleCheckHomeAlert}>지우기</button>
+        <button
+          onClick={() =>
+            userProgressStore.handleOpenModal("past-notifications")
+          }
+        >
+          지난 알림 보기
+        </button>
       </div>
     </div>
-  )
+  );
 }

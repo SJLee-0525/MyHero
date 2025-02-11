@@ -128,6 +128,10 @@ export default function CreateFamily() {
     }
   }
 
+  function handleOpenFindFamily() {
+    userProgressStore.handleOpenModal("find-family");
+  }
+
   return (
     <Modal
       open={userProgressStore.modalProgress === "create-member-user-info"}
@@ -183,6 +187,9 @@ export default function CreateFamily() {
           )}
           <button className="signup-btn" onClick={handleCreateMember}>
             가입하기
+          </button>
+          <button className="find-btn" onClick={handleOpenFindFamily}>
+            가족 모임 ID를 잊으셨나요?
           </button>
         </p>
       </div>

@@ -16,6 +16,7 @@ import Signout from "./Signout.jsx";
 import UpdateFamily from "./UpdateFamily.jsx";
 import DeleteFamily from "./DeleteFamily.jsx";
 import CreateMember from "./CreateMember.jsx";
+import FindFamily from "./FindFamily.jsx";
 import UpdateMember from "./UpdateMember.jsx";
 import DeleteMember from "./DeleteMember.jsx";
 import ChangePassword from "./ChangePassword.jsx";
@@ -89,6 +90,7 @@ export default function UserInfo() {
       <UpdateFamily />
       <DeleteFamily />
       <CreateMember />
+      <FindFamily />
       <UpdateMember />
       <DeleteMember />
       <ChangePassword />

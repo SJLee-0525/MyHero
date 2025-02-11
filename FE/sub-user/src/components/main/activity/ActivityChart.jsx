@@ -13,15 +13,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { HealthContext } from "../../../store/healthStore";
+import { CalendarStoreContext } from "../../../store/calendarStore.jsx";
 
 function CustomTooltip({ payload, label, active }) {
   if (active) {
     return (
       <div className="custom-tooltip">
         <p className="date">{label}</p>
-        <p className="health">{`health : ${payload}`}</p>
-        {/* <p className="mental">{`mental : ${payload[1].value}`}</p> */}
+        <p className="health">{`health : ${payload[0].value}`}</p>
         <p className="desc">건강함</p>
       </div>
     );
@@ -31,16 +30,20 @@ function CustomTooltip({ payload, label, active }) {
 }
 
 export default function ActivityChart() {
-  const healthStore = useContext(HealthContext);
+  const calendarStore = useContext(CalendarStoreContext);
 
-  let activityStatus =
-    healthStore.activityStatus.length > 0
-      ? [...healthStore.activityStatus]
-      : [];
+  let activityStatus = Object.entries(calendarStore.schedules.schedules.health)
+    .slice()
+    .map(([date, details]) => ({
+      date,
+      averageScore: details.averageScore,
+    }));
+
+  activityStatus = activityStatus.reverse();
+
   if (activityStatus.length > 7) {
     activityStatus = activityStatus.slice(0, 7);
   }
-  activityStatus = activityStatus.reverse();
 
   return (
     <div id="activity-chart">
@@ -59,13 +62,13 @@ export default function ActivityChart() {
             bottom: 15,
           }}
         >
-          <XAxis dataKey="reported_at" />
+          <XAxis dataKey="date" />
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
           <Line
             type="monotone"
-            dataKey="score"
+            dataKey="averageScore"
             stroke="#44803F"
             strokeWidth={2}
           />

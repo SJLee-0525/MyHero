@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProgressContext } from "./store/userProgressStore.jsx";
 import { HomeStatusContext } from "./store/homeStatusStore.jsx";
 import { HealthContext } from "./store/healthStore.jsx";
+import { EmergencyContext } from "./store/emergencyStore.jsx";
 import { CalendarStoreContext } from "./store/calendarStore.jsx";
 
 import TopNav from "./components/nav/TopNav";
@@ -23,6 +24,8 @@ import Mental from "./components/main/mental/Mental.jsx";
 
 import Accounts from "./components/main/accounts/Accounts.jsx";
 import Settings from "./components/main/settings/Settings.jsx";
+import RegisterMemberQr from "./components/main/accounts/RegisterMemberQr.jsx";
+import NewNotiModal from "./components/main/notification/NewNotiModal.jsx";
 // import Router from "./router/router";
 
 import Advertisement from "./components/main/advertisement/Advertisement.jsx";
@@ -31,42 +34,56 @@ function App() {
   const userProgressStore = useContext(UserProgressContext);
   const homeStatusStore = useContext(HomeStatusContext);
   const healthStore = useContext(HealthContext);
+  const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
 
   const loading =
-    userProgressStore.loading || homeStatusStore.loading || healthStore.loading;
+    userProgressStore.loading ||
+    homeStatusStore.loading ||
+    healthStore.loading ||
+    emergencyStore.loading;
 
   return (
     <BrowserRouter>
       {loading && <LoadingSpinner />}
-      {userProgressStore.loginUserInfo.login ? (
-        <div id="app">
-          <nav id="top-nav">
-            <TopNav />
-          </nav>
-          <nav id="side-nav">
-            <SideNav />
-          </nav>
-
-          <main id="main-page">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/notification" element={<Notification />} />
-              <Route path="/message" element={<Message />} />
-              <Route path="/emergency" element={<Emergency />} />
-              <Route path="/calendar" element={<Calendar />} />
-              <Route path="/activity" element={<Activity />} />
-              <Route path="/mental" element={<Mental />} />
-              <Route path="/accounts/*" element={<Accounts />} />
-              <Route path="/settings" element={<Settings />} />
-            </Routes>
-          </main>
-        </div>
-      ) : (
-        <div id="app">
-          <Advertisement />
-        </div>
-      )}
+      <div id="app">
+        {userProgressStore.loginUserInfo.login && (
+          <>
+            <nav id="top-nav">
+              <TopNav />
+            </nav>
+            <nav id="side-nav">
+              <SideNav />
+            </nav>
+          </>
+        )}
+        <main id="main-page">
+          <Routes>
+            {/* 로그인 여부와 상관없는 공용 라우트 */}
+            <Route
+              path="/accounts/register/:familyId"
+              element={<RegisterMemberQr />}
+            />
+            {/* 로그인 여부에 따라 다른 화면 표시 */}
+            {userProgressStore.loginUserInfo.login ? (
+              <>
+                <Route path="/" element={<Home />} />
+                <Route path="/notification" element={<Notification />} />
+                <Route path="/message" element={<Message />} />
+                {/* <Route path="/emergency" element={<Emergency />} /> */}
+                <Route path="/calendar" element={<Calendar />} />
+                <Route path="/activity" element={<Activity />} />
+                {/* <Route path="/mental" element={<Mental />} /> */}
+                <Route path="/accounts/*" element={<Accounts />} />
+                <Route path="/settings" element={<Settings />} />
+              </>
+            ) : (
+              <Route path="/" element={<Advertisement />} />
+            )}
+          </Routes>
+          <NewNotiModal />
+        </main>
+      </div>
     </BrowserRouter>
   );
 }

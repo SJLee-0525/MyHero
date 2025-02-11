@@ -1,5 +1,5 @@
 #notification-main {
-  width: 80vw;
+  width: 100%;
   min-width: 400px;
 }
 
@@ -17,21 +17,65 @@
 }
 
 #notification-elem-left {
-  width: 40%; /* 고정 폭 */
+  width: 50%; /* 고정 폭 */
   min-width: 300px; /* 최소 폭 */
 }
 
 #notification-elem-right {
-  width: 60%; /* 고정 폭 */
+  width: 50%; /* 고정 폭 */
   min-width: 300px; /* 최소 폭 */
+}
+
+#all-notifications {
+  width: 100%;
+  height: 32vh;
+  max-height: 40vh;
+}
+
+#modal-notifications {
+  width: 50vw;
+  max-width: 50vw;
+  height: 75vh;
+  max-height: 75vh;
 }
 
 #home-notifications {
   display: flex;
   flex-direction: column;
+  justify-content: start;
 
   width: 100%;
-  gap: 10px;
+  height: 90%;
+  max-height: 90%;
+  gap: 8px;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+/* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
+#home-notifications::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#home-notifications::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#home-notifications::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#home-notifications::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+}
+
+#home-notifications .notification-btn {
+  background-color: transparent;
+  border: none;
+
+  cursor: pointer;
 }
 
 #home-notifications .home-notification {
@@ -43,6 +87,7 @@
   padding: 10px;
 
   width: 100%;
+
   gap: 15px;
 
   background-color: #d9d9d9;
@@ -86,24 +131,35 @@
 #home-notifications .home-notification-icon-3 {
   background-color: #ff5a33;
 
-  width: 45px;
-  height: 45px;
+  height: 100%;
+  aspect-ratio: 1;
 
   border-radius: 100%;
+}
+
+#home-notifications .home-notification-content {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: start;
+
+  width: 80%;
+  gap: 5px;
 }
 
 #home-notifications .home-notification-description {
   font-weight: bold;
 }
 
-#home-notifications .home-notification-btn {
+#all-notifications .home-notification-btn {
   display: flex;
   justify-content: end;
 
   margin: 5px 0px;
 }
 
-#home-notifications .home-notification-btn button {
+#all-notifications .home-notification-btn button {
   background-color: transparent;
   border: none;
   border-radius: 5px;
@@ -117,10 +173,45 @@
   transition: all 0.3s ease;
 }
 
-#home-notifications .home-notification-btn button:hover {
+#all-notifications .home-notification-btn button:hover {
   background-color: #ff9500;
 
   transition: all 0.3s ease;
+}
+
+#past-notifications {
+  width: 50vw;
+  height: 75vh;
+  max-height: 75vh;
+}
+
+#past-notifications #home-notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+  padding: 8px;
+  border-radius: 10px;
+
+  width: 100%;
+  height: 90%;
+  max-height: 90%;
+  gap: 8px;
+
+  background-color: #00000046;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+#public-emergency-notifications-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 100%;
+  height: 42vh;
+  max-height: 42vh;
 }
 
 #public-emergency-notifications {
@@ -128,7 +219,39 @@
   flex-direction: column;
 
   width: 100%;
+  height: 96%;
+  max-height: 96%;
   gap: 10px;
+
+  border-radius: 8px;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+/* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
+#public-emergency-notifications::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#public-emergency-notifications::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#public-emergency-notifications::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#public-emergency-notifications::-webkit-scrollbar-thumb:hover {
+  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+}
+
+#public-emergency-notifications .public-emergency-notification-btn {
+  background-color: transparent;
+  border: none;
+
+  cursor: pointer;
 }
 
 #public-emergency-notifications .public-emergency-notification {
@@ -146,6 +269,24 @@
 
   background-color: #d9d9d9;
   color: black;
+}
+
+#public-emergency-notifications .public-emergency-notification-checked {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: start;
+
+  border-radius: 8px;
+  padding: 10px;
+
+  width: 100%;
+  gap: 15px;
+
+  background-color: #d9d9d9;
+  color: black;
+  filter: contrast(40%);
 }
 
 #public-emergency-notifications .public-emergency-notification-header {
@@ -171,6 +312,7 @@
 
 #public-emergency-notifications .public-emergency-notification-content {
   font-size: larger;
+  text-align: start;
 }
 
 #public-emergency-notifications .public-emergency-notification-footer {
@@ -192,6 +334,55 @@
   .public-emergency-notification-footer
   .public-emergency-notification-date {
   margin: 0;
+}
+
+#public-emergency-notifications-container .public-emergency-notification-btn {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
+#public-emergency-notifications-container
+  .public-emergency-notification-btn
+  button {
+  background-color: transparent;
+  border: none;
+  border-radius: 5px;
+
+  font-weight: bold;
+  color: white;
+
+  padding: 5px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#public-emergency-notifications-container
+  .public-emergency-notification-btn
+  button:hover {
+  background-color: #ff9500;
+
+  transition: all 0.3s ease;
+}
+
+#past-notifications #public-emergency-notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+
+  padding: 8px;
+  border-radius: 10px;
+
+  width: 100%;
+  height: 90%;
+  max-height: 90%;
+  gap: 8px;
+
+  background-color: #00000046;
+
+  overflow-y: auto; /* 세로 스크롤 가능 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
 }
 
 @media screen and (max-width: 1200px) {

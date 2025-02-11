@@ -96,13 +96,13 @@ export default function SideNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <SideNavElems
+          {/* <SideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
             identifier="EMERGENCY"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          /> */}
           <SideNavElems
             imgSrc={calendarIcon}
             altSrc="calendar"
@@ -124,13 +124,13 @@ export default function SideNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           /> */}
-          <SideNavElems
+          {/* <SideNavElems
             imgSrc={mindfulnessIcon}
             altSrc="mental"
             identifier="MENTAL"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          /> */}
         </ul>
       </div>
       <div>

@@ -444,6 +444,32 @@
   transition: all 0.3s ease;
 }
 
+#signup-form .find-btn {
+  width: 100%;
+  height: 50px;
+
+  margin-top: 10px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: transparent;
+
+  color: #ff9500;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#signup-form .find-btn:hover {
+  background-color: #ff9500;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
 .logout-btn {
   width: 100%;
   height: 50px;
@@ -670,6 +696,38 @@ hr {
   transition: all 0.3s ease;
 }
 
+#login-user-info .login-user-info-header .qr-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 8px;
+  gap: 5px;
+
+  background-color: #f7941d; /* 주황색 배경 */
+  border-radius: 10px;
+
+  text-align: center;
+}
+
+#login-user-info .login-user-info-header.qr-id {
+  padding: 0 5px;
+  border-radius: 10px;
+
+  font-weight: bold;
+  color: white;
+
+  font-size: small;
+}
+
+#login-user-info .login-user-info-header .qr-code {
+  margin-bottom: 8px;
+  padding: 10px;
+
+  background-color: white;
+  border-radius: 8px;
+}
+
 #login-user-info table {
   border-collapse: collapse;
   border-spacing: 0;
@@ -733,6 +791,20 @@ hr {
   transition: all 0.3s ease;
 }
 
+#login-user-info .member-container-box {
+  border-radius: 8px;
+
+  margin: 10px 0px;
+  padding: 15px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+  color: black;
+}
+
+#login-user-info .member-container-box h3 {
+  margin: 0px 5px 10px;
+}
+
 #login-user-info .member-container {
   display: flex;
   justify-content: space-between;
@@ -740,7 +812,6 @@ hr {
 
   border-radius: 8px;
 
-  margin: 10px 0px;
   padding: 15px;
 
   background-color: rgba(255, 255, 255, 0.568);
@@ -866,6 +937,70 @@ hr {
   background-color: #e43710;
   color: white;
 
+  transition: all 0.3s ease;
+}
+
+#find-family {
+}
+
+#find-family .find-family-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#find-family .find-family-header h2 {
+  margin: 10px 5px 0px;
+}
+
+#find-family table {
+  border-collapse: collapse;
+  border-spacing: 0;
+
+  width: 100%;
+
+  margin: 15px 0px;
+}
+
+#find-family td {
+  padding: 12px;
+
+  border: none;
+  border-bottom: 1px rgba(8, 8, 8, 0.568) solid;
+}
+
+#find-family tr:last-child td {
+  border-bottom: none;
+}
+
+#find-family td:first-child {
+  width: 25%;
+
+  font-weight: bold;
+}
+
+#find-family .find-family-btn-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin-top: 10px;
+}
+
+#find-family .find-family-btn-container button {
+  width: 120px;
+  height: 45px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #ff9500;
+  color: white;
+
+  text-align: center;
+  font-weight: bold;
+
+  cursor: pointer;
   transition: all 0.3s ease;
 }
 

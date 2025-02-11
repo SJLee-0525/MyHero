@@ -38,6 +38,7 @@ export const HealthContext = createContext({
       },
     },
   ],
+  selectedToggle: "",
   mentalReport: [
     {
       index: 3,
@@ -80,6 +81,7 @@ export const HealthContext = createContext({
       ],
     },
   },
+  handleChangeSelectedToggle: (toggle) => {},
   handleShowDetailReport: () => {},
   handleGetHealthData: () => {},
   handleGetActivityStatus: () => {},
@@ -96,6 +98,8 @@ export default function HealthContextProvider({ children }) {
   const [healthStatus, setHealthStatus] = useState([]);
   const [activityStatus, setActivityStatus] = useState([]);
   const [mentalStatus, setMentalStatus] = useState([]);
+
+  const [selectedToggle, setSelectedToggle] = useState("activity");
   const [mentalReport, setMentalReport] = useState([]);
 
   const [weeklyData, setWeeklyData] = useState([
@@ -121,6 +125,10 @@ export default function HealthContextProvider({ children }) {
     familyId = userProgressStore.memberInfo.selectedFamilyId;
   } else if (userProgressStore.loginUserInfo.userInfo?.role === "main") {
     familyId = userProgressStore.familyInfo?.familyInfo?.id;
+  }
+
+  function handleChangeSelectedToggle(toggle) {
+    setSelectedToggle(toggle);
   }
 
   // 상세 보고서 모달 열기
@@ -545,10 +553,12 @@ export default function HealthContextProvider({ children }) {
     activityStatus,
     mentalStatus,
     mentalReport,
+    selectedToggle,
     weeklyData,
     keywords,
     keywordColors,
     healthLog,
+    handleChangeSelectedToggle,
     handleShowDetailReport,
     handleGetHealthData,
     handleGetActivityStatus,

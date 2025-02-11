@@ -33,7 +33,7 @@ export default function ToggleGroup() {
       : null;
   const ethanol =
     homeStatusStore.homeStatus.length > 0
-      ? (homeStatusStore.homeStatus[0].ethanol * 100).toFixed(1)
+      ? homeStatusStore.homeStatus[0].ethanol.toFixed(3)
       : null;
   const heartRate =
     (healthStore.healthStatus && healthStore.healthStatus[0]?.heart_rate) ||
@@ -91,6 +91,7 @@ export default function ToggleGroup() {
           altSrc="temperature"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].temperature &&
             18 < homeStatusStore.homeStatus[0].temperature &&
             homeStatusStore.homeStatus[0].temperature < 26
               ? "good"
@@ -108,6 +109,7 @@ export default function ToggleGroup() {
           altSrc="humidity"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].humidity &&
             40 < homeStatusStore.homeStatus[0].humidity &&
             homeStatusStore.homeStatus[0].humidity < 70
               ? "good"
@@ -125,6 +127,7 @@ export default function ToggleGroup() {
           altSrc="dust"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].dust_level &&
             homeStatusStore.homeStatus[0].dust_level < 40
               ? "good"
               : "bad"
@@ -137,23 +140,26 @@ export default function ToggleGroup() {
           altSrc="finedust"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].others?.ultrafinedust &&
             homeStatusStore.homeStatus[0].others?.ultrafinedust < 30
               ? "good"
               : "bad"
           }
           status={`${
-            homeStatusStore.homeStatus.length > 0
+            homeStatusStore.homeStatus.length > 0 &&
+            homeStatusStore.homeStatus[0].others.ultrafinedust
               ? `${homeStatusStore.homeStatus[0].others.ultrafinedust}㎍/㎥`
               : null
           }`}
         />
         <StatusToggle
-          name="가스 누출"
+          name="일산화탄소"
           imgSrc={heatImage}
           altSrc="gas"
           statusLevel={
             homeStatusStore.homeStatus.length > 0 &&
-            homeStatusStore.homeStatus[0].ethanol < 30
+            homeStatusStore.homeStatus[0].ethanol > 0 &&
+            homeStatusStore.homeStatus[0].ethanol < 1.5
               ? "good"
               : "bad"
           }

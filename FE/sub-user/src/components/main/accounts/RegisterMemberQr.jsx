@@ -5,6 +5,8 @@ import { useParams, useNavigate } from "react-router-dom";
 
 import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
+import RouteLogin from "./RouteLogin.jsx";
+
 export default function RegisterMemberQr() {
   const userProgressStore = useContext(UserProgressContext);
   const navigate = useNavigate();
@@ -18,8 +20,14 @@ export default function RegisterMemberQr() {
   useEffect(() => {
     if (familyId !== undefined) {
       handleCheckFamily();
+
+      if (!userProgressStore.loginUserInfo.login) {
+        userProgressStore.handleOpenModal("route-login");
+      } else {
+        userProgressStore.handleCloseModal();
+      }
     }
-  }, [familyId]);
+  }, [familyId, userProgressStore.loginUserInfo.login]);
 
   // 가족 구성원 조회 및 정보 저장
   async function handleCheckFamily() {
@@ -157,6 +165,7 @@ export default function RegisterMemberQr() {
           가입하기
         </button>
       </p>
+      <RouteLogin />
     </div>
   );
 }

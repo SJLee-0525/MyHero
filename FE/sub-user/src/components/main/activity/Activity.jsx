@@ -1,14 +1,21 @@
 import "./Activity.css";
 
-import PageContainer from "../container/PageContainer";
+import { useContext } from "react";
 
-// import Toggle from "../../toggle/Toggle.jsx";
+import { HealthContext } from "../../../store/healthStore.jsx";
+
+import PageContainer from "../container/PageContainer";
 
 import ActivityToggles from "./ActivityToggles.jsx";
 import ActivityChartContainer from "./ActiviyChartContainer";
+import MentalChartContainer from "../mental/MentalChartContainer.jsx";
 import WeeklyStats from "./WeeklyStats.jsx";
+import MentalReport from "../mental/MentalReport.jsx";
+import Keywords from "../mental/Keywords.jsx";
 
 export default function Activity() {
+  const healthStore = useContext(HealthContext);
+
   const mainUserName = "박순자123";
 
   return (
@@ -19,12 +26,21 @@ export default function Activity() {
           <div id="activity-elem-left">
             <PageContainer title={`${mainUserName}님의 건강 상태`}>
               <ActivityToggles />
-              <ActivityChartContainer />
+              {healthStore.selectedToggle === "activity" && (
+                <ActivityChartContainer />
+              )}
+              {healthStore.selectedToggle === "mental" && (
+                <MentalChartContainer />
+              )}
             </PageContainer>
+            <Keywords />
           </div>
           <div id="activity-elem-right">
             <PageContainer title="주간 건강 리포트">
               <WeeklyStats />
+            </PageContainer>
+            <PageContainer title="대화 리포트">
+              <MentalReport />
             </PageContainer>
           </div>
         </div>

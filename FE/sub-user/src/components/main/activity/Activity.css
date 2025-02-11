@@ -109,15 +109,20 @@ hr {
   box-sizing: border-box;
 
   display: flex;
+  justify-content: center;
+  align-items: center;
 
   min-width: 48%;
   max-width: 150px;
   height: 80px;
   padding: 15px;
 
+  border: none;
   border-radius: 10px;
 
   background: #d9d9d9ac;
+
+  cursor: pointer;
 }
 
 #activity-toggle-box {
@@ -185,6 +190,14 @@ hr {
 
 #activity-toggle-box img {
   width: 70%;
+}
+
+#activity-toggle-box .toggle-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 50%;
 }
 
 #activity-toggle-box .toggle-name {

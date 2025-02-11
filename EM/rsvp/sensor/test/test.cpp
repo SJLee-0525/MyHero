@@ -141,7 +141,7 @@ int main() {
 			sender.SendEnvironmentData(Data);
 			lastTime = currentTime;
 		}
-		if(Data.ethanol > 2.0 || Data.dust > 25.0){
+		if(Data.ethanol > 2.0 || Data.dust > 35.0){
 			cout << "긴급 환경 데이터 전송" << Data.ethanol << "% " << Data.dust << "㎍/㎥\n";
 			sender.SendEnvironmentData(Data);
 		}

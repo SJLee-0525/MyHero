@@ -86,6 +86,7 @@ class FamiliesTable(Base):
     active_status = relationship("ActiveStatusTable", cascade="all, delete")
     mental_status = relationship("MentalStatusTable", cascade="all, delete")
     mental_reports = relationship("MentalReportsTable", cascade="all, delete")
+    notifications = relationship("NotificationsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +

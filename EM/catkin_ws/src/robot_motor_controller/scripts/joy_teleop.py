@@ -67,7 +67,6 @@ class JoyTeleop:
             stop_msg = Bool()
             stop_msg.data = True
             self.stop_pub.publish(stop_msg)
-            rospy.loginfo("Stop signal sent to recovery behavior")
         
         self.prev_stop_button = stop_button
         

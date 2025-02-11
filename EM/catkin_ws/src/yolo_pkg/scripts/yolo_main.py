@@ -14,13 +14,19 @@ async def main():
         print("카메라 열기 실패!")
         return
 
+    frame_count = 0
     while True:
         ret, frame = cap.read()
         if not ret:
             print("동영상 프레임 읽기 실패!")
             break
 
-        processed_frame, fall_detected, debug_info = await detector.process_frame(frame)
+        if frame_count % 5 == 0:
+            processed_frame, fall_detected, debug_info = await detector.process_frame(frame)
+        else:
+            processed_frame = frame
+
+        frame_count += 1
 
         cv2.imshow("Fall Detection", processed_frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):

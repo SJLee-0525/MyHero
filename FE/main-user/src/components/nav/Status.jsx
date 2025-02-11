@@ -25,7 +25,7 @@ export default function Status() {
         status={store.openCalendarState}
         onClickIcon={store.handleCalendarState}
       />
-      <StatusIcon imgSrc={batteryIconCharge} altSrc="battery-icon-charge" />
+      <StatusIcon imgSrc={batteryIconCharge} altSrc="battery-icon-charge" className="no-border" />
       <StatusIcon
         imgSrc={settingIcon}
         altSrc="setting-icon"

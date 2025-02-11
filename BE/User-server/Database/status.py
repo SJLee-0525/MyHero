@@ -49,8 +49,7 @@ def get_home_status(
         family_id: str,
         start_time: datetime,
         end_time: datetime = datetime.now(tz=timezone.utc),
-        time_order: Order = Order.ASC
-) -> list[dict]:
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 집 환경 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -125,7 +124,7 @@ def get_latest_home_status(family_id: str) -> dict:
                 HomeStatusTable.dust_level,
                 HomeStatusTable.ethanol,
                 HomeStatusTable.others
-            ).filter(HealthStatusTable.family_id == family_id
+            ).filter(HomeStatusTable.family_id == family_id
             ).order_by(HomeStatusTable.reported_at.desc()).first()
 
             if home_status_data is not None:
@@ -210,8 +209,7 @@ def get_health_status(
         family_id: str,
         start_time: datetime,
         end_time: datetime = datetime.now(tz=timezone.utc),
-        time_order: Order = Order.ASC
-) -> list[dict]:
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 건강 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -355,8 +353,7 @@ def get_active_status(
         family_id: str,
         start_time: datetime,
         end_time: datetime = datetime.now(tz=timezone.utc),
-        time_order: Order = Order.ASC
-) -> list[dict]:
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 활동 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -489,8 +486,7 @@ def get_mental_status(
         family_id: str,
         start_time: datetime,
         end_time: datetime = datetime.now(tz=timezone.utc),
-        time_order: Order = Order.ASC
-) -> list[dict]:
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     조건에 따른 모든 정신건강 정보를 불러오는 기능
     :param family_id: 대상의 가족 ID
@@ -617,8 +613,7 @@ def get_mental_reports(
         family_id: str,
         start_time: datetime,
         end_time: datetime = datetime.now(tz=timezone.utc),
-        time_order: Order = Order.ASC
-) -> list:
+        time_order: Order = Order.ASC) -> list:
     """
     조건에 따른 모든 정신건강 리포트를 불러오는 기능
     :param family_id: 대상의 가족 ID

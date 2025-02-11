@@ -12,6 +12,8 @@ from Database.models import *
 from sqlalchemy import and_
 from sqlalchemy.exc import SQLAlchemyError
 
+from datetime import datetime, timezone
+
 from Utilities.logging_tools import *
 
 database: Database = Database()
@@ -43,10 +45,16 @@ def create_notification(notification_data: NotificationsTable) -> bool:
             return result
 
 # 아직 읽지 않은 알림을 가져오는 기능
-def get_new_notifications(family_id: str, time_order: Order = Order.ASC) -> list[dict]:
+def get_new_notifications(
+        family_id: str,
+        start_time: datetime = None,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     아직 읽지 않은 Family의 알림을 가져오는 기능
     :param family_id: 해당하는 Family의 ID str
+    :param start_time: 검색을 위한 시작 날짜와 시각
+    :param end_time: 검색을 위한 끝 날짜와 시각
     :param time_order: 데이터의 정렬 순서 (시간 기반)
     :return: 읽지 않은 Family에게 도착한 모든 알림 list[dict]
     """
@@ -65,13 +73,19 @@ def get_new_notifications(family_id: str, time_order: Order = Order.ASC) -> list
             ).filter(and_(NotificationsTable.family_id == family_id,
                           NotificationsTable.is_read == False))
 
+            if start_time is not None:
+                filtered_new_notification_list = new_notification_list.filter(
+                    NotificationsTable.created_at.between(start_time, end_time))
+            else:
+                filtered_new_notification_list = new_notification_list
+
             ordered_new_notification_list = None
 
             if time_order == Order.ASC:
-                ordered_new_notification_list = new_notification_list.order_by(
+                ordered_new_notification_list = filtered_new_notification_list.order_by(
                     NotificationsTable.created_at.asc()).all()
             elif time_order == Order.DESC:
-                ordered_new_notification_list = new_notification_list.order_by(
+                ordered_new_notification_list = filtered_new_notification_list.order_by(
                     NotificationsTable.created_at.desc()).all()
 
             serialized_data: list[dict] = [{
@@ -92,10 +106,16 @@ def get_new_notifications(family_id: str, time_order: Order = Order.ASC) -> list
             return result
 
 # 모든 알림을 가져오는 기능
-def get_all_notifications(family_id: str, time_order: Order = Order.ASC) -> list[dict]:
+def get_all_notifications(
+        family_id: str,
+        start_time: datetime = None,
+        end_time: datetime = datetime.now(tz=timezone.utc),
+        time_order: Order = Order.ASC) -> list[dict]:
     """
     Family의 모든 알림을 가져오는 기능
     :param family_id: 해당하는 Family의 ID str
+    :param start_time: 검색을 위한 시작 날짜와 시각
+    :param end_time: 검색을 위한 끝 날짜와 시각
     :param time_order: 데이터의 정렬 순서 (시간 기반)
     :return: Family ID로 필터링 된 모든 알림 list[dict]
     """
@@ -113,13 +133,19 @@ def get_all_notifications(family_id: str, time_order: Order = Order.ASC) -> list
                 NotificationsTable.is_read
             ).filter(NotificationsTable.family_id == family_id)
 
+            if start_time is not None:
+                filtered_all_notification_list = all_notification_list.filter(
+                    NotificationsTable.created_at.between(start_time, end_time))
+            else:
+                filtered_all_notification_list = all_notification_list
+
             ordered_all_notification_list = None
 
             if time_order == Order.ASC:
-                ordered_all_notification_list = all_notification_list.order_by(
+                ordered_all_notification_list = filtered_all_notification_list.order_by(
                     NotificationsTable.created_at.asc()).all()
             elif time_order == Order.DESC:
-                ordered_all_notification_list = all_notification_list.order_by(
+                ordered_all_notification_list = filtered_all_notification_list.order_by(
                     NotificationsTable.created_at.desc()).all()
 
             serialized_data: list[dict] = [{

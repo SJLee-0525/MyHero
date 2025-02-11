@@ -85,6 +85,10 @@ Visualization Manager:
       Enabled: true
       Value: true
 
+    - Class: rviz/Marker
+      Name: Navigation Points
+      Marker Topic: /navigation_points
+
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true

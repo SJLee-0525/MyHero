@@ -74,7 +74,6 @@ namespace backoff_recovery
     {
         if (msg->data)
         {
-            ROS_INFO("Stop signal received from gamepad");
             should_stop_ = true;
         }
     }

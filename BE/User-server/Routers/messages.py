@@ -37,7 +37,9 @@ async def get_receivable_account(user_id: str, request_id: str = Depends(Databas
         )
 
     # 시스템 계정은 모든 사람에게 보낼 수 있음
-    if request_data["role"] == Role.SYSTEM:
+    target_account: dict = Database.get_one_account(user_id)
+
+    if target_account["role"] == Role.SYSTEM:
         raise HTTPException(
             status_code=status.HTTP_204_NO_CONTENT,
             detail={
@@ -49,16 +51,16 @@ async def get_receivable_account(user_id: str, request_id: str = Depends(Databas
     # 접근 권한 범위 확인
     receivable_account: list[dict] = []
 
-    if request_data["role"] == Role.MAIN:  # 주 사용자가 접근한 경우 소속된 가족까지 접근 가능
-        family_id: str = Database.main_id_to_family_id(request_id)
+    if target_account["role"] == Role.MAIN:  # 주 사용자가 접근한 경우 소속된 가족까지 접근 가능
+        family_id: str = Database.main_id_to_family_id(user_id)
         member_data: list[dict] = Database.get_all_members(family_id=family_id)
         for member in member_data:
             receivable_account.append({
                 "user_id": member["user_id"],
                 "name": member["nickname"]
             })
-    elif request_data["role"] == Role.SUB:  # 보조 사용자가 접근한 경우 소속된 주 사용자들의 정보까지 접근 가능
-        member_data: list[dict] = Database.get_all_members(user_id=request_id)
+    elif target_account["role"] == Role.SUB:  # 보조 사용자가 접근한 경우 소속된 주 사용자들의 정보까지 접근 가능
+        member_data: list[dict] = Database.get_all_members(user_id=user_id)
         family_id_list: list[str] = [member["family_id"] for member in member_data]
         for family_id in family_id_list:
             family_data: dict = Database.get_one_family(family_id)
@@ -101,7 +103,7 @@ async def send_message(message_data: Message, request_id: str = Depends(Database
             detail={
                 "type": "no data",
                 "loc": missing_location,
-                "message": "Password data is required",
+                "message": "Account id data is required",
                 "input": jsonable_encoder(message_data)
             }
         )

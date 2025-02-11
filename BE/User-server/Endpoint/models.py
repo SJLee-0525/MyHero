@@ -154,3 +154,12 @@ class Notification(BaseModel):
     family_id: Optional[str] = None
     notification_grade: Optional[str] = None
     descriptions: Optional[str] = None
+
+class Message(BaseModel):
+    """
+    사용자간의 메시지를 주고 받기 위해 Client가 보내는 데이터
+    """
+    from_id: Optional[str] = None
+    to_id: Optional[str] = None
+    content: Optional[str] = None
+    image_url: Optional[str] = None

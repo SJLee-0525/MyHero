@@ -110,7 +110,7 @@ async def get_new_notification(
         family_id: str,
         order: Optional[Order] = Query(Order.ASC),
         request_id = Depends(Database.check_current_user)):
-    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 생성할 수 있음
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
     member_data: list = Database.get_all_members(family_id=family_id)
@@ -148,7 +148,7 @@ async def get_all_notification(
         family_id: str,
         order: Optional[Order] = Query(Order.ASC),
         request_id = Depends(Database.check_current_user)):
-    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 생성할 수 있음
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
     member_data: list = Database.get_all_members(family_id=family_id)
@@ -196,7 +196,7 @@ async def read_notification(notification_id: int, request_id = Depends(Database.
             }
         )
 
-    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 생성할 수 있음
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(notification_data["family_id"])
     member_data: list = Database.get_all_members(family_id=notification_data["family_id"])
@@ -272,7 +272,6 @@ async def delete_notification(notification_id: int, request_id = Depends(Databas
             "message": "Notification deleted successfully"
         }
     else:
-        logger.warning(f"Failed to delete notification: {notification_id}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={

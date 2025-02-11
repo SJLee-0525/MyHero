@@ -45,6 +45,7 @@ class AutoNavigation:
         if not status.status_list or not self.is_moving:
             return
         current_status = status.status_list[-1].status
+        # 상태 코드 3(SUCCEEDED) 또는 4(ABORTED)일 때 새 목표 선택
         if current_status in [3, 4]:
             if self.nav_points:
                 self.current_orientation = math.atan2(
@@ -106,40 +107,50 @@ class AutoNavigation:
             if abs(angle_diff) <= math.pi/4:
                 forward_points.append(point)
 
+        # 전방에 조건에 맞는 점이 없으면 빈 영역 전체에서 임의의 점 선택 (fallback)
         if forward_points:
             selected_point = random.choice(forward_points)
-            self.nav_points = [selected_point]
-            self.visualize_points()
-            
-            if self.prev_goal:
-                dx = selected_point[0] - self.prev_goal.pose.position.x
-                dy = selected_point[1] - self.prev_goal.pose.position.y
-                yaw = math.atan2(dy, dx)
-            else:
-                yaw = 0.0
-            
-            w = math.cos(yaw/2)
-            z = math.sin(yaw/2)
-            
-            goal = PoseStamped()
-            goal.header.frame_id = "map"
-            goal.header.stamp = rospy.Time.now()
-            goal.pose.position.x = selected_point[0]
-            goal.pose.position.y = selected_point[1]
-            goal.pose.orientation.w = w
-            goal.pose.orientation.z = z
+        else:
+            rospy.logwarn("전방에 빈 영역이 없습니다. 빈 영역에서 임의의 점을 선택합니다.")
+            selected_point = random.choice(empty_points)
 
-            self.prev_goal = goal
-            self.goal_pub.publish(goal)
-            self.is_moving = True
-            rospy.loginfo(f"새로운 목표점 선택: {selected_point}, 방향: {math.degrees(yaw)}도")
+        self.nav_points = [selected_point]
+        self.visualize_points()
+        
+        if self.prev_goal:
+            dx = selected_point[0] - self.prev_goal.pose.position.x
+            dy = selected_point[1] - self.prev_goal.pose.position.y
+            yaw = math.atan2(dy, dx)
+        else:
+            yaw = 0.0
+        
+        w = math.cos(yaw/2)
+        z = math.sin(yaw/2)
+        
+        goal = PoseStamped()
+        goal.header.frame_id = "map"
+        goal.header.stamp = rospy.Time.now()
+        goal.pose.position.x = selected_point[0]
+        goal.pose.position.y = selected_point[1]
+        goal.pose.orientation.w = w
+        goal.pose.orientation.z = z
+
+        self.prev_goal = goal
+        self.goal_pub.publish(goal)
+        self.is_moving = True
+        rospy.loginfo(f"새로운 목표점 선택: {selected_point}, 방향: {math.degrees(yaw)}도")
     
     def joy_callback(self, joy_msg):
         # X 버튼(index 2) 또는 Y 버튼(index 3) 눌림 감지
         if joy_msg.buttons[2] or joy_msg.buttons[3]:
+            # 이전 모드를 기억하고 토글
+            prev_mode = self.auto_mode
             self.auto_mode = not self.auto_mode
             mode = "자동" if self.auto_mode else "수동"
             rospy.loginfo(f"내비게이션 모드가 {mode}(으로) 전환되었습니다.")
+            # 만약 수동 모드에서 자동 모드로 전환되었고, 현재 이동 중이 아니라면 새 목표 선택
+            if self.auto_mode and not prev_mode and not self.is_moving:
+                self.select_and_send_new_goal()
     
     def find_empty_spaces(self, occupancy_grid):
         empty_points = []
@@ -155,10 +166,10 @@ class AutoNavigation:
             else:
                 return empty_points
 
-        grid_step = 10  # 격자 간격 조절
-        max_distance = 5.0  # 최대 5m 범위
+        grid_step = 10  # 격자 간격 (필요시 조정)
+        max_distance = 5.0  # 최대 5m 범위 (필요시 확장 가능)
         
-        cost_threshold = 100  # 비용 정보 임계치
+        cost_threshold = 100  # 비용 정보 임계치 (장애물과의 안전거리를 위해 필요시 조정)
 
         for i in range(0, width, grid_step):
             for j in range(0, height, grid_step):

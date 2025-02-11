@@ -29,7 +29,7 @@ class Database:
             f"{self.password}@{self.host}:{self.port}/"+
             f"{self.schema}?charset={self.charset}",
             pool_size=10,
-            max_overflow=20,
+            max_overflow=5,
             pool_recycle=120,
             pool_pre_ping=True,
             echo=False

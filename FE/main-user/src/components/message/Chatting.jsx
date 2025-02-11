@@ -35,8 +35,8 @@ export default function Chatting() {
                         <Message key={msg.id} text={msg.text} sender={msg.sender} time={msg.time} />
                     ))}
                 </div>
-                <div className="divider"></div>
-                <Photo />
+                {/* <div className="divider"></div>
+                <Photo /> */}
             </div>
             <ReplyBar onSend={handleSendMessage} onRetry={handleStartListening} />
         </div>

@@ -79,7 +79,7 @@
 #info-title {
   font-size: 1.3rem;
   font-weight: bold;
-  color: white;
+  color: #54736D;
 }
 
 
@@ -100,7 +100,7 @@
 #weather-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: #54736D;
   align-self: flex-start;
 }
 
@@ -120,12 +120,15 @@
 #weather-detail {
   display: flex;
   flex-direction: column;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #54736D;
 }
 
 #schedule-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: #54736D;
   align-self: flex-start;
 }
 
@@ -207,6 +210,12 @@
 
 #environment-info #info-title {
   font-size: 1.2rem;
+}
+
+#environment-info #info-status {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #54736D;
 }
 
 /* #environment-temp, #environment-hum, #environment-dust, #environment-gas {

@@ -40,7 +40,7 @@ from enum import Enum
 import aiohttp
 from gtts import gTTS
 import pygame
-
+import subprocess
 
 # 환경 변수 로드
 load_dotenv()
@@ -64,15 +64,24 @@ MAX_CHUNK_SIZE = 15360  # 960ms 이내의 오디오 데이터 크기
 DEFAULT_KEYWORDS = ["영웅", "영웅아", "영웅이", "영웅.", "영웅아.", "영웅이.", 
                    "영웅!", "영웅아!", "영웅이!", "영웅?", "영웅아?", "영웅이?", "영웅~", "영웅아~", "영웅이~",
                    "영웅왕.", "영웅왕!", "영웅왕?", "영화", "영화.", "영화!", "영웅왕"]
-MESSAGE_KEYWORDS = ['응급', '응급!', '응급.', '응급?', '위급', '위급!', '위급.', '위급?',
-                    '살려줘', '살려줘!', '살려줘.', '살려줘?', '메시지', '메시지!', '메시지.', '메시지?',
-                    '신고', '신고.', '신고?', '신고!']
+EMERGENCY_KEYWORDS = ['응급', '응급!', '응급.', '응급?', '위급', '위급!', '위급.', '위급?',
+                    '살려줘', '살려줘!', '살려줘.', '살려줘?', '신고', '신고.', '신고?', '신고!',
+                    '도와줘', '도와줘!', '도와줘.', '도와줘?']
+MESSAGE_KEYWORDS = ["메시지", "메세지", "메시지.", "메세지.", "메시지!", "메세지!", "메시지?", "메세지?", "메시지~", "메세지~",
+                    "메시징.", "메세징.", "메시징!", "메세징!", "메시징?", "메세징?", "메시징~", "메세징~"]
 TERMINATION_KEYWORDS = ["종료", "그만", "멈춰", "끝", "종료해줘"]
 
 class STTMode(Enum):
     KEYWORD_DETECTION = "keyword_detection"
     SPEECH_RECOGNITION = "speech_recognition"
+    EMERGENCY_MESSAGE = "emergency_message"
+    MESSAGE_FLOW = "message_flow"
     MESSAGE = "message"
+
+class MessageState(Enum):
+    SELECTING_RECIPIENT = "selecting_recipient"
+    ENTERING_MESSAGE = "entering_message"
+
 # AudioStream 
 class AudioStream:
     def __init__(self, rate=RATE, chunk=CHUNK):
@@ -82,7 +91,9 @@ class AudioStream:
         self.closed = True  
         self._audio_interface = None    
         self._audio_stream = None   
-        self._resource_lock = threading.Lock()  
+        self._resource_lock = threading.Lock()
+        self.message_state = None
+        self.temp_recipient = None
         logger.info("AudioStream 초기화 완료")  
 
     def __enter__(self):
@@ -126,15 +137,28 @@ class AudioStream:
             self.closed = True
             if hasattr(self, '_audio_stream') and self._audio_stream:   
                 try:
-                    self._audio_stream.stop_stream()
+                    if self._audio_stream.is_active():
+                        self._audio_stream.stop_stream()
                     self._audio_stream.close()
+                    self._audio_stream = None
                 except Exception as e:
                     logger.error(f"오디오 스트림 종료 오류: {e}")
+                
             if hasattr(self, '_audio_interface') and self._audio_interface:
                 try:
                     self._audio_interface.terminate()
+                    self._audio_interface = None
                 except Exception as e:
                     logger.error(f"PyAudio 종료 오류: {e}")
+            
+            # ALSA 디바이스 직접 리셋
+            try:
+                subprocess.run(['arecord', '-l'], capture_output=True)  # ALSA 디바이스 상태 확인
+                subprocess.run(['pulseaudio', '-k'], capture_output=True)  # PulseAudio 재시작
+                subprocess.run(['pulseaudio', '--start'], capture_output=True)
+            except Exception as e:
+                logger.error(f"ALSA 리셋 중 오류: {e}")
+                
             self._buff.put(None)
 
     def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
@@ -179,6 +203,8 @@ class STTManager:
             self.user_id = None
             self.base_url = "http://70.12.246.26:8000"
             self.current_mode = STTMode.KEYWORD_DETECTION
+            self.message_state = None
+            self.temp_recipient = None
             
             try:
                 with open('user_id.txt', 'r') as f:
@@ -249,14 +275,20 @@ class STTManager:
                             self.start_sound.play()
                             return True
                             
-                        # 메시지 키워드 감지
-                        elif any(keyword in transcript for keyword in MESSAGE_KEYWORDS):
-                            logger.info("메시지 키워드 감지됨")
-                            self.current_mode = STTMode.MESSAGE
-                            tts_path = self.generate_speech("메시지를 말씀해주세요.")
+                        # 응급 상황 키워드 감지
+                        elif any(keyword in transcript for keyword in EMERGENCY_KEYWORDS):
+                            logger.info("위급 상황 키워드 감지됨")
+                            self.current_mode = STTMode.EMERGENCY_MESSAGE
+                            tts_path = self.generate_speech("위급 상황 메시지를 말씀해주세요.")
                             self.play_audio(tts_path)
                             return True
                         
+                        # 일반 메시지 키워드
+                        elif any(keyword in transcript for keyword in MESSAGE_KEYWORDS):
+                            logger.info("메시지 전송 키워드 감지됨")
+                            self.current_mode = STTMode.MESSAGE_FLOW
+                            return True
+
                         logger.info("키워드 없음")
                         return False
 
@@ -271,42 +303,86 @@ class STTManager:
             logger.info(f"{self.current_mode} 모드로 음성 인식 시작")
             config = self.get_config(self.current_mode)
             
-            with AudioStream() as stream:
-                requests = (
-                    speech.StreamingRecognizeRequest(audio_content=content)
-                    for content in stream.generator()
-                )
-                responses = self.client.streaming_recognize(config, requests)
+            if self.current_mode == STTMode.MESSAGE_FLOW:
+                tts_path = self.generate_speech("누구에게 메세지를 보내시겠습니까?")
+                self.play_audio(tts_path)
                 
-                final_text = None
-                
-                for response in responses:
-                    if not response.results:
-                        continue
-
-                    result = response.results[0]
-                    if not result.alternatives:
-                        continue
-
-                    transcript = result.alternatives[0].transcript.strip()
+                with AudioStream() as stream:
+                    requests = (
+                        speech.StreamingRecognizeRequest(audio_content=content)
+                        for content in stream.generator()
+                    )
+                    responses = self.client.streaming_recognize(config, requests)
                     
-                    if result.is_final:
-                        logger.info(f"최종 텍스트 감지: {transcript}")
-                        final_text = transcript
-                        
-                        if self.current_mode == STTMode.SPEECH_RECOGNITION:
-                            await self._process_chat(transcript)
-                        elif self.current_mode == STTMode.MESSAGE:
-                            await self._send_message(transcript)
-                        
-                        # 모드 초기화
-                        self.current_mode = STTMode.KEYWORD_DETECTION
-                        break
+                    for response in responses:
+                        if not response.results:
+                            continue
 
-                return final_text
+                        result = response.results[0]
+                        transcript = result.alternatives[0].transcript.strip()
+                        
+                        if result.is_final:
+                            logger.info(f"최종 텍스트 감지: {transcript}")
+                            recipient_id = await self._find_most_similar_member(transcript)
+                            logger.info(f"수신자 매칭 결과: {recipient_id}")
+                            
+                            if recipient_id:
+                                self.current_mode = STTMode.SPEECH_RECOGNITION  
+                                # await asyncio.sleep(2)   
+                                await self.start_single_voice_message(recipient_id)  
+                            else:
+                                tts_path = self.generate_speech("일치하는 가족 구성원을 찾을 수 없습니다.")
+                                self.play_audio(tts_path)
+                            break
+
+            elif self.current_mode == STTMode.SPEECH_RECOGNITION:
+                # 기존 채팅 처리
+                with AudioStream() as stream:
+                    requests = (
+                        speech.StreamingRecognizeRequest(audio_content=content)
+                        for content in stream.generator()
+                    )
+                    responses = self.client.streaming_recognize(config, requests)
+                    
+                    for response in responses:
+                        if not response.results:
+                            continue
+
+                        result = response.results[0]
+                        transcript = result.alternatives[0].transcript.strip()
+                        
+                        if result.is_final:
+                            logger.info(f"최종 텍스트 감지: {transcript}")
+                            await self._process_chat(transcript)
+                            self.current_mode = STTMode.KEYWORD_DETECTION
+                            break
+                    
+            elif self.current_mode == STTMode.EMERGENCY_MESSAGE:
+                # 위급 상황 메시지 처리
+                with AudioStream() as stream:
+                    requests = (
+                        speech.StreamingRecognizeRequest(audio_content=content)
+                        for content in stream.generator()
+                    )
+                    responses = self.client.streaming_recognize(config, requests)
+                    
+                    for response in responses:
+                        if not response.results:
+                            continue
+
+                        result = response.results[0]
+                        transcript = result.alternatives[0].transcript.strip()
+                        
+                        if result.is_final:
+                            logger.info(f"최종 텍스트 감지: {transcript}")
+                            await self._send_message(transcript)
+                            self.current_mode = STTMode.KEYWORD_DETECTION
+                            break
+
+            return transcript
 
         except Exception as e:
-            logger.error(f"음성 인식 중 오류: {e}")
+            logger.error(f"음성 인식 중 오류: {str(e)}")
             self.current_mode = STTMode.KEYWORD_DETECTION
             return None
 
@@ -335,6 +411,40 @@ class STTManager:
         except Exception as e:
             logger.error(f"API 요청 중 오류: {e}")
 
+    async def _capture_message_input(self):
+        """메시지 입력을 캡처하는 별도의 메서드"""
+        try:
+            # await asyncio.sleep(1)
+            
+            config = self.get_config(STTMode.MESSAGE)
+            
+            with AudioStream() as stream:
+                requests = (
+                    speech.StreamingRecognizeRequest(audio_content=content)
+                    for content in stream.generator()
+                )
+                responses = self.client.streaming_recognize(config, requests)
+                
+                for response in responses:
+                    if not response.results:
+                        continue
+
+                    result = response.results[0]
+                    if not result.alternatives:
+                        continue
+
+                    transcript = result.alternatives[0].transcript.strip()
+                    
+                    if result.is_final:
+                        logger.info(f"메시지 입력 텍스트: {transcript}")
+                        return transcript
+
+            return None
+        except Exception as e:
+            logger.error(f"메시지 입력 캡처 중 오류: {e}")
+            # await asyncio.sleep(1)
+            return None
+
     async def _send_message(self, content: str):
         try:
             async with aiohttp.ClientSession() as session:
@@ -361,10 +471,13 @@ class STTManager:
     async def start_single_voice_message(self, to_id: str):
         """특정 사용자에게 보낼 음성 메시지 녹음 시작"""
         try:
+            # await asyncio.sleep(2) 
             tts_path = self.generate_speech("메시지를 말씀해주세요.")
             self.play_audio(tts_path)
             
-            config = self.get_config(STTMode.MESSAGE)
+            # await asyncio.sleep(1)
+
+            config = self.get_config(STTMode.MESSAGE_FLOW) 
             
             with AudioStream() as stream:
                 requests = (
@@ -378,20 +491,18 @@ class STTManager:
                         continue
 
                     result = response.results[0]
-                    if not result.alternatives:
-                        continue
-
                     transcript = result.alternatives[0].transcript.strip()
                     
                     if result.is_final:
                         logger.info(f"최종 텍스트 감지: {transcript}")
-                        # 특정 사용자에게 메시지 전송
                         await self._send_single_message(to_id, transcript)
+                        self.current_mode = STTMode.KEYWORD_DETECTION  # 키워드 감지 모드로 복귀
                         return transcript
 
             return None
         except Exception as e:
             logger.error(f"음성 메시지 녹음 중 오류: {e}")
+            self.current_mode = STTMode.KEYWORD_DETECTION
             return None
 
     async def _send_single_message(self, to_id: str, content: str):
@@ -494,6 +605,63 @@ class STTManager:
             except Exception as e:
                 logger.error(f"메시지 읽음 처리 중 오류: {e}")
                 return False
+
+    async def _find_most_similar_member(self, transcript: str) -> str:
+        """입력된 텍스트와 가장 유사한 닉네임을 가진 가족 구성원 찾기"""
+        try:
+            async with aiohttp.ClientSession() as session:
+                url = f"{self.base_url}/family/main/{self.user_id}"
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        return None
+                    family = await response.json()
+                    family_id = family['id']
+
+                url = f"{self.base_url}/family/{family_id}/members"
+                async with session.get(url) as response:
+                    if response.status != 200:
+                        return None
+                    members = await response.json()
+                    
+                    
+                    for member in members:
+                        if transcript.lower() == member['nickname'].lower():
+                            return member['user_id']
+                    
+                    for member in members:
+                        if transcript.lower() in member['nickname'].lower() or \
+                        member['nickname'].lower() in transcript.lower():
+                            return member['user_id']
+                        
+                    consonants = {
+                        'ㄱ': ['가','깋'], 'ㄲ': ['까','낗'], 'ㄴ': ['나','닣'],
+                        'ㄷ': ['다','딯'], 'ㄸ': ['따','띻'], 'ㄹ': ['라','맇'],
+                        'ㅁ': ['마','밓'], 'ㅂ': ['바','빟'], 'ㅃ': ['빠','삫'],
+                        'ㅅ': ['사','싷'], 'ㅆ': ['싸','앃'], 'ㅇ': ['아','잏'],
+                        'ㅈ': ['자','짛'], 'ㅉ': ['짜','찧'], 'ㅊ': ['차','칳'],
+                        'ㅋ': ['카','킿'], 'ㅌ': ['타','팋'], 'ㅍ': ['파','핗'],
+                        'ㅎ': ['하','힣']
+                    }
+                    
+                    def get_consonant(char):
+                        for cons, (start, end) in consonants.items():
+                            if start <= char <= end:
+                                return cons
+                        return char
+
+                    transcript_cons = ''.join(get_consonant(c) for c in transcript if c.isalpha())
+                    
+                    for member in members:
+                        member_cons = ''.join(get_consonant(c) for c in member['nickname'] if c.isalpha())
+                        if transcript_cons == member_cons:
+                            return member['user_id']
+                    
+                    return None
+                    
+                return None
+        except Exception as e:
+            logger.error(f"가족 구성원 조회 중 오류: {e}")
+            return None
 
 async def check_messages_periodically(stt_manager):
     while True:

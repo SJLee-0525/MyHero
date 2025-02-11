@@ -9,5 +9,11 @@ services:
       - SYS_TIME
     ports:
       - "4380:8000"
+    networks:
+      - api_shared_network
     env_file:
       - .env
+
+networks:
+  api_shared_network:
+    external: true

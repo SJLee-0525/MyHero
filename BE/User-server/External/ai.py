@@ -17,7 +17,8 @@ logger = get_logger("External_AI")
 
 # 외부 AI Process 서버 확인
 load_dotenv()
-AI_HOST: str = os.getenv("AI_HOST")
+isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
+AI_HOST: str = os.getenv("AI_HOST") if isDeploy else "localhost"
 AI_PORT: int = int(os.getenv("AI_PORT"))
 AI_PATH: str = f"{AI_HOST}:{AI_PORT}"
 external_timeout: float = float(os.getenv("EXTERNAL_TIMEOUT", 60.0))

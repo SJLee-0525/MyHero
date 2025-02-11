@@ -15,18 +15,22 @@ from Routers import accounts, families, members, authentication, status, chats, 
 from Database import cleanup_login_sessions
 from asyncio import create_task
 
+from Utilities.logging_tools import get_logger
+
+logger = get_logger("System")
+
 # ========== 백그라운드 기능 ==========
 @asynccontextmanager
 async def startup(app: FastAPI):
     # 시작된 경우
-    print("🚀 [System] Start Care-bot User API Server!!!")
+    logger.info("🚀 Start Care-bot User API Server!!!")
     task = create_task(cleanup_login_sessions())
 
     yield
 
     # 종료 된 경우
     task.cancel()
-    print("🛑 [System] Server shutdown")
+    logger.info("🛑 Server shutdown!!!")
 
 # ========== FastAPI 설정 ==========
 app = FastAPI(lifespan=startup)

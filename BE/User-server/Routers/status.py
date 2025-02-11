@@ -111,7 +111,6 @@ async def get_home_status(
 ):
     # 필수 입력 정보 점검
     missing_location: list = ["query"]
-    print(request_id)
 
     if start is None:
         missing_location.append("start")

@@ -29,10 +29,18 @@ class AutoNavigation:
         self.prev_goal = None  # 이전 목표점 저장
         self.tf_listener = tf.TransformListener()
         
+        # 5초 후에 첫 목표점 선택을 시작하도록 타이머 설정
+        rospy.Timer(rospy.Duration(10), self.initial_goal_timer_callback, oneshot=True)
+
+    def initial_goal_timer_callback(self, event):
+        if not self.nav_points:  # 아직 목표점이 없는 경우에만
+            self.select_and_send_new_goal()
+    
     def map_callback(self, occupancy_grid):
         self.occupancy_grid = occupancy_grid
-        if not self.nav_points:  # 처음 맵을 받았을 때 첫 목표점 선택
-            self.select_and_send_new_goal()
+        # 타이머에서 처리하도록 이 부분 제거
+        # if not self.nav_points:
+        #     self.select_and_send_new_goal()
     
     def status_callback(self, status):
         # status가 비어있거나 이동 중이 아니면 리턴
@@ -83,25 +91,30 @@ class AutoNavigation:
 
         # 현재 방향을 기준으로 전방 120도 영역 내의 점들만 필터링
         forward_points = []
+        current_orientation = self.get_robot_orientation()  # 실시간 로봇 방향 획득
+        
+        try:
+            # 현재 로봇의 위치 획득
+            (current_pos, rot) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            return
+
         for point in empty_points:
-            if self.prev_goal:  # 이전 목표점이 있는 경우
-                # 현재 위치에서 목표점까지의 각도 계산
-                dx = point[0] - self.prev_goal.pose.position.x
-                dy = point[1] - self.prev_goal.pose.position.y
-                angle = math.atan2(dy, dx)
-                
-                # 각도 차이 계산 (-π ~ π 범위로 정규화)
-                angle_diff = angle - self.current_orientation
-                while angle_diff > math.pi:
-                    angle_diff -= 2 * math.pi
-                while angle_diff < -math.pi:
-                    angle_diff += 2 * math.pi
-                
-                # 전방 120도 영역 내에 있는 점만 선택 (-60도 ~ +60도)
-                if abs(angle_diff) <= math.pi/3:  # π/3 = 60도
-                    forward_points.append(point)
-            else:
-                forward_points = empty_points  # 첫 목표점은 제한 없이 선택
+            # 현재 로봇 위치에서 목표점까지의 각도 계산
+            dx = point[0] - current_pos[0]
+            dy = point[1] - current_pos[1]
+            angle = math.atan2(dy, dx)
+            
+            # 각도 차이 계산 (-π ~ π 범위로 정규화)
+            angle_diff = angle - current_orientation
+            while angle_diff > math.pi:
+                angle_diff -= 2 * math.pi
+            while angle_diff < -math.pi:
+                angle_diff += 2 * math.pi
+            
+            # 전방 90도 영역 내에 있는 점만 선택 (-45도 ~ +45도)
+            if abs(angle_diff) <= math.pi/4:  # π/4 = 45도
+                forward_points.append(point)
 
         if forward_points:
             selected_point = random.choice(forward_points)
@@ -150,7 +163,7 @@ class AutoNavigation:
 
         # 격자 간격으로 샘플링 (모든 빈 칸을 검사하지 않고 일정 간격으로)
         grid_step = 10  # 격자 간격 조절 (0.5m 간격)
-        max_distance = 5.0  # 최대 5m 거리
+        max_distance = 3.0  # 최대 5m 거리
 
         for i in range(0, width, grid_step):
             for j in range(0, height, grid_step):

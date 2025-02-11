@@ -16,7 +16,7 @@ footprint_padding: 0.01             # 장애물과의 최소 여유(패딩)
 # 센서 업데이트 관련 (라이다만 사용)
 observation_sources: "laser_scan"
 laser_scan:
-  observation_persistence: 1  # 장애물 정보 유지 시간 (초)
+  observation_persistence: 0.0  # 장애물 정보 유지 시간 (초)
   data_type: LaserScan
   topic: scan             # 실제 LiDAR 토픽 이름
   marking: true
@@ -26,7 +26,7 @@ laser_scan:
   min_obstacle_height: 0.0
   max_obstacle_height: 0.5
   obstacle_range: 5.0
-  raytrace_range: 7.0
+  raytrace_range: 12.0
   min_range: 0.3
   max_range: 12.0
 
@@ -34,5 +34,5 @@ laser_scan:
 inflation_layer:
   enabled: true
   cost_scaling_factor: 6.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
-  inflation_radius: 1.0      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
+  inflation_radius: 0.5      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
   inflation_unknown: false   # unknown 영역도 장애물 취급할지말지

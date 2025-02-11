@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProgressContext } from "./store/userProgressStore.jsx";
 import { HomeStatusContext } from "./store/homeStatusStore.jsx";
 import { HealthContext } from "./store/healthStore.jsx";
+import { EmergencyContext } from "./store/emergencyStore.jsx";
 import { CalendarStoreContext } from "./store/calendarStore.jsx";
 
 import TopNav from "./components/nav/TopNav";
@@ -32,10 +33,14 @@ function App() {
   const userProgressStore = useContext(UserProgressContext);
   const homeStatusStore = useContext(HomeStatusContext);
   const healthStore = useContext(HealthContext);
+  const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
 
   const loading =
-    userProgressStore.loading || homeStatusStore.loading || healthStore.loading;
+    userProgressStore.loading ||
+    homeStatusStore.loading ||
+    healthStore.loading ||
+    emergencyStore.loading;
 
   return (
     <BrowserRouter>
@@ -64,7 +69,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/notification" element={<Notification />} />
                 <Route path="/message" element={<Message />} />
-                <Route path="/emergency" element={<Emergency />} />
+                {/* <Route path="/emergency" element={<Emergency />} /> */}
                 <Route path="/calendar" element={<Calendar />} />
                 <Route path="/activity" element={<Activity />} />
                 <Route path="/mental" element={<Mental />} />

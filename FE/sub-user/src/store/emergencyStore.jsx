@@ -1,44 +1,42 @@
 import { useState, useContext, createContext } from "react";
+import { useHttp } from "../hooks/useHttp";
 
 import { UserProgressContext } from "./userProgressStore";
+import { set } from "date-fns";
 
 export const EmergencyContext = createContext({
-  emergencyAlerts: [
-    {
-      id: 0,
-      location: "",
-      type: "",
-      response: false,
-      date: "",
-      check: false,
-      imgSrc: "",
-    },
-  ],
-  publicEmergencyAlert: [
-    {
-      SN: 0,
-      CRT_DT: "",
-      MSG_CN: "",
-      RCPTN_RGN_NM: "",
-      EMRG_STEP_NM: "",
-      DST_SE_NM: "",
-      REG_YMD: "",
-      MDFCN_TMD: "",
-    },
-  ],
-  homeNotifications: [
-    {
-      index: 0,
-      family_id: 0,
-      notification_grade: 0,
-      descriptions: "",
-      date: "",
-      check: false,
-    },
-  ],
-  setEmergencyAlerts: () => {},
-  setPublicEmergencyAlert: () => {},
-  setHomeNotifications: () => {},
+  allNotifications: [],
+  categorizedNotifications: {
+    info: [
+      {
+        index: 181,
+        family_id: "",
+        created_at: "",
+        notification_grade: "",
+        description: "",
+        is_read: false,
+      },
+    ],
+    warn: [
+      {
+        index: 167,
+        family_id: "",
+        created_at: "",
+        notification_grade: "",
+        description: {
+          MSG_CN: "",
+          DST_SE_NM: "",
+        },
+        is_read: false,
+      },
+    ],
+    crit: [],
+  },
+  setAllNotifications: () => {},
+  setCategorizedNotifications: () => {},
+  getAllNotifications: (order) => {},
+  handleReadNotification: (index) => {},
+  categorizeNotifications: (notifications) => {},
   handleCheckAlert: () => {},
   handleShowAlertLog: () => {},
   handleCheckHomeAlert: () => {},
@@ -47,124 +45,142 @@ export const EmergencyContext = createContext({
 export default function EmergencyContextProvider({ children }) {
   const userProgressStore = useContext(UserProgressContext);
 
-  const [emergencyAlerts, setEmergencyAlerts] = useState([
-    {
-      id: 1,
-      location: "거실",
-      type: "낙상",
-      response: false,
-      date: "2025/01/20 11:12:51",
-      check: false,
-      imgSrc: "/lim.png",
-    },
-    {
-      id: 2,
-      location: "거실",
-      type: "낙상",
-      response: true,
-      date: "2025/01/20 11:16:51",
-      check: false,
-      imgSrc: "/lim.png",
-    },
-    {
-      id: 3,
-      location: "거실",
-      type: "낙상",
-      response: false,
-      date: "2025/01/20 11:12:51",
-      check: true,
-      imgSrc: "/lim.png",
-    },
-    {
-      id: 4,
-      location: "거실",
-      type: "낙상",
-      response: true,
-      date: "2025/01/20 11:16:51",
-      check: true,
-      imgSrc: "/lim.png",
-    },
-    {
-      id: 5,
-      location: "거실",
-      type: "낙상",
-      response: false,
-      date: "2025/01/20 11:12:51",
-      check: true,
-      imgSrc: "/lim.png",
-    },
-    {
-      id: 6,
-      location: "거실",
-      type: "낙상",
-      response: true,
-      date: "2025/01/20 11:16:51",
-      check: true,
-      imgSrc: "/lim.png",
-    },
-  ]);
+  const { request, loading } = useHttp();
 
-  const [publicEmergencyAlert, setPublicEmergencyAlert] = useState([
-    {
-      SN: 205163,
-      CRT_DT: "2023/09/16 11:09:49",
-      MSG_CN:
-        "[행정안전부] 오늘 11시10분 부산 호우경보 산사태ㆍ상습침수 등 위험지역 대피 외출자제 등 안전에 주의바랍니다",
-      RCPTN_RGN_NM: "부산광역시 전체",
-      EMRG_STEP_NM: "안전안내",
-      DST_SE_NM: "호우",
-      REG_YMD: "2023-09-16",
-      MDFCN_TMD: "2023-09-16",
-    },
-    {
-      SN: 205265,
-      CRT_DT: "2023/09/17 06:05:36",
-      MSG_CN:
-        "[기장군] 호우경보 발효중. 하천산책로 해안가 급경사지 등 위험지역 접근금지 및 노약자 외출자제 등 안전에 유의하여 주시기 바랍니다.",
-      RCPTN_RGN_NM: "부산광역시 기장군",
-      EMRG_STEP_NM: "안전안내",
-      DST_SE_NM: "한파",
-      REG_YMD: "2023-09-17",
-      MDFCN_TMD: "2023-09-17",
-    },
-  ]);
+  const [allNotifications, setAllNotifications] = useState([]);
+  const [categorizedNotifications, setCategorizedNotifications] = useState({
+    info: [],
+    warn: [],
+    crit: [],
+  });
 
-  const [homeNotifications, setHomeNotifications] = useState([
-    {
-      index: 1,
-      family_id: 1,
-      notification_grade: 2,
-      descriptions: "room1의 온도가 30도를 넘었습니다.",
-      date: "2025/01/04 23:24:11",
-      check: true,
-    },
-    {
-      index: 2,
-      family_id: 1,
-      notification_grade: 1,
-      descriptions: "어머니로부터 메시지가 도착했습니다.",
-      date: "2025/01/09 09:15:11",
-      check: true,
-    },
-    {
-      index: 3,
-      family_id: 1,
-      notification_grade: 3,
-      descriptions: "실내에서 가스 누출이 감지되었습니다.",
-      date: "2025/01/10 11:25:30",
+  let familyId = "";
+  if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
+    familyId = userProgressStore.memberInfo.selectedFamilyId;
+  } else if (userProgressStore.loginUserInfo.userInfo?.role === "main") {
+    familyId = userProgressStore.familyInfo?.familyInfo?.id;
+  }
 
-      check: false,
-    },
-    {
-      index: 4,
-      family_id: 1,
-      notification_grade: 2,
-      descriptions: "비정상적인 움직임이 감지되었습니다.",
-      date: "2025/01/10 14:12:51",
+  async function getAllNotifications(order = "desc") {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
 
-      check: false,
-    },
-  ]);
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/notify/all/${familyId}?order=${order}`,
+        "GET"
+      );
+
+      if (response.success) {
+        const resData = response.data;
+
+        if (resData.message === "All notifications retrieved successfully") {
+          setAllNotifications(resData.result);
+          return {
+            success: true,
+            data: resData.result,
+          };
+        }
+      } else {
+        console.error(response.error);
+        return {
+          success: false,
+          error: {
+            type: "get_all_notifications",
+            message: "전체 알림을 불러오는데 실패했습니다.",
+          },
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        error: {
+          type: "get_all_notifications",
+          message: "전체 알림을 불러오는데 실패했습니다.",
+        },
+      };
+    }
+  }
+
+  // 알림 읽음 처리
+  async function handleReadNotification(index) {
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/notify/read/${index}`,
+        "PATCH"
+      );
+
+      if (response.success) {
+        const resData = response.data;
+
+        if (resData.message === "Notification check read successfully") {
+          getAllNotifications();
+          return {
+            success: true,
+            data: resData.result,
+          };
+        }
+      } else {
+        console.error(response.error);
+        return {
+          success: false,
+          error: {
+            type: "check_notification",
+            message: "알림을 읽음 처리하는데 실패했습니다.",
+          },
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        error: {
+          type: "get_all_notifications",
+          message: "전체 알림을 불러오는데 실패했습니다.",
+        },
+      };
+    }
+  }
+
+  // 각 알림을 등급에 따라 분류
+  function categorizeNotifications(notifications) {
+    const categorized = {
+      info: [],
+      warn: [],
+      crit: [],
+    };
+
+    notifications.forEach((notification) => {
+      const { notification_grade, description } = notification;
+
+      // description이 JSON 문자열이면 객체로 변환
+      let parsedDescription;
+      try {
+        parsedDescription = JSON.parse(description);
+      } catch (e) {
+        parsedDescription = description; // JSON 파싱 실패 시 원본 유지
+      }
+
+      if (categorized.hasOwnProperty(notification_grade)) {
+        categorized[notification_grade].push({
+          ...notification,
+          description: parsedDescription,
+        });
+      }
+    });
+
+    setCategorizedNotifications({ ...categorized });
+    return;
+  }
 
   // 한 번 확인하면 이전의 알림은 전부 읽음 처리.
   function handleCheckAlert() {
@@ -197,12 +213,14 @@ export default function EmergencyContextProvider({ children }) {
   // console.log(emergencyAlerts)
 
   const ctxValue = {
-    emergencyAlerts,
-    publicEmergencyAlert,
-    homeNotifications,
-    setEmergencyAlerts,
-    setPublicEmergencyAlert,
-    setHomeNotifications,
+    loading,
+    allNotifications,
+    categorizedNotifications,
+    setAllNotifications,
+    setCategorizedNotifications,
+    getAllNotifications,
+    handleReadNotification,
+    categorizeNotifications,
     handleCheckAlert,
     handleShowAlertLog,
     handleCheckHomeAlert,

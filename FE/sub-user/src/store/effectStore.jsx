@@ -3,6 +3,7 @@ import { useEffect, useContext, createContext } from "react";
 import { UserProgressContext } from "./userProgressStore";
 import { HomeStatusContext } from "./homeStatusStore";
 import { HealthContext } from "./healthStore";
+import { EmergencyContext } from "./emergencyStore";
 import { CalendarStoreContext } from "./calendarStore";
 
 export const EffectContext = createContext({});
@@ -13,6 +14,7 @@ export default function EffectContextProvider({ children }) {
   const userProgressStore = useContext(UserProgressContext);
   const homeStatusStore = useContext(HomeStatusContext);
   const healthStore = useContext(HealthContext);
+  const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
@@ -111,6 +113,7 @@ export default function EffectContextProvider({ children }) {
         await healthStore.handleGetMentalStatus();
         await healthStore.handleGetMentalReports();
         await healthStore.handleGetWeekData();
+        await emergencyStore.getAllNotifications();
         console.log("API 요청 끝!");
       }
     };
@@ -179,6 +182,24 @@ export default function EffectContextProvider({ children }) {
 
     fetchData();
   }, [healthStore.mentalStatus]);
+
+  useEffect(() => {
+    if (!userProgressStore.loginUserInfo.login) {
+      return;
+    }
+
+    if (emergencyStore.allNotifications.length === 0) {
+      return;
+    }
+
+    const categorizeData = async () => {
+      await emergencyStore.categorizeNotifications(
+        emergencyStore.allNotifications
+      );
+    };
+
+    categorizeData();
+  }, [emergencyStore.allNotifications]);
 
   return (
     <EffectContext.Provider value={ctxValue}>{children}</EffectContext.Provider>

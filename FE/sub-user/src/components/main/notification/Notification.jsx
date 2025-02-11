@@ -4,6 +4,10 @@ import PageContainer from "../container/PageContainer.jsx";
 
 import AllNotifications from "./AllNotifications.jsx";
 import PublicEmergencyNotifications from "./PublicEmergencyNotifications.jsx";
+import Emergency from "../emergency/Emergency.jsx";
+
+import PastNotifications from "./PastNotifications.jsx";
+import PastPublicEmergency from "./PastPublicEmergency.jsx";
 
 export default function Notification() {
   return (
@@ -15,14 +19,19 @@ export default function Notification() {
             <PageContainer title="알림">
               <AllNotifications />
             </PageContainer>
-          </div>
-          <div id="notification-elem-right">
             <PageContainer title="긴급 재난 문자">
               <PublicEmergencyNotifications />
             </PageContainer>
           </div>
+          <div id="notification-elem-right">
+            <PageContainer title="긴급 상황 알림">
+              <Emergency />
+            </PageContainer>
+          </div>
         </div>
       </div>
+      <PastNotifications />
+      <PastPublicEmergency />
     </div>
   );
 }

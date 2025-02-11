@@ -127,13 +127,13 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems
+          {/* <TopNavSideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
             identifier="EMERGENCY"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          /> */}
           <TopNavSideNavElems
             imgSrc={calendarIcon}
             altSrc="calendar"

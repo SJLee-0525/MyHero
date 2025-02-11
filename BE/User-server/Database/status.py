@@ -124,7 +124,7 @@ def get_latest_home_status(family_id: str) -> dict:
                 HomeStatusTable.dust_level,
                 HomeStatusTable.ethanol,
                 HomeStatusTable.others
-            ).filter(HealthStatusTable.family_id == family_id
+            ).filter(HomeStatusTable.family_id == family_id
             ).order_by(HomeStatusTable.reported_at.desc()).first()
 
             if home_status_data is not None:

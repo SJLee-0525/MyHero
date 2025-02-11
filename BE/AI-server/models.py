@@ -148,7 +148,7 @@ class Message(Base):
     to_id = Column(String(16))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     content = Column(Text)
-    image_id = Column(String(32))
+    image_url = Column(String(32))
     is_read = Column(Integer, default=0)
 
 class ChatKeywords(Base):

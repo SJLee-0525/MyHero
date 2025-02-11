@@ -65,6 +65,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 db = SessionLocal()
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 # 서비스 초기화
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 weather_service = WeatherService(api_key=os.getenv("WEATHER_API_KEY"))
@@ -174,7 +181,7 @@ async def update_notifications_periodically():
             logger.error(f"Notification update error: {str(e)}")
 
 @app.post("/generate-emotional-report/{family_id}")
-async def generate_emotional_report(family_id: str):
+async def generate_emotional_report(family_id: str, db: Session = Depends(get_db)):
     try:
         emotion_service = EmotionService(openai_client, db)
         report = await emotion_service.generate_report(family_id)
@@ -370,6 +377,44 @@ async def mark_message_as_read(message_id: int):
     except Exception as e:
         logger.error(f"메시지 읽음 처리 오류: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get('/family/main/{user_id}')
+async def get_family_by_main_user(user_id: str, db: Session = Depends(get_db)):
+    """메인 사용자 ID로 가족 정보 조회"""
+    try:
+        family = db.query(Family).filter(Family.main_user == user_id).first()
+
+        if not family:
+            raise HTTPException(status_code=404, detail="가족 정보를 찾을 수 없습니다")
+        
+        return family
+    
+    except Exception as e:
+        logger.error(f"가족 정보 조회 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    finally:
+        db.close()
+    
+@app.get('/family/{family_id}/members')
+async def get_family_members(family_id: str, db: Session = Depends(get_db)):
+    """가족 ID로 가족 구성원 조회"""
+    try:
+        members = db.query(MemberRelations)\
+            .filter(MemberRelations.family_id == family_id)\
+            .all()
+        
+        if not members:
+            raise HTTPException(status_code=404, detail='가족 구성원을 찾을 수 없습니다')
+        
+        return members
+
+    except Exception as e:
+        logger.error(f"가족 구성원 조회 오류: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    finally:
+        db.close()
 
 @app.on_event("startup")
 async def startup_event():

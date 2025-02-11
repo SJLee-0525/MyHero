@@ -1,6 +1,7 @@
 import { useState, createContext } from "react";
 
 export const StoreContext = createContext({
+  openNewsState: "",
   openMessageState: "",
   openEmergencyState: "",
   openNotificationState: "",
@@ -10,6 +11,7 @@ export const StoreContext = createContext({
   cameraState: "",
   driveState: "",
   micState: "",
+  setOpenNewsState: () => {},
   setOpenMessageState: () => {},
   setOpenEmergencyState: () => {},
   setOpenNotificationState: () => {},
@@ -19,6 +21,7 @@ export const StoreContext = createContext({
   setCameraState: () => {},
   setDriveState: () => {},
   setMicState: () => {},
+  handleNewsState: () => {},
   handleMessageState: () => {},
   handleMessageChange: () => {},
   handleSendMessage: () => {},
@@ -32,6 +35,7 @@ export default function StoreContextProvider({ children }) {
   const [openMessageState, setOpenMessageState] = useState(false);
   const [openEmergencyState, setOpenEmergencyState] = useState(false);
   const [openNotificationState, setOpenNotificationState] = useState(false);
+  const [openNewsState, setOpenNewsState] = useState(false);
   const [openCalendarState, setOpenCalendarState] = useState(false);
   const [openSettingState, setOpenSettingState] = useState(false);
 
@@ -60,6 +64,11 @@ export default function StoreContextProvider({ children }) {
     console.log("Emergency: ", !openEmergencyState);
   }
 
+  function handleNewsState() {
+    setOpenNewsState(true);
+    console.log("News: ", !openNewsState);
+  }
+
   function handleNotificationState() {
     setOpenNotificationState(true);
     console.log("Notification: ", !openNotificationState);
@@ -79,6 +88,7 @@ export default function StoreContextProvider({ children }) {
     setOpenMessageState(false);
     setOpenEmergencyState(false);
     setOpenNotificationState(false);
+    setOpenNewsState(false);
     setOpenCalendarState(false);
     setOpenSettingState(false);
   }
@@ -115,6 +125,7 @@ export default function StoreContextProvider({ children }) {
     openMessageState,
     openEmergencyState,
     openNotificationState,
+    openNewsState,
     openCalendarState,
     openSettingState,
     alertState,
@@ -124,6 +135,7 @@ export default function StoreContextProvider({ children }) {
     setOpenMessageState,
     setOpenEmergencyState,
     setOpenNotificationState,
+    setOpenNewsState,
     setOpenCalendarState,
     setOpenSettingState,
     setAlertState,
@@ -135,6 +147,7 @@ export default function StoreContextProvider({ children }) {
     handleSendMessage,
     handleEmergencyState,
     handleNotificationState,
+    handleNewsState,
     handleCalendarState,
     handleSettingState,
     handleModalClose,

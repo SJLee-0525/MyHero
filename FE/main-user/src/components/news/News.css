@@ -1,0 +1,156 @@
+.news-container {
+  display: flex;
+  width: auto;
+  background: #D9D9D9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.news-list {
+  width: 50%;
+  padding-right: 10px;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-list h2 {
+  font-size: 1.2rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+/* 스크롤 가능한 영역 */
+.news-scroll {
+  overflow-y: auto;
+  max-height: 300px;
+  padding-right: 5px;
+}
+
+/* 날짜별 구획 */
+.news-group {
+  margin-bottom: 10px;
+}
+
+.news-group h2 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0;
+  margin-left: 5px;
+  padding: 0px;
+}
+
+.news-box {
+  display: flex;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 5px 0;
+  cursor: pointer;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #ddd;
+  width: calc(100% - 2px);
+  box-sizing: border-box;
+  min-height: 80px;
+  position: relative;
+}
+
+/* 읽은 알림 음영 처리 */
+.news-box.read {
+  opacity: 0.5;
+}
+
+.news-box {
+  background: #fff;
+}
+
+.news-time {
+  font-size: 0.8rem;
+  color: #555;
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+}
+
+/* 우측 상세 정보 */
+.news-unselected {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.news-detail {
+  width: 50%;
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-detail h2 {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  padding: 0px;
+}
+
+.news-content {
+  flex-grow: 1;
+  position: relative;
+  padding: 10px;
+  background: #ffffffa0;
+  border-radius: 8px;
+}
+
+.news-text {
+  font-size: 1rem;
+  width: 100%;
+  border-radius: 5px;
+  word-break: break-all;
+  margin: 5px 0;
+}
+
+.news-long-text {
+  font-size: 1rem;
+  width: 100%;
+  border-radius: 5px;
+  word-break: break-all;
+  padding: 10px;
+  margin: 0 0;
+}
+
+/* 스크롤 스타일 */
+.news-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.news-scroll::-webkit-scrollbar-thumb {
+  background-color: #aaa;
+  border-radius: 10px;
+}
+
+.news-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reply-button {
+  position: absolute;
+  font-size: 1rem;
+  font-weight: bold;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #44803F;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reply-button:hover {
+  background: #54736D;
+}

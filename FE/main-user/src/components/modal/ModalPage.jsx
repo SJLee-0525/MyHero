@@ -6,6 +6,7 @@ import Emergency from "../emergency/Emergency.jsx";
 import EmergencyModal from "./EmergencyModal.jsx";
 import MessageModal from "./MessageModal.jsx";
 import NoticeModal from "./NoticeModal.jsx";
+import NewsModal from "./NewsModal.jsx";
 import CalendarModal from "./CalendarModal.jsx";
 import ModalSettingBox from "./ModalSettingBox.jsx";
 import SettingModal from "./SettingModal.jsx";
@@ -38,6 +39,15 @@ export default function ModalPage() {
           <NoticeModal
             title="알림"
             message="Check notifications"
+            onCloseConfirm={store.handleModalClose}
+          />
+        )}
+      </Modal>
+      <Modal open={store.openNewsState} onClose={store.handleModalClose}>
+        {store.openNewsState && (
+          <NewsModal
+            title="뉴스"
+            message="Check News"
             onCloseConfirm={store.handleModalClose}
           />
         )}

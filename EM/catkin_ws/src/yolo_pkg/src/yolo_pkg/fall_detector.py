@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import cv2
 import torch
 import os
@@ -6,9 +8,9 @@ import asyncio
 import aiohttp
 from datetime import datetime
 from ultralytics import YOLO
-from config import Config
-from pose_analyzer import EnhancedPoseAnalyzer
-from fps_tracker import FPSTracker
+from yolo_pkg.config import Config
+from yolo_pkg.pose_analyzer import EnhancedPoseAnalyzer
+from yolo_pkg.fps_tracker import FPSTracker
 
 class EnhancedFallDetector:
     """향상된 낙상 감지 클래스"""

@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import time
 from collections import deque
 import numpy as np
 import torch
 from typing import Tuple, Dict
-from config import Pose, Location
+from yolo_pkg.config import Pose, Location
 
 class MotionContext:
     """움직임 컨텍스트 관리 클래스"""

@@ -1,8 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import time
 import numpy as np
 import torch
 from typing import Tuple, Dict
-from motion_context import MotionContext
+from yolo_pkg.motion_context import MotionContext
 
 class EnhancedPoseAnalyzer:
     """포즈 분석기"""

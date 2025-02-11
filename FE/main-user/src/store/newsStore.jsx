@@ -9,19 +9,18 @@ export const NewsStoreContext = createContext({
 });
 
 export default function NewsStoreContextProvider({ children }) {
-  const { request, loading, error } = useMainHttp();
+  const { request } = useMainHttp();
   const userProgressStore = useContext(UserProgressContext);
 
   const [newsData, setNewsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ API에서 뉴스 데이터 가져오기
   async function fetchNewsData() {
     setIsLoading(true);
 
     try {
-      const response = await request(`${userProgressStore.DEV_API_URL}/tools/news`); // API 호출
-      const resData = response.data; // JSON 변환
+      const response = await request(`${userProgressStore.DEV_API_URL}/tools/news`);
+      const resData = response.data;
       
       if (response.success) {
         if (resData.message === "News retrieved successfully") {
@@ -40,7 +39,7 @@ export default function NewsStoreContextProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchNewsData(); // 컴포넌트 마운트 시 뉴스 데이터 가져오기
+    fetchNewsData();
   }, []);
 
   const ctxValue = {

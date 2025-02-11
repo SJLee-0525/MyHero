@@ -22,7 +22,7 @@ logger = get_logger("Router_Messages")
 
 # ========== Message 부분 ==========
 @router.get("/receivable/{user_id}", status_code=status.HTTP_200_OK)
-async def get_receivable_messages(user_id: str, request_id: str = Depends(Database.check_current_user)):
+async def get_receivable_account(user_id: str, request_id: str = Depends(Database.check_current_user)):
     # 시스템 계정을 제외한 본인 계정에 대해서만 조회 가능
     request_data: dict = Database.get_one_account(request_id)
 

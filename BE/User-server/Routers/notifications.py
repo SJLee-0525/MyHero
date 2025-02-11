@@ -9,6 +9,8 @@ Parts of Notifications
 from fastapi import HTTPException, APIRouter, status, Query, Depends
 from fastapi.encoders import jsonable_encoder
 
+from datetime import datetime, timezone
+
 import Database
 from Database.models import *
 
@@ -108,7 +110,9 @@ async def crate_notification(notification_data: Notification, request_id: str = 
 @router.get("/new/{family_id}", status_code=status.HTTP_200_OK)
 async def get_new_notification(
         family_id: str,
-        order: Optional[Order] = Query(Order.ASC),
+        start: Optional[datetime] = Query(None, description="Query start time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
+        order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id = Depends(Database.check_current_user)):
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -128,7 +132,12 @@ async def get_new_notification(
         )
 
     # 정보 불러오기
-    notification_data: list = Database.get_new_notifications(family_id=family_id, time_order=order)
+    notification_data: list = Database.get_new_notifications(
+        family_id=family_id,
+        start_time=start,
+        end_time=end if start else None,
+        time_order=order
+    )
 
     if notification_data:
         return {
@@ -146,7 +155,9 @@ async def get_new_notification(
 @router.get("/all/{family_id}", status_code=status.HTTP_200_OK)
 async def get_all_notification(
         family_id: str,
-        order: Optional[Order] = Query(Order.ASC),
+        start: Optional[datetime] = Query(None, description="Query start time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
+        order: Optional[Order] = Query(Order.ASC, description="Query order"),
         request_id = Depends(Database.check_current_user)):
     # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 알림을 불러올 수 있음
     request_data: dict = Database.get_one_account(request_id)
@@ -166,7 +177,12 @@ async def get_all_notification(
         )
 
     # 정보 불러오기
-    notification_data: list = Database.get_all_notifications(family_id=family_id, time_order=order)
+    notification_data: list = Database.get_all_notifications(
+        family_id=family_id,
+        start_time=start,
+        end_time=end if start else None,
+        time_order=order
+    )
 
     if notification_data:
         return {

@@ -62,6 +62,7 @@ export const UserProgressContext = createContext({
   handleSignOut: (password) => {},
   handleCheckFamilyExist: (userId) => {},
   handleGetFamilyName: (familyId) => {},
+  handleFindFamilyInfo: (payload) => {},
   handleCreateFamily: (payload) => {},
   handleGetFamilyInfo: (familyId) => {},
   handleUpdateFamilyInfo: (newFamilyName) => {},
@@ -958,6 +959,47 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  // 가족 모임 찾기
+  async function handleFindFamilyInfo(payload) {
+    try {
+      const response = await request(
+        `${DEV_API_URL}/families/find`,
+        "POST",
+        payload
+      );
+
+      if (response.success) {
+        const resData = response.data;
+
+        if (
+          resData.message === "Families found successfully" &&
+          resData.result.length > 0
+        ) {
+          console.log("가족 모임 찾기 성공");
+          return { success: true, data: resData.result[0] };
+        }
+      } else {
+        console.error("가족 모임 찾기 실패:", response.error);
+        return {
+          success: false,
+          error: {
+            type: response.error.type,
+            message: response.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   // 가족 구성원 조회
   async function handleGetFamilyMemberInfo(familyId) {
     try {
@@ -1244,6 +1286,7 @@ export default function UserProgressContextProvider({ children }) {
     handleDeleteFamilyInfo,
     handleCheckFamilyList,
     handleGetFamilyName,
+    handleFindFamilyInfo,
     handleGetFamilyMemberInfo,
     handleCreateMember,
     handleUpdateMember,

@@ -41,15 +41,18 @@ export default function FamilyUserInfo() {
           <div className="login-user-info-header">
             <div>
               <h3>{familyUserInfo.familyInfo.family_name}네 모임 정보</h3>
-              <p>등록 ID: {familyUserInfo.familyInfo.id}</p>
-              <QRCodeCanvas
-                onClick={() =>
-                  navigate(
-                    `${window.location.pathname}/register/${familyUserInfo.familyInfo.id}`
-                  )
-                }
-                value={`${window.location.origin}/accounts/register/${familyUserInfo.familyInfo.id}`}
-              />
+              <div className="qr-container">
+                <p className="qr-id">{familyUserInfo.familyInfo.id}</p>
+                <QRCodeCanvas
+                  className="qr-code"
+                  onClick={() =>
+                    navigate(
+                      `${window.location.pathname}/register/${familyUserInfo.familyInfo.id}`
+                    )
+                  }
+                  value={`${window.location.origin}/accounts/register/${familyUserInfo.familyInfo.id}`}
+                />
+              </div>
             </div>
             <div className="family-btn-container">
               <button

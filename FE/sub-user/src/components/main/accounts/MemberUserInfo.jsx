@@ -8,6 +8,7 @@ export default function MemberUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   // const loginUserInfo = userProgressStore.loginUserInfo;
   const memberUserInfo = userProgressStore.memberInfo;
+  console.log(123123123, memberUserInfo);
 
   function handleShowCreateMemberUserInfo() {
     userProgressStore.handleOpenModal("create-member-user-info");
@@ -47,33 +48,39 @@ export default function MemberUserInfo() {
             {memberUserInfo.registerData.map((info) => {
               return (
                 <div key={info.id}>
-                  <div className="member-container">
-                    <table>
-                      <tbody>
-                        <tr>
-                          <td>모임 ID</td>
-                          <td>{info.family_id}</td>
-                        </tr>
-                        <tr>
-                          <td>등록 닉네임</td>
-                          <td>{info.nickname}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-
-                    <div className="member-btn-container">
-                      <button
-                        className="update"
-                        onClick={() => handleShowUpdateMemberUserInfo(info.id)}
-                      >
-                        닉네임 수정
-                      </button>
-                      <button
-                        className="delete"
-                        onClick={() => handleShowDeleteMemberUserInfo(info.id)}
-                      >
-                        연결 해제
-                      </button>
+                  <div className="member-container-box">
+                    <h3>{info.family_name ? info.family_name : null}</h3>
+                    <div className="member-container">
+                      <table>
+                        <tbody>
+                          <tr>
+                            <td>모임 ID</td>
+                            <td>{info.family_id}</td>
+                          </tr>
+                          <tr>
+                            <td> 등록 닉네임</td>
+                            <td>{info.nickname}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div className="member-btn-container">
+                        <button
+                          className="update"
+                          onClick={() =>
+                            handleShowUpdateMemberUserInfo(info.id)
+                          }
+                        >
+                          닉네임 수정
+                        </button>
+                        <button
+                          className="delete"
+                          onClick={() =>
+                            handleShowDeleteMemberUserInfo(info.id)
+                          }
+                        >
+                          연결 해제
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -9,5 +9,7 @@ services:
       - SYS_TIME
     ports:
       - "4180:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - .env

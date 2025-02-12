@@ -228,13 +228,10 @@ async def get_new_received_messages(
         }
     else:
         logger.warning("No new received messages")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "No new received messages"
-            }
-        )
+        return {
+            "message": "No new received messages",
+            "result": jsonable_encoder(message_data)
+        }
 
 # 받은 모든 메시지를 불러오는 기능
 @router.get("/all", status_code=status.HTTP_200_OK)
@@ -271,13 +268,10 @@ async def get_all_received_messages(
         }
     else:
         logger.warning("No received messages")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "No received messages"
-            }
-        )
+        return {
+            "message": "No received messages",
+            "result": jsonable_encoder(message_data)
+        }
 
 # 보낸 메시지를 불러오는 기능
 @router.get("/sent", status_code=status.HTTP_200_OK)
@@ -314,13 +308,10 @@ async def get_all_sent_messages(
         }
     else:
         logger.warning("No sent messages")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "No sent messages"
-            }
-        )
+        return {
+            "message": "No sent messages",
+            "result": jsonable_encoder(message_data)
+        }
 
 # 메시지를 읽음 처리하는 기능
 @router.patch("/read/{message_id}", status_code=status.HTTP_200_OK)

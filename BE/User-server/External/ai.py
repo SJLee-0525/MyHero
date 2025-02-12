@@ -6,7 +6,7 @@ External Server Connection
 """
 # Libraries
 import httpx
-import datetime
+from datetime import datetime, timezone
 
 from Utilities.logging_tools import *
 
@@ -102,7 +102,10 @@ async def request_conversation_keywords(family_id: str) -> httpx.Response | None
         return None
 
 # 종합적인 심리 보고서를 요청하는 기능
-async def request_psychology_report(family_id: str, start: datetime, end: datetime) -> httpx.Response | None:
+async def request_psychology_report(
+        family_id: str,
+        start: datetime,
+        end: datetime = datetime.now(tz=timezone.utc)) -> httpx.Response | None:
     """
     주 사용자의 AI Chat 기록을 기반으로 심리 상태 보고서를 생성하는 기능 (DB 저장 X)
     :param family_id: 해당하는 가족의 ID
@@ -112,10 +115,12 @@ async def request_psychology_report(family_id: str, start: datetime, end: dateti
     """
     external_url = f"{AI_PATH}/analyze-mental-health/{family_id}"
 
-    request_data = {
-        "start_date": start.isoformat(timespec='seconds') if start else None,
-        "end_date": end.isoformat(timespec='seconds') if end else None
-    }
+    request_data = None
+    if start is not None:
+        request_data = {
+            "start_date": start.isoformat(timespec='seconds') if start else None,
+            "end_date": end.isoformat(timespec='seconds') if end else None
+        }
 
     try:
         async with httpx.AsyncClient(timeout=set_timeout) as client:

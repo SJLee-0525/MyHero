@@ -185,7 +185,7 @@ async def get_all_families(request_id: str = Depends(Database.check_current_user
     # 시스템 관리자만 접근할 수 있음
     request_data: dict = Database.get_one_account(request_id)
 
-    if not request_data and request_data["role"] != Role.SYSTEM:
+    if not request_data or request_data["role"] != Role.SYSTEM:
         logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -425,7 +425,7 @@ async def delete_family(family_id: str, checker: PasswordCheck, request_id: str 
     request_data: dict = Database.get_one_account(request_id)
     family_data: dict = Database.get_one_family(family_id)
 
-    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+    if not request_data or not family_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
         logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

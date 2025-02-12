@@ -5,6 +5,7 @@ import { HomeStatusContext } from "./homeStatusStore";
 import { HealthContext } from "./healthStore";
 import { EmergencyContext } from "./emergencyStore";
 import { CalendarStoreContext } from "./calendarStore";
+import { MessageContext } from "./messageStore";
 
 export const EffectContext = createContext({});
 
@@ -16,6 +17,7 @@ export default function EffectContextProvider({ children }) {
   const healthStore = useContext(HealthContext);
   const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
+  const messageStore = useContext(MessageContext);
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
@@ -114,6 +116,7 @@ export default function EffectContextProvider({ children }) {
         await healthStore.handleGetMentalReports();
         await healthStore.handleGetWeekData();
         await emergencyStore.getAllNotifications();
+        await messageStore.handleGetAllMessages();
         console.log("API 요청 끝!");
       }
     };
@@ -130,6 +133,7 @@ export default function EffectContextProvider({ children }) {
         });
         await homeStatusStore.handleGetHomeStatus();
         await emergencyStore.getAllNotifications();
+        await messageStore.getNewMessages();
         console.log("Refresh 요청 끝!");
       }
     };

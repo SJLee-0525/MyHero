@@ -1,4 +1,5 @@
 import os
+import signal
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -41,6 +42,23 @@ import aiohttp
 from gtts import gTTS
 import pygame
 import subprocess
+
+# robot_eyes 프로세스에 시그널 전송
+def send_signal(sig_type):
+    try:
+        with open('/tmp/robot_eyes.pid', 'r') as f:
+            pid = int(f.read().strip())
+        if sig_type == 1:
+            os.kill(pid, signal.SIGUSR1)
+        elif sig_type == 2:
+            os.kill(pid, signal.SIGUSR2)
+        return True
+    except FileNotFoundError:
+        return False
+    except ProcessLookupError:
+        return False
+    except Exception as e:
+        return False
 
 # 환경 변수 로드
 load_dotenv()
@@ -679,6 +697,7 @@ async def main():
             keyword_detected = await stt_manager.detect_keyword()
             
             if keyword_detected:
+                send_signal(1)
                 logger.info(f"{stt_manager.current_mode} 모드 시작")
                 text = await stt_manager.process_speech()
                 if text:

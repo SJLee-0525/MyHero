@@ -15,7 +15,12 @@ from datetime import timezone
 import Database
 from Database.models import *
 from Endpoint.models import *
-from External.ai import request_mental_status, request_mental_reports
+from External.ai import (
+    request_mental_status,
+    request_mental_reports,
+    request_conversation_keywords,
+    request_psychology_report
+)
 
 from Utilities.logging_tools import *
 
@@ -742,6 +747,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
     response: httpx.Response = await request_mental_status(family_id=family_id)
 
     if response is not None and response.status_code == status.HTTP_200_OK:
+        logger.info(f"Mental status created successfully: {family_id}")
         return {
             "message": "Mental status created successfully",
             "data": response.json()
@@ -974,6 +980,7 @@ async def create_mental_reports(
     )
 
     if response is not None and response.status_code == status.HTTP_200_OK:
+        logger.info(f"Mental reports created successfully: {family_id} ")
         return {
             "message": "Mental reports created successfully",
             "data": response.json()
@@ -1149,5 +1156,90 @@ async def delete_latest_mental_reports(family_id: str, request_id: str = Depends
             detail={
                 "type": "server error",
                 "message": "Failed to delete mental reports"
+            }
+        )
+
+# ========== Status/Others 부분 ==========
+
+# 하루의 대화내역을 기반으로 키워드를 추출하는 기능
+@router.get("/keywords/{family_id}", status_code=status.HTTP_200_OK)
+async def create_conversation_keyword(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list[dict] = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 요청하기
+    response: httpx.Response = await request_conversation_keywords(family_id=family_id)
+
+    if response is not None and response.status_code == status.HTTP_200_OK:
+        logger.info(f"Conversation keywords created successfully: {family_id} ")
+        return {
+            "message": "Conversation keywords created successfully",
+            "data": response.json()
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create conversation keywords"
+            }
+        )
+
+@router.get("/psychology/{family_id}", status_code=status.HTTP_200_OK)
+async def create_psychology_report(
+        family_id: str,
+        start: Optional[datetime] = Query(None, description="Query start time"),
+        end: Optional[datetime] = Query(datetime.now(tz=timezone.utc), description="Query end time"),
+        request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 조회할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list[dict] = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"Can not access account: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 요청하기
+    response: httpx.Response = await request_psychology_report(
+        family_id=family_id,
+        start=start,
+        end=end
+    )
+
+    if response is not None and response.status_code == status.HTTP_200_OK:
+        logger.info(f"Psychology report created successfully: {family_id} ")
+        return {
+            "message": "Psychology report created successfully",
+            "data": response.json()
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create psychology report"
             }
         )

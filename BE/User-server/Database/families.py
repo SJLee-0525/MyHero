@@ -6,7 +6,7 @@ Database Families Part
 """
 
 # Libraries
-from Database.connector import Database
+from Database.connector import database_instance as database
 from Database.models import *
 
 from sqlalchemy import and_
@@ -16,7 +16,6 @@ from datetime import date
 
 from Utilities.logging_tools import *
 
-database: Database = Database()
 logger = get_logger("DB_Families")
 
 # 주 사용자 ID로 가족 ID를 불러오기

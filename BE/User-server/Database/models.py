@@ -57,6 +57,8 @@ class AccountsTable(Base):
     family_relations = relationship("FamiliesTable", cascade="all, delete")
     member_relations = relationship("MemberRelationsTable", cascade="all, delete")
     login_sessions = relationship("LoginSessionsTable", cascade="all, delete")
+    message_sent = relationship("MessageTable", foreign_keys="[MessageTable.from_id]" ,cascade="all, delete")
+    message_received = relationship("MessageTable", foreign_keys="[MessageTable.to_id]" ,cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -86,7 +88,7 @@ class FamiliesTable(Base):
     active_status = relationship("ActiveStatusTable", cascade="all, delete")
     mental_status = relationship("MentalStatusTable", cascade="all, delete")
     mental_reports = relationship("MentalReportsTable", cascade="all, delete")
-    notifications = relationship("NotificationsTable", cascade="all, delete")
+    notifications_relations = relationship("NotificationsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +

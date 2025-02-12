@@ -6,7 +6,7 @@ Database Tools Part
 """
 
 # Libraries
-from Database.connector import Database
+from Database.connector import database_instance as database
 from Database.models import *
 
 from sqlalchemy import or_
@@ -14,7 +14,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from Utilities.logging_tools import *
 
-database: Database = Database()
 logger = get_logger("DB_Tools")
 
 # ========== Tool 부분 ==========

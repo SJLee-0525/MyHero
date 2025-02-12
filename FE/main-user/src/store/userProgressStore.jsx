@@ -22,6 +22,10 @@ export const UserProgressContext = createContext({
   handleLogout: () => {},
 });
 
+export function useUserProgressStore() {
+  return useContext(UserProgressContext);
+}
+
 export default function UserProgressContextProvider({ children }) {
   const mainStore = useContext(StoreContext)
 
@@ -81,11 +85,8 @@ export default function UserProgressContextProvider({ children }) {
         password,
       });
 
-      console.log(response)
-
       if (response.success) {
         const resData = response.data;
-        console.log('resData', resData)
 
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
@@ -153,7 +154,7 @@ export default function UserProgressContextProvider({ children }) {
 
   async function connectRasp() {
     try {
-      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {user_id: loginUserInfo.userInfo.id})
+      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {email: loginUserInfo.userInfo.email, password: loginUserInfo.userInfo.password})
 
       if (response.success) {
         console.log("연결되었습니다.", response);

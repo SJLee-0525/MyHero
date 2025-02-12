@@ -112,9 +112,9 @@
 
 .message-list {
     flex: 1;
-    height: 200px;
-    max-height: 200px;
-    overflow-y: auto;
+    width: 100%;
+    max-height: 350px;
+    /* overflow-y: auto; */
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -308,3 +308,70 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     color: #FFFFFF;
 }
+
+.user-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.user-button {
+    --w: 10em;
+    --bg: rgb(var(--rgb));
+    --bga: rgba(var(--rgb), 0.4);
+
+    width: var(--w);
+    height: var(--w);
+    background: var(--bg);
+    box-shadow: 0 3px 12px 2px var(--bga);
+
+    transition: 0.1s transform, 0.3s box-shadow;
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    height: 130px;
+    color: white;
+    background-color: #44803F;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-button:hover {
+    background-color: #54736D;
+    transform: scale(1.05);
+}
+
+/* 클릭 애니메이션 효과 */
+.user-button:active {
+    animation: clickEffect 0.5s cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+/* 클릭 시 색상 변경 */
+.user-button.clicked {
+    animation: clickEffect 1s cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+/* 클릭 애니메이션 효과 */
+@keyframes clickEffect {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.99);
+    }
+    100% {
+        transform: scale(1);
+    }
+}  

@@ -43,6 +43,8 @@ export default function WeatherStoreContextProvider({ children }) {
     useEffect(() => {
         if (userId) {
             fetchWeatherData();
+            const interval = setInterval(fetchWeatherData, 60 * 60 * 1000);
+            return () => clearInterval(interval);
         }
     }, [userId]);
 
@@ -54,7 +56,7 @@ export default function WeatherStoreContextProvider({ children }) {
 
     return (
         <WeatherStoreContext.Provider value={ctxValue}>
-        {children}
+            {children}
         </WeatherStoreContext.Provider>
     );
 }

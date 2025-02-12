@@ -1,10 +1,12 @@
 import React from "react";
 import { useState } from "react";
+import { useMessageStore } from "../../store/messageStore";
 import "./Message.css";
 
 export default function ReplyBar({ onSend }) {
     const [message, setMessage] = useState("");
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
+    const { selectedUser, addMessage } = useMessageStore();
 
     const handleChange = (e) => {
         setMessage(e.target.value);
@@ -13,13 +15,15 @@ export default function ReplyBar({ onSend }) {
     const handleSend = () => {
         if (message.trim() === "") return;
 
-        onSend({
-            id: Date.now(),
-            text: message,
-            sender: "me",
-            time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
-        });
+        const newMessage = {
+            index: Date.now(),
+            from_id: "me",
+            to_id: selectedUser.user_id,
+            created_at: new Date().toLocaleString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+            content: message
+        };
 
+        addMessage(selectedUser.user_id, newMessage);
         setMessage("");
         setIsListening(false); // 전송 후 음성 인식 종료
     };
@@ -28,7 +32,9 @@ export default function ReplyBar({ onSend }) {
     const handleRetry = () => {
         setMessage(""); // 기존 메시지 초기화
         setIsListening(true); // 음성 인식 다시 시작
-        onRetry();
+        if (typeof onRetry === "function") {
+            onRetry(); // 존재할 때만 실행
+        }
     };
 
     return (

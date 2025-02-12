@@ -226,22 +226,20 @@ async def delete_member(member_id: str, checker: PasswordCheck):
             detail={
                 "type": "no data",
                 "loc": missing_location,
-                "message": "Password is required",
-                "input": {"member_id": member_id, "password": "<PASSWORD>"}
+                "message": "Password is required"
             }
         )
 
+    # 없는 가족 관계를 삭제하려는지 확인
     previous_member: dict = Database.get_one_member(member_id)
 
-    # 없는 가족 관계를 삭제하려는지 확인
     if not previous_member:
         logger.warning(f"Member not found: {member_id}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "type": "not found",
-                "message": "Member not found",
-                "input": {"member_id": member_id}
+                "message": "Member not found"
             }
         )
 
@@ -256,15 +254,14 @@ async def delete_member(member_id: str, checker: PasswordCheck):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={
                 "type": "unauthorized",
-                "message": "Invalid password",
-                "input": {"member_id": member_id, "password": "<PASSWORD>"}
+                "message": "Invalid password"
             }
         )
 
     # 가족 관계 삭제 진행
-    final_result: bool = Database.delete_one_member(member_id)
+    result: bool = Database.delete_one_member(member_id)
 
-    if final_result:
+    if result:
         return {
             "message": "Member deleted successfully"
         }
@@ -273,7 +270,86 @@ async def delete_member(member_id: str, checker: PasswordCheck):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={
                 "type": "server error",
-                "message": "Failed to delete member",
-                "input": {"member_id": member_id, "password": "<PASSWORD>"}
+                "message": "Failed to delete member"
+            }
+        )
+
+# 주 사용자가 등록된 보조 사용자를 추방 시키는 기능
+@router.delete("/kick/{member_id}", status_code=status.HTTP_200_OK)
+async def kick_member(member_id: str, checker: PasswordCheck, request_id: str = Depends(Database.check_current_user)):
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
+    if checker.password is None or checker.password == "":
+        missing_location.append("password")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Password is required"
+            }
+        )
+
+    # 없는 가족 관계를 삭제하려는지 확인
+    previous_member: dict = Database.get_one_member(member_id)
+
+    if not previous_member:
+        logger.warning(f"Member not found: {member_id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Member not found"
+            }
+        )
+
+    # 해당 가족 관계의 주 사용자만 추방할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    target_family: str = previous_member["family_id"]
+    request_family: str = Database.main_id_to_family_id(request_id)
+
+    if not request_data or not request_family or \
+        (request_data["role"] != Role.SYSTEM and target_family != request_family):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 비밀번호 검증
+    input_password: str = checker.password
+    hashed_password: str = Database.get_hashed_password(request_id)
+    is_verified: bool = verify_password(input_password, hashed_password)
+
+    if not is_verified:
+        logger.warning(f"Invalid password: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "type": "unauthorized",
+                "message": "Invalid password"
+            }
+        )
+
+    # 가족 관계 삭제 진행
+    result: bool = Database.delete_one_member(member_id)
+
+    if result:
+        return {
+            "message": "Member kicked successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to delete member"
             }
         )

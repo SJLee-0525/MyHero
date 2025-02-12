@@ -546,7 +546,8 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
         score=active_data.score,
         action=active_data.action,
         is_critical=active_data.is_critical,
-        description=active_data.description
+        description=active_data.description,
+        image_url=active_data.image_url
     )
 
     # 업로드

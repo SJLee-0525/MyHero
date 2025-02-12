@@ -194,6 +194,7 @@ class ActiveStatusTable(Base):
     action = Column(String(32), nullable=True)
     is_critical = Column(Boolean, nullable=True)
     description = Column(TEXT, nullable=True)
+    image_url = Column(TEXT, nullable=True)
 
     def __repr__(self):
         return (f"" +
@@ -203,7 +204,8 @@ class ActiveStatusTable(Base):
                 f"score='{self.score}', " +
                 f"action='{self.action}', " +
                 f"is_critical='{self.is_critical}', " +
-                f"description='{self.description}')>"
+                f"description='{self.description}', " +
+                f"image_url='{self.image_url}')>"
         )
 
 class MentalStatusTable(Base):

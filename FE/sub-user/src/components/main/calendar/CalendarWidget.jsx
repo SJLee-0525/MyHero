@@ -14,6 +14,7 @@ export default function CalendarWidget() {
       <CalendarWidgetBody />
       <SelectedDate />
     </div>
+
     // </CalendarStoreContextProvider>
   );
 }

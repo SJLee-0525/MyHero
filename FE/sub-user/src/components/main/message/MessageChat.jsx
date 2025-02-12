@@ -22,13 +22,17 @@ export default function MessageChat() {
 
   return (
     <div id="message-chat">
-      {/* 메시지 기록 출력 */}
       {currentPersonMessageLog.length === 0 && (
         <div id="no-chat">
           <span>대화 기록이 없습니다.</span>
         </div>
       )}
-      {currentPersonMessageLog.length > 0 && (
+      {!messageStore.messagePerson && (
+        <div id="no-chat">
+          <span>대화 상대를 선택해주세요.</span>
+        </div>
+      )}
+      {messageStore.messagePerson && currentPersonMessageLog.length > 0 && (
         <div id="chat" ref={chatRef}>
           {currentPersonMessageLog.map((log) => {
             // UTC+9 변환

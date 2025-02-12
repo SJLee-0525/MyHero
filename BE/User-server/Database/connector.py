@@ -46,4 +46,4 @@ class Database:
     def get_pre_session(self):
         return self.pre_session
 
-
+database_instance = Database()

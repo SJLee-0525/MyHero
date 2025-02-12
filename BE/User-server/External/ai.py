@@ -18,7 +18,7 @@ logger = get_logger("External_AI")
 # 외부 AI Process 서버 확인
 load_dotenv()
 isDeploy: bool = bool(int(os.getenv("IS_DEPLOY", 0)))
-AI_HOST: str = os.getenv("AI_HOST") if isDeploy else "localhost"
+AI_HOST: str = os.getenv("AI_HOST") if isDeploy else "http://localhost"
 AI_PORT: int = int(os.getenv("AI_PORT"))
 AI_PATH: str = f"{AI_HOST}:{AI_PORT}"
 external_timeout: float = float(os.getenv("EXTERNAL_TIMEOUT", 60.0))
@@ -89,7 +89,7 @@ async def request_conversation_keywords(family_id: str) -> httpx.Response | None
     """
     주 사용자의 AI Chat 기록을 기반으로 대화 키워드를 요약하는 기능
     :param family_id: 해당하는 가족의 ID
-    :return:
+    :return: AI Server로부터 반환된 결과 값 (httpx.Response)
     """
     external_url = f"{AI_PATH}/generate-keyword/{family_id}"
 
@@ -103,6 +103,13 @@ async def request_conversation_keywords(family_id: str) -> httpx.Response | None
 
 # 종합적인 심리 보고서를 요청하는 기능
 async def request_psychology_report(family_id: str, start: datetime, end: datetime) -> httpx.Response | None:
+    """
+    주 사용자의 AI Chat 기록을 기반으로 심리 상태 보고서를 생성하는 기능 (DB 저장 X)
+    :param family_id: 해당하는 가족의 ID
+    :param start: 보고서를 생성할 데이터의 시작 날짜 및 시각
+    :param end: 보고서를 생성할 데이터의 마지막 날짜 및 시각
+    :return: AI Server로부터 반환된 결과 값 (httpx.Response)
+    """
     external_url = f"{AI_PATH}/analyze-mental-health/{family_id}"
 
     request_data = {

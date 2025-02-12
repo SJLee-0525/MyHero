@@ -25,7 +25,9 @@ import Mental from "./components/main/mental/Mental.jsx";
 import Accounts from "./components/main/accounts/Accounts.jsx";
 import Settings from "./components/main/settings/Settings.jsx";
 import RegisterMemberQr from "./components/main/accounts/RegisterMemberQr.jsx";
+
 import NewNotiModal from "./components/main/notification/NewNotiModal.jsx";
+import NewEmergencyModal from "./components/main/emergency/NewEmergencyModal.jsx";
 // import Router from "./router/router";
 
 import Advertisement from "./components/main/advertisement/Advertisement.jsx";
@@ -37,11 +39,7 @@ function App() {
   const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
 
-  const loading =
-    userProgressStore.loading ||
-    homeStatusStore.loading ||
-    healthStore.loading ||
-    emergencyStore.loading;
+  const loading = userProgressStore.loading || healthStore.loading;
 
   return (
     <BrowserRouter>
@@ -82,6 +80,7 @@ function App() {
             )}
           </Routes>
           <NewNotiModal />
+          <NewEmergencyModal />
         </main>
       </div>
     </BrowserRouter>

@@ -273,7 +273,7 @@ export default function EmergencyContextProvider({ children }) {
     setNewNotifications([]);
   }
 
-  // 전부 읽음 처리.
+  // 일반 알림 전부 읽음 처리.
   async function handleCheckAllAlert() {
     try {
       for (const notification of newNotifications) {

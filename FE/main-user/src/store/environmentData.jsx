@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import { useState } from "react";
 import { useContext } from "react";
+import { useEffect } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
 import { UserProgressContext } from "./userProgressStore";
 
@@ -95,6 +96,15 @@ export default function EnvironmentDataContextProvider({ children }) {
             }
         }
     }
+
+    // 5분마다 데이터 업데이트
+    useEffect(() => {
+        if (familyId) {
+            handleGetLatestEnvironmentData();
+            const interval = setInterval(handleGetLatestEnvironmentData, 5 * 60 * 1000);
+            return () => clearInterval(interval);
+        }
+    }, [familyId]);
 
     const ctxValue = {
         loading,

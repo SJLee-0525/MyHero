@@ -47,6 +47,8 @@ export default function DisasterStoreContextProvider({ children }) {
     useEffect(() => {
         if (familyId) {
             fetchDisasterData();
+            const interval = setInterval(fetchDisasterData, 5 * 60 * 1000);
+            return () => clearInterval(interval);
         }
     }, [familyId]);
 

@@ -19,6 +19,8 @@ export default function NewsStoreContextProvider({ children }) {
     setIsLoading(true);
 
     try {
+      if(!userProgressStore.loginUserInfo.login) return;
+      
       const response = await request(`${userProgressStore.DEV_API_URL}/tools/news`);
       const resData = response.data;
       

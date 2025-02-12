@@ -40,7 +40,8 @@ from .authentication import (
     check_current_user,
     change_password,
     get_login_session,
-    cleanup_login_sessions
+    cleanup_login_sessions,
+    record_auto_login
 )
 
 from .status import (

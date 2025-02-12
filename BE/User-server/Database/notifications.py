@@ -68,7 +68,8 @@ def get_new_notifications(
                 NotificationsTable.created_at,
                 NotificationsTable.notification_grade,
                 NotificationsTable.descriptions,
-                NotificationsTable.is_read
+                NotificationsTable.is_read,
+                NotificationsTable.image_url
             ).filter(and_(NotificationsTable.family_id == family_id,
                           NotificationsTable.is_read == False))
 
@@ -93,7 +94,8 @@ def get_new_notifications(
                 "created_at": data[2],
                 "notification_grade": data[3],
                 "description": data[4],
-                "is_read": data[5]
+                "is_read": data[5],
+                "image_url": data[6]
             } for data in ordered_new_notification_list]
 
             result = serialized_data
@@ -129,7 +131,8 @@ def get_all_notifications(
                 NotificationsTable.created_at,
                 NotificationsTable.notification_grade,
                 NotificationsTable.descriptions,
-                NotificationsTable.is_read
+                NotificationsTable.is_read,
+                NotificationsTable.image_url
             ).filter(NotificationsTable.family_id == family_id)
 
             if start_time is not None:
@@ -153,7 +156,8 @@ def get_all_notifications(
                 "created_at": data[2],
                 "notification_grade": data[3],
                 "description": data[4],
-                "is_read": data[5]
+                "is_read": data[5],
+                "image_url": data[6]
             } for data in ordered_all_notification_list]
 
             result = serialized_data
@@ -182,7 +186,8 @@ def get_one_notification(index: int) -> dict:
                 NotificationsTable.created_at,
                 NotificationsTable.notification_grade,
                 NotificationsTable.descriptions,
-                NotificationsTable.is_read
+                NotificationsTable.is_read,
+                NotificationsTable.image_url
             ).filter(NotificationsTable.index == index).first()
 
             serialized_data: dict = {
@@ -191,7 +196,8 @@ def get_one_notification(index: int) -> dict:
                 "created_at": notification_data[2],
                 "notification_grade": notification_data[3],
                 "description": notification_data[4],
-                "is_read": notification_data[5]
+                "is_read": notification_data[5],
+                "image_url": notification_data[6]
             }
 
             result = serialized_data

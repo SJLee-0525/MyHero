@@ -197,7 +197,7 @@ async def get_all_accounts(request_id: str = Depends(Database.check_current_user
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or request_data["role"] != Role.SYSTEM:
-        logger.warning(f"Can not access all accounts: {request_id}")
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -228,13 +228,12 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
-        logger.warning(f"Can not access account: {request_id}")
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
                 "type": "can not access",
-                "message": "You do not have permission",
-                "input": {"user_id": user_id}
+                "message": "You do not have permission"
             }
         )
 
@@ -252,8 +251,7 @@ async def get_account(user_id: str, request_id: str = Depends(Database.check_cur
             status_code=status.HTTP_404_NOT_FOUND,
             detail={
                 "type": "not found",
-                "message": "Account not found",
-                "input": {"user_id": user_id}
+                "message": "Account not found"
             }
         )
 
@@ -264,7 +262,7 @@ async def update_account(user_id: str, updated_account: Account, request_id: str
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
-        logger.warning(f"Can not access account: {request_id}")
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -399,7 +397,7 @@ async def delete_account(user_id: str, checker: PasswordCheck, request_id: str =
     request_data: dict = Database.get_one_account(request_id)
 
     if not request_data or (request_data["role"] != Role.SYSTEM and user_id != request_id):
-        logger.warning(f"Can not access account: {request_id}")
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={

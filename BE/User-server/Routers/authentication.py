@@ -107,7 +107,8 @@ async def login(response: Response, login_data: Login):
     new_session: LoginSessionsTable = LoginSessionsTable(
         xid=new_xid,
         user_id=user_id,
-        is_main_user=user_data["role"] is Role.MAIN
+        is_main_user=user_data["role"] is Role.MAIN,
+        is_remember=False
     )
 
     # Sesstion 생성하기
@@ -174,7 +175,7 @@ async def logout(request: Request, response: Response):
 
 # 사용자의 비밀번호를 변경하는 기능
 @router.patch("/change-password", status_code=status.HTTP_200_OK)
-async def change_password(change_password_data: ChangePassword, request_id = Depends(Database.check_current_user)):
+async def change_password(change_password_data: ChangePassword, request_id: str = Depends(Database.check_current_user)):
     target_user_id: str = change_password_data.user_id
 
     # 필수 입력 정보를 전달했는지 점검
@@ -280,5 +281,56 @@ async def change_password(change_password_data: ChangePassword, request_id = Dep
                     "current_password": "<PASSWORD>",
                     "new_password": "<PASSWORD>"
                 }
+            }
+        )
+
+# 자동 로그인을 설정하는 기능
+@router.patch("/auto-login", status_code=status.HTTP_200_OK)
+async def set_auto_login(request: Request, request_id: str = Depends(Database.check_current_user)):
+    # 보낸 Session 정보가 정상적인지 검증하기
+    session_id: str = request.cookies.get("session_id")
+    session_data: dict = Database.get_login_session(session_id)
+
+    if not session_id or not request_id or not session_data:
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 자동 로그인 사용 처리하기
+    result: bool = Database.record_auto_login(session_id)
+
+    if result:
+        logger.info(f">>> Auto login set successful: {session_id} <<<")
+        return {
+            "message": "Auto login set successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to set auto login"
+            }
+        )
+
+# 지금 유효한 권한을 가지고 있는지 확인하는 기능
+@router.get("/check", status_code=status.HTTP_200_OK)
+async def check_permission(request_id: str = Depends(Database.check_current_user)):
+    if request_id:
+        logger.info(f"Check permission successful: {request_id}")
+        return {
+            "message": "You have permission"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
             }
         )

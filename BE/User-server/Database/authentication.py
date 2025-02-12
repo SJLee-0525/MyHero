@@ -12,7 +12,7 @@ from Database.models import *
 
 from fastapi import Request, HTTPException, status
 
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from datetime import timezone, datetime, timedelta
@@ -30,6 +30,7 @@ logger = get_logger("DB_Authentication")
 # 세션 만료 시간 불러오기
 load_dotenv()
 session_expire_time: int = int(os.getenv("SESSION_EXPIRE_TIME", 1800))
+remember_expire_time: int = int(os.getenv("REMEMBER_EXPIRE_TIME", 2592000))
 session_cleanup_interval: int = int(os.getenv("SESSION_CLEANUP_INTERVAL", 600))
 
 # 로그인을 위해 Session을 생성하는 기능
@@ -112,7 +113,8 @@ def check_current_user(request: Request) -> str:
                 last_active: int = int(last_active_time.timestamp())
 
                 # 시간 초과로 세션이 만료되었는지 확인
-                if current_time - last_active > session_expire_time:
+                if (login_data.is_remember and current_time - last_active > remember_expire_time) or \
+                    (not login_data.is_remember and current_time - last_active > session_expire_time):
                     session.delete(login_data)
                     session.commit()
                     return user_id
@@ -181,7 +183,8 @@ def get_login_session(session_id: str) -> dict:
                     "xid": login_data.xid,
                     "user_id": login_data.user_id,
                     "last_active": login_data.last_active,
-                    "is_main_user": login_data.is_main_user
+                    "is_main_user": login_data.is_main_user,
+                    "is_remember": login_data.is_remember
                 }
 
                 result = serialized_data
@@ -207,14 +210,18 @@ async def cleanup_login_sessions() -> None:
             try:
                 current_time: datetime = datetime.now(tz=timezone.utc)
                 expired_time: datetime = current_time - timedelta(seconds=session_expire_time)
+                remember_expired_time: datetime = current_time - timedelta(seconds=remember_expire_time)
 
                 expired_sessions = session.query(
                     LoginSessionsTable
-                ).filter(and_(
-                    LoginSessionsTable.last_active < expired_time,
-                    LoginSessionsTable.is_main_user == False
-                )
-                ).all()
+                ).filter(or_(
+                    and_(LoginSessionsTable.last_active < expired_time,
+                         LoginSessionsTable.is_main_user == False,
+                         LoginSessionsTable.is_remember == False),
+                    and_(LoginSessionsTable.last_active < remember_expired_time,
+                         LoginSessionsTable.is_main_user == False,
+                         LoginSessionsTable.is_remember == True)
+                )).all()
 
                 for session_data in expired_sessions:
                     session.delete(session_data)
@@ -230,3 +237,29 @@ async def cleanup_login_sessions() -> None:
                     logger.info(f"Cleaned up login sessions")
                 else:
                     logger.error(f"Failed to clean up login sessions")
+
+# 자동 로그인을 사용하는지 기록하는 기능
+def record_auto_login(session_id: str) -> bool:
+    """
+    Session 정보에 자동 로그인 사용을 기록하는 기능
+    :param session_id: 세션 ID
+    :return: 성공적으로 기록했는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            login_data = session.query(LoginSessionsTable).filter(LoginSessionsTable.xid == session_id).first()
+            if login_data is not None:
+                login_data.is_remember = True
+                result = True
+            else:
+                result = False
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error recording auto login: {str(error)}")
+            result = False
+        finally:
+            session.commit()
+            return result

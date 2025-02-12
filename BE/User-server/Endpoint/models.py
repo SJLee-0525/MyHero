@@ -155,6 +155,7 @@ class Notification(BaseModel):
     family_id: Optional[str] = None
     notification_grade: Optional[str] = None
     descriptions: Optional[str] = None
+    image_url: Optional[str] = None
 
 class Message(BaseModel):
     """

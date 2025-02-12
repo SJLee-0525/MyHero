@@ -25,7 +25,7 @@ logger = get_logger("Router_Families")
 
 # 주 사용자의 ID를 이용해 가족이 이미 생성되었는지 확인하는 기능
 @router.post("/check-exist", status_code=status.HTTP_200_OK)
-async def check_family_from_main_id(family_check: IDCheck):
+async def check_family_from_main_id(family_check: IDCheck, request_id: str = Depends(Database.check_current_user)):
     # 필수 입력 조건 점검
     missing_location: list = ["body"]
 
@@ -40,6 +40,20 @@ async def check_family_from_main_id(family_check: IDCheck):
                 "type": "no data",
                 "loc": ["body", "id"],
                 "message": "Main ID is required",
+                "input": jsonable_encoder(family_check)
+            }
+        )
+
+    # 시스템 계정을 제외하고 확인하려는 주 사용자 본인만 확인할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_check.id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
                 "input": jsonable_encoder(family_check)
             }
         )
@@ -66,12 +80,12 @@ async def check_family_from_main_id(family_check: IDCheck):
 
 # 주 사용자를 기반으로 새로운 가족을 생성하는 기능
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def create_family(family_data: Family):
+async def create_family(family_data: Family, request_id: str = Depends(Database.check_current_user)):
     # 필수 입력 정보 점검
     missing_location: list = ["body"]
 
-    if family_data.family_name is None or family_data.family_name == "":
-        missing_location.append("family_name")
+    if family_data.main_user is None or family_data.main_user == "":
+        missing_location.append("main_user")
 
     if len(missing_location) > 1:
         logger.error(f"No data provided: {missing_location}")
@@ -80,7 +94,21 @@ async def create_family(family_data: Family):
             detail={
                 "type": "no data",
                 "loc": missing_location,
-                "message": "Family name is required",
+                "message": "Main user ID is required",
+                "input": jsonable_encoder(family_data)
+            }
+        )
+
+    # 시스템 계정을 제외하고 확인하려는 주 사용자 본인만 가족을 생성할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data.main_user):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
                 "input": jsonable_encoder(family_data)
             }
         )
@@ -108,7 +136,7 @@ async def create_family(family_data: Family):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
                 "type": "invalid value",
-                "message": "Does not exist or is not a main user",
+                "message": "You are not a main user",
                 "input": jsonable_encoder(family_data)
             }
         )
@@ -131,6 +159,7 @@ async def create_family(family_data: Family):
         family_name=family_data.family_name
     )
 
+    # 새로운 가족 생성
     result: bool = Database.create_family(new_family)
 
     if result:
@@ -152,7 +181,21 @@ async def create_family(family_data: Family):
 
 # 모든 가족의 정보를 불러오는 기능
 @router.get("", status_code=status.HTTP_200_OK)
-async def get_all_families():
+async def get_all_families(request_id: str = Depends(Database.check_current_user)):
+    # 시스템 관리자만 접근할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data or request_data["role"] != Role.SYSTEM:
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 가족 정보 불러오기
     family_list: list = Database.get_all_families()
 
     if family_list:
@@ -274,7 +317,25 @@ async def find_family(find_data: FindFamily, request_id: str = Depends(Database.
 
 # 가족 정보를 불러오는 기능
 @router.get("/{family_id}", status_code=status.HTTP_200_OK)
-async def get_family(family_id: str):
+async def get_family(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 정보를 불러올 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 가족 정보 불러오기
     family_data: dict = Database.get_one_family(family_id)
 
     if family_data:
@@ -295,26 +356,29 @@ async def get_family(family_id: str):
 
 # 가족 정보를 수정하는 기능 (family_name만 수정 가능)
 @router.patch("/{family_id}", status_code=status.HTTP_200_OK)
-async def update_family(family_id: str, updated_family: Family):
-    previous_family: dict = Database.get_one_family(family_id)
+async def update_family(family_id: str, updated_family: Family, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족의 정보를 수정할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
 
-    # 없는 가족 정보를 변경하려는지 확인
-    if not previous_family:
-        logger.warning(f"Family not found: {family_id}")
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "type": "not found",
-                "message": "Family not found",
-                "input": jsonable_encoder(updated_family)
+                "type": "can not access",
+                "message": "You do not have permission"
             }
         )
 
     # 최종적으로 변경할 데이터 생성
     total_updated_family: FamiliesTable = FamiliesTable(
         id=family_id,
-        main_user=previous_family["main_user"],
-        family_name=updated_family.family_name if updated_family.family_name is not None else previous_family["family_name"]
+        main_user=family_data["main_user"],
+        family_name=updated_family.family_name if updated_family.family_name is not None else family_data["family_name"]
     )
 
     # 가족 정보 변경
@@ -338,7 +402,7 @@ async def update_family(family_id: str, updated_family: Family):
 
 # 가족 정보를 삭제하는 기능 (주 사용자의 비밀번호 필요)
 @router.delete("/{family_id}", status_code=status.HTTP_200_OK)
-async def delete_family(family_id: str, checker: PasswordCheck):
+async def delete_family(family_id: str, checker: PasswordCheck, request_id: str = Depends(Database.check_current_user)):
     # 필수 입력 조건 점검
     missing_location: list = ["body"]
 
@@ -357,23 +421,23 @@ async def delete_family(family_id: str, checker: PasswordCheck):
             }
         )
 
-    previous_family: dict = Database.get_one_family(family_id)
+    # 시스템 계정을 제외하고 확인하려는 주 사용자 본인만 가족을 생성할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
 
-    # 없는 가족을 삭제하려는지 확인
-    if not previous_family:
-        logger.warning(f"Family not found: {family_id}")
+    if not request_data or not family_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail={
-                "type": "not found",
-                "message": "Family not found",
-                "input": {"family_id": family_id}
+                "type": "can not access",
+                "message": "You do not have permission"
             }
         )
 
     # 비밀번호 검증
     input_password: str = checker.password
-    hashed_password: str = Database.get_hashed_password(previous_family["main_user"])
+    hashed_password: str = Database.get_hashed_password(family_data["main_user"])
     is_verified: bool = verify_password(input_password, hashed_password)
 
     if not is_verified:

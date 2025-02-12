@@ -3,8 +3,8 @@ import "./Calendar.css";
 import { useContext } from "react";
 import { CalendarStoreContext } from "../../store/calendarStore";
 
-import arrowBackIcon from "../../assets/icons/arrow_back.svg";
-import arrowForwardIcon from "../../assets/icons/arrow_forward.svg";
+import arrowBackIcon from "../../assets/icons/arrow_back.png";
+import arrowForwardIcon from "../../assets/icons/arrow_forward.png";
 
 export default function CalendarHeader() {
   const { dispatch, currentDate } = useContext(CalendarStoreContext);

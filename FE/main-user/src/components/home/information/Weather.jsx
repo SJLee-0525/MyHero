@@ -3,27 +3,36 @@ import { useContext } from "react";
 import { WeatherStoreContext } from "../../../store/weatherStore";
 import "../Home.css";
 
+import sunny from "../../../assets/weather/sunny.png";
+import littleCloud from "../../../assets/weather/little_cloud.png";
+import hellCloud from "../../../assets/weather/hell_cloud.png";
+import foggy from "../../../assets/weather/foggy.png";
+import rain from "../../../assets/weather/rain.png";
+import rainow from "../../../assets/weather/rainow.png";
+import snow from "../../../assets/weather/snow.png";
+import shower from "../../../assets/weather/shower.png";
+
 export default function Weather() {
     const { weatherData, isLoading } = useContext(WeatherStoreContext);
 
     const skyIcons = {
-        "맑음": "",
-        "구름조금": "",
-        "구름많음": "",
-        "흐림": "",
+        "맑음": sunny,
+        "구름조금": littleCloud,
+        "구름많음": hellCloud,
+        "흐림": foggy,
     }
 
     const rainIcons = {
-        "비": "",
-        "비/눈": "",
-        "눈": "",
-        "소나기기": "",
+        "비": rain,
+        "비/눈": rainow,
+        "눈": snow,
+        "소나기": shower,
     }
 
     let weatherIcon = skyIcons[weatherData.sky] || skyIcons["맑음"];
 
-    if (weatherData.precipitation !== "없음") {
-        weatherIcon = rainIcons[weatherData.precipitation] || weatherIcon;
+    if (weatherData.sky !== "없음") {
+        weatherIcon = rainIcons[weatherData.sky] || weatherIcon;
     }
 
 

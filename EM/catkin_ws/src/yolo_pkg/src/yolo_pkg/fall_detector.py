@@ -32,11 +32,23 @@ class EnhancedFallDetector:
         processed_frame = frame.copy()
         fall_detected = False
         debug_info = {}
+        center_point = None  # 바운딩 박스 중심점 초기화
+        
         try:
             results = self.model(frame, verbose=False)
             for result in results:
                 if result.keypoints is None:
                     continue
+                
+                # 첫 번째 검출된 사람의 바운딩 박스 중심점만 사용
+                if len(result.boxes) > 0:
+                    box = result.boxes[0]  # 첫 번째 박스
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    # 중심점 계산
+                    center_x = (x1 + x2) // 2
+                    center_y = (y1 + y2) // 2
+                    center_point = (center_x, center_y)
+                
                 keypoints = result.keypoints.data
                 for person_idx, kps in enumerate(keypoints):
                     is_fallen, person_debug_info = self.pose_analyzer.analyze_pose(kps)
@@ -62,11 +74,11 @@ class EnhancedFallDetector:
                 1, self.config.colors['fps_text'], 2
             )
 
-            return processed_frame, fall_detected, debug_info
+            return processed_frame, fall_detected, debug_info, center_point
 
         except Exception as e:
             print(f"프레임 처리 중 오류 발생: {e}")
-            return frame, False, {}
+            return frame, False, {}, None
 
     def visualize_detection(self, frame, keypoints, is_fallen, debug_info):
         try:

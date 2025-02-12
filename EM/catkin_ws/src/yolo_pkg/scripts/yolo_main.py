@@ -6,10 +6,14 @@ import cv2
 import rospy
 import asyncio
 from yolo_pkg.fall_detector import EnhancedFallDetector
+from geometry_msgs.msg import Point  # 추가
 
 async def main():
     rospy.init_node('yolo_detection', anonymous=True)
     detector = EnhancedFallDetector()
+    
+    # 바운딩 박스 중심점 퍼블리셔 생성
+    bbox_center_pub = rospy.Publisher('bbox_center', Point, queue_size=10)
 
     # 현재 스크립트의 절대 경로를 사용해 test_video 폴더의 파일 절대 경로 생성
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -35,7 +39,15 @@ async def main():
             break
 
         if frame_count % 3 == 0:
-            processed_frame, fall_detected, debug_info = await detector.process_frame(frame)
+            processed_frame, fall_detected, debug_info, center_point = await detector.process_frame(frame)
+            
+            # center_point가 있으면 토픽 발행
+            if center_point is not None:
+                point_msg = Point()
+                point_msg.x = center_point[0]
+                point_msg.y = center_point[1]
+                point_msg.z = 0.0  # z 좌표는 2D 이미지에서는 사용하지 않음
+                bbox_center_pub.publish(point_msg)
         else:
             processed_frame = frame
 

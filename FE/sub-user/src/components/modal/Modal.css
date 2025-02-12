@@ -10,6 +10,18 @@
   }
 }
 
+/* 모달 애니메이션 */
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0); /* 모달이 정상 위치로 올라옴 */
+    opacity: 1;
+  }
+}
+
 .modal {
   min-width: 400px;
   max-width: 70vw;
@@ -35,4 +47,32 @@
 .modal::backdrop {
   background: rgba(0, 0, 0, 0.15);
   backdrop-filter: blur(30px);
+}
+
+.noti-modal {
+  position: fixed;
+
+  bottom: 0px;
+  right: 0px;
+
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
+
+  border: 0;
+  border-radius: 12px;
+
+  max-width: 400px;
+  max-height: 70vh;
+
+  background: rgba(255, 255, 255, 0.548);
+
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+
+  animation: slideLeft 0.4s ease-out;
+  overflow-y: auto;
+}
+
+.noti-modal::-webkit-scrollbar {
+  width: 0px; /* 스크롤바의 너비 */
 }

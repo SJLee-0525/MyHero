@@ -22,6 +22,10 @@ export const UserProgressContext = createContext({
   handleLogout: () => {},
 });
 
+export function useUserProgressStore() {
+  return useContext(UserProgressContext);
+}
+
 export default function UserProgressContextProvider({ children }) {
   const mainStore = useContext(StoreContext)
 
@@ -81,11 +85,8 @@ export default function UserProgressContextProvider({ children }) {
         password,
       });
 
-      console.log(response)
-
       if (response.success) {
         const resData = response.data;
-        console.log('resData', resData)
 
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);

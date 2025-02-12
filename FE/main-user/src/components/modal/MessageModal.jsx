@@ -24,7 +24,7 @@ export default function MessageModal({ title }) {
   return (
     <div id="modal-body">
       <div id="modal-bar">
-        <h2>{isChatting ? selectedUser?.name : title}</h2>
+        <h2>메세지</h2>
       </div>
       <div id="chatting-area">
         {isChatting ? (

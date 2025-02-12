@@ -14,7 +14,7 @@ export default function SelectMessageRoom() {
   }
 
   const registeredFamilyInfo = userProgressStore.memberInfo.registerData;
-  console.log(registeredFamilyInfo);
+
   return (
     <>
       {registeredFamilyInfo && (

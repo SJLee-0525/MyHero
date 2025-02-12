@@ -132,7 +132,7 @@ export default function EffectContextProvider({ children }) {
           login: userProgressStore.loginUserInfo,
         });
         await homeStatusStore.handleGetHomeStatus();
-        await emergencyStore.getAllNotifications();
+        await emergencyStore.handleGetNewNotifications();
         await messageStore.getNewMessages();
         console.log("Refresh 요청 끝!");
       }

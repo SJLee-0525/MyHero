@@ -37,6 +37,7 @@ export const EmergencyContext = createContext({
   setAllNotifications: () => {},
   setCategorizedNotifications: () => {},
   getAllNotifications: (order) => {},
+  handleGetNewNotifications: (order) => {},
   handleReadNotification: (index) => {},
   categorizeNotifications: (notifications) => {},
   handleClearNewNotifications: () => {},
@@ -142,6 +143,56 @@ export default function EmergencyContextProvider({ children }) {
         error: {
           type: "get_all_notifications",
           message: "전체 알림을 불러오는데 실패했습니다.",
+        },
+      };
+    }
+  }
+
+  async function handleGetNewNotifications(order = "desc") {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/notify/new/${familyId}?order=${order}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "New notification retrieved successfully") {
+          const newNotifications = resData.result;
+
+          // 새 알림이 있을 경우에만 상태 업데이트
+          if (newNotifications.length > 0) {
+            await getAllNotifications();
+          }
+        }
+      } else {
+        console.error(response.error);
+        return {
+          success: false,
+          error: {
+            type: "get_all_notifications",
+            message: "새 알림을 불러오는데 실패했습니다.",
+          },
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        error: {
+          type: "get_all_notifications",
+          message: "새 알림을 불러오는데 실패했습니다.",
         },
       };
     }
@@ -272,6 +323,7 @@ export default function EmergencyContextProvider({ children }) {
     setAllNotifications,
     setCategorizedNotifications,
     getAllNotifications,
+    handleGetNewNotifications,
     handleReadNotification,
     categorizeNotifications,
     handleClearNewNotifications,

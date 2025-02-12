@@ -198,7 +198,7 @@ export default function MessageContextProvider({ children }) {
         if (
           resData.message === "New received messages retrieved successfully"
         ) {
-          console.log("새 메시지 수신!", resData.result);
+          // console.log("새 메시지 수신!", resData.result);
           await handleGetAllMessages();
           return {
             success: true,
@@ -253,7 +253,7 @@ export default function MessageContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Message sent successfully") {
-          console.log("메시지 전송 성공", resData.result);
+          console.log("메시지 전송 성공");
           await handleGetAllMessages();
           return {
             success: true,

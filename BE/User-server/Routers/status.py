@@ -50,24 +50,11 @@ async def create_home_status(home_data: HomeStatus, request_id: str = Depends(Da
             }
         )
 
-    # 존재하는 가족 ID인지 확인
-    family_data = Database.get_one_family(home_data.family_id)
-
-    if not family_data:
-        logger.warning(f"Family not found: {home_data.family_id}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "Family not found",
-                "input": jsonable_encoder(home_data)
-            }
-        )
-
     # 시스템 계정을 제외한 가족의 주 사용자만 보고할 수 있음
     request_data: dict = Database.get_one_account(request_id)
+    family_data = Database.get_one_family(home_data.family_id)
 
-    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+    if not request_data or not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
         logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -283,24 +270,11 @@ async def create_health_status(health_data: HealthStatus, request_id: str = Depe
             }
         )
 
-    # 존재하는 가족 ID인지 확인
-    family_data = Database.get_one_family(health_data.family_id)
-
-    if not family_data:
-        logger.warning(f"No family found: {health_data.family_id}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "Family not found",
-                "input": jsonable_encoder(health_data)
-            }
-        )
-
     # 시스템 계정을 제외한 가족의 주 사용자만 보고할 수 있음
     request_data: dict = Database.get_one_account(request_id)
+    family_data = Database.get_one_family(health_data.family_id)
 
-    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+    if not request_data or not family_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
         logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -512,24 +486,11 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
             }
         )
 
-    # 존재하는 가족 ID인지 확인
-    family_data = Database.get_one_family(active_data.family_id)
-
-    if not family_data:
-        logger.warning(f"No family found: {ActiveStatus.family_id}")
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail={
-                "type": "not found",
-                "message": "Family not found",
-                "input": jsonable_encoder(active_data)
-            }
-        )
-
     # 시스템 계정을 제외한 가족의 주 사용자만 보고할 수 있음
     request_data: dict = Database.get_one_account(request_id)
+    family_data = Database.get_one_family(active_data.family_id)
 
-    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
+    if not request_data or not family_data or (request_data["role"] != Role.SYSTEM and request_id != family_data["main_user"]):
         logger.warning(f"Can not access account: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -546,7 +507,8 @@ async def create_active_status(active_data: ActiveStatus, request_id: str = Depe
         score=active_data.score,
         action=active_data.action,
         is_critical=active_data.is_critical,
-        description=active_data.description
+        description=active_data.description,
+        image_url=active_data.image_url
     )
 
     # 업로드

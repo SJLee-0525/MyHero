@@ -138,6 +138,7 @@ class ActiveStatus(BaseModel):
     action: Optional[str] = None  # 활동에 대한 간략한 요약
     is_critical: Optional[bool] = None  # 활동이 상태에 치명적인지 여부
     description: Optional[str] = None  # 상세한 보고 내용
+    image_url: Optional[str] = None  # 상태에 대한 이미지
 
 class AIChat(BaseModel):
     """

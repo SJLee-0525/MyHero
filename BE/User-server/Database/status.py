@@ -373,7 +373,8 @@ def get_active_status(
                     ActiveStatusTable.score,
                     ActiveStatusTable.action,
                     ActiveStatusTable.is_critical,
-                    ActiveStatusTable.description
+                    ActiveStatusTable.description,
+                    ActiveStatusTable.image_url
                 ).filter(and_(ActiveStatusTable.reported_at.between(start_time, end_time),
                               ActiveStatusTable.family_id == family_id))
 
@@ -393,7 +394,8 @@ def get_active_status(
                 "score": data[3],
                 "action": data[4],
                 "is_critical": data[5],
-                "description": data[6]
+                "description": data[6],
+                "image_url": data[7]
             } for data in ordered_active_status_list]
 
             result = serialized_data
@@ -423,7 +425,8 @@ def get_latest_active_status(family_id: str) -> dict:
                 ActiveStatusTable.score,
                 ActiveStatusTable.action,
                 ActiveStatusTable.is_critical,
-                ActiveStatusTable.description
+                ActiveStatusTable.description,
+                ActiveStatusTable.image_url
             ).filter(ActiveStatusTable.family_id == family_id
             ).order_by(ActiveStatusTable.reported_at.desc()).first()
 
@@ -435,7 +438,8 @@ def get_latest_active_status(family_id: str) -> dict:
                     "score": active_status_data[3],
                     "action": active_status_data[4],
                     "is_critical": active_status_data[5],
-                    "description": active_status_data[6]
+                    "description": active_status_data[6],
+                    "image_url": active_status_data[7]
                 }
                 result = serialized_data
             else:

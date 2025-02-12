@@ -938,6 +938,7 @@ export default function UserProgressContextProvider({ children }) {
             newRegisterData.push({
               ...familyIds[i],
               family_name: resData.result.family_name,
+              main_user_id: resData.result.main_user,
             });
           }
         } else {

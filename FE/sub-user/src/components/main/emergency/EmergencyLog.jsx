@@ -31,7 +31,7 @@ export default function EmergencyLog() {
 
             return (
               <div
-                key={emergencyAlert.id}
+                key={emergencyAlert.index}
                 className={callRes ? "alert-box-check" : "alert-box"}
               >
                 <div className="title-container">

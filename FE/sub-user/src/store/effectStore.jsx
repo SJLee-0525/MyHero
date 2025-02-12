@@ -5,6 +5,7 @@ import { HomeStatusContext } from "./homeStatusStore";
 import { HealthContext } from "./healthStore";
 import { EmergencyContext } from "./emergencyStore";
 import { CalendarStoreContext } from "./calendarStore";
+import { MessageContext } from "./messageStore";
 
 export const EffectContext = createContext({});
 
@@ -16,6 +17,7 @@ export default function EffectContextProvider({ children }) {
   const healthStore = useContext(HealthContext);
   const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
+  const messageStore = useContext(MessageContext);
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
@@ -114,7 +116,25 @@ export default function EffectContextProvider({ children }) {
         await healthStore.handleGetMentalReports();
         await healthStore.handleGetWeekData();
         await emergencyStore.getAllNotifications();
+        await messageStore.handleGetAllMessages();
         console.log("API 요청 끝!");
+      }
+    };
+
+    const refreshData = async () => {
+      if (
+        userProgressStore.memberInfo.selectedFamilyId ||
+        userProgressStore.familyInfo.familyInfo.id
+      ) {
+        console.log("Refresh 요청 시작!", {
+          member: userProgressStore.memberInfo,
+          family: userProgressStore.familyInfo,
+          login: userProgressStore.loginUserInfo,
+        });
+        await homeStatusStore.handleGetHomeStatus();
+        await emergencyStore.handleGetNewNotifications();
+        await messageStore.getNewMessages();
+        console.log("Refresh 요청 끝!");
       }
     };
 
@@ -122,7 +142,7 @@ export default function EffectContextProvider({ children }) {
     fetchData();
 
     // setInterval에 fetchData 함수를 넘겨야 함
-    const intervalId = setInterval(fetchData, 150 * 1000);
+    const intervalId = setInterval(refreshData, 10 * 1000);
 
     // Cleanup 함수 추가: 컴포넌트가 언마운트 될 때 interval을 클리어
     return () => clearInterval(intervalId);

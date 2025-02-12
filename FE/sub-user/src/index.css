@@ -50,6 +50,10 @@ body {
   z-index: 9999;
 }
 
+#new-noti-modal {
+  z-index: 9999;
+}
+
 @media screen and (max-width: 720px) {
   body {
     display: flex;

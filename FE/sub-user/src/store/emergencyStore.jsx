@@ -33,14 +33,15 @@ export const EmergencyContext = createContext({
     crit: [],
   },
   newNotifications: [],
+  newCritNotifications: [],
   setAllNotifications: () => {},
   setCategorizedNotifications: () => {},
   getAllNotifications: (order) => {},
+  handleGetNewNotifications: (order) => {},
   handleReadNotification: (index) => {},
   categorizeNotifications: (notifications) => {},
-  handleCheckNewNotifications: (prevNotifications, newNotifications) => {},
   handleClearNewNotifications: () => {},
-  handleCheckAlert: () => {},
+  handleCheckAllAlert: () => {},
   handleShowAlertLog: () => {},
   handleCheckHomeAlert: () => {},
 });
@@ -57,6 +58,7 @@ export default function EmergencyContextProvider({ children }) {
     crit: [],
   });
   const [newNotifications, setNewNotifications] = useState([]);
+  const [newCritNotifications, setNewCritNotifications] = useState([]);
 
   let familyId = "";
   if (userProgressStore.loginUserInfo.userInfo?.role === "sub") {
@@ -89,17 +91,36 @@ export default function EmergencyContextProvider({ children }) {
         if (resData.message === "All notifications retrieved successfully") {
           const newNotifications = resData.result;
 
-          setAllNotifications((prevNotifications) => {
-            if (
-              prevNotifications.length > 0 &&
-              prevNotifications.length !== newNotifications.length
-            ) {
-              console.log("새로운 알림이 있습니다.");
-              handleCheckNewNotifications(prevNotifications, newNotifications);
-            }
+          setAllNotifications(newNotifications);
 
-            return newNotifications;
-          });
+          // 새로운 일반 알림만 추출
+          const unReadNotifications = newNotifications
+            .slice()
+            .filter((notification) => {
+              if (
+                notification.is_read === false &&
+                notification.notification_grade !== "crit"
+              ) {
+                return notification;
+              }
+            });
+
+          setNewNotifications(unReadNotifications);
+
+          // 새로운 긴급 상황 알림만 추출
+          const unReadCritNotifications = newNotifications
+            .slice()
+            .filter((notification) => {
+              if (
+                notification.is_read === false &&
+                notification.notification_grade === "crit"
+              ) {
+                return notification;
+              }
+            });
+
+          setNewCritNotifications(unReadCritNotifications);
+
           return {
             success: true,
             data: resData.result,
@@ -122,6 +143,56 @@ export default function EmergencyContextProvider({ children }) {
         error: {
           type: "get_all_notifications",
           message: "전체 알림을 불러오는데 실패했습니다.",
+        },
+      };
+    }
+  }
+
+  async function handleGetNewNotifications(order = "desc") {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/notify/new/${familyId}?order=${order}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "New notification retrieved successfully") {
+          const newNotifications = resData.result;
+
+          // 새 알림이 있을 경우에만 상태 업데이트
+          if (newNotifications.length > 0) {
+            await getAllNotifications();
+          }
+        }
+      } else {
+        console.error(response.error);
+        return {
+          success: false,
+          error: {
+            type: "get_all_notifications",
+            message: "새 알림을 불러오는데 실패했습니다.",
+          },
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        error: {
+          type: "get_all_notifications",
+          message: "새 알림을 불러오는데 실패했습니다.",
         },
       };
     }
@@ -198,36 +269,33 @@ export default function EmergencyContextProvider({ children }) {
     return;
   }
 
-  // 새 알림 분류 및 알림 팝업 호출
-  function handleCheckNewNotifications(prevNotifications, newNotifications) {
-    if (prevNotifications.length === newNotifications.length) return;
-
-    const newNotificationsLength =
-      newNotifications.length - prevNotifications.length;
-
-    // 새 알림 분류
-    const needAlertNotifications = newNotifications.slice(
-      0,
-      newNotificationsLength
-    );
-    setNewNotifications(needAlertNotifications);
-    return;
-  }
-
   function handleClearNewNotifications() {
     setNewNotifications([]);
   }
 
-  // 한 번 확인하면 이전의 알림은 전부 읽음 처리.
-  function handleCheckAlert() {
-    return setEmergencyAlerts((prevAlerts) => {
-      return prevAlerts.map((prevAlert) => {
-        return {
-          ...prevAlert,
-          check: true,
-        };
-      });
-    });
+  // 일반 알림 전부 읽음 처리.
+  async function handleCheckAllAlert() {
+    try {
+      for (const notification of newNotifications) {
+        const response = await request(
+          `${userProgressStore.DEV_API_URL}/notify/read/${notification.index}`,
+          "PATCH"
+        );
+
+        if (response.success) {
+          const resData = response.data;
+
+          if (resData.message === "Notification check read successfully") {
+            console.log(`${notification.index} 읽음 처리 완료`);
+          }
+        }
+      }
+
+      console.log("모든 알림 읽음 처리 완료");
+      await getAllNotifications();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   // 긴급 상황 알림 기록 모달 호출
@@ -246,21 +314,20 @@ export default function EmergencyContextProvider({ children }) {
     });
   }
 
-  // console.log(emergencyAlerts)
-
   const ctxValue = {
     loading,
     allNotifications,
     categorizedNotifications,
     newNotifications,
+    newCritNotifications,
     setAllNotifications,
     setCategorizedNotifications,
     getAllNotifications,
+    handleGetNewNotifications,
     handleReadNotification,
     categorizeNotifications,
-    handleCheckNewNotifications,
     handleClearNewNotifications,
-    handleCheckAlert,
+    handleCheckAllAlert,
     handleShowAlertLog,
     handleCheckHomeAlert,
   };

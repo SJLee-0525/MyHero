@@ -1,41 +1,39 @@
 import "./Message.css";
 
-import { useContext } from "react";
+import { useRef, useState, useContext } from "react";
 import { MessageContext } from "../../../store/messageStore";
 
 export default function MessageInput() {
   const messageStore = useContext(MessageContext);
 
-  function handleSubmit(event) {
+  const [image, setImage] = useState(null);
+  const inputMessage = useRef("");
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImage(imageUrl);
+    }
+  };
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    // 현재 날짜와 시간을 가져오기
-    const currentDate = new Date();
+    try {
+      const content = inputMessage.current.value;
+      const imageUrl = image ? image : null;
 
-    // 날짜와 시간을 문자열로 포맷팅
-    const formattedDate = `${currentDate.getFullYear()}년 ${
-      currentDate.getMonth() + 1
-    }월 ${currentDate.getDate()}일 ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+      const response = await messageStore.handleSendMessage(content, imageUrl);
 
-    // FormData에서 값을 가져오기
-    const fd = new FormData(event.target);
-
-    const role = fd.get("role");
-    const message = fd.get("message");
-
-    // role과 message가 제대로 가져와졌는지 확인
-    console.log("Role:", role);
-    console.log("Message:", message);
-
-    // 데이터 객체 생성
-    const data = {
-      role: role,
-      message: message,
-      date: formattedDate,
-    };
-
-    // 메시지 전송
-    messageStore.handleSendMessage(data);
+      if (response.success) {
+        // 초기화
+        setImage(null);
+        inputMessage.current.value = "";
+      }
+    } catch (error) {
+      console.error(error);
+    }
 
     // 폼 필드 초기화
     event.target.reset(); // 폼 필드 초기화
@@ -44,13 +42,33 @@ export default function MessageInput() {
   return (
     <div id="message-form-group">
       <form onSubmit={handleSubmit}>
-        <select name="role" id="message-role" required>
-          <option value="main">MAIN</option>
-          <option value="sub">SUB</option>
-        </select>
+        {/* 사진 첨부 기능 */}
+        <div id="message-file-group">
+          <label htmlFor="message-file">📷</label>
+          <input
+            id="message-file"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: "none" }} // 숨겨진 파일 선택 버튼
+          />
+        </div>
+
+        {/* 미리보기 이미지 */}
+        {image && (
+          <div id="image-preview">
+            <img src={image} alt="미리보기" width="100" />
+          </div>
+        )}
 
         <div id="message-input-group">
-          <input id="message-input" type="text" name="message" required />
+          <input
+            id="message-input"
+            type="text"
+            name="message"
+            ref={inputMessage}
+            required
+          />
           <button type="submit">전송</button>
         </div>
       </form>

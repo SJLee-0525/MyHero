@@ -4,8 +4,9 @@ import { loadEnvironments } from "./store/environmentsStore.jsx";
 import "./index.css";
 import App from "./App.jsx";
 
-import UserProgressContextProvider from "./store/userProgressStore.jsx";
 import StoreContextProvider from "./store/store.jsx";
+import UserProgressContextProvider from "./store/userProgressStore.jsx";
+import MessageProvider from "./store/messageStore.jsx";
 import DisasterStoreContextProvider from "./store/disasterStore.jsx";
 import EnvironmentDataContextProvider from "./store/environmentData.jsx";
 import WeatherStoreContextProvider from "./store/weatherStore.jsx";
@@ -18,15 +19,17 @@ const startApp = async () => {
     <StrictMode>
       <StoreContextProvider>
         <UserProgressContextProvider>
-          <DisasterStoreContextProvider> 
-            <EnvironmentDataContextProvider>
-              <WeatherStoreContextProvider>
-                <NewsStoreContextProvider>
-                  <App />
-                </NewsStoreContextProvider>
-              </WeatherStoreContextProvider>  
-            </EnvironmentDataContextProvider>
-          </DisasterStoreContextProvider>
+          <MessageProvider>
+            <DisasterStoreContextProvider> 
+              <EnvironmentDataContextProvider>
+                <WeatherStoreContextProvider>
+                  <NewsStoreContextProvider>
+                    <App />
+                  </NewsStoreContextProvider>
+                </WeatherStoreContextProvider>  
+              </EnvironmentDataContextProvider>
+            </DisasterStoreContextProvider>
+          </MessageProvider>
         </UserProgressContextProvider>
       </StoreContextProvider>
     </StrictMode>

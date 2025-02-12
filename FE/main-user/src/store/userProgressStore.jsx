@@ -153,7 +153,7 @@ export default function UserProgressContextProvider({ children }) {
 
   async function connectRasp() {
     try {
-      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {user_id: loginUserInfo.userInfo.id})
+      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {email: loginUserInfo.userInfo.email, password: loginUserInfo.userInfo.password})
 
       if (response.success) {
         console.log("연결되었습니다.", response);

@@ -41,8 +41,11 @@ export default function NewsStoreContextProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchNewsData();
-  }, []);
+    if (userProgressStore.loginUserInfo.login) {
+      console.log("🔄 로그인 완료됨, 뉴스 데이터 가져오기 실행");
+      fetchNewsData();
+    }
+  }, [userProgressStore.loginUserInfo.login]);
 
   const ctxValue = {
     newsData,

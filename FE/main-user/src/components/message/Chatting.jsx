@@ -1,22 +1,27 @@
 import React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Message from "./Message.jsx";
-// import Photo from "./Photo.jsx";
 import ReplyBar from "./ReplyBar.jsx";
+import { useMessageStore } from "../../store/messageStore.jsx"
 import "./Message.css";
 
-
 export default function Chatting() {
-    const [messages, setMessages] = useState([
-        { id: 1, text: "오늘 저녁 김치찌개 먹을래?", sender: "me", time: "오후 4:05" },
-        { id: 2, text: "참치야 돼지야?", sender: "other", time: "오후 4:07" }
-    ]);
-
+    const { selectedUser, conversations, addMessage } = useMessageStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
 
+    if (!selectedUser) return <p>대화할 상대를 선택하세요.</p>;
+
+    const messages = conversations[selectedUser.user_id] || [];
+
+    useEffect(() => {
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [messages]);
+
     const handleSendMessage = (newMessage) => {
-        setMessages([...messages, newMessage]);
+        addMessage(selectedUser.user_id, newMessage);
         setIsListening(false); // 메시지 전송 후 음성 인식 종료
     };
 
@@ -34,17 +39,15 @@ export default function Chatting() {
     return (
         <div className="message-container">
             <div className="message-header">
-                <h2 className="chat-title">아들</h2>
+                <h2 className="chat-title">{selectedUser.name}</h2>
             </div>
             <div className="message-content">
                 <div className="message-list">
                     {messages.map((msg) => (
-                        <Message key={msg.id} text={msg.text} sender={msg.sender} time={msg.time} />
+                        <Message key={msg.index} text={msg.content} sender={msg.from_id === selectedUser.user_id ? "other" : "me"} time={msg.created_at} />
                     ))}
                     <div ref={messageEndRef} />
                 </div>
-                {/* <div className="divider"></div>
-                <Photo /> */}
                 <ReplyBar onSend={handleSendMessage} onRetry={handleStartListening} />
             </div>
         </div>

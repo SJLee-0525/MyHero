@@ -54,7 +54,7 @@ export default function WeatherStoreContextProvider({ children }) {
 
     return (
         <WeatherStoreContext.Provider value={ctxValue}>
-        {children}
+            {children}
         </WeatherStoreContext.Provider>
     );
 }

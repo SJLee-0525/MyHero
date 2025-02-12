@@ -1,6 +1,6 @@
 #emergency-main {
-  width: 800px;
-  min-width: 400px;
+  width: 100%;
+  min-width: 380px;
 
   height: 81.6vh;
   max-height: 81.6vh;
@@ -237,7 +237,7 @@
 
 #emergency-main .log-button {
   width: 100%;
-  min-width: 400px;
+  min-width: 380px;
   height: 55px;
 
   border: 0;

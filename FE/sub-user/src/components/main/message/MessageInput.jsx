@@ -39,6 +39,10 @@ export default function MessageInput() {
     event.target.reset(); // 폼 필드 초기화
   }
 
+  if (!messageStore.messagePerson) {
+    return;
+  }
+
   return (
     <div id="message-form-group">
       <form onSubmit={handleSubmit}>

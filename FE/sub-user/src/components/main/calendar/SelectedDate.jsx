@@ -16,7 +16,7 @@ export default function SelectedDate() {
   const homeStatusData = schedules.schedules.homeStatus;
 
   return (
-    <div className="calender-schedule-widget">
+    <div className="calendar-schedule-widget">
       {/* 위젯 내 일정 표시 */}
       <div className="calendar-schedule-date">
         <a>{selectedDate.date}</a>

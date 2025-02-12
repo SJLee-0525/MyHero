@@ -44,7 +44,7 @@ export default function MemberUserInfo() {
               가족 모임 연결
             </button>
           </div>
-          <div>
+          <div className="family-container">
             {memberUserInfo.registerData.map((info) => {
               return (
                 <div key={info.id}>

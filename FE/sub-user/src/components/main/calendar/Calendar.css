@@ -1,12 +1,64 @@
 #calendar {
   display: flex;
+  justify-content: space-between;
+  align-items: start;
+
+  width: 100%;
+  height: 100%;
+
+  gap: 10px;
+}
+
+#calendar-left {
+  width: 50%;
+
+  margin: 10px auto;
+  padding: 15px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
+
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+}
+
+#calendar-right {
+  display: flex;
   flex-direction: column;
+  justify-content: start;
+  align-items: center;
 
-  min-width: 400px;
-  width: 800px;
+  width: 50%;
 
-  margin: 0 auto 10px auto;
-  gap: 8px;
+  margin: 10px auto;
+  padding: 15px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
+
+  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+}
+
+#calendar-widget {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
 }
 
 /* HEADER */
@@ -60,12 +112,13 @@
   display: flex;
   flex-direction: column;
 
+  width: 100%;
   padding: 25px 10px;
   gap: 15px;
 
   background: rgba(255, 255, 255, 0.568);
 
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .calendar-day-wrapper {
@@ -250,15 +303,16 @@
   aspect-ratio: 1; /* 너비와 높이를 동일하게 설정 */
 }
 
-.calender-schedule {
+.calendar-schedule {
   margin: 20px 10px 0px;
 
   display: flex;
   justify-content: space-between;
 }
 
-.calender-schedule-widget {
-  margin: 20px 0px 0px;
+.calendar-schedule-widget {
+  width: 100%;
+  margin: 0px 0px 0px;
 }
 
 .calendar-day-widget-schedules {
@@ -336,7 +390,7 @@
   font-weight: bold;
 }
 
-.calender-schedule ul {
+.calendar-schedule ul {
   margin-bottom: 0;
   padding: 0px;
 
@@ -345,7 +399,7 @@
   font-size: medium;
 }
 
-.calender-schedule-widget ul {
+.calendar-schedule-widget ul {
   margin-bottom: 0;
   padding: 0px;
 
@@ -668,4 +722,110 @@
   text-align: end;
 
   margin: 0;
+}
+
+@media screen and (max-width: 1200px) {
+  #calendar {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    gap: 0px;
+  }
+
+  #calendar-left {
+    width: 100%;
+  }
+
+  #calendar-right {
+    width: 100%;
+  }
+
+  .calendar-header-change-button {
+    width: 100%;
+  }
+
+  .calendar-header-change-button button {
+    width: 30px;
+    height: 30px;
+  }
+
+  .calendar-header-change-button img {
+    width: 15px;
+    height: 15px;
+  }
+
+  .calendar-container {
+    padding: 15px 10px;
+  }
+
+  .calendar-day-wrapper {
+    grid-template-columns: repeat(7, minmax(30px, 1fr));
+  }
+
+  .calendar-item {
+    display: flex;
+    justify-content: center;
+  }
+
+  .calendar-day {
+    padding: 2px;
+  }
+
+  .calendar-day-schedules {
+    padding: 2px 0px;
+  }
+
+  .calendar-day-schedules .health-aver {
+    padding: 0 2px;
+  }
+
+  .calendar-day-schedules .mental-aver {
+    padding: 0 2px;
+  }
+
+  .calendar-day-schedules .no-aver {
+    padding: 0 2px;
+  }
+
+  .calendar-day-schedule {
+    padding: 0 2px;
+  }
+
+  .calendar-day-schedules-date {
+    height: 50%;
+  }
+
+  .calendar-day-schedules-widget {
+    gap: 2px;
+  }
+
+  .calendar-day-schedules-widget .health {
+    width: 5px;
+  }
+
+  .calendar-day-schedules-widget .mental {
+    width: 5px;
+  }
+
+  .calendar-day-schedules-widget .no {
+    width: 5px;
+  }
+
+  .calendar-schedule {
+    margin: 10px 5px 0px;
+  }
+
+  .calendar-day-widget-schedules {
+    gap: 5px;
+    margin: 5px 0 5px;
+  }
+
+  .calendar-day-widget-schedules .health {
+    height: 30px;
+  }
 }

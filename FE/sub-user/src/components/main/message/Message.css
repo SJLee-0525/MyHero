@@ -1,10 +1,10 @@
 #message-main {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
 
   width: 100%;
-  min-width: 400px;
+  min-width: 380px;
   height: 100%;
 
   gap: 10px;
@@ -12,7 +12,6 @@
 
 #message-left {
   width: 25%;
-  height: 100%;
 
   margin: 10px auto;
   padding: 10px;
@@ -295,4 +294,75 @@
   border-radius: 0px 8px 8px 0px;
 
   cursor: pointer;
+}
+
+@media screen and (max-width: 1200px) {
+  #message-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    gap: 0px;
+  }
+
+  #message-left {
+    width: 100%;
+    height: 7vh;
+  }
+
+  #message-right {
+    width: 100%;
+    height: 80vh;
+  }
+
+  #message-left .select-message-room {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+
+    width: 100%;
+    padding: 5px;
+
+    gap: 10px;
+
+    overflow-y: unset;
+  }
+
+  #message-left .select-message-room .unselected {
+    width: 150px;
+    height: 50px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background-color: rgba(255, 255, 255, 0.3);
+
+    transition: all 0.3s ease;
+  }
+
+  #message-left .select-message-room .unselected:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+
+    font-weight: bold;
+
+    transition: all 0.3s ease;
+  }
+
+  #message-left .select-message-room .selected {
+    width: 150px;
+    height: 50px;
+
+    border: 0;
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    background-color: rgb(255, 255, 255);
+    transition: all 0.3s ease;
+  }
 }

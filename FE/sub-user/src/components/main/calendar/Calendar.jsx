@@ -13,15 +13,18 @@ export default function Calendar() {
   return (
     <div id="calendar">
       {/* <h2 id="main-container-title">CALENDAR</h2> */}
-      <PageContainer title="캘린더">
-        {/* <CalendarStoreContextProvider> */}
-        <div id="calendar">
+
+      {/* <CalendarStoreContextProvider> */}
+      <div id="calendar">
+        <div id="calendar-left">
           <CalendarHeader />
           <CalendarBody />
+        </div>
+        <div id="calendar-right">
           <CalendarSchedules />
         </div>
-        {/* </CalendarStoreContextProvider> */}
-      </PageContainer>
+      </div>
+      {/* </CalendarStoreContextProvider> */}
     </div>
   );
 }

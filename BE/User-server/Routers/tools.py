@@ -92,7 +92,7 @@ async def get_ai_server_status():
     else:
         logger.critical("AI Process Server is not running.")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=status.HTTP_418_IM_A_TEAPOT,
             detail={
                 "type": "server error",
                 "message": "AI Process Server is not running."

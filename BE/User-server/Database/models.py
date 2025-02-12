@@ -311,6 +311,7 @@ class NotificationsTable(Base):
     descriptions = Column(TEXT, nullable=True)
     message_sn = Column(INT, nullable=True)
     is_read = Column(Boolean, nullable=True, server_default="FALSE")
+    image_url = Column(TEXT, nullable=True)
 
     def __repr__(self):
         return (f"" +
@@ -320,7 +321,8 @@ class NotificationsTable(Base):
                 f"notification_grade='{self.notification_grade}', " +
                 f"descriptions='{self.descriptions}', " +
                 f"message_sn='{self.message_sn}', " +
-                f"is_read='{self.is_read}')>"
+                f"is_read='{self.is_read}," +
+                f"image_url='{self.image_url}')>"
         )
 
 class MessageTable(Base):

@@ -79,12 +79,12 @@ async def crate_notification(notification_data: Notification, request_id: str = 
         family_id=notification_data.family_id,
         notification_grade=notification_data.notification_grade.upper() \
             if notification_data.notification_grade else None,
-        descriptions=notification_data.descriptions
+        descriptions=notification_data.descriptions,
+        image_url=notification_data.image_url
     )
 
     # 업로드
     result: bool = Database.create_notification(new_notification)
-
 
     if result:
         notification_data: list = Database.get_all_notifications(

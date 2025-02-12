@@ -31,13 +31,13 @@ export default function Environment() {
                     name="미세 먼지"
                     imgSrc={Airwave}
                     altSrc="finedust"
-                    status={`${environmentDataStore.environmentData.data.dust_level} ㎍/㎥`}
+                    status={`${parseFloat(environmentDataStore.environmentData.data.dust_level || 0).toFixed(2)} ㎍/㎥`}
                 ></StatusWidget>
                 <StatusWidget
                     name="일산화탄소"
                     imgSrc={Gas}
                     altSrc="ethanol"
-                    status={`${environmentDataStore.environmentData.data.ethanol} %`}
+                    status={`${parseFloat(environmentDataStore.environmentData.data.ethanol || 0).toFixed(2)} %`}
                 >
                     {environmentDataStore.ethanol > 0 ? "가스 감지됨" : "가스 정상"}
                 </StatusWidget>

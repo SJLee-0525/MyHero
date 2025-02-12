@@ -59,8 +59,8 @@ export default function EnvironmentDataContextProvider({ children }) {
                         reported_at: resData.data.reported_at,
                         temperature: resData.data.temperature,
                         humidity: resData.data.humidity,
-                        dust_level: resData.data.dust_level,
-                        ethanol: resData.data.ethanol,
+                        dust_level: resData.data.dust_level.toFixed(2),
+                        ethanol: resData.data.ethanol.toFixed(2),
                     } 
                 });
                 }

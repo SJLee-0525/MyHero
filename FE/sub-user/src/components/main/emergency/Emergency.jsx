@@ -17,24 +17,20 @@ export default function Emergency() {
     <div id="emergency-main">
       <div id="emergency">
         <div id="emergency-alert">
-          {/* check가 false인 알림을 찾으면 그 알림을 출력하고 중단. some이나 every는 boolean값을 반환하기에 이 목적으로 사용하기 적합하지 않음.. */}
-          {(() => {
-            const firstUncheckedAlert =
-              emergencyStore.categorizedNotifications.crit.find(
-                (alert) => !alert.check
-              );
-            return firstUncheckedAlert ? (
+          {emergencyStore.newCritNotifications.length > 0 ? (
+            emergencyStore.newCritNotifications.map((emergencyAlert) => (
               <EmergencyAlert
-                key={firstUncheckedAlert.id}
-                emergencyAlert={firstUncheckedAlert}
-                onCheckAlert={emergencyStore.handleCheckAlert}
+                key={emergencyAlert.index}
+                emergencyAlert={emergencyAlert}
+                onCheckAlert={() =>
+                  emergencyStore.handleReadNotification(emergencyAlert.index)
+                }
               />
-            ) : (
-              <h3>감지된 이상이 없습니다.</h3>
-            );
-          })()}
+            ))
+          ) : (
+            <h3>감지된 이상이 없습니다.</h3>
+          )}
         </div>
-
         {/* 긴급 상황 알림 기록 확인 버튼 */}
 
         <button

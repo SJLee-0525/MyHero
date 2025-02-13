@@ -10,6 +10,7 @@
   transition: all 0.3s ease-in-out;
   transform: translateX(0);
   opacity: 1;
+  cursor: none;
 }
  
 #nav-bar p {
@@ -33,6 +34,7 @@
   margin: 4px;
   margin-bottom: 1rem;
   transition: all 0.2s ease-in-out;
+  cursor: none;
 }
 
 #nav-bar #status-bar button:hover {

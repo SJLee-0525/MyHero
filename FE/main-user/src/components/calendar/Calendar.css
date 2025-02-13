@@ -6,6 +6,7 @@
     width: 700px;
   
     margin: 0 auto 10px auto;
+    cursor: none;
   }
   
   /* HEADER */
@@ -39,7 +40,6 @@
   
     aspect-ratio: 1; /* 너비와 높이를 동일하게 설정 */
   
-    cursor: pointer;
     transition: all 0.1s ease-in-out;
   }
   
@@ -97,12 +97,9 @@
     padding: 3px;
     aspect-ratio: 1.5; /* 너비와 높이를 동일하게 설정 */
   
-    cursor: pointer;
-  
     color: #000; /* Default day color for current month */
     font-weight: bold;
   
-    cursor: pointer;
     transition: all 0.3s ease;
   }
   
@@ -237,6 +234,5 @@
     border: 0;
     border-radius: 0px 8px 8px 0px;
   
-    cursor: pointer;
     font-size: x-large;
   }  

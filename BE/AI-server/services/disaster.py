@@ -19,52 +19,45 @@ class DisasterService:
         try:
             today_kst = get_kst_today()
             today_str = today_kst.strftime("%Y%m%d")
-
+            
             families_with_addresses = db.query(Family.id, Account.address).join(
                 Account, Family.main_user == Account.id
             ).filter(Account.address.isnot(None)).distinct().all()
-            
-            all_messages = []
-            
+        
             for family_id, address in families_with_addresses:
+                family_messages = []
+                
                 messages_local = await self._fetch_disaster_data(address, today_str)
                 if messages_local:
-                    all_messages.extend(
-                        [{'family_id': family_id, **msg} for msg in messages_local]
-                    )
-                    
+                    family_messages.extend(messages_local)
+                
                 messages_all = await self._fetch_disaster_all_data(address, today_str)
                 if messages_all:
-                    all_messages.extend(
-                        [{'family_id': family_id, **msg} for msg in messages_all]
-                    )
-
-            # 메시지 중복 제거 (family_id와 SN 기준)
-            unique_messages = {}
-            for msg in all_messages:
-                key = (msg['family_id'], msg['SN'])
-                if key not in unique_messages:
-                    unique_messages[key] = msg
-
-            for message in unique_messages.values():
-                sn = message.get('SN')
-                family_id = message.get('family_id')
+                    family_messages.extend(messages_all)
                 
-                existing = db.query(Notification).filter(
-                    Notification.family_id == family_id,
-                    Notification.message_sn == sn
-                ).first()
+                unique_messages = {}
+                for msg in family_messages:
+                    key = msg.get('SN')
+                    if key not in unique_messages:
+                        unique_messages[key] = msg
                 
-                if not existing:
-                    notification = Notification(
-                        family_id=family_id,
-                        notification_grade='WARN',
-                        descriptions=json.dumps(message, ensure_ascii=False),
-                        message_sn=sn
-                    )
-                    db.add(notification)
+                for message in unique_messages.values():
+                    sn = message.get('SN')
+                    
+                    existing = db.query(Notification).filter(
+                        Notification.family_id == family_id,
+                        Notification.message_sn == sn
+                    ).first()
+                    
+                    if not existing:
+                        notification = Notification(
+                            family_id=family_id,
+                            notification_grade='WARN',
+                            descriptions=json.dumps(message, ensure_ascii=False),
+                            message_sn=sn
+                        )
+                        db.add(notification)
             
-            # 모든 처리가 끝난 후 한 번에 커밋
             db.commit()
             
         except Exception as e:

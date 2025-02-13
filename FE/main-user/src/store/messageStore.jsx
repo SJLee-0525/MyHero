@@ -70,15 +70,14 @@ export default function MessageProvider({ children }) {
             const startTime = "2020-01-01T00:00:00"; // ✅ 모든 메시지를 가져오기 위해 오래된 날짜 설정
             const endTime = new Date().toISOString();
 
-            // ✅ 1. 받은 메시지 불러오기
+            const existingMessages = conversations[selectedUserId] || [];
+
             const receivedResponse = await request(`${userProgressStore.DEV_API_URL}/messages/all?start=${startTime}&end=${endTime}&order=desc`);
             const receivedData = receivedResponse.data;
 
-            // ✅ 2. 보낸 메시지 불러오기
             const sentResponse = await request(`${userProgressStore.DEV_API_URL}/messages/sent?start=${startTime}&end=${endTime}&order=desc`);
             const sentData = sentResponse.data;
 
-            // ✅ 3. 서버 응답 확인
             console.log("📩 받은 메시지 원본 데이터:", receivedData.result);
             console.log("📤 보낸 메시지 원본 데이터:", sentData.result);
 
@@ -91,14 +90,14 @@ export default function MessageProvider({ children }) {
                 (msg) => msg.to_id === loginUserId && msg.from_id === selectedUserId
             ).map(msg => ({
                 ...msg,
-                sender: "other" // 상대방이 보낸 메시지
+                sender: "other"
             }));
     
             const sentMessages = sentData.result.filter(
                 (msg) => msg.from_id === loginUserId && msg.to_id === selectedUserId
             ).map(msg => ({
                 ...msg,
-                sender: "me" // 내가 보낸 메시지
+                sender: "me"
             }));
 
             console.log("📥 받은 메시지:", receivedMessages);
@@ -108,13 +107,12 @@ export default function MessageProvider({ children }) {
                 console.warn("⚠️ 서버에서 보낸 메시지를 찾을 수 없습니다.");
             }
 
-            const sortedMessages = [...receivedMessages, ...sentMessages].sort(
-                (a, b) => new Date(a.created_at) - new Date(b.created_at)
-            );
+            const sortedMessages = [...existingMessages, ...receivedMessages, ...sentMessages]
+                .filter((v, i, a) => a.findIndex(t => (t.index === v.index)) === i) // 중복 제거
+                .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 
             console.log(`✅ ${selectedUserId}와의 대화 메시지 정리됨`, sortedMessages);
 
-            // ✅ 7. conversations 상태 업데이트
             setConversations((prev) => ({
                 ...prev,
                 [selectedUserId]: sortedMessages.length > 0 ? sortedMessages : (prev[selectedUserId] || []),
@@ -134,7 +132,6 @@ export default function MessageProvider({ children }) {
 
         setSelectedUser(user);
 
-        // ✅ 항상 대화 목록을 최신 상태로 불러오기
         fetchMessages(user.user_id);
     }
 

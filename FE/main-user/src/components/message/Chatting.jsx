@@ -7,7 +7,7 @@ import { useUserProgressStore } from "../../store/userProgressStore.jsx";
 import "./Message.css";
 
 export default function Chatting({ isOpen }) {
-    const { selectedUser, conversations, addMessage } = useMessageStore();
+    const { selectedUser, conversations, addMessage, setConversations } = useMessageStore();
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
@@ -27,7 +27,13 @@ export default function Chatting({ isOpen }) {
         };
     }, [isOpen, selectedUser.user_id]);
 
-    const handleSendMessage = (newMessage) => {
+    useEffect(() => {
+        if (messageEndRef.current) {
+            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        }
+    }, [messages]);
+
+    const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
             index: Date.now(),  // 임시 ID (서버와 동기화되면 변경 가능)
             from_id: loginUserInfo.userInfo.id, // 내가 보낸 메시지
@@ -38,6 +44,23 @@ export default function Chatting({ isOpen }) {
         };
 
         addMessage(selectedUser.user_id, newMsgObject);
+
+        setConversations((prev) => ({
+            ...prev,
+            [selectedUser.user_id]: [...(prev[selectedUser.user_id] || []), newMsgObject]
+        }));
+
+        const response = await sendMessageToServer(newMsgObject);
+
+        if (response.success) {
+            console.log("✅ 서버에 메시지 저장 완료:", response.data);
+
+            setTimeout(() => {
+                fetchMessages(selectedUser.user_id);
+            }, 1000); // 서버 데이터 업데이트 후 동기화
+        } else {
+        console.error("❌ 메시지 전송 실패:", response.error);
+        }
 
         setIsListening(false); // 메시지 전송 후 음성 인식 종료
     };

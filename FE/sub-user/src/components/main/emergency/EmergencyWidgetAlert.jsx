@@ -39,7 +39,7 @@ export default function EmergencyWidgetAlert({ emergencyAlert, onCheckAlert }) {
 
         {/* 이미지 출력단 */}
         <div>
-          <img src={emergencyAlert.imgSrc} alt="temp" />
+          <img src={emergencyAlert.image_url} alt="temp" />
         </div>
       </div>
 

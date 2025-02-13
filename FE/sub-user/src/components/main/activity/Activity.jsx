@@ -33,12 +33,12 @@ export default function Activity() {
                 <MentalChartContainer />
               )}
             </PageContainer>
-            <Keywords />
-          </div>
-          <div id="activity-elem-right">
             <PageContainer title="주간 건강 리포트">
               <WeeklyStats />
             </PageContainer>
+          </div>
+          <div id="activity-elem-right">
+            {/* <Keywords /> */}
             <PageContainer title="대화 리포트">
               <MentalReport />
             </PageContainer>

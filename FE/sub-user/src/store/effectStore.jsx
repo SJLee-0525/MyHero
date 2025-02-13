@@ -115,6 +115,7 @@ export default function EffectContextProvider({ children }) {
         await healthStore.handleGetMentalStatus();
         await healthStore.handleGetMentalReports();
         await healthStore.handleGetWeekData();
+        await healthStore.handleGetKeywords();
         await emergencyStore.getAllNotifications();
         await messageStore.handleGetAllMessages();
         console.log("API 요청 끝!");

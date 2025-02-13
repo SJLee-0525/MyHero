@@ -88,6 +88,7 @@ export const HealthContext = createContext({
   handleGetMentalStatus: () => {},
   handleGetMentalReports: () => {},
   handleGetOneDayMentalReport: () => {},
+  handleGetKeywords: () => {},
 });
 
 export default function HealthContextProvider({ children }) {
@@ -107,8 +108,10 @@ export default function HealthContextProvider({ children }) {
     { name: "mental", value: 0 },
   ]);
 
+  const [keywords, setKeywords] = useState([]);
+
   // 대화 키워드 관련련
-  const keywords = ["임영웅", "김치찌개", "두부", "여행", "병원"];
+  // const keywords = ["임영웅", "김치찌개", "두부", "여행", "병원"];
   const keywordColors = [
     ["#146152", "white"],
     ["#44803F", "white"],
@@ -547,6 +550,52 @@ export default function HealthContextProvider({ children }) {
     }
   };
 
+  async function handleGetKeywords() {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/status/keywords/${familyId}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "Conversation keywords created successfully") {
+          console.log("대화 키워드 불러오기 성공:", resData.result);
+          setKeywords([...resData.result.keywords]);
+        }
+      } else {
+        console.error("대화 키워드 불러오기 실패:", resData.error);
+        return {
+          success: false,
+          error: {
+            type: resData.error.type,
+            message: resData.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("대화 키워드를 불러오는 데 실패했습니다.", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   const ctxValue = {
     loading,
     healthStatus,
@@ -566,6 +615,7 @@ export default function HealthContextProvider({ children }) {
     handleGetMentalReports,
     handleGetOneDayMentalReport,
     handleGetWeekData,
+    handleGetKeywords,
   };
 
   return (

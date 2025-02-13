@@ -11,7 +11,7 @@ import ActivityChartContainer from "./ActiviyChartContainer";
 import MentalChartContainer from "../mental/MentalChartContainer.jsx";
 import WeeklyStats from "./WeeklyStats.jsx";
 import MentalReport from "../mental/MentalReport.jsx";
-import Keywords from "../mental/Keywords.jsx";
+import MentalHealth from "../mental/MentalHealth.jsx";
 
 export default function Activity() {
   const healthStore = useContext(HealthContext);
@@ -41,6 +41,9 @@ export default function Activity() {
             {/* <Keywords /> */}
             <PageContainer title="대화 리포트">
               <MentalReport />
+            </PageContainer>
+            <PageContainer title="정신 건강">
+              <MentalHealth />
             </PageContainer>
           </div>
         </div>

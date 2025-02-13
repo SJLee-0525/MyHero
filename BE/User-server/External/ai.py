@@ -159,6 +159,7 @@ async def talk_with_ai(user_id: str, message: str, session_id: str = None) -> ht
 
 # ========== News & Weather 부분 ==========
 
+# >>> Deprecated <<<
 # 한국의 최신 뉴스를 불러오는 기능
 async def korean_news() -> httpx.Response | None:
     external_url = f"{AI_PATH}/news"

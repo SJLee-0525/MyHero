@@ -86,5 +86,6 @@ from .messages import (
 
 from .tools import (
     get_all_master_region,
-    get_all_sub_region
+    get_all_sub_region,
+    get_news
 )

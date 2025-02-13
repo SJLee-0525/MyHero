@@ -436,20 +436,21 @@ async def delete_family(family_id: str, checker: PasswordCheck, request_id: str 
         )
 
     # 비밀번호 검증
-    input_password: str = checker.password
-    hashed_password: str = Database.get_hashed_password(family_data["main_user"])
-    is_verified: bool = verify_password(input_password, hashed_password)
+    if request_data["role"] is not Role.SYSTEM:
+        input_password: str = checker.password
+        hashed_password: str = Database.get_hashed_password(family_data["main_user"])
+        is_verified: bool = verify_password(input_password, hashed_password)
 
-    if not is_verified:
-        logger.warning(f"Invalid password: {family_id}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "type": "unauthorized",
-                "message": "Invalid password",
-                "input": {"family_id": family_id, "password": "<PASSWORD>"}
-            }
-        )
+        if not is_verified:
+            logger.warning(f"Invalid password: {family_id}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "type": "unauthorized",
+                    "message": "Invalid password",
+                    "input": {"family_id": family_id, "password": "<PASSWORD>"}
+                }
+            )
 
     # 가족 삭제 진행
     final_result: bool = Database.delete_one_family(family_id)

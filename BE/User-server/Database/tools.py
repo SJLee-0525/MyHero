@@ -9,6 +9,8 @@ Database Tools Part
 from Database.connector import database_instance as database
 from Database.models import *
 
+from datetime import datetime, date
+
 from sqlalchemy import or_
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -89,5 +91,53 @@ def get_all_sub_region(master_region: str = None) -> list[dict]:
             session.rollback()
             logger.error(f"Error getting all sub region data: {str(error)}")
             result = []
+        finally:
+            return result
+
+def get_news(target_date: date) -> dict:
+    result: dict = {}
+
+    category_list = [
+        "business",
+        "entertainment",
+        "environment",
+        "health",
+        "politics",
+        "science",
+        "sports",
+        "technology"
+    ]
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            today_news_list = session.query(
+                NewsTable.id,
+                NewsTable.category,
+                NewsTable.title,
+                NewsTable.link,
+                NewsTable.image_url,
+                NewsTable.pub_date,
+                NewsTable.created_at
+            ).filter(NewsTable.pub_date == target_date)
+
+            for category in category_list:
+                filtered_news_list = today_news_list.filter(NewsTable.category == category).all()
+
+                serialized_data = [{
+                    "id": data[0],
+                    "category": data[1],
+                    "title": data[2],
+                    "link": data[3],
+                    "image_url": data[4],
+                    "pub_date": data[5],
+                    "created_at": data[6]
+                } for data in filtered_news_list]
+
+                result[category] = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting news data: {str(error)}")
+            result = {}
         finally:
             return result

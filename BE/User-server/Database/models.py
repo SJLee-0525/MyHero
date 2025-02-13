@@ -351,3 +351,28 @@ class MessageTable(Base):
                 f"image_url='{self.image_url}', " +
                 f"is_read='{self.is_read}')>"
         )
+
+class NewsTable(Base):
+    """
+    한국의 뉴스 정보
+    """
+    __tablename__ = "news"
+
+    id = Column(INT, primary_key=True, nullable=False, autoincrement=True)
+    title = Column(String(255), nullable=False)
+    link = Column(TEXT, nullable=False)
+    pub_date = Column(Date, nullable=False)
+    image_url = Column(TEXT, nullable=True)
+    category = Column(String(50), nullable=False)
+    created_at = Column(TIMESTAMP, nullable=True, server_default=func.now())
+
+    def __repr__(self):
+        return (f"" +
+                f"<News(id='{self.id}', " +
+                f"title='{self.title}', " +
+                f"link='{self.link}', " +
+                f"pub_date='{self.pub_date}', " +
+                f"image_url='{self.image_url}', " +
+                f"category='{self.category}', " +
+                f"created_at='{self.created_at}')>"
+        )

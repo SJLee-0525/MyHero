@@ -5,6 +5,7 @@ services:
     build: .
     container_name: image-provider
     hostname: image-provider
+    restart: unless-stopped
     cap_add:
       - SYS_TIME
     ports:

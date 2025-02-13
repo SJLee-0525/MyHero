@@ -59,4 +59,7 @@
           args="-d $(find my_slam)/rviz/nav2.rviz"
           respawn="true"
           output="screen"/>
+
+    <!-- Static Transform Publisher -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_to_base_link" args="x y z qx qy qz qw base_link camera_frame" />
 </launch>

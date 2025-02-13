@@ -190,7 +190,7 @@ async def get_latest_home_status(family_id: str, request_id: str = Depends(Datab
     if home_status:
         return {
             "message": "Home status retrieved successfully",
-            "data": jsonable_encoder(home_status)
+            "result": jsonable_encoder(home_status)
         }
     else:
         logger.warning(f"No home status found: {family_id}")
@@ -712,7 +712,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
         logger.info(f"Mental status created successfully: {family_id}")
         return {
             "message": "Mental status created successfully",
-            "data": response.json()
+            "result": response.json()
         }
     elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
         logger.warning(f"Can not create mental status: {family_id}")
@@ -945,7 +945,7 @@ async def create_mental_reports(
         logger.info(f"Mental reports created successfully: {family_id} ")
         return {
             "message": "Mental reports created successfully",
-            "data": response.json()
+            "result": response.json()
         }
     elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
         logger.warning(f"No mental reports found: {family_id}")

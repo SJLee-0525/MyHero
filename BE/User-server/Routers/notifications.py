@@ -252,7 +252,7 @@ async def read_notification(notification_id: int, request_id = Depends(Database.
         )
 
 # 알림을 삭제하는 기능
-@router.delete("/{notification_id}", status_code=status.HTTP_200_OK)
+@router.delete("/delete/{notification_id}", status_code=status.HTTP_200_OK)
 async def delete_notification(notification_id: int, request_id = Depends(Database.check_current_user)):
     # 시스템 관리자만 삭제할 수 있음
     request_data: dict = Database.get_one_account(request_id)

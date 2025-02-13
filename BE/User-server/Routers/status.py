@@ -156,12 +156,12 @@ async def get_home_status(
     if home_status_list:
         return {
             "message": "Home status retrieved successfully",
-            "data": jsonable_encoder(home_status_list)
+            "result": jsonable_encoder(home_status_list)
         }
     else:
         return {
             "message": "No home status found",
-            "data": jsonable_encoder(home_status_list)
+            "result": jsonable_encoder(home_status_list)
         }
 
 # 가장 최신의 집 환경 정보를 불러오는 기능
@@ -372,12 +372,12 @@ async def get_health_status(
     if health_status_list:
         return {
             "message": "Health status retrieved successfully",
-            "data": jsonable_encoder(health_status_list)
+            "result": jsonable_encoder(health_status_list)
         }
     else:
         return {
             "message": "No health status found",
-            "data": jsonable_encoder(health_status_list)
+            "result": jsonable_encoder(health_status_list)
         }
 
 # 가장 최신의 건강 정보를 불러오는 기능
@@ -406,7 +406,7 @@ async def get_latest_health_status(family_id: str, request_id: str = Depends(Dat
     if health_status:
         return {
             "message": "Health status retrieved successfully",
-            "data": jsonable_encoder(health_status)
+            "result": jsonable_encoder(health_status)
         }
     else:
         logger.warning(f"No health status found: {family_id}")
@@ -592,12 +592,12 @@ async def get_active_status(
     if active_status_list:
         return {
             "message": "Active status retrieved successfully",
-            "data": jsonable_encoder(active_status_list)
+            "result": jsonable_encoder(active_status_list)
         }
     else:
         return {
             "message": "No active status found",
-            "data": jsonable_encoder(active_status_list)
+            "result": jsonable_encoder(active_status_list)
         }
 
 # 가장 최신의 활동 정보를 불러오는 기능
@@ -626,7 +626,7 @@ async def get_latest_active_status(family_id: str, request_id: str = Depends(Dat
     if active_status:
         return {
             "message": "Active status retrieved successfully",
-            "data": jsonable_encoder(active_status)
+            "result": jsonable_encoder(active_status)
         }
     else:
         logger.warning(f"No active status found: {family_id}")
@@ -721,7 +721,7 @@ async def create_mental_status(family_id: str, request_id: str = Depends(Databas
             detail={
                 "type": "not found",
                 "message": "No mental status found",
-                "data": {}
+                "result": {}
             }
         )
     else:
@@ -797,12 +797,12 @@ async def get_mental_status(
     if mental_status_list:
         return {
             "message": "Mental status retrieved successfully",
-            "data": jsonable_encoder(mental_status_list)
+            "result": jsonable_encoder(mental_status_list)
         }
     else:
         return {
             "message": "No mental status found",
-            "data": jsonable_encoder(mental_status_list)
+            "result": jsonable_encoder(mental_status_list)
         }
 
 # 가장 최신의 정신건강 정보를 불러오는 기능
@@ -831,7 +831,7 @@ async def get_latest_mental_status(family_id: str, request_id: str = Depends(Dat
     if mental_status:
         return {
             "message": "Mental status retrieved successfully",
-            "data": jsonable_encoder(mental_status)
+            "result": jsonable_encoder(mental_status)
         }
     else:
         logger.warning(f"No mental status found: {family_id}")
@@ -954,7 +954,7 @@ async def create_mental_reports(
             detail={
                 "type": "not found",
                 "message": "No mental reports found",
-                "data": {}
+                "result": {}
             }
         )
     else:
@@ -1030,12 +1030,12 @@ async def get_mental_reports(
     if mental_reports_list:
         return {
             "message": "Mental reports retrieved successfully",
-            "data": jsonable_encoder(mental_reports_list)
+            "result": jsonable_encoder(mental_reports_list)
         }
     else:
         return {
             "message": "No mental reports found",
-            "data": jsonable_encoder(mental_reports_list)
+            "result": jsonable_encoder(mental_reports_list)
         }
 
 # 가장 최신의 정신건강 리포트를 불러오는 기능
@@ -1064,7 +1064,7 @@ async def get_latest_mental_reports(family_id: str, request_id: str = Depends(Da
     if mental_reports:
         return {
             "message": "Mental reports retrieved successfully",
-            "data": jsonable_encoder(mental_reports)
+            "result": jsonable_encoder(mental_reports)
         }
     else:
         logger.warning(f"No mental reports found: {family_id}")
@@ -1150,7 +1150,7 @@ async def create_conversation_keyword(family_id: str, request_id: str = Depends(
         logger.info(f"Conversation keywords created successfully: {family_id} ")
         return {
             "message": "Conversation keywords created successfully",
-            "data": response.json()
+            "result": response.json()
         }
     else:
         raise HTTPException(
@@ -1195,7 +1195,7 @@ async def create_psychology_report(
         logger.info(f"Psychology report created successfully: {family_id} ")
         return {
             "message": "Psychology report created successfully",
-            "data": response.json()
+            "result": response.json()
         }
     else:
         raise HTTPException(

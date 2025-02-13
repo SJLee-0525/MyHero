@@ -155,13 +155,13 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           /> */}
-          <TopNavSideNavElems
+          {/* <TopNavSideNavElems
             imgSrc={settingIcon}
             altSrc="settings"
             identifier="SETTINGS"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          /> */}
         </ul>
       </aside>
     </div>,

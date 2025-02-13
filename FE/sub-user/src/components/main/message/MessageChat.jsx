@@ -36,7 +36,7 @@ export default function MessageChat() {
         <div id="chat" ref={chatRef}>
           {currentPersonMessageLog.map((log) => {
             // UTC+9 변환
-            const createdAtKST = new Date(log.created_at).toLocaleString(
+            const createdAtKST = new Date(log.created_at + "Z").toLocaleString(
               "ko-KR",
               {
                 timeZone: "Asia/Seoul",
@@ -45,7 +45,7 @@ export default function MessageChat() {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: true,
+                hour12: false, // 24시간제 사용
               }
             );
 

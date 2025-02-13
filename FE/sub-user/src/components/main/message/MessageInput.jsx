@@ -25,18 +25,18 @@ export default function MessageInput() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
-    const fileExtension = image.name.split(".").pop().toLowerCase();
-
-    if (!allowedExtensions.includes(fileExtension)) {
-      console.error("지원하지 않는 파일 형식입니다.");
-      return;
-    }
-
     let imageUrl = null;
 
     try {
       if (image) {
+        const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp"];
+        const fileExtension = image.name.split(".").pop().toLowerCase();
+
+        if (!allowedExtensions.includes(fileExtension)) {
+          console.error("지원하지 않는 파일 형식입니다.");
+          return;
+        }
+
         const formData = new FormData();
         formData.append("file", image);
 

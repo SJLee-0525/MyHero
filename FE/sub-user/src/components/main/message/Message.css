@@ -201,12 +201,14 @@
 }
 
 #chat .main-chat {
+  max-width: 300px;
   background-color: #b4cf66;
   /* background-color: #bfff00; */
   border-radius: 10px 10px 10px 0px;
 }
 
 #chat .sub-chat {
+  max-width: 300px;
   background-color: #ffec5c;
   /* background-color: #ffe100; */
   border-radius: 10px 10px 0px 10px;

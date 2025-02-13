@@ -18,8 +18,24 @@ export default function Login() {
     password: false,
   });
 
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
   const emailInput = useRef("");
   const passwordInput = useRef("");
+
+  const handleKeyDown = (event) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    if (!event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(false);
+    }
+  };
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -92,7 +108,13 @@ export default function Login() {
         <div className="login-form-row">
           <div className="login-control">
             <label htmlFor="email">이메일 아이디</label>
-            <input type="email" name="email" ref={emailInput} />
+            <input
+              type="email"
+              name="email"
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
+              ref={emailInput}
+            />
 
             {/* {formIsInvalid.email && (
               <div className="login-control-error">
@@ -101,15 +123,29 @@ export default function Login() {
             )} */}
           </div>
 
+          {isCapsLockOn && (
+            <div className="login-control-error">
+              <p>⚠️ Caps Lock이 켜져 있습니다!</p>
+            </div>
+          )}
+          {!isCapsLockOn && (
+            <div className="login-control-error">
+              <p> </p>
+            </div>
+          )}
+
           <div className="login-control">
             <label htmlFor="password">비밀번호</label>
             <input
               // id="password"
               type="password"
               name="password"
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
               ref={passwordInput}
             />
           </div>
+
           {/* {formIsInvalid.password && (
             <div className="login-control-error">
               <p>비밀번호는 8자 이상입니다.</p>{" "}

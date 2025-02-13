@@ -9,4 +9,4 @@ services:
     cap_add:
       - SYS_TIME
     ports:
-      - "4780:3000"
+      - "127.0.0.1:4780:3000"

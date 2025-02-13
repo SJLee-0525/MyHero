@@ -5,6 +5,7 @@ services:
     build: .
     container_name: dev-main
     hostname: dev-main
+    restart: unless-stopped
     cap_add:
       - SYS_TIME
     ports:

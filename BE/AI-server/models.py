@@ -7,7 +7,7 @@ from sqlalchemy.pool import Pool
 from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
 from time import sleep
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 
 # 환경 변수 로드
 load_dotenv()
@@ -172,3 +172,13 @@ class MentalReport(Base):
     worst_day = Column(Date)
     improvement_needed = Column(Boolean)
     summary = Column(Text)
+
+class News(Base):
+    __tablename__ = 'news'
+    id = Column(Integer, primary_key=True)
+    title = Column(String(255), nullable=False)
+    link = Column(Text, nullable=False)
+    pub_date = Column(Date, nullable=False)
+    image_url = Column(Text)
+    category = Column(String(50), nullable=False)
+    created_at = Column(DateTime(timezone=True))

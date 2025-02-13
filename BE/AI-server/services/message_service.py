@@ -89,7 +89,7 @@ class MessageService:
             logger.error(f"메시지 조회 오류: {str(e)}")
             return []
 
-    def mark_as_read(self, message_id: int) -> bool:
+    async def mark_as_read(self, message_id: int) -> bool:
         """메시지 읽음 처리"""
         try:
             message = self.db.query(Message).filter(Message.index == message_id).first()

@@ -368,10 +368,10 @@ async def get_unread_messages(user_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/chat/messages/read/{message_id}")
-async def mark_message_as_read(message_id: int):
+async def mark_message_as_read(message_id: int, db: Session = Depends(get_db)):
     try:
         message_service = MessageService(db)
-        if message_service.mark_as_read(message_id):
+        if await message_service.mark_as_read(message_id):
             return {"status": "success", "message": "메시지를 읽음 처리했습니다"}
         raise HTTPException(status_code=404, detail="메시지를 찾을 수 없습니다")
     except Exception as e:
@@ -416,10 +416,16 @@ async def get_family_members(family_id: str, db: Session = Depends(get_db)):
     finally:
         db.close()
 
+async def schedule_news_updates():
+    while True:
+        await news_service.update_news()
+        await asyncio.sleep(3600)
+
 @app.on_event("startup")
 async def startup_event():
     asyncio.create_task(update_notifications_periodically())
     asyncio.create_task(update_cache_periodically())
+    asyncio.create_task(schedule_news_updates()) 
     logger.info("Application startup completed")
 
 @app.on_event("shutdown")

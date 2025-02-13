@@ -36,9 +36,11 @@ async def main():
                 break
 
             if frame_count % FRAME_STEP == 0:
-                processed_frame, fall_detected, debug_info = await detector.process_frame(frame)
+                processed_frame, fall_detected, debug_info, *_ = await detector.process_frame(frame)
             else:
                 processed_frame = frame
+                fall_detected = False
+                debug_info = {}
 
             frame_count += 1
 

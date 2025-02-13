@@ -9,7 +9,7 @@ services:
     cap_add:
       - SYS_TIME
     ports:
-      - "4185:8000"
+      - "127.0.0.1:4185:8000"
     volumes:
       - /home/ubuntu/docker/image-provider:/app/Storage
     env_file:

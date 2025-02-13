@@ -9,7 +9,7 @@ services:
     cap_add:
       - SYS_TIME
     ports:
-      - "4180:8000"
+      - "127.0.0.1:4180:8000"
     networks:
       - api_shared_network
     env_file:

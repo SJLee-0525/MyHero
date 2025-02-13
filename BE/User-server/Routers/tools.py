@@ -6,13 +6,16 @@ Parts of Tools
 """
 
 # Libraries
-from fastapi import HTTPException, APIRouter, status, Depends
+from fastapi import HTTPException, APIRouter, status, Query, Depends
 from fastapi.encoders import jsonable_encoder
 
 import httpx
 import Database
 from Database.models import *
-from External.ai import korean_news, korean_weather, check_connection
+from External.ai import korean_weather, check_connection
+
+from datetime import date
+from typing import Optional
 
 from Utilities.logging_tools import *
 
@@ -94,13 +97,15 @@ async def get_ai_server_status():
         raise HTTPException(
             status_code=status.HTTP_418_IM_A_TEAPOT,
             detail={
-                "type": "server error",
-                "message": "AI Process Server is not running."
+                "type": "coffe",
+                "message": "AI Process Server serves coffee."
             }
         )
 
 @router.get("/news", status_code=status.HTTP_200_OK)
-async def get_news(request_id: str = Depends(Database.check_current_user)):
+async def get_news(
+        when: Optional[date] = Query(None, description="News query date"),
+        request_id: str = Depends(Database.check_current_user)):
     # 사용자 계정을 통해 접근하는지 점검
     request_data: dict = Database.get_one_account(request_id)
 
@@ -114,25 +119,32 @@ async def get_news(request_id: str = Depends(Database.check_current_user)):
             }
         )
 
-    # 뉴스 정보 받아오기
-    response: httpx.Response = await korean_news()
+    # 필수 입력 정보 점검
+    missing_location: list = ["query"]
 
-    if response is not None and response.status_code == status.HTTP_200_OK:
-        return {
-            "message": "News retrieved successfully",
-            "result": jsonable_encoder(response.json())
-        }
-    elif response is not None and response.status_code == status.HTTP_404_NOT_FOUND:
-        logger.warning("News not found")
+    if when is None:
+        missing_location.append("when")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={
-                "type": "not found",
-                "message": "News not found"
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Password data is required"
             }
         )
+
+    # 뉴스 정보 받아오기
+    result: dict = Database.get_news(when)
+
+    if result:
+        return {
+            "message": "News retrieved successfully",
+            "result": result
+        }
     else:
-        logger.critical("Failed to retrieve news")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={

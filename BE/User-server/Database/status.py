@@ -324,6 +324,7 @@ def delete_latest_health_status(family_id: str) -> bool:
 
 # ========== Active 부분 ==========
 
+# >>> Deprecated <<<
 # 새로운 활동 정보 추가하기
 def create_active_status(active_status_data: ActiveStatusTable) -> bool:
     """
@@ -347,6 +348,7 @@ def create_active_status(active_status_data: ActiveStatusTable) -> bool:
             session.commit()
             return result
 
+# >>> Deprecated <<<
 # 조건에 따른 모든 활동 정보 불러오기
 def get_active_status(
         family_id: str,
@@ -406,6 +408,7 @@ def get_active_status(
         finally:
             return result
 
+# >>> Deprecated <<<
 # 가장 최신의 활동 정보 불러오기
 def get_latest_active_status(family_id: str) -> dict:
     """
@@ -451,6 +454,7 @@ def get_latest_active_status(family_id: str) -> dict:
         finally:
             return result
 
+# >>> Deprecated <<<
 # 가장 최신의 활동 정보 삭제하기
 def delete_latest_active_status(family_id: str) -> bool:
     """

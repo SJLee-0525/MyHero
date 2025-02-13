@@ -89,6 +89,7 @@ class FamiliesTable(Base):
     mental_status = relationship("MentalStatusTable", cascade="all, delete")
     mental_reports = relationship("MentalReportsTable", cascade="all, delete")
     notifications_relations = relationship("NotificationsTable", cascade="all, delete")
+    settings_relations = relationship("SettingsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -375,4 +376,25 @@ class NewsTable(Base):
                 f"image_url='{self.image_url}', " +
                 f"category='{self.category}', " +
                 f"created_at='{self.created_at}')>"
+        )
+
+class SettingsTable(Base):
+    """
+    로봇의 설정 값 정보
+    """
+    __tablename__ = "settings"
+
+    family_id = Column(String(16), ForeignKey('families.id'), primary_key=True, nullable=False)
+    is_alarm_enabled = Column(Boolean, nullable=False, server_default="FALSE")
+    is_camera_enabled = Column(Boolean, nullable=False, server_default="FALSE")
+    is_microphone_enabled = Column(Boolean, nullable=False, server_default="FALSE")
+    is_driving_enabled = Column(Boolean, nullable=False, server_default="FALSE")
+
+    def __repr__(self):
+        return (f"" +
+                f"<Settings(family_id='{self.family_id}', " +
+                f"is_alarm_enabled='{self.is_alarm_enabled}', " +
+                f"is_camera_enabled='{self.is_camera_enabled}', " +
+                f"is_microphone_enabled='{self.is_microphone_enabled}', " +
+                f"is_driving_enabled='{self.is_driving_enabled}')>"
         )

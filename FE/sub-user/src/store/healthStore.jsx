@@ -203,16 +203,16 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Health status retrieved successfully") {
-          setHealthStatus([...resData.data]);
+          setHealthStatus([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         } else if (resData.message === "No health status found") {
-          setHealthStatus([...resData.data]);
+          setHealthStatus([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         }
       } else {
@@ -276,20 +276,20 @@ export default function HealthContextProvider({ children }) {
       if (response.success) {
         if (resData.message === "Active status retrieved successfully") {
           setActivityStatus(
-            resData.data.map((item) => ({
+            resData.result.map((item) => ({
               ...item,
               description: JSON.parse(item.description.replace(/'/g, '"')),
             }))
           );
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         } else if (resData.message === "No active status found") {
-          setActivityStatus([...resData.data]);
+          setActivityStatus([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         }
       } else {
@@ -353,20 +353,20 @@ export default function HealthContextProvider({ children }) {
       if (response.success) {
         if (resData.message === "Mental status retrieved successfully") {
           setMentalStatus(
-            resData.data.map((item) => ({
+            resData.result.map((item) => ({
               ...item,
               description: JSON.parse(item.description.replace(/'/g, '"')),
             }))
           );
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         } else if (resData.message === "No mental status found") {
-          setMentalStatus([...resData.data]);
+          setMentalStatus([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         }
       } else {
@@ -429,16 +429,16 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Mental reports retrieved successfully") {
-          setMentalReport([...resData.data]);
+          setMentalReport([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         } else if (resData.message === "No mental reports found") {
-          setMentalReport([...resData.data]);
+          setMentalReport([...resData.result]);
           return {
             success: true,
-            data: resData.data,
+            data: resData.result,
           };
         }
       } else {

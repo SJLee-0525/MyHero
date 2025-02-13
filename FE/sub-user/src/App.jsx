@@ -73,7 +73,7 @@ function App() {
                 <Route path="/activity" element={<Activity />} />
                 {/* <Route path="/mental" element={<Mental />} /> */}
                 <Route path="/accounts/*" element={<Accounts />} />
-                <Route path="/settings" element={<Settings />} />
+                {/* <Route path="/settings" element={<Settings />} /> */}
               </>
             ) : (
               <Route path="/" element={<Advertisement />} />

@@ -175,13 +175,13 @@
 #chat .main {
   display: flex;
   justify-content: start;
-  align-items: center;
+  align-items: end;
 }
 
 #chat .sub {
   display: flex;
   justify-content: end;
-  align-items: center;
+  align-items: end;
 }
 
 #chat .chat-date {
@@ -201,15 +201,25 @@
 }
 
 #chat .main-chat {
+  max-width: 300px;
   background-color: #b4cf66;
   /* background-color: #bfff00; */
   border-radius: 10px 10px 10px 0px;
 }
 
 #chat .sub-chat {
+  max-width: 300px;
   background-color: #ffec5c;
   /* background-color: #ffe100; */
   border-radius: 10px 10px 0px 10px;
+}
+
+#chat img {
+  max-width: 300px;
+  max-height: 300px;
+
+  border-radius: 8px;
+  border: 0;
 }
 
 /* 애니메이션 정의 */
@@ -222,21 +232,6 @@
     transform: translateY(0); /* 최종 위치는 원래 위치 */
     opacity: 1; /* 끝날 때는 완전히 보이도록 */
   }
-}
-
-#message-file-group {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  color: #007bff;
-  font-weight: bold;
-}
-
-#image-preview img {
-  margin-top: 10px;
-  border-radius: 8px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 #message-form-group {
@@ -252,6 +247,43 @@
 
   width: 100%;
   gap: 10px;
+}
+
+#message-file-group {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 10%;
+  gap: 10px;
+
+  border: 0;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.568);
+
+  cursor: pointer;
+  font-weight: bold;
+
+  transition: all 0.3s ease;
+}
+
+#message-file-group:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+
+  transition: all 0.3s ease;
+}
+
+#image-preview {
+  position: absolute;
+
+  bottom: +70px;
+}
+
+#image-preview img {
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 #message-form-group #message-role {
@@ -270,7 +302,7 @@
   justify-content: center;
   align-items: center;
 
-  width: 100%;
+  width: 90%;
 }
 
 #message-input-group input {

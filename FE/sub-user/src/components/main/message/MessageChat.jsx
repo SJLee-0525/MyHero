@@ -36,7 +36,7 @@ export default function MessageChat() {
         <div id="chat" ref={chatRef}>
           {currentPersonMessageLog.map((log) => {
             // UTC+9 변환
-            const createdAtKST = new Date(log.created_at).toLocaleString(
+            const createdAtKST = new Date(log.created_at + "Z").toLocaleString(
               "ko-KR",
               {
                 timeZone: "Asia/Seoul",
@@ -45,7 +45,7 @@ export default function MessageChat() {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: true,
+                hour12: false, // 24시간제 사용
               }
             );
 
@@ -53,7 +53,12 @@ export default function MessageChat() {
               (log.from_id === messageStore.messagePerson &&
                 log.to_id === userProgressStore.loginUserInfo.userInfo.id && (
                   <div key={log.index} className="main">
-                    <span className="main-chat">{log.content}</span>
+                    <div className="main-chat">
+                      {log.image_url && (
+                        <img src={log.image_url} alt="이미지" />
+                      )}
+                      <div>{log.content}</div>
+                    </div>
                     <span className="chat-date">{createdAtKST}</span>
                   </div>
                 )) ||
@@ -61,7 +66,12 @@ export default function MessageChat() {
                 log.from_id === userProgressStore.loginUserInfo.userInfo.id && (
                   <div key={log.index} className="sub">
                     <span className="chat-date">{createdAtKST}</span>
-                    <span className="sub-chat">{log.content}</span>
+                    <div className="sub-chat">
+                      {log.image_url && (
+                        <img src={log.image_url} alt="이미지" />
+                      )}
+                      <div>{log.content}</div>
+                    </div>
                   </div>
                 )) ||
               null

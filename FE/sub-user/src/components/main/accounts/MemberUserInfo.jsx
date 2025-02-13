@@ -8,7 +8,6 @@ export default function MemberUserInfo() {
   const userProgressStore = useContext(UserProgressContext);
   // const loginUserInfo = userProgressStore.loginUserInfo;
   const memberUserInfo = userProgressStore.memberInfo;
-  console.log(123123123, memberUserInfo);
 
   function handleShowCreateMemberUserInfo() {
     userProgressStore.handleOpenModal("create-member-user-info");

@@ -18,7 +18,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 1rem;
+
+  margin: 1rem 0;
 }
 
 #login-form .login-control {
@@ -89,6 +90,7 @@
 .login-control-error {
   color: #ff5a33;
   font-size: 0.8rem;
+  width: 300px;
   height: 2rem;
   padding: 0.5rem 0;
 }

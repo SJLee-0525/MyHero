@@ -12,6 +12,7 @@ export const MessageContext = createContext({
   handleGetAllSentMessage: (inputStart, inputEnd, order) => {},
   handleGetAllMessages: () => {},
   getNewMessages: (inputStart, inputEnd, order) => {},
+  insertPhotoFile: (imageFile) => {},
   handleSendMessage: (content, imageUrl = null) => {},
 });
 
@@ -227,6 +228,48 @@ export default function MessageContextProvider({ children }) {
     }
   }
 
+  async function insertPhotoFile(formData) {
+    try {
+      const response = await fetch(
+        `${userProgressStore.IMAGE_API_URL}/upload`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include", // 필요한 경우 포함
+        }
+      );
+
+      const resData = await response.json().catch(() => null); // JSON 변환 실패 방지
+
+      if (response.ok) {
+        if (resData.message === "Image uploaded successfully") {
+          return {
+            success: true,
+            data: resData.result,
+          };
+        }
+      } else {
+        console.error(`이미지 업로드 실패`, resData.error);
+        return {
+          success: false,
+          error: {
+            type: resData.error.type,
+            message: resData.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   async function handleSendMessage(content, imageUrl = null) {
     if (
       !content ||
@@ -291,6 +334,7 @@ export default function MessageContextProvider({ children }) {
     handleGetAllSentMessage,
     handleGetAllMessages,
     getNewMessages,
+    insertPhotoFile,
     handleSendMessage,
   };
 

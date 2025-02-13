@@ -34,6 +34,7 @@ export const UserProgressContext = createContext({
   },
   DEV_API_URL: "",
   MAIN_API_URL: "",
+  IMAGE_API_URL: "",
   DEV_KEY: "",
   MAIN_KEY: "",
   setIsActiveSideBarElem: () => {},
@@ -176,12 +177,15 @@ export default function UserProgressContextProvider({ children }) {
   // env 관련
   let DEV_API_URL = import.meta.env.VITE_DEV_API;
   let MAIN_API_URL = import.meta.env.VITE_MAIN_API;
+  let IMAGE_API_URL = import.meta.env.VITE_IMAGE_API;
   let DEV_KEY = import.meta.env.VITE_DEV_KEY;
   let MAIN_KEY = import.meta.env.VITE_MAIN_KEY;
 
   if (DEV_API_URL === undefined) DEV_API_URL = getEnvironments("DEV_API_URL");
   if (MAIN_API_URL === undefined)
     MAIN_API_URL = getEnvironments("MAIN_API_URL");
+  if (IMAGE_API_URL === undefined)
+    IMAGE_API_URL = getEnvironments("IMAGE_API_URL");
   if (DEV_KEY === undefined) DEV_KEY = getEnvironments("DEV_KEY");
   if (MAIN_KEY === undefined) MAIN_KEY = getEnvironments("MAIN_KEY");
   // ======================================================================
@@ -1254,6 +1258,7 @@ export default function UserProgressContextProvider({ children }) {
     memberInfo,
     DEV_API_URL,
     MAIN_API_URL,
+    IMAGE_API_URL,
     DEV_KEY,
     MAIN_KEY,
     setIsActiveSideBarElem,

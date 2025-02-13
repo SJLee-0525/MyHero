@@ -338,19 +338,20 @@ async def delete_member(member_id: str, checker: PasswordCheck, request_id: str 
         )
 
     # 비밀번호 검증
-    input_password: str = checker.password
-    hashed_password: str = Database.get_hashed_password(previous_member["user_id"])
-    is_verified: bool = verify_password(input_password, hashed_password)
+    if request_data["role"] is not Role.SYSTEM:
+        input_password: str = checker.password
+        hashed_password: str = Database.get_hashed_password(previous_member["user_id"])
+        is_verified: bool = verify_password(input_password, hashed_password)
 
-    if not is_verified:
-        logger.warning(f"Invalid password: {member_id}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "type": "unauthorized",
-                "message": "Invalid password"
-            }
-        )
+        if not is_verified:
+            logger.warning(f"Invalid password: {member_id}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "type": "unauthorized",
+                    "message": "Invalid password"
+                }
+            )
 
     # 가족 관계 삭제 진행
     result: bool = Database.delete_one_member(member_id)
@@ -418,19 +419,20 @@ async def kick_member(member_id: str, checker: PasswordCheck, request_id: str = 
         )
 
     # 비밀번호 검증
-    input_password: str = checker.password
-    hashed_password: str = Database.get_hashed_password(request_id)
-    is_verified: bool = verify_password(input_password, hashed_password)
+    if request_data["role"] is not Role.SYSTEM:
+        input_password: str = checker.password
+        hashed_password: str = Database.get_hashed_password(request_id)
+        is_verified: bool = verify_password(input_password, hashed_password)
 
-    if not is_verified:
-        logger.warning(f"Invalid password: {request_id}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail={
-                "type": "unauthorized",
-                "message": "Invalid password"
-            }
-        )
+        if not is_verified:
+            logger.warning(f"Invalid password: {request_id}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail={
+                    "type": "unauthorized",
+                    "message": "Invalid password"
+                }
+            )
 
     # 가족 관계 삭제 진행
     result: bool = Database.delete_one_member(member_id)

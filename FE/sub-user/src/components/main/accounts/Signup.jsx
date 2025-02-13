@@ -281,11 +281,27 @@ export default function Signup() {
     passwordCheck: false,
   });
 
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
+
   const emailInput = useRef("");
   const passwordInput = useRef("");
 
   const [cities, setCities] = useState([]);
   const [selectedState, setSelectedState] = useState("");
+
+  const handleKeyDown = (event) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    if (!event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(false);
+    }
+  };
 
   async function handleEmailCheck() {
     const enteredEmail = emailInput.current.value;
@@ -534,15 +550,17 @@ export default function Signup() {
               id="password"
               type="password"
               name="password"
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
               ref={passwordInput}
               required
             />
 
-            {formIsInvalid.password && (
-              <div className="signup-control-error">
-                <p>비밀번호는 8자 이상이어야 합니다.</p>
-              </div>
-            )}
+            <div className="login-control-error">
+              {formIsInvalid.password && (
+                <p>⚠️ 비밀번호는 8자 이상이어야 합니다.</p>
+              )}
+            </div>
           </div>
 
           {/* 비밀번호 확인 입력 */}
@@ -552,18 +570,20 @@ export default function Signup() {
               id="confirm-password"
               type="password"
               name="confirm-password"
+              onKeyDown={handleKeyDown}
+              onKeyUp={handleKeyUp}
               required
             />
 
-            {formIsInvalid.passwordCheck && (
-              <div className="signup-control-error">
-                <p>비밀번호가 일치하지 않습니다.</p>
-              </div>
-            )}
+            <div className="signup-control-error">
+              {formIsInvalid.passwordCheck && (
+                <p>⚠️ 비밀번호가 일치하지 않습니다.</p>
+              )}
+              {isCapsLockOn && <p>⚠️ Caps Lock이 켜져 있습니다!</p>}
+            </div>
           </div>
         </div>
-
-        <hr />
+        <br />
 
         {/* 개인 정보 입력 */}
         <div className="signup-control-row">

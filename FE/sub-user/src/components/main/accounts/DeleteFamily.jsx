@@ -12,8 +12,23 @@ export default function DeleteFamily() {
   const navigate = useNavigate();
 
   const [passwordIsInvalid, setPasswordIsInvalid] = useState(false);
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
   const inputPassword = useRef("");
+
+  const handleKeyDown = (event) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    if (!event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(false);
+    }
+  };
 
   // 가족 삭제 로직
   async function handleDeleteFamily() {
@@ -74,12 +89,16 @@ export default function DeleteFamily() {
         </div>
         <p className="signout-control">
           <label htmlFor="password">비밀번호</label>
-          <input type="password" ref={inputPassword} />
-          {passwordIsInvalid && (
-            <div className="login-control-error">
-              <p>비밀번호는 8자 이상입니다.</p>{" "}
-            </div>
-          )}
+          <input
+            type="password"
+            ref={inputPassword}
+            onKeyDown={handleKeyDown}
+            onKeyUp={handleKeyUp}
+          />
+          <div className="login-control-error">
+            {passwordIsInvalid && <p>⚠️ 비밀번호는 8자 이상입니다.</p>}
+            {isCapsLockOn && <p>⚠️ Caps Lock이 켜져 있습니다!</p>}
+          </div>
           <button className="logout-btn" onClick={handleDeleteFamily}>
             모임 삭제
           </button>

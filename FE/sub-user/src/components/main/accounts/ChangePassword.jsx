@@ -14,10 +14,25 @@ export default function ChangePassword() {
   const [newPasswordIsInvalid, setNewPasswordIsInvalid] = useState(false);
   const [confirmPasswordIsInvalid, setConfirmPasswordIsInvalid] =
     useState(false);
+  const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
   const inputPassword = useRef("");
   const inputNewPassword = useRef("");
   const confirmPassword = useRef("");
+
+  const handleKeyDown = (event) => {
+    if (event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(true);
+    } else {
+      setIsCapsLockOn(false);
+    }
+  };
+
+  const handleKeyUp = (event) => {
+    if (!event.getModifierState("CapsLock")) {
+      setIsCapsLockOn(false);
+    }
+  };
 
   // 가족 삭제 로직
   async function handleChangePassword() {
@@ -92,12 +107,22 @@ export default function ChangePassword() {
           <div className="login-form-row">
             <div className="login-control">
               <label htmlFor="text">현재 비밀번호</label>
-              <input type="password" ref={inputPassword} />
+              <input
+                type="password"
+                ref={inputPassword}
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
+              />
             </div>
 
             <div className="login-control">
               <label htmlFor="password">변경 비밀번호</label>
-              <input type="password" ref={inputNewPassword} />
+              <input
+                type="password"
+                ref={inputNewPassword}
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
+              />
             </div>
 
             {/* 비밀번호 확인 입력 */}
@@ -107,27 +132,22 @@ export default function ChangePassword() {
                 id="confirm-password"
                 type="password"
                 name="confirm-password"
+                onKeyDown={handleKeyDown}
+                onKeyUp={handleKeyUp}
                 ref={confirmPassword}
                 required
               />
             </div>
             <div>
-              {!newPasswordIsInvalid ||
-                (!confirmPasswordIsInvalid && (
-                  <div className="login-control-error">
-                    <p> </p>
-                  </div>
-                ))}
-              {newPasswordIsInvalid && (
-                <div className="login-control-error">
-                  <p>새 비밀번호는 8자 이상이어야 합니다.</p>
-                </div>
-              )}
-              {confirmPasswordIsInvalid && (
-                <div className="login-control-error">
-                  <p>확인 비밀번호가 일치하지 않습니다.</p>
-                </div>
-              )}
+              <div className="login-control-error">
+                {newPasswordIsInvalid && (
+                  <p>⚠️ 새 비밀번호는 8자 이상이어야 합니다.</p>
+                )}
+                {confirmPasswordIsInvalid && (
+                  <p>⚠️ 확인 비밀번호가 일치하지 않습니다.</p>
+                )}
+                {isCapsLockOn && <p>⚠️ Caps Lock이 켜져 있습니다!</p>}
+              </div>
             </div>
           </div>
           <p className="login-form-action">

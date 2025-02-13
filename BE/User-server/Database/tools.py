@@ -94,7 +94,13 @@ def get_all_sub_region(master_region: str = None) -> list[dict]:
         finally:
             return result
 
+# 데이터 베이스에 미리 Cache된 News를 불러오는 기능
 def get_news(target_date: date) -> dict:
+    """
+    Cached News를 불러오는 기능
+    :param target_date: News가 발행된 날짜
+    :return: Category별로 정리된 News dict[list]
+    """
     result: dict = {}
 
     category_list = [
@@ -140,4 +146,127 @@ def get_news(target_date: date) -> dict:
             logger.error(f"Error getting news data: {str(error)}")
             result = {}
         finally:
+            return result
+
+# Settings 값을 새롭게 추가하는 기능
+def create_settings(settings_data: SettingsTable):
+    """
+    Settings 값을 새롭게 추가하는 기능
+    :param settings_data: SettingsTable로 미리 Mapping된 데이터
+    :return: 성공적으로 생성되었는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            session.add(settings_data)
+            logger.info(f"New settings created: {settings_data}")
+            result = True
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error creating new settings: {str(error)}")
+            result = False
+        finally:
+            session.commit()
+            return result
+
+# Settings 값을 불러오는 기능
+def get_settings(family_id: str) -> dict:
+    """
+    해당 가족의 장비의 Settings 값을 불러오는 기능
+    :param family_id: 가족의 ID
+    :return: Settings 값 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            settings_data = session.query(
+                SettingsTable.family_id,
+                SettingsTable.is_alarm_enabled,
+                SettingsTable.is_camera_enabled,
+                SettingsTable.is_microphone_enabled,
+                SettingsTable.is_driving_enabled
+            ).filter(SettingsTable.family_id == family_id).first()
+
+            if settings_data is not None:
+                serialized_data = {
+                    "family_id": settings_data[0],
+                    "is_alarm_enabled": settings_data[1],
+                    "is_camera_enabled": settings_data[2],
+                    "is_microphone_enabled": settings_data[3],
+                    "is_driving_enabled": settings_data[4]
+                }
+                result = serialized_data
+            else:
+                result = {}
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting settings data: {str(error)}")
+            result = {}
+        finally:
+            return result
+
+# Settings 값을 수정하는 기능
+def update_settings(family_id: str, updated_settings: SettingsTable) -> bool:
+    """
+    Settings 값을 업데이트하는 기능
+    :param family_id: 가족의 ID
+    :param updated_settings: 변경할 Settings의 값
+    :return: 성공적으로 Settings 값이 업데이트 되었는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            previous_settings = session.query(SettingsTable).filter(SettingsTable.family_id == family_id).first()
+
+            if previous_settings is not None:
+                if updated_settings.is_alarm_enabled is not None:
+                    previous_settings.is_alarm_enabled = updated_settings.is_alarm_enabled
+                if updated_settings.is_camera_enabled is not None:
+                    previous_settings.is_camera_enabled = updated_settings.is_camera_enabled
+                if updated_settings.is_microphone_enabled is not None:
+                    previous_settings.is_microphone_enabled = updated_settings.is_microphone_enabled
+                if updated_settings.is_driving_enabled is not None:
+                    previous_settings.is_driving_enabled = updated_settings.is_driving_enabled
+                result = True
+            else:
+                result = False
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error updating settings data: {str(error)}")
+            result = False
+        finally:
+            session.commit()
+            return result
+
+# Settings 값을 삭제하는 기능
+def delete_settings(family_id: str) -> bool:
+    """
+    Settings 값을 삭제하는 기능
+    :param family_id: 가족의 ID
+    :return: 성공적으로 Settings 값이 삭제되었는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            settings_data = session.query(SettingsTable).filter(SettingsTable.family_id == family_id).first()
+            if settings_data is not None:
+                session.delete(settings_data)
+                logger.info(f"Settings data deleted: {settings_data}")
+                result = True
+            else:
+                result = False
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error deleting settings data: {str(error)}")
+            result = False
+        finally:
+            session.commit()
             return result

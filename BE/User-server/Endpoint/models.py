@@ -165,3 +165,12 @@ class Message(BaseModel):
     to_id: Optional[str] = None
     content: Optional[str] = None
     image_url: Optional[str] = None
+
+class Settings(BaseModel):
+    """
+    로봇의 설정 값을 업데이트하기 위해 Client가 보내는 데이터
+    """
+    is_alarm_enabled: Optional[bool] = None
+    is_camera_enabled: Optional[bool] = None
+    is_microphone_enabled: Optional[bool] = None
+    is_driving_enabled: Optional[bool] = None

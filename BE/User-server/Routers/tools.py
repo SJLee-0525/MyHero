@@ -12,6 +12,7 @@ from fastapi.encoders import jsonable_encoder
 import httpx
 import Database
 from Database.models import *
+from Endpoint.models import Settings
 from External.ai import korean_weather, check_connection
 
 from datetime import date
@@ -22,7 +23,7 @@ from Utilities.logging_tools import *
 router = APIRouter(prefix="/tools", tags=["Tools"])
 logger = get_logger("Router_Tools")
 
-# ========== Tool 부분 ==========
+# ========== Tool/Location 부분 ==========
 # 광역자치단체를 불러오는 기능
 @router.get("/master-region", status_code=status.HTTP_200_OK)
 async def get_all_master_regions():
@@ -82,6 +83,8 @@ async def get_all_sub_regions_by_master_region(master_region: str):
                 "message": "Failed to retrieve sub region data"
             }
         )
+
+# ========== Tool/AI 부분 ==========
 
 # AI Process Server가 접근 가능한지 확인하는 기능
 @router.get("/ai-server", status_code=status.HTTP_200_OK)
@@ -218,5 +221,98 @@ async def get_weather(user_id: str, request_id: str = Depends(Database.check_cur
             detail={
                 "type": "server error",
                 "message": "Failed to retrieve weather"
+            }
+        )
+
+# ========== Tool/Settings 부분 ==========
+
+# Settings 값을 가져오는 기능
+@router.get("/settings/{family_id}", status_code=status.HTTP_200_OK)
+async def get_settings(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 정보를 수정할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # Settings 값 불러오기
+    result: dict = Database.get_settings(family_id)
+
+    if result:
+        return {
+            "message": "Settings retrieved successfully",
+            "result": result
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to retrieve settings"
+            }
+        )
+
+# Settings 값을 수정하는 기능
+@router.patch("/settings/{family_id}", status_code=status.HTTP_200_OK)
+async def update_settings(family_id: str, updated_settings: Settings, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 정보를 수정할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": jsonable_encoder(updated_settings)
+            }
+        )
+
+    # 변경할 Settings 값 생성
+    final_updated_settings: SettingsTable = SettingsTable(
+        family_id=family_id,
+        is_alarm_enabled=updated_settings.is_alarm_enabled \
+            if updated_settings.is_alarm_enabled is not None else None,
+        is_microphone_enabled=updated_settings.is_microphone_enabled \
+            if updated_settings.is_microphone_enabled is not None else None,
+        is_camera_enabled=updated_settings.is_camera_enabled \
+            if updated_settings.is_camera_enabled is not None else None,
+        is_driving_enabled=updated_settings.is_driving_enabled \
+            if updated_settings.is_driving_enabled is not None else None
+    )
+
+    # Settings 정보 변경
+    result: bool = Database.update_settings(
+        family_id=family_id,
+        updated_settings=final_updated_settings
+    )
+
+    if result:
+        return {
+            "message": "Settings updated successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to update settings",
+                "input": jsonable_encoder(updated_settings)
             }
         )

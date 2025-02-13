@@ -159,6 +159,20 @@ async def create_family(family_data: Family, request_id: str = Depends(Database.
         family_name=family_data.family_name
     )
 
+    # Settings 값 생성
+    settings_data: SettingsTable = SettingsTable(family_id=new_id)
+    settings_result: bool = Database.create_settings(settings_data)
+
+    if not settings_result:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to create new settings",
+                "input": jsonable_encoder(family_data)
+            }
+        )
+
     # 새로운 가족 생성
     result: bool = Database.create_family(new_family)
 

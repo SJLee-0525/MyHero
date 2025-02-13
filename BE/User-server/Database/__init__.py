@@ -87,5 +87,9 @@ from .messages import (
 from .tools import (
     get_all_master_region,
     get_all_sub_region,
-    get_news
+    get_news,
+    create_settings,
+    get_settings,
+    update_settings,
+    delete_settings
 )

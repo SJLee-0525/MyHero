@@ -27,6 +27,7 @@ app.get('/env', (req, res) => {
   res.json({
     DEV_API_URL: process.env.REACT_APP_DEV_API,
     MAIN_API_URL: process.env.REACT_APP_MAIN_API,
+    IMAGE_API_URL: process.env.REACT_APP_IMAGE_API,
     DEV_KEY: process.env.REACT_APP_DEV_KEY,
     MAIN_KEY: process.env.REACT_APP_MAIN_KEY,
     MODE: process.env.NODE_ENV,

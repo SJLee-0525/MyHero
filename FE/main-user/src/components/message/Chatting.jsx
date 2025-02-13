@@ -12,27 +12,28 @@ export default function Chatting({ isOpen }) {
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
 
-    if (!selectedUser) return <p>대화할 상대를 선택하세요.</p>;
-
-    const messages = conversations[selectedUser.user_id] || [];
-
+    
+    // const messages = conversations[selectedUser.user_id] || [];
+    
     useEffect(() => {
         if (isOpen && selectedUser.user_id) {
             console.log(`📩 ${selectedUser.user_id}와의 전체 대화 내역 불러오기 시작`);
             fetchMessages(selectedUser.user_id);
         }
-
+        
         return () => {
             console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
         };
-    }, [isOpen, selectedUser.user_id]);
-
+    }, [isOpen, selectedUser]);
+    
     useEffect(() => {
         if (messageEndRef.current) {
             messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
         }
-    }, [messages]);
-
+    }, [conversations[selectedUser.user_id]]);
+    
+    if (!selectedUser || !conversations  || !conversations[selectedUser.user_id]) return <p>대화할 상대를 선택하세요.</p>;
+    
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
             index: Date.now(),  // 임시 ID (서버와 동기화되면 변경 가능)
@@ -43,21 +44,17 @@ export default function Chatting({ isOpen }) {
             sender: "me"
         };
 
-        addMessage(selectedUser.user_id, newMsgObject);
+        // addMessage(selectedUser.user_id, newMsgObject);
 
-        setConversations((prev) => ({
-            ...prev,
-            [selectedUser.user_id]: [...(prev[selectedUser.user_id] || []), newMsgObject]
-        }));
+        // setConversations((prev) => ({
+        //     ...prev,
+        //     [selectedUser.user_id]: [...(prev[selectedUser.user_id] || []), newMsgObject]
+        // }));
 
         const response = await sendMessageToServer(newMsgObject);
 
         if (response.success) {
             console.log("✅ 서버에 메시지 저장 완료:", response.data);
-
-            setTimeout(() => {
-                fetchMessages(selectedUser.user_id);
-            }, 1000); // 서버 데이터 업데이트 후 동기화
         } else {
         console.error("❌ 메시지 전송 실패:", response.error);
         }
@@ -77,10 +74,10 @@ export default function Chatting({ isOpen }) {
             </div>
             <div className="message-content">
                 <div className="message-list">
-                    {messages.length === 0 ? (
+                    {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (
                         <p className="no-messages">대화 내역이 없습니다.</p>
                     ) : (
-                        messages.map((msg) => (
+                        conversations[selectedUser.user_id].map((msg) => (
                             <Message 
                                 key={msg.index} 
                                 text={msg.content} 

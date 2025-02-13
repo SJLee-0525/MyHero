@@ -10,12 +10,12 @@ export default function NewsBoxPage({ category, newsData, onBack }) {
       <div className="news-list">
         {newsData.length > 0 ? (
           newsData.map((news) => (
-            <div key={news.article_id} className="news-box" onClick={() => window.open(news.link, "_blank")}>
+            <div key={news.id} className="news-box" onClick={() => window.open(news.link, "_blank")}>
               <img src={news.image_url} alt="News" className="news-image" />
               <div className="news-info">
                 <h3 className="news-title">{news.title}</h3>
                 <p className="news-meta">
-                  {news.creator ? news.creator[0] : "Unknown"} · {new Date(news.pubDate).toLocaleDateString()}
+                  {new Date(news.pub_date).toLocaleDateString()}
                 </p>
               </div>
             </div>

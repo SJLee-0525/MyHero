@@ -26,7 +26,7 @@ export default function ReplyBar({ onSend }) {
             sender: "me",
         };
 
-        addMessage(selectedUser.user_id, newMessage);
+        // addMessage(selectedUser.user_id, newMessage);
 
         const response = await sendMessageToServer(newMessage);
 

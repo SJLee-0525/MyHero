@@ -26,6 +26,7 @@ export default function MessageProvider({ children }) {
     const [selectedUser, setSelectedUser] = useState(null); // 선택한 대화 상대
     const [conversations, setConversations] = useState({}); // 유저별 대화 저장
     const [isLoading, setIsLoading] = useState(false);
+    // console.log('################',conversations)
 
     let loginUserId = userProgressStore.loginUserInfo.userInfo?.id || "";
     
@@ -49,8 +50,12 @@ export default function MessageProvider({ children }) {
     }
 
     async function sendMessageToServer(message) {
+        console.log("!!!!!!!!!!!!!!", message)
         try {
             const response = await request(`${userProgressStore.DEV_API_URL}/messages/send`, "POST", message);
+            
+            await fetchMessages(message.to_id);
+
             return response;
         } catch (error) {
             console.error("❌ 메시지 전송 중 오류 발생:", error);

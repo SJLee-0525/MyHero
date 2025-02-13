@@ -6,7 +6,7 @@ import { useMessageStore } from "../../store/messageStore.jsx";
 import { useUserProgressStore } from "../../store/userProgressStore.jsx";
 import "./Message.css";
 
-export default function Chatting() {
+export default function Chatting({ isOpen }) {
     const { selectedUser, conversations, addMessage } = useMessageStore();
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
@@ -17,20 +17,27 @@ export default function Chatting() {
     const messages = conversations[selectedUser.user_id] || [];
 
     useEffect(() => {
-        console.log(`📩 ${selectedUser.user_id}와의 전체 대화 내역`, messages);
-        if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        if (isOpen && selectedUser.user_id) {
+            console.log(`📩 ${selectedUser.user_id}와의 전체 대화 내역 불러오기 시작`);
+            fetchMessages(selectedUser.user_id);
         }
-    }, [messages]);
+
+        return () => {
+            console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
+        };
+    }, [isOpen, selectedUser.user_id]);
 
     const handleSendMessage = (newMessage) => {
-        addMessage(selectedUser.user_id, {
+        const newMsgObject = {
             index: Date.now(),  // 임시 ID (서버와 동기화되면 변경 가능)
             from_id: loginUserInfo.userInfo.id, // 내가 보낸 메시지
             to_id: selectedUser.user_id,
             created_at: new Date().toISOString(),
             content: newMessage,
-        });
+            sender: "me"
+        };
+
+        addMessage(selectedUser.user_id, newMsgObject);
 
         setIsListening(false); // 메시지 전송 후 음성 인식 종료
     };
@@ -54,7 +61,7 @@ export default function Chatting() {
                             <Message 
                                 key={msg.index} 
                                 text={msg.content} 
-                                sender={msg.from_id === loginUserInfo.userInfo.id ? "me" : "other"} 
+                                sender={msg.sender} 
                                 time={new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             />
                         ))

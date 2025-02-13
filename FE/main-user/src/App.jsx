@@ -26,7 +26,7 @@ export default function App() {
   const userProgressStore = useContext(UserProgressContext);
   const environmentStore = useContext(EnvironmentDataContext)
 
-  const SCREENSAVER_TIMEOUT = 500000000000;
+  const SCREENSAVER_TIMEOUT = 50000000;
   let timeoutId = null;
 
   const resetTimer = () => {

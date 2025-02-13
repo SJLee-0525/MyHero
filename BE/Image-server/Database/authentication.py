@@ -6,7 +6,7 @@ Database Authentication Part
 """
 
 # Library
-from Database.connector import Database
+from Database.connector import database_instance as database
 from Database.models import *
 
 from fastapi import Request
@@ -24,7 +24,6 @@ from dotenv import load_dotenv
 
 from Utilities.logging_tools import *
 
-database: Database = Database()
 logger = get_logger("DB_Authentication")
 
 # 세션 만료 시간 불러오기

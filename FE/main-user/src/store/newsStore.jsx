@@ -20,8 +20,12 @@ export default function NewsStoreContextProvider({ children }) {
 
     try {
       if(!userProgressStore.loginUserInfo.login) return;
+
+      const today = new Date();
+      today.setDate(today.getDate() - 1);
+      const formattedDate = today.toISOString().split("T")[0];
       
-      const response = await request(`${userProgressStore.DEV_API_URL}/tools/news`);
+      const response = await request(`${userProgressStore.DEV_API_URL}/tools/news?when=${formattedDate}`);
       const resData = response.data;
       
       if (response.success) {

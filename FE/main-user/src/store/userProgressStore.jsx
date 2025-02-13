@@ -40,21 +40,24 @@ export default function UserProgressContextProvider({ children }) {
     familyMember: undefined,
   });
 
-  // 로그인 시 sessionStorage에 저장된 정보 불러오기
-  // useEffect(() => {
-  //   if (!loginUserInfo.login) return;
+  // 세션 저장을 위해 추가된 사항
+  useEffect(() => {
+    const storedLoginUserInfo = sessionStorage.getItem("loginUserInfo");
+    
+    if (storedLoginUserInfo) {
+        const parsedUserInfo = JSON.parse(storedLoginUserInfo);
+        
+        if (!loginUserInfo.login || loginUserInfo.userInfo?.id !== parsedUserInfo.id) {
+          setLoginUserInfo({
+              login: true,
+              userInfo: parsedUserInfo,
+          });
 
-  //   // if (loginUserInfo.login && loginUserInfo.userInfo.id) {
-  //   //   if (loginUserInfo.userInfo.role === "main") {
-  //   //     handleCheckFamilyExist(loginUserInfo.userInfo.id);
-  //   //   } else if (loginUserInfo.userInfo.role === "sub") {
-  //   //     handleCheckFamilyList();
-  //   //   }
-  //   // }
-  // }, [loginUserInfo]);
+          console.log("🔄 세션에서 로그인 정보 복구:", parsedUserInfo);
+        }
+    }
+  })
 
-
-    // ======================================================================
   // env 관련
   let DEV_API_URL = import.meta.env.VITE_DEV_API;
   let MAIN_API_URL = import.meta.env.VITE_MAIN_API;
@@ -91,8 +94,18 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
 
-          // 로그인 정보 저장
-          handleUpdateSessionLoginInfo(resData.result.user_data);
+          // // 로그인 정보 저장
+          // handleUpdateSessionLoginInfo(resData.result.user_data);
+
+          // ✅ 중복 저장 방지: 세션에 저장된 정보와 다를 경우에만 업데이트
+          const existingSession = sessionStorage.getItem("loginUserInfo");
+          if (!existingSession || JSON.parse(existingSession).id !== resData.result.user_data.id) {
+              sessionStorage.setItem("loginUserInfo", JSON.stringify(resData.result.user_data));
+              setLoginUserInfo({
+                  login: true,
+                  userInfo: resData.result.user_data,
+              });
+          }
 
           return { success: true, data: resData.user_id };
         }

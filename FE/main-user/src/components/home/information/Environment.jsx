@@ -15,8 +15,8 @@ export default function Environment() {
     const environmentDataStore = useContext(EnvironmentDataContext);
 
     // 미세 먼지와 일산화탄소 수치 가져오기
-    const dustLevel = parseFloat(environmentDataStore.environmentData.result.dust_level || 0);
-    const ethanolLevel = parseFloat(environmentDataStore.environmentData.result.ethanol || 0);
+    const dustLevel = parseFloat(environmentDataStore.environmentData.result.dust_level ?? 0);
+    const ethanolLevel = parseFloat(environmentDataStore.environmentData.result.ethanol ?? 0);
 
     // 미세 먼지 상태 판단 (40 이상이면 나쁨)
     const dustStatus = dustLevel < 40 ? "good" : "bad";
@@ -24,7 +24,8 @@ export default function Environment() {
 
     // 일산화탄소 상태 판단 (1.5 이상이면 나쁨)
     const ethanolStatus = ethanolLevel > 0 && ethanolLevel < 1.5 ? "good" : "bad";
-    const ethanolIcon = ethanolStatus === "bad" ? GasEm : Gas;
+    // const ethanolIcon = ethanolStatus === "good" ? Gas : GasEm;
+    const ethanolIcon = environmentDataStore.environmentData.result.ethanol === null || environmentDataStore.environmentData.result.ethanol === undefined ? Gas : (ethanolStatus === "bad" ? GasEm : Gas);
 
     return (
         <div id="environment">

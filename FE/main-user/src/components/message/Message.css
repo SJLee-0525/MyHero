@@ -30,6 +30,13 @@
     justify-content: flex-start;
 }
 
+.message-text {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
+}
+
 .mainText {
     background-color: #B4CF66;
     color: #000000;

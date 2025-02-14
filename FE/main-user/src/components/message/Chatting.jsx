@@ -12,15 +12,30 @@ export default function Chatting({ isOpen }) {
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
     
-    useEffect(() => {
-        if (isOpen && selectedUser.user_id) {
-            console.log(`📩 ${selectedUser.user_id}와의 전체 대화 내역 불러오기 시작`);
-            fetchMessages(selectedUser.user_id);
-        }
+    // useEffect(() => {
+    //     if (isOpen && selectedUser.user_id) {
+    //         fetchMessages(selectedUser.user_id);
+    //     }
         
-        return () => {
-            console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
-        };
+    //     return () => {
+    //         console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
+    //     };
+    // }, [isOpen, selectedUser]);
+
+    useEffect(() => {
+        if (isOpen && selectedUser?.user_id) {
+            console.log(`📩 ${selectedUser.user_id}와의 전체 대화 내역 실시간 업데이트 시작`);
+            
+            // 1초마다 메시지를 새로 불러옴
+            const interval = setInterval(() => {
+                fetchMessages(selectedUser.user_id);
+            }, 1000);
+
+            return () => {
+                clearInterval(interval);
+                console.log("🚪 채팅 창이 닫혀 실시간 업데이트 중지됨.");
+            };
+        }
     }, [isOpen, selectedUser]);
     
     useEffect(() => {
@@ -29,7 +44,7 @@ export default function Chatting({ isOpen }) {
         }
     }, [conversations[selectedUser.user_id]]);
     
-    if (!selectedUser || !conversations || !conversations[selectedUser.user_id]) return <p>불러오는 중입니다...</p>;
+    if (!selectedUser || !conversations || !conversations[selectedUser.user_id]) return <p className="loading-message">불러오는 중입니다...</p>;
     
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {

@@ -149,7 +149,7 @@ async def get_all_members(
     # 사용자 ID로 조회하는 경우 당사자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
 
-    if userId is not None:
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != userId):
         if not request_data or (request_data["role"] != Role.SYSTEM and request_id != userId):
             logger.warning(f"You do not have permission: {request_id}")
             raise HTTPException(

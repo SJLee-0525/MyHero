@@ -81,9 +81,10 @@ class NewsService:
                 self.last_update = current_time
                 logger.info(f"News data successfully updated at {current_time}")
                 
-            finally:
-                db.close()
-                
+            except Exception as e:
+                db.rollback()
+                raise
+            
         except Exception as e:
             logger.error(f"Error updating news: {str(e)}")
         finally:

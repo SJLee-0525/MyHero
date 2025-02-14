@@ -5,7 +5,10 @@ import { UserProgressContext } from "./userProgressStore";
 export const NewsStoreContext = createContext({
   newsData: {},
   isLoading: false,
+  selectedNews: null,
   fetchNewsData: () => {},
+  selectNews: () => {},
+  clearSelectedNews: () => {},
 });
 
 export default function NewsStoreContextProvider({ children }) {
@@ -14,6 +17,7 @@ export default function NewsStoreContextProvider({ children }) {
 
   const [newsData, setNewsData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   async function fetchNewsData() {
     setIsLoading(true);
@@ -44,6 +48,16 @@ export default function NewsStoreContextProvider({ children }) {
     }
   };
 
+   // ✅ 뉴스 선택 함수 추가 (상세 보기 기능)
+   function selectNews(news) {
+    setSelectedNews(news);
+  }
+
+  // ✅ 뉴스 상세에서 나갈 때 선택된 뉴스 초기화
+  function clearSelectedNews() {
+    setSelectedNews(null);
+  }
+
   useEffect(() => {
     if (userProgressStore.loginUserInfo.login) {
       console.log("🔄 로그인 완료됨, 뉴스 데이터 가져오기 실행");
@@ -54,7 +68,10 @@ export default function NewsStoreContextProvider({ children }) {
   const ctxValue = {
     newsData,
     isLoading,
+    selectNews,
     fetchNewsData,
+    selectedNews,
+    clearSelectedNews,
   };
 
   return (

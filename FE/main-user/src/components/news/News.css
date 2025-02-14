@@ -39,21 +39,32 @@
 .news-box-page {
   min-height: 350px;
   padding: 20px;
+  overflow: hidden;
 }
 
 .back-button {
   padding: 10px;
-  margin-bottom: 15px;
+  max-height: 40px;
   background-color: #44803f;
   color: white;
   border: none;
   border-radius: 5px;
+  font-weight: bold;
+}
+
+.news-header {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
 }
 
 .news-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  max-height: 280px;
+  overflow-y: scroll;
 }
 
 .news-box {
@@ -92,4 +103,25 @@
 .news-meta {
   font-size: 0.9rem;
   color: #666;
+}
+
+/* 뉴스 상세 */
+.news-detail {
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+}
+
+.news-detail-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.news-text {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
 }

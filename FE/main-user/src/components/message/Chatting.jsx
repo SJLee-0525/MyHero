@@ -7,13 +7,10 @@ import { useUserProgressStore } from "../../store/userProgressStore.jsx";
 import "./Message.css";
 
 export default function Chatting({ isOpen }) {
-    const { selectedUser, conversations, addMessage, setConversations } = useMessageStore();
+    const { selectedUser, conversations } = useMessageStore();
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
-
-    
-    // const messages = conversations[selectedUser.user_id] || [];
     
     useEffect(() => {
         if (isOpen && selectedUser.user_id) {
@@ -28,11 +25,11 @@ export default function Chatting({ isOpen }) {
     
     useEffect(() => {
         if (messageEndRef.current) {
-            messageEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+            messageEndRef.current.scrollIntoView({ behavior: "auto", block: "end" });
         }
     }, [conversations[selectedUser.user_id]]);
     
-    if (!selectedUser || !conversations  || !conversations[selectedUser.user_id]) return <p>대화할 상대를 선택하세요.</p>;
+    if (!selectedUser || !conversations || !conversations[selectedUser.user_id]) return <p>불러오는 중입니다...</p>;
     
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
@@ -43,13 +40,6 @@ export default function Chatting({ isOpen }) {
             content: newMessage,
             sender: "me"
         };
-
-        // addMessage(selectedUser.user_id, newMsgObject);
-
-        // setConversations((prev) => ({
-        //     ...prev,
-        //     [selectedUser.user_id]: [...(prev[selectedUser.user_id] || []), newMsgObject]
-        // }));
 
         const response = await sendMessageToServer(newMsgObject);
 

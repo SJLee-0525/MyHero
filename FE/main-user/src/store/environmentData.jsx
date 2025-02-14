@@ -51,20 +51,20 @@ export default function EnvironmentDataContextProvider({ children }) {
         try {
             const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
 
+            const resData = response.data
             if (response.success) {
-                if (response.message === "Home status retrieved successfully") {
+                if (resData.message === "Home status retrieved successfully") {
                 setEnvironmentData({
                     result: {
-                        family_id: response.data.result.family_id,
-                        reported_at: response.data.result.reported_at,
-                        temperature: response.data.result.temperature,
-                        humidity: response.data.result.humidity,
-                        dust_level: response.data.result.dust_level.toFixed(2),
-                        ethanol: response.data.result.ethanol.toFixed(2),
+                        family_id: resData.result.family_id,
+                        reported_at: resData.result.reported_at,
+                        temperature: resData.result.temperature,
+                        humidity: resData.result.humidity,
+                        dust_level: resData.result.dust_level.toFixed(2),
+                        ethanol: resData.result.ethanol.toFixed(2),
                     } 
                 });
                 }
-                console.log("환경!!!!!!!!", response)
             } else {
                 console.error("최신 집 내부 정보 조회 실패:", response.error)
                 setEnvironmentData({

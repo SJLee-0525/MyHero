@@ -149,7 +149,7 @@ async def get_all_members(
     # 사용자 ID로 조회하는 경우 당사자만 조회할 수 있음
     request_data: dict = Database.get_one_account(request_id)
 
-    if not request_data or (request_data["role"] != Role.SYSTEM and request_id != userId):
+    if userId is not None:
         if not request_data or (request_data["role"] != Role.SYSTEM and request_id != userId):
             logger.warning(f"You do not have permission: {request_id}")
             raise HTTPException(
@@ -161,20 +161,21 @@ async def get_all_members(
             )
 
     # 가족 ID로 조회하는 경우 해당 가족에 소속된 사람만 조회할 수 있음
-    family_data: dict = Database.get_one_family(familyId)
-    member_data: list = Database.get_all_members(family_id=familyId)
-    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
-                                [user_data["user_id"] for user_data in member_data])
+    if familyId is not None:
+        family_data: dict = Database.get_one_family(familyId)
+        member_data: list = Database.get_all_members(family_id=familyId)
+        permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                    [user_data["user_id"] for user_data in member_data])
 
-    if request_data["role"] != Role.SYSTEM and request_id not in permission_id:
-        logger.warning(f"You do not have permission: {request_id}")
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail={
-                "type": "can not access",
-                "message": "You do not have permission"
-            }
-        )
+        if request_data["role"] != Role.SYSTEM and request_id not in permission_id:
+            logger.warning(f"You do not have permission: {request_id}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail={
+                    "type": "can not access",
+                    "message": "You do not have permission"
+                }
+            )
 
 
     # 가족 관계 정보 불러오기

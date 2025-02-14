@@ -11,6 +11,7 @@ const MessageContext = createContext({
     fetchReceivableUsers: () => {},
     fetchMessages: () => {},
     selectUser: () => {},
+    clearSelectedUser: () => {},
     addMessage: () => {},
 });
 
@@ -140,6 +141,10 @@ export default function MessageProvider({ children }) {
         }));
     }
 
+    function clearSelectedUser() {
+        setSelectedUser(null);
+      }
+
     useEffect(() => {
         if (!userProgressStore?.loginUserInfo?.userInfo?.id) {
             console.log("⏳ Waiting for login...");
@@ -159,6 +164,7 @@ export default function MessageProvider({ children }) {
         fetchReceivableUsers,
         sendMessageToServer,
         fetchMessages,
+        clearSelectedUser,
         addMessage,
     }
 

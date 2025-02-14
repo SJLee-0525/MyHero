@@ -169,10 +169,10 @@ def get_all_notifications(
             return result
 
 # Index 번호로 알림을 가져오는 기능
-def get_one_notification(index: int) -> dict:
+def get_one_notification(notification_id: int) -> dict:
     """
     Index 번호로 알림을 가져오는 기능
-    :param index: 알림의 Index 번호
+    :param notification_id: 알림의 Index 번호
     :return: 불러온 알림 데이터 dict
     """
     result: dict = {}
@@ -188,7 +188,7 @@ def get_one_notification(index: int) -> dict:
                 NotificationsTable.descriptions,
                 NotificationsTable.is_read,
                 NotificationsTable.image_url
-            ).filter(NotificationsTable.index == index).first()
+            ).filter(NotificationsTable.index == notification_id).first()
 
             serialized_data: dict = {
                 "index": notification_data[0],
@@ -209,7 +209,7 @@ def get_one_notification(index: int) -> dict:
             return result
 
 # 알람을 읽었다고 기록하는 기능
-def check_read_notifications(notification_id: int) -> bool:
+def check_read_notification(notification_id: int) -> bool:
     """
     알림의 읽음을 기록하는 기능
     :param notification_id: 알림에 배정된 고유 번호
@@ -235,7 +235,7 @@ def check_read_notifications(notification_id: int) -> bool:
             return result
 
 # 알림을 삭제하는 기능
-def delete_notifications(notification_id: int) -> bool:
+def delete_notification(notification_id: int) -> bool:
     """
     알림을 삭제하는 기능
     :param notification_id: 알림에 배정된 고유 번호

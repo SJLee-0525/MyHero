@@ -136,11 +136,11 @@ def check_current_user(request: Request) -> str:
             return user_id
 
 # 사용자 계정의 비밀번호를 변경하는 기능
-def change_password(user_id: str, new_hased_password: str) -> bool:
+def change_password(user_id: str, new_hashed_password: str) -> bool:
     """
     사용자 정보에 등록된 비밀번호를 변경하는 기능
     :param user_id: 비밀번호를 변경할 사용자의 ID
-    :param new_hased_password: 미리 암호화된 사용자의 새로운 비밀번호
+    :param new_hashed_password: 미리 암호화된 사용자의 새로운 비밀번호
     :return: 성공적으로 비밀번호를 변경했는지 여부 bool
     """
     result: bool = False
@@ -152,7 +152,7 @@ def change_password(user_id: str, new_hased_password: str) -> bool:
 
             if previous_account is not None:
                 # 새로운 비밀번호로 변경
-                previous_account.password = new_hased_password
+                previous_account.password = new_hashed_password
                 result = True
             else:
                 result = False

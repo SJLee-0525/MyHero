@@ -230,7 +230,7 @@ async def read_notification(notification_id: int, request_id = Depends(Database.
         )
 
     # 읽음 표시하기
-    result: bool = Database.check_read_notifications(notification_id)
+    result: bool = Database.check_read_notification(notification_id)
 
     if result:
         logger.info(f"Notification check read successfully: {notification_id}")
@@ -281,7 +281,7 @@ async def delete_notification(notification_id: int, request_id = Depends(Databas
         )
 
     # 삭제하기
-    result: bool = Database.delete_notifications(notification_id)
+    result: bool = Database.delete_notification(notification_id)
 
     if result:
         return {

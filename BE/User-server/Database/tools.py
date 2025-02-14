@@ -149,7 +149,7 @@ def get_news(target_date: date) -> dict:
             return result
 
 # Settings 값을 새롭게 추가하는 기능
-def create_settings(settings_data: SettingsTable):
+def create_settings(settings_data: SettingsTable) -> bool:
     """
     Settings 값을 새롭게 추가하는 기능
     :param settings_data: SettingsTable로 미리 Mapping된 데이터

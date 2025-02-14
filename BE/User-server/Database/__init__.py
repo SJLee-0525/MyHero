@@ -70,8 +70,8 @@ from .notifications import (
     get_new_notifications,
     get_all_notifications,
     get_one_notification,
-    check_read_notifications,
-    delete_notifications
+    check_read_notification,
+    delete_notification
 )
 
 from .messages import (

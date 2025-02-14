@@ -5,9 +5,8 @@ import NoticeDetail from "./NoticeDetail";
 import "./Notice.css";
 
 export default function Notice({ onReply }) {
-  const { disasterData, isLoading } = useContext(DisasterStoreContext);
+  const { disasterData, isLoading, markNotificationAsRead, setDisasterData } = useContext(DisasterStoreContext);
   const [selectedNotice, setSelectedNotice] = useState(null);
-  const [readNotices, setReadNotices] = useState(new Set());
 
   const disasterNotices = Array.isArray(disasterData) ? disasterData.map(notice => ({
     id: `disaster-${notice.index}`,
@@ -20,6 +19,7 @@ export default function Notice({ onReply }) {
     })(),
     created_at: notice.created_at,
     notification_grade: notice.notification_grade || "info",
+    is_read: notice.is_read,
   })) : [];
 
   const allNotices = [...disasterNotices].sort(
@@ -54,10 +54,21 @@ export default function Notice({ onReply }) {
     return `${period} ${formattedHours}:${minutes}`;
   };
 
-  // 읽음 처리
   const openNotice = (notice) => {
     setSelectedNotice(notice);
-    setReadNotices((prev) => new Set([...prev, notice.id]));
+
+    const extractedIndex = notice.id ? parseInt(notice.id.replace(/\D/g, ""), 10) : null;
+
+    if (!notice.is_read && extractedIndex) {
+        setDisasterData((prevData) => {
+          const newData = prevData.map((item) =>
+              item.index === extractedIndex ? { ...item, is_read: true } : item
+          )
+          return [...newData];
+    });
+
+        markNotificationAsRead(extractedIndex);
+    }
   };
 
   // 날짜별 그룹화
@@ -77,16 +88,15 @@ export default function Notice({ onReply }) {
           {Object.entries(groupedNotices).map(([date, notices]) => (
             <div key={date} className="notice-group">
               <h2>{date}</h2>
-              {notices.map((notice) => (
+              {allNotices.map((notice) => (
                 <NoticeBox
-                  key={notice.id}
+                  key={notice.index}
                   notice={{ 
                     ...notice, 
                     time: formatTime(notice.created_at),
                     notification_grade: notice.notification_grade
                   }}
                   onClick={openNotice}
-                  isRead={readNotices.has(notice.id)}
                 />
               ))}
             </div>

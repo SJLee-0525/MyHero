@@ -64,7 +64,8 @@
 
 /* 읽은 알림 음영 처리 */
 .notice-box.read {
-  opacity: 0.5;
+  opacity: 0.5 !important;
+  transition: opacity 0.3s ea;
 }
 
 .notice-box.message {
@@ -95,6 +96,9 @@
 
 /* 우측 상세 정보 */
 .notice-unselected {
+  flex-grow: 1;
+  position: relative;
+  padding: 10px;
   font-size: 1rem;
   padding: 10px;
   border-radius: 5px;

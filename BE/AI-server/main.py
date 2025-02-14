@@ -56,74 +56,78 @@ app.add_middleware(
 DATABASE_URL = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:3306/S12P11A102"
 
 class DBSessionManager:
-   def __init__(self, db_url):
-       self.engine = create_engine(
-           db_url,
-           pool_recycle=120,  
-           pool_pre_ping=True,
-           pool_use_lifo=True,
-           echo_pool=True 
-       )
-       self.SessionLocal = sessionmaker(
-           bind=self.engine,
-           autocommit=False,
-           autoflush=False
-       )
-       self._db = None
-       self.initialize_db()
-       
-       # SQLAlchemy 이벤트에 쿼리 실행 재시도 로직 추가
-       @event.listens_for(self.engine, "do_execute_no_params")
-       def receive_do_execute_no_params(cursor, statement, context):
-           for attempt in range(3):
-               try:
-                   return cursor.execute(statement)
-               except exc.DBAPIError as err:
-                   if err.connection_invalidated and attempt < 2:
-                       self.initialize_db()
-                       continue
-                   raise
+    def __init__(self, db_url):
+        self.engine = create_engine(
+            db_url,
+            pool_recycle=120,  
+            pool_pre_ping=True,
+            pool_use_lifo=True,
+            echo_pool=True 
+        )
+        self.SessionLocal = sessionmaker(
+            bind=self.engine,
+            autocommit=False,
+            autoflush=False
+        )
+        self._db = None
+        
+        # 이벤트 리스너 등록
+        @event.listens_for(self.engine, "handle_error")
+        def handle_error(context):
+            if isinstance(context.original_exception, exc.OperationalError):
+                if "MySQL server has gone away" in str(context.original_exception):
+                    for attempt in range(3):
+                        try:
+                            self.initialize_db()
+                            # 실패한 쿼리 재시도
+                            return context.execution_context.statement
+                        except:
+                            if attempt == 2:
+                                raise
+                            continue
+        
+        self.initialize_db()
+        event.listens_for(self.engine, "engine_connect")(self.ping_connection)
 
-       @event.listens_for(self.engine, "do_execute")
-       def receive_do_execute(cursor, statement, parameters, context):
-           for attempt in range(3):
-               try:
-                   return cursor.execute(statement, parameters)
-               except exc.DBAPIError as err:
-                   if err.connection_invalidated and attempt < 2:
-                       self.initialize_db()
-                       continue
-                   raise
+    def initialize_db(self):
+        if self._db:
+            try:
+                self._db.close()
+            except:
+                pass
+                
+        for attempt in range(3):
+            try:
+                db = self.SessionLocal()
+                db.execute(text('SELECT 1'))
+                self._db = db
+                return
+            except Exception as e:
+                if attempt == 2:  
+                    raise
+                if 'db' in locals():
+                    try:
+                        db.close()
+                    except:
+                        pass
 
-       event.listens_for(self.engine, "engine_connect")(self.ping_connection)
+    @property
+    def db(self):
+        try:
+            self._db.execute(text('SELECT 1'))
+            return self._db
+        except:
+            self.initialize_db()
+            return self._db
 
-   def initialize_db(self):
-       for attempt in range(3):
-           try:
-               db = self.SessionLocal()
-               db.execute(text('SELECT 1'))
-               self._db = db
-               return
-           except Exception as e:
-               if attempt == 2:  
-                   raise
-               if db:
-                   db.close()
-
-   @property
-   def db(self):
-       if self._db is None or not self._db.is_active:
-           self.initialize_db()
-       return self._db
-
-   def ping_connection(self, connection, branch):
-       if branch:
-           return
-       try:
-           connection.scalar(select(1))
-       except exc.DBAPIError as err:
-           if err.connection_invalidated:
-               self.initialize_db()
+    def ping_connection(self, connection, branch):
+        if branch:
+            return
+        try:
+            connection.scalar(select(1))
+        except exc.DBAPIError as err:
+            if err.connection_invalidated:
+                self.initialize_db()
 
 db_manager = DBSessionManager(DATABASE_URL)
 db = db_manager.db

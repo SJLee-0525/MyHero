@@ -47,6 +47,8 @@
 .notice-box {
   display: flex;
   padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   border-radius: 8px;
   margin: 5px 0;
   flex-direction: column;
@@ -62,11 +64,18 @@
 
 /* 읽은 알림 음영 처리 */
 .notice-box.read {
-  opacity: 0.5;
+  opacity: 0.5 !important;
+  transition: opacity 0.3s ea;
 }
 
 .notice-box.message {
   background: #fffa8b;
+}
+
+.notice-box.crit {
+  background: #ff6666;
+  color: #fffa8b;
+  font-weight: bold;
 }
 
 .notice-box.warn {
@@ -87,6 +96,9 @@
 
 /* 우측 상세 정보 */
 .notice-unselected {
+  flex-grow: 1;
+  position: relative;
+  padding: 10px;
   font-size: 1rem;
   padding: 10px;
   border-radius: 5px;

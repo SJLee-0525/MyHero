@@ -77,6 +77,13 @@
     max-width: 70%;
 }
 
+.loading-message {
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding-left: 20px;
+    color: #333;
+}
+
 .message-container {
     flex-direction: row;
     justify-content: space-between;

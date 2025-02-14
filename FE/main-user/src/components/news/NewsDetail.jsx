@@ -1,19 +1,21 @@
 import React from "react";
 import "./News.css";
 
-export default function NewsDetail({ news, onReply }) {
+export default function NewsDetail({ news, onBack }) {
     if (!news) {
       return <div className="news-unselected">뉴스를 선택하세요</div>;
     }
   
     return (
       <div className="news-detail">
-        <h2>뉴스 상세</h2>
         <div className="news-content">
-          <h3>{news.title}</h3>
-          <img src={news.image_url} alt="News" className="news-detail-image" />
-          <p className="news-meta">{new Date(news.pub_date).toLocaleDateString()}</p>
-          <p className="news-text">{news.text}</p>
+          <button className="back-button-detail" onClick={onBack}>←</button>
+          <iframe 
+            src={news.link} 
+            className="news-iframe" 
+            title="News Detail"
+            sandbox="allow-same-origin allow-scripts allow-popups"
+          />
         </div>
       </div>
     );

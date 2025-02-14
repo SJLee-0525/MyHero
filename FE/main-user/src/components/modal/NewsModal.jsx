@@ -20,9 +20,6 @@ export default function NewsModal({ title, onCloseConfirm }) {
         <h2>{title}</h2>
       </div>
       <News onReply={handleReply} />
-      <button onClick={onCloseConfirm} className="button">
-         닫기
-      </button>
     </div>
   );
 }

@@ -5,18 +5,11 @@ import NoticeDetail from "./NoticeDetail";
 import "./Notice.css";
 
 export default function Notice({ onReply }) {
-  const { disasterData, isLoading } = useContext(DisasterStoreContext);
+  const { disasterData, isLoading, markNotificationAsRead, setDisasterData } = useContext(DisasterStoreContext);
   const [selectedNotice, setSelectedNotice] = useState(null);
-  const [readNotices, setReadNotices] = useState(new Set());
-
-  // ✅ 기존 일반 알림 (임시 데이터)
-  const notices = [
-    { id: "info-1", text: "택배가 도착했습니다.", created_at: "2025-02-11T08:30:00", type: "info" },
-    { id: "info-2", text: "일정 알림: 병원 방문", created_at: "2025-02-11T10:15:00", type: "schedule" },
-  ];
 
   const disasterNotices = Array.isArray(disasterData) ? disasterData.map(notice => ({
-    id: `warn-${notice.index}`,
+    id: `disaster-${notice.index}`,
     text: (() => {
       try {
         return JSON.parse(notice.description).MSG_CN || notice.description;
@@ -25,16 +18,21 @@ export default function Notice({ onReply }) {
       }
     })(),
     created_at: notice.created_at,
-    type: "warn",
+    notification_grade: notice.notification_grade || "info",
+    is_read: notice.is_read,
   })) : [];
 
-  const allNotices = [...notices, ...disasterNotices].sort(
+  const allNotices = [...disasterNotices].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
+    date.setHours(date.getHours() + 9);
+
     const today = new Date();
+    today.setHours(today.getHours() + 9);
+
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
@@ -45,13 +43,32 @@ export default function Notice({ onReply }) {
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    date.setHours(date.getHours() + 9);
+    // return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+    
+    const hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const period = hours >= 12 ? "오후" : "오전";
+    const formattedHours = hours % 12 || 12;
+
+    return `${period} ${formattedHours}:${minutes}`;
   };
 
-  // 읽음 처리
   const openNotice = (notice) => {
     setSelectedNotice(notice);
-    setReadNotices((prev) => new Set([...prev, notice.id]));
+
+    const extractedIndex = notice.id ? parseInt(notice.id.replace(/\D/g, ""), 10) : null;
+
+    if (!notice.is_read && extractedIndex) {
+        setDisasterData((prevData) => {
+          const newData = prevData.map((item) =>
+              item.index === extractedIndex ? { ...item, is_read: true } : item
+          )
+          return [...newData];
+    });
+
+        markNotificationAsRead(extractedIndex);
+    }
   };
 
   // 날짜별 그룹화
@@ -71,12 +88,15 @@ export default function Notice({ onReply }) {
           {Object.entries(groupedNotices).map(([date, notices]) => (
             <div key={date} className="notice-group">
               <h2>{date}</h2>
-              {notices.map((notice) => (
+              {allNotices.map((notice) => (
                 <NoticeBox
-                  key={notice.id}
-                  notice={{ ...notice, time: formatTime(notice.created_at)}}
+                  key={notice.index}
+                  notice={{ 
+                    ...notice, 
+                    time: formatTime(notice.created_at),
+                    notification_grade: notice.notification_grade
+                  }}
                   onClick={openNotice}
-                  isRead={readNotices.has(notice.id)}
                 />
               ))}
             </div>

@@ -411,8 +411,12 @@ async def get_family_by_main_user(user_id: str):
             raise HTTPException(status_code=404, detail="가족 정보를 찾을 수 없습니다")
         
         db.commit()
-        return family
-    
+        return {
+            "id": family.id,  
+            "main_user": family.main_user
+            
+        }
+        
     except Exception as e:
         db.rollback()
         logger.error(f"가족 정보 조회 오류: {str(e)}")
@@ -421,7 +425,6 @@ async def get_family_by_main_user(user_id: str):
   
 @app.get('/family/{family_id}/members')
 async def get_family_members(family_id: str):
-    """가족 ID로 가족 구성원 조회"""
     try:
         members = db.query(MemberRelations)\
             .filter(MemberRelations.family_id == family_id)\
@@ -430,9 +433,16 @@ async def get_family_members(family_id: str):
         if not members:
             raise HTTPException(status_code=404, detail='가족 구성원을 찾을 수 없습니다')
         
+        member_list = [
+            {
+                "user_id": member.user_id,
+                "nickname": member.nickname,
+            } for member in members
+        ]
+        
         db.commit()
-        return members
-
+        return member_list
+    
     except Exception as e:
         db.rollback()
         logger.error(f"가족 구성원 조회 오류: {str(e)}")

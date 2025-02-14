@@ -1,7 +1,16 @@
 #notification-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+
   width: 100%;
   height: 100%;
   min-width: 380px;
+}
+
+#notification-main h2 {
+  height: 10%;
 }
 
 #notification-container {
@@ -10,45 +19,54 @@
   align-items: flex-start; /* 상하 정렬 */
 
   width: 100%;
-  height: 100%;
+  height: 90%;
 
   gap: 10px;
 }
 
-#notification-elem-left,
-#notification-elem-right {
-  flex: 1 1 auto; /* 필요 시 크기 조정 가능 */
-  height: 100%;
-}
-
-#notification-elem-left {
-  width: 50%; /* 고정 폭 */
-  min-width: 300px; /* 최소 폭 */
-}
-
-#notification-elem-right {
-  width: 50%; /* 고정 폭 */
-  min-width: 300px; /* 최소 폭 */
-}
-
 #all-notifications {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
   width: 100%;
-  height: 31.5vh;
-  max-height: 31.5vh;
+  height: 100%;
+
+  border-radius: 8px;
+  background-color: white;
+}
+
+#all-notifications-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  padding: 10px;
+
+  border-radius: 8px 8px 0px 0px;
+
+  background-color: #3e5c76;
+  color: white;
+}
+
+#all-notifications-header h3 {
+  margin: 4px;
 }
 
 #home-notifications {
   display: flex;
   flex-direction: column;
-  justify-content: start;
 
   width: 100%;
-  height: 90%;
-  max-height: 90%;
+  height: 100%;
+
+  padding: 10px;
   gap: 8px;
 
-  overflow-y: auto; /* 세로 스크롤 가능 */
-  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  border-radius: 8px;
+
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
@@ -66,7 +84,7 @@
 }
 
 #home-notifications::-webkit-scrollbar-thumb:hover {
-  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+  background: #777777; /* 손잡이를 hover 했을 때 색상 */
 }
 
 #home-notifications .notification-btn {
@@ -105,7 +123,7 @@
 
   background-color: #d9d9d9;
   color: black;
-  filter: contrast(40%);
+  filter: contrast(50%);
 }
 
 #home-notifications .home-notification-icon-1 {
@@ -175,19 +193,20 @@ p {
 #all-notifications .home-notification-btn {
   display: flex;
   justify-content: end;
+  align-items: center;
 
-  margin: 5px 0px;
+  margin: 5px;
 }
 
 #all-notifications .home-notification-btn button {
-  background-color: transparent;
   border: none;
   border-radius: 5px;
 
+  padding: 5px 8px;
+
+  background-color: #3e5c76;
   font-weight: bold;
   color: white;
-
-  padding: 5px;
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -301,8 +320,28 @@ p {
   justify-content: space-between;
 
   width: 100%;
-  height: 42vh;
-  max-height: 42vh;
+  height: 100%;
+
+  border-radius: 8px;
+
+  background-color: white;
+}
+
+#public-emergency-notifications-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  padding: 10px;
+
+  border-radius: 8px 8px 0px 0px;
+
+  background-color: #3e5c76;
+  color: white;
+}
+
+#public-emergency-notifications-header h3 {
+  margin: 4px;
 }
 
 #public-emergency-notifications {
@@ -311,8 +350,9 @@ p {
 
   width: 100%;
   height: 100%;
-  max-height: 96%;
-  gap: 10px;
+
+  padding: 10px;
+  gap: 8px;
 
   border-radius: 8px;
 
@@ -335,10 +375,10 @@ p {
 }
 
 #public-emergency-notifications::-webkit-scrollbar-thumb:hover {
-  background: #ffffff; /* 손잡이를 hover 했을 때 색상 */
+  background: #777777; /* 손잡이를 hover 했을 때 색상 */
 }
 
-#public-emergency-notifications .public-emergency-notification-btn {
+#public-emergency-notifications .public-emergency-notification-click-btn {
   background-color: transparent;
   border: none;
 
@@ -377,7 +417,7 @@ p {
 
   background-color: #d9d9d9;
   color: black;
-  filter: contrast(40%);
+  filter: contrast(50%);
 }
 
 #public-emergency-notifications .public-emergency-notification-header {
@@ -431,19 +471,21 @@ p {
   display: flex;
   justify-content: end;
   align-items: center;
+
+  margin: 5px;
 }
 
 #public-emergency-notifications-container
   .public-emergency-notification-btn
   button {
-  background-color: transparent;
   border: none;
   border-radius: 5px;
+  background-color: #3e5c76;
 
   font-weight: bold;
   color: white;
 
-  padding: 5px;
+  padding: 5px 8px;
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -481,6 +523,7 @@ p {
     display: flex;
     flex-direction: column;
 
+    margin-top: 10px;
     gap: 0px;
   }
 

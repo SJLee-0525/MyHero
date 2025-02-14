@@ -42,7 +42,7 @@ export default function ToggleGroup() {
   // console.log(dustLevel, ethanol, heartRate);
 
   return (
-    <>
+    <div id="toggle-group-container">
       <div id="toggle-group">
         <Toggle
           name="알림"
@@ -89,7 +89,6 @@ export default function ToggleGroup() {
           altSrc="car"
         ></Toggle>
       </div>
-      <hr />
       <div id="toggle-group">
         <StatusToggle
           name="온도"
@@ -128,7 +127,7 @@ export default function ToggleGroup() {
           }`}
         />
         <StatusToggle
-          name="미세 먼지"
+          name="미세먼지"
           imgSrc={airImage}
           altSrc="dust"
           statusLevel={
@@ -141,7 +140,7 @@ export default function ToggleGroup() {
           status={`${dustLevel ? `${dustLevel}㎍/㎥` : null}`}
         />
         <StatusToggle
-          name="초미세 먼지"
+          name="초미세먼지"
           imgSrc={fineAirImage}
           altSrc="finedust"
           statusLevel={
@@ -179,6 +178,6 @@ export default function ToggleGroup() {
           status={`${heartRate ? `${heartRate} bpm` : null}`}
         />
       </div>
-    </>
+    </div>
   );
 }

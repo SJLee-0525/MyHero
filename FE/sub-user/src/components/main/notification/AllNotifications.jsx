@@ -15,16 +15,22 @@ export default function AllNotifications() {
 
   return (
     <div id="all-notifications">
+      <div id="all-notifications-header">
+        <h3>일반 알림</h3>
+      </div>
       <div id="home-notifications">
         {emergencyStore.categorizedNotifications.info
           .slice()
-          .filter((notification) => !notification.is_read) // is_read가 false인 항목만 남김
+          // .filter((notification) => !notification.is_read)
           .map((notification) => {
             // UTC+9 변환
             const createdAtKST = new Date(
-              notification.created_at
+              notification.created_at + "Z"
             ).toLocaleString("ko-KR", {
               timeZone: "Asia/Seoul",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
               hour: "2-digit",
               minute: "2-digit",
               hour12: true, // 24시간제

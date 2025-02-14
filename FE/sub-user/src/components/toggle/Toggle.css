@@ -1,12 +1,30 @@
+#toggle-group-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0px 0px 10px;
+  gap: 10px;
+
+  border-radius: 0px 0px 8px 8px;
+  background-color: #3e5c76;
+}
+
 #toggle-group {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between; /* 공간 균등 분배 */
 
-  width: 100%;
+  width: 95%;
+  padding: 5px 10px;
 
   gap: 2%;
+
+  border-radius: 8px;
+
+  background-color: white;
 }
 
 #status-toggle {
@@ -21,9 +39,9 @@
 
   margin: 4px 0px;
 
-  border-radius: 10px;
+  border-radius: 8px;
 
-  background: #d9d9d9ac;
+  background: #e8f0f8;
 }
 
 #status-toggle-box {
@@ -112,7 +130,8 @@
 
 #status-toggle-box .toggle-name {
   font-size: small;
-  margin: 0 5px;
+
+  margin: 0;
 }
 
 #status-toggle-box .bad-status {

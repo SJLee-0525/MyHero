@@ -1,29 +1,33 @@
-import "./Calendar.css"
+import "./Calendar.css";
 
-import { useContext } from "react"
-import { CalendarStoreContext } from "../../../store/calendarStore"
+import { useContext } from "react";
+import { CalendarStoreContext } from "../../../store/calendarStore";
 
 export default function CalendarBody() {
-  const { daysInMonth, selectedDate, currentDate, schedules } = useContext(CalendarStoreContext)
+  const { daysInMonth, selectedDate, currentDate, schedules } =
+    useContext(CalendarStoreContext);
 
-  const weeks = ["일", "월", "화", "수", "목", "금", "토"]
+  const weeks = ["일", "월", "화", "수", "목", "금", "토"];
 
-  const healthData = schedules.schedules.health
-  const mentalData = schedules.schedules.mental
+  const healthData = schedules.schedules.health;
+  const mentalData = schedules.schedules.mental;
 
   return (
-    <div className="calendar-container">
+    <div className="calendar-widget-container">
       {/* 요일 표시 */}
-      <div className="calendar-day-wrapper">
+      <div className="calendar-widget-day-wrapper">
         {weeks.map((week, index) => (
-          <div key={week} className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}>
+          <div
+            key={week}
+            className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}
+          >
             {week}
           </div>
         ))}
       </div>
 
       {/* Days */}
-      <div className="calendar-day-wrapper">
+      <div className="calendar-widget-day-wrapper">
         {daysInMonth.map((date) => (
           <div
             key={date.date}
@@ -39,12 +43,20 @@ export default function CalendarBody() {
             </div>
             {/* 캘린더에 일정을 간략하게 표시 */}
             <div className="calendar-day-schedules-widget">
-              {healthData[date.date] ? <div className="health"></div> : <div className="no" />}
-              {mentalData[date.date] ? <div className="mental"></div> : <div className="no" />}
+              {healthData[date.date] ? (
+                <div className="health"></div>
+              ) : (
+                <div className="no" />
+              )}
+              {mentalData[date.date] ? (
+                <div className="mental"></div>
+              ) : (
+                <div className="no" />
+              )}
             </div>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }

@@ -1,33 +1,104 @@
 #emergency-main {
-  width: 100%;
-  min-width: 380px;
-
-  height: 81.6vh;
-  max-height: 81.6vh;
-}
-
-#emergency {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-between;
 
   width: 100%;
   height: 100%;
 
-  margin: 0 auto;
+  border-radius: 8px;
+  background-color: white;
+}
+
+#emergency-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  padding: 10px;
+  border-radius: 8px 8px 0px 0px;
+
+  background-color: #3e5c76;
+  color: white;
+}
+
+#emergency-header h3 {
+  margin: 4px;
+}
+
+#emergency {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: 100%;
+  height: 100%;
+
+  border-radius: 8px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+#emergency-alert-widget {
+  display: flex;
+  flex-direction: column;
+
+  width: 100%;
+  height: 650px;
+
+  margin-bottom: 7px;
+  padding: 10px;
+  gap: 8px;
+
+  border-radius: 8px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+#emergency-alert-widget::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#emergency-alert-widget::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#emergency-alert-widget::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#emergency-alert-widget::-webkit-scrollbar-thumb:hover {
+  background: #777777; /* 손잡이를 hover 했을 때 색상 */
 }
 
 #emergency-alert {
-  min-height: 400px;
-  height: 90%;
-  max-height: 90%;
-  margin: 15px;
-
+  display: flex;
+  flex-direction: column;
   width: 100%;
+  height: 100%;
+  padding: 10px;
+  gap: 8px;
+  border-radius: 8px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
 
-  overflow-y: auto; /* 세로 스크롤 가능 */
-  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+#emergency-alert::-webkit-scrollbar {
+  width: 8px; /* 스크롤바의 너비 */
+}
+
+#emergency-alert::-webkit-scrollbar-track {
+  background: #00000000; /* 스크롤바 배경 색상 */
+}
+
+#emergency-alert::-webkit-scrollbar-thumb {
+  background: #a8a8a8; /* 스크롤바의 손잡이 색상 */
+  border-radius: 10px; /* 손잡이의 둥근 모서리 */
+}
+
+#emergency-alert::-webkit-scrollbar-thumb:hover {
+  background: #777777; /* 손잡이를 hover 했을 때 색상 */
 }
 
 #emergency-alert-box {
@@ -36,18 +107,77 @@
   justify-content: space-between;
 
   width: 100%;
-  height: 100%;
 }
 
-#emergency-alert-box .title-container {
+#emergency-alert-box {
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  gap: 15px;
+
+  background-color: #d9d9d9;
+  color: black;
+}
+
+#emergency-alert-box-checked {
+  display: flex;
+  flex-direction: column;
+
+  border-radius: 8px;
+  padding: 10px;
+  width: 100%;
+  gap: 15px;
+
+  background-color: #d9d9d9;
+  color: black;
+  filter: contrast(50%);
+}
+
+.emergency-alert-button {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  margin: 5px;
+}
+
+.emergency-alert-button button {
+  border: none;
+  border-radius: 5px;
+  background-color: #3e5c76;
+
+  font-weight: bold;
+  color: white;
+  padding: 5px 8px;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.title-container {
   display: flex;
   justify-content: space-between;
 
   width: 100%;
 }
 
-#emergency-alert-box .date {
+.title-container h2 {
+  color: #ff5a33;
+  margin: 0px 4px 4px;
+}
+
+.date {
   margin: 0;
+  font-size: 14px;
+}
+
+.emergency-image-container img {
+  width: 300px;
+
+  border-radius: 8px;
 }
 
 @keyframes blink {
@@ -230,7 +360,7 @@
   justify-content: end;
   align-items: center;
 
-  margin: 20px 10px;
+  margin: 10px;
 
   width: 100%;
 }
@@ -271,23 +401,16 @@
   border: 0;
   border-radius: 8px;
 
+  background-color: #aabbcc;
   color: white;
   font-weight: bold;
-
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 #emergency-widget-log .log-widget-button:hover {
-  background-color: #ff9500;
+  background-color: #3e5c76;
 
   transition: all 0.3s ease;
 }
@@ -487,4 +610,125 @@
   filter: brightness(0.8);
 
   transition: all 0.3s ease;
+}
+
+#notification {
+  width: 100%;
+}
+
+#notification .notification-btn {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  background-color: #e8f0f8;
+}
+#notification .notification-btn-warn {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  background-color: #f8f3e8;
+}
+#notification .notification-btn-crit {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  background-color: #f8e8e8;
+}
+
+#notification .home-notification-icon-1 {
+  background-color: #44803f;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#notification .home-notification-icon-2 {
+  background-color: #ffec5c;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#notification .home-notification-icon-3 {
+  background-color: #ff5a33;
+
+  width: 45px;
+  height: 45px;
+
+  border-radius: 100%;
+}
+
+#notification .home-notification-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+
+  width: 100%;
+  height: 100%;
+
+  gap: 7px;
+}
+
+#notification .home-notification-content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+
+  width: 100%;
+  gap: 15px;
+}
+
+#notification .home-notification-content-header h2 {
+  margin: 0;
+}
+p {
+  margin: 0 0 8px;
+  font-weight: bold;
+}
+
+#notification .home-notification-description {
+  font-weight: bold;
+}
+
+#notification .new-home-notification-description {
+  text-align: start;
+}
+
+#notification .crit-image {
+  max-width: 300px;
+
+  border-radius: 8px;
+}
+
+#notification .home-notification-date {
+  width: 100%;
+
+  margin: 0;
+
+  font-weight: normal;
+  font-size: 14px;
+  text-align: end;
 }

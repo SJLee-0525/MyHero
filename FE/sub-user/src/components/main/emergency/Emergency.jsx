@@ -15,30 +15,33 @@ export default function Emergency() {
 
   return (
     <div id="emergency-main">
+      <div id="emergency-header">
+        <h3>긴급 상황 알림</h3>
+      </div>
       <div id="emergency">
         <div id="emergency-alert">
-          {emergencyStore.newCritNotifications.length > 0 ? (
-            emergencyStore.newCritNotifications.map((emergencyAlert) => (
-              <EmergencyAlert
-                key={emergencyAlert.index}
-                emergencyAlert={emergencyAlert}
-                onCheckAlert={() =>
-                  emergencyStore.handleReadNotification(emergencyAlert.index)
-                }
-              />
-            ))
+          {emergencyStore.categorizedNotifications.crit.length > 0 ? (
+            emergencyStore.categorizedNotifications.crit.map(
+              (emergencyAlert) => (
+                <EmergencyAlert
+                  key={emergencyAlert.index}
+                  emergencyAlert={emergencyAlert}
+                  onCheckAlert={() =>
+                    emergencyStore.handleReadNotification(emergencyAlert.index)
+                  }
+                />
+              )
+            )
           ) : (
             <h3>감지된 이상이 없습니다.</h3>
           )}
         </div>
+        <div className="emergency-alert-button">
+          <button onClick={emergencyStore.handleShowAlertLog}>
+            이전 기록 확인
+          </button>
+        </div>
         {/* 긴급 상황 알림 기록 확인 버튼 */}
-
-        <button
-          className="log-button"
-          onClick={emergencyStore.handleShowAlertLog}
-        >
-          이전 기록 확인
-        </button>
 
         <EmergencyLog />
       </div>

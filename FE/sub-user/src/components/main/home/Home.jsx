@@ -28,19 +28,22 @@ export default function Main() {
     <div id="home-main">
       {/* <h2 id="main-container-title">HOME</h2> */}
 
+      <h2>홈</h2>
       <div id="page-container">
         <div>
-          <Widget title="긴급 상황 알림" type="emergency">
+          <Widget title="전체 알림" type="emergency">
             <EmergencyWidget />
           </Widget>
-          <KeywordsWidget />
         </div>
         <Widget title="캘린더" type="calendar">
           <CalendarWidget />
         </Widget>
-        <Widget title={`${mainUserName}님의 집`}>
-          <ToggleGroup />
-        </Widget>
+        <div>
+          <Widget title={`${mainUserName}님의 집`}>
+            <ToggleGroup />
+          </Widget>
+          <KeywordsWidget />
+        </div>
       </div>
     </div>
   );

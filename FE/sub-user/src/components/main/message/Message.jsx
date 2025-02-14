@@ -20,10 +20,10 @@ export default function Message() {
 
   return (
     <div id="message-main">
-      <div id="message-left">
+      <h2 id="message-title">메시지</h2>
+
+      <div id="message-container">
         <SelectMessageRoom />
-      </div>
-      <div id="message-right">
         <div id="message">
           <MessageChat />
           <MessageInput />

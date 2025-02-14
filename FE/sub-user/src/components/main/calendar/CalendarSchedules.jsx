@@ -48,7 +48,7 @@ export default function CalendarSchedules() {
   }
 
   return (
-    <>
+    <div className="calendar-schedule-container">
       <div className="calendar-schedule-date">
         <a>{selectedDate.date}</a>
       </div>
@@ -101,7 +101,7 @@ export default function CalendarSchedules() {
         </li>
       </div>
 
-      <div className="calendar-schedule-reports-box">
+      <div className="calendar-schedule-results-box">
         <div className="calendar-health-reports">
           <div className="calendar-health-reports-header">
             <img src={activityImage} alt="activity" />
@@ -225,6 +225,6 @@ export default function CalendarSchedules() {
         />
         <button type="submit">+</button>
       </form> */}
-    </>
+    </div>
   );
 }

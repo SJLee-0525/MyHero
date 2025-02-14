@@ -1,13 +1,40 @@
 #message-main {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: start;
   align-items: start;
 
   width: 100%;
   min-width: 380px;
   height: 100%;
+}
 
-  gap: 10px;
+#message-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  width: 100%;
+  height: 90%;
+
+  background-color: #1d2d44;
+  border-radius: 8px;
+
+  padding: 10px;
+}
+
+#message-header {
+  height: 10%;
+}
+
+#message-main h2 {
+  height: 10%;
+}
+
+#message-title {
+  color: #0d1321;
+  font-size: 36px;
+  margin: 0px 20px 10px;
 }
 
 #message-left {
@@ -51,18 +78,18 @@
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 }
 
-#message-left .select-message-room {
+.select-message-room {
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: center;
 
-  width: 100%;
+  width: 25%;
   height: 100%;
 
+  margin-top: 20px;
   padding: 10px 2px;
-
-  gap: 10px;
+  gap: 5px;
 
   overflow-y: auto;
 }
@@ -72,9 +99,12 @@
   height: 50px;
 
   border: 0;
-  border-radius: 8px;
+  border-radius: 8px 0px 0px 8px;
 
-  background-color: rgba(255, 255, 255, 0.3);
+  font-size: 18px;
+
+  background-color: #1d2d44;
+  color: white;
 
   transition: all 0.3s ease;
 }
@@ -92,11 +122,14 @@
   height: 50px;
 
   border: 0;
-  border-radius: 8px;
+  border-radius: 8px 0px 0px 8px;
 
+  font-size: 18px;
   font-weight: bold;
 
-  background-color: rgb(255, 255, 255);
+  background-color: white;
+  color: #1d2d44;
+
   transition: all 0.3s ease;
 }
 
@@ -106,10 +139,12 @@
   justify-content: space-between;
   align-items: start;
 
-  width: 100%;
+  width: 75%;
   height: 100%;
 
-  padding: 10px 0px;
+  border-radius: 8px;
+
+  background-color: white;
 }
 
 #message h2 {
@@ -122,6 +157,8 @@
   justify-content: space-between;
   align-items: center;
 
+  padding: 10px;
+
   width: 100%;
   height: 90%;
 }
@@ -133,6 +170,10 @@
 
   width: 100%;
   height: 90%;
+
+  color: #0d1321;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 #chat {
@@ -141,17 +182,19 @@
   justify-content: start;
 
   width: 100%;
+  min-height: 100%;
   height: 100%;
 
   padding: 15px;
   gap: 18px;
 
-  border-radius: 15px;
+  border: 0;
+  border-radius: 8px;
 
   overflow-y: auto; /* 세로 스크롤 가능 */
   box-sizing: border-box; /* 패딩 포함 크기 계산 */
 
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: #aabbcc;
 }
 
 /* Webkit 기반 브라우저에서 스크롤바 스타일 변경 */
@@ -206,21 +249,22 @@
 
 #chat .main-chat {
   max-width: 300px;
-  background-color: #b4cf66;
-  /* background-color: #bfff00; */
+  background-color: #1d2d44;
+
+  color: white;
   border-radius: 10px 10px 10px 0px;
 }
 
 #chat .sub-chat {
   max-width: 300px;
-  background-color: #ffec5c;
-  /* background-color: #ffe100; */
+
+  background-color: #f0ebd8;
   border-radius: 10px 10px 0px 10px;
 }
 
 #chat img {
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 280px;
+  max-height: 280px;
 
   border-radius: 8px;
   border: 0;
@@ -239,9 +283,14 @@
 }
 
 #message-form-group {
-  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   width: 100%;
+  height: 10%;
+
+  padding: 10px;
 }
 
 #message-form-group form {
@@ -250,6 +299,7 @@
   justify-content: space-between;
 
   width: 100%;
+  height: 100%;
   gap: 10px;
 }
 
@@ -260,12 +310,13 @@
   justify-content: center;
   align-items: center;
 
-  width: 10%;
+  height: 100%;
+  aspect-ratio: 1;
   gap: 10px;
 
   border: 0;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.568);
+  background-color: #aabbcc;
 
   cursor: pointer;
   font-weight: bold;
@@ -274,7 +325,7 @@
 }
 
 #message-file-group:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: #748cab;
 
   transition: all 0.3s ease;
 }
@@ -290,49 +341,54 @@
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
-#message-form-group #message-role {
-  width: 20%;
-  height: 50px;
-  padding-left: 15px;
-
-  background-color: rgba(255, 255, 255, 0.568);
-
-  border: 0;
-  border-radius: 8px;
-}
-
 #message-input-group {
   display: flex;
   justify-content: center;
   align-items: center;
 
-  width: 90%;
+  width: 100%;
 }
 
 #message-input-group input {
-  width: 80%;
+  width: 85%;
   height: 50px;
   padding-left: 15px;
 
-  background-color: rgba(255, 255, 255, 0.568);
+  background-color: #dddddd;
 
   border: 0;
   border-radius: 8px 0px 0px 8px;
 }
 
+#message-input-group input:active {
+  border: 1px solid red;
+}
+
 #message-input-group button {
-  width: 20%;
+  width: 15%;
   height: 50px;
 
-  background-color: #ffec5c;
+  background-color: #aabbcc;
 
   border: 0;
   border-radius: 0px 8px 8px 0px;
 
+  font-weight: bold;
+
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@media screen and (max-width: 1200px) {
+#message-input-group button:hover {
+  background-color: #748cab;
+  transition: all 0.3s ease;
+}
+
+@media screen and (max-width: 720px) {
+  #message-title {
+    display: none;
+  }
+
   #message-main {
     display: flex;
     flex-direction: column;
@@ -342,46 +398,57 @@
     width: 100%;
     height: 100%;
 
+    margin-top: 10px;
     gap: 0px;
   }
 
-  #message-left {
+  #message-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+
     width: 100%;
-    height: 7vh;
+    height: 100%;
+
+    margin: 0px;
+    padding: 0px;
+
+    background-color: white;
   }
 
-  #message-right {
-    width: 100%;
-    height: 80vh;
-  }
-
-  #message-left .select-message-room {
+  .select-message-room {
     display: flex;
     flex-direction: row;
     justify-content: start;
     align-items: center;
 
     width: 100%;
+
+    margin: 0;
     padding: 5px;
 
     gap: 10px;
 
+    border-radius: 8px 8px 0px 0px;
+    background-color: #1d2d44;
+
     overflow-y: unset;
   }
 
-  #message-left .select-message-room .unselected {
+  .select-message-room .unselected {
     width: 150px;
     height: 50px;
 
     border: 0;
     border-radius: 8px;
 
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: transparent;
 
     transition: all 0.3s ease;
   }
 
-  #message-left .select-message-room .unselected:hover {
+  .select-message-room .unselected:hover {
     background-color: rgba(255, 255, 255, 0.6);
 
     font-weight: bold;
@@ -389,7 +456,7 @@
     transition: all 0.3s ease;
   }
 
-  #message-left .select-message-room .selected {
+  .select-message-room .selected {
     width: 150px;
     height: 50px;
 
@@ -400,5 +467,10 @@
 
     background-color: rgb(255, 255, 255);
     transition: all 0.3s ease;
+  }
+
+  #message {
+    width: 100%;
+    height: 80vh;
   }
 }

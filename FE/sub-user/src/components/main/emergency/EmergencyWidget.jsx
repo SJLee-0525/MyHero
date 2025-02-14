@@ -13,32 +13,29 @@ export default function EmergencyWidget() {
   const emergencyStore = useContext(EmergencyContext);
 
   return (
-    <>
-      <div id="emergency-alert">
-        {emergencyStore.newCritNotifications.length > 0 ? (
-          emergencyStore.newCritNotifications.map((emergencyAlert) => (
+    <div>
+      <div id="emergency-alert-widget">
+        {emergencyStore.allNotifications.length > 0 ? (
+          emergencyStore.allNotifications.map((notification) => (
             <EmergencyWidgetAlert
-              key={emergencyAlert.index}
-              emergencyAlert={emergencyAlert}
-              onCheckAlert={() =>
-                emergencyStore.handleReadNotification(emergencyAlert.index)
-              }
+              key={notification.index}
+              notification={notification}
             />
           ))
         ) : (
-          <h3>감지된 이상이 없습니다.</h3>
+          <h3>기록된 알림이 없습니다.</h3>
         )}
       </div>
 
-      <div id="emergency-widget-log">
+      {/* <div id="emergency-widget-log">
         <button
           className="log-widget-button"
           onClick={emergencyStore.handleShowAlertLog}
         >
           이전 기록 확인
         </button>
-      </div>
+      </div> */}
       <EmergencyLog />
-    </>
+    </div>
   );
 }

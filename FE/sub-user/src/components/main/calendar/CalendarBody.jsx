@@ -1,23 +1,27 @@
-import "./Calendar.css"
+import "./Calendar.css";
 
-import { useContext } from "react"
-import { CalendarStoreContext } from "../../../store/calendarStore"
+import { useContext } from "react";
+import { CalendarStoreContext } from "../../../store/calendarStore";
 
 export default function CalendarBody() {
-  const { daysInMonth, selectedDate, currentDate, schedules } = useContext(CalendarStoreContext)
+  const { daysInMonth, selectedDate, currentDate, schedules } =
+    useContext(CalendarStoreContext);
 
   // console.log(schedules);
-  const weeks = ["일", "월", "화", "수", "목", "금", "토"]
+  const weeks = ["일", "월", "화", "수", "목", "금", "토"];
 
-  const healthData = schedules.schedules.health
-  const mentalData = schedules.schedules.mental
+  const healthData = schedules.schedules.health;
+  const mentalData = schedules.schedules.mental;
 
   return (
     <div className="calendar-container">
       {/* 요일 표시 */}
       <div className="calendar-day-wrapper">
         {weeks.map((week, index) => (
-          <div key={week} className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}>
+          <div
+            key={week}
+            className={`calendar-item ${index === 0 ? "sunday" : "weekday"}`}
+          >
             {week}
           </div>
         ))}
@@ -41,14 +45,18 @@ export default function CalendarBody() {
             {/* 캘린더에 일정을 간략하게 표시 */}
             <li className="calendar-day-schedules">
               {healthData[date.date] ? (
-                <ul className="health-aver">{healthData[date.date].averageScore}</ul>
+                <ul className="health-aver">
+                  {healthData[date.date].averageScore}
+                </ul>
               ) : (
                 <ul className="no-aver">
                   <br />
                 </ul>
               )}
               {mentalData[date.date] ? (
-                <ul className="mental-aver">{mentalData[date.date].averageScore}</ul>
+                <ul className="mental-aver">
+                  {mentalData[date.date].averageScore}
+                </ul>
               ) : (
                 <ul className="no-aver">
                   <br />
@@ -59,5 +67,5 @@ export default function CalendarBody() {
         ))}
       </div>
     </div>
-  )
+  );
 }

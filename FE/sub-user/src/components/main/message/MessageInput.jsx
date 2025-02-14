@@ -53,7 +53,7 @@ export default function MessageInput() {
 
       const content = inputMessage.current.value.trim(); // 공백만 있는 메시지 방지
 
-      if (!content) {
+      if (!imageUrl && !content) {
         console.warn("메시지 내용 또는 이미지가 필요합니다.");
         return; // 빈 메시지 전송 방지
       }
@@ -108,7 +108,6 @@ export default function MessageInput() {
             type="text"
             name="message"
             ref={inputMessage}
-            required
           />
           <button type="submit">전송</button>
         </div>

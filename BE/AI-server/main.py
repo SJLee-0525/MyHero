@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine, event, exc, select
+from sqlalchemy import create_engine, event, exc, select, text
 
 import os
 import logging
@@ -55,27 +55,82 @@ app.add_middleware(
 # DB 연결 설정
 DATABASE_URL = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:3306/S12P11A102"
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_recycle=120,  
-    pool_pre_ping=True ,
-    pool_use_lifo=True,
-    echo_pool=True 
-)
+class DBSessionManager:
+    def __init__(self, db_url):
+        self.engine = create_engine(
+            db_url,
+            pool_recycle=120,  
+            pool_pre_ping=True,
+            pool_use_lifo=True,
+            echo_pool=True 
+        )
+        self.SessionLocal = sessionmaker(
+            bind=self.engine,
+            autocommit=False,
+            autoflush=False
+        )
+        self._db = None
+        
+        # 이벤트 리스너 등록
+        @event.listens_for(self.engine, "handle_error")
+        def handle_error(context):
+            if isinstance(context.original_exception, exc.OperationalError):
+                if "MySQL server has gone away" in str(context.original_exception):
+                    for attempt in range(3):
+                        try:
+                            self.initialize_db()
+                            # 실패한 쿼리 재시도
+                            return context.execution_context.statement
+                        except:
+                            if attempt == 2:
+                                raise
+                            continue
+        
+        self.initialize_db()
+        event.listens_for(self.engine, "engine_connect")(self.ping_connection)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    def initialize_db(self):
+        if self._db:
+            try:
+                self._db.close()
+            except:
+                pass
+                
+        for attempt in range(3):
+            try:
+                db = self.SessionLocal()
+                db.execute(text('SELECT 1'))
+                self._db = db
+                return
+            except Exception as e:
+                if attempt == 2:  
+                    raise
+                if 'db' in locals():
+                    try:
+                        db.close()
+                    except:
+                        pass
 
-db = SessionLocal()
+    @property
+    def db(self):
+        try:
+            self._db.execute(text('SELECT 1'))
+            return self._db
+        except:
+            self.initialize_db()
+            return self._db
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    except Exception:
-        db.rollback()
-        raise
-    finally:
-        db.close()
+    def ping_connection(self, connection, branch):
+        if branch:
+            return
+        try:
+            connection.scalar(select(1))
+        except exc.DBAPIError as err:
+            if err.connection_invalidated:
+                self.initialize_db()
+
+db_manager = DBSessionManager(DATABASE_URL)
+db = db_manager.db
 
 # 서비스 초기화
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -116,14 +171,12 @@ class MessageResponse(BaseModel):
 async def update_cache_periodically():
     while True:
         try:
-            db = next(get_db())
-            users = db.query(Account).all()
+            users = db_manager.db.query(Account).all()
             for user in users:
                 if user.address:
-                    weather_data = await weather_service.get_weather_for_user(user.id, db)
+                    weather_data = await weather_service.get_weather_for_user(user.id, db_manager.db)
                     if weather_data:
                         cache_manager.set_weather(user.id, weather_data)
-
             await asyncio.sleep(3600)  # 1시간 대기 
         except Exception as e:
             logger.error(f"Cache update error: {str(e)}")
@@ -179,13 +232,11 @@ async def get_news():
         logger.error(f"News error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-# 재난문자 noti save
 async def update_notifications_periodically():
     while True:
         try:
-            db = next(get_db())
-            await disaster_service.update_disaster_notifications(db)
-            await asyncio.sleep(300)  # 5분 대기
+            await disaster_service.update_disaster_notifications(db_manager.db)
+            await asyncio.sleep(300)  
         except Exception as e:
             logger.error(f"Notification update error: {str(e)}")
 
@@ -467,19 +518,8 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    db.close()
-    engine.dispose()
+    db_manager.engine.dispose()  
 
-@event.listens_for(engine, "engine_connect")
-def ping_connection(connection, branch):
-    if branch:
-        return
-
-    try:
-        connection.scalar(select(1))
-    except exc.DBAPIError as err:
-        if err.connection_invalidated:
-            connection.scalar(select(1))
 
 if __name__ == "__main__":
     import uvicorn

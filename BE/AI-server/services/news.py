@@ -46,9 +46,9 @@ class NewsService:
             if not news_data:
                 return
 
-            from main import SessionLocal
-
-            db = SessionLocal()
+            from main import db_manager
+            db = db_manager.db
+            
             try:
                 for category, news_list in news_data.items():
                     if not news_list:

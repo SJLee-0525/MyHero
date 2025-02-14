@@ -12,26 +12,24 @@ export default function MessageList({ onSelectUser }) {
     }, []);
 
     return (
-        <div className="message-list">
-            <div className="user-buttons">
-                {receivableUsers.map((user) => (
-                    <button 
-                        key={user?.user_id || Math.random()}
-                        className="user-button" 
-                        onClick={() => {
-                        if (!user?.user_id) {
-                            console.error("Error: user_id is undefined", user);
-                            return;
-                        }
-                        setClickedUser(user.user_id);
-                        setTimeout(() => setClickedUser(null), 500);
-                        selectUser(user);
-                        onSelectUser();
-                    }}>
-                        {user?.name || "이름 없음"}
-                    </button>
-                ))}
-            </div>
+        <div className="user-buttons">
+            {receivableUsers.map((user) => (
+                <button 
+                    key={user?.user_id || Math.random()}
+                    className="user-button" 
+                    onClick={() => {
+                    if (!user?.user_id) {
+                        console.error("Error: user_id is undefined", user);
+                        return;
+                    }
+                    setClickedUser(user.user_id);
+                    setTimeout(() => setClickedUser(null), 500);
+                    selectUser(user);
+                    onSelectUser();
+                }}>
+                    {user?.name || "이름 없음"}
+                </button>
+            ))}
         </div>
     );
 };

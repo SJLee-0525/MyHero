@@ -7,6 +7,7 @@ min-width: 450px;
 max-width: 600px;
 
 border-radius: 8px;
+cursor: none;
 }
 
 #login-form .login-form-row {
@@ -14,6 +15,7 @@ display: flex;
 flex-wrap: wrap;
 justify-content: flex-start;
 gap: 1rem;
+cursor: none;
 }
 
 #login-form .login-control {
@@ -22,6 +24,7 @@ width: 100%;
 
 #login-form .login-control input {
 display: block;
+cursor: none;
 
 width: 100%;
 height: 50px;
@@ -35,6 +38,7 @@ border-radius: 8px;
 
 #login-form .login-control label {
 display: block;
+cursor: none;
 
 margin-bottom: 0.2rem;
 
@@ -70,8 +74,8 @@ color: #ff5a33;
 font-size: larger;
 text-align: center;
 
-cursor: pointer;
 transition: all 0.3s ease;
+cursor: none;
 }
 
 #login-form .login-header button:hover {
@@ -103,7 +107,7 @@ background-color: #44803f;
 color: white;
 font-weight: bold;
 
-cursor: pointer;
+cursor: none;
 transition: all 0.3s ease;
 }
 
@@ -127,7 +131,6 @@ background-color: transparent;
 color: white;
 font-weight: bold;
 
-cursor: pointer;
 transition: all 0.3 ease;
 }
 
@@ -148,6 +151,7 @@ transition: all 0.3s ease;
 .logout-btn {
 width: 100%;
 height: 50px;
+cursor: none;
 
 margin-top: 10px;
 
@@ -159,7 +163,6 @@ background-color: #ff5a33;
 color: white;
 font-weight: bold;
 
-cursor: pointer;
 transition: all 0.3s ease;
 }
 
@@ -167,369 +170,4 @@ transition: all 0.3s ease;
 filter: brightness(0.8);
 
 transition: all 0.3s ease;
-}
-
-#user-info {
-display: flex;
-flex-direction: column;
-
-width: 100%;
-
-padding: 0px 10px;
-gap: 10px;
-}
-
-#user-info-btn-container {
-display: flex;
-justify-content: start;
-align-items: center;
-
-width: 100%;
-
-gap: 10px;
-}
-
-#user-info-btn-container .selected-btn {
-margin: 4px 0px;
-padding: 4px 4px;
-
-height: 45px;
-width: 120px;
-
-border: none;
-border-radius: 8px;
-
-background: #ff9500;
-
-font-weight: bold;
-color: white;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#user-info-btn-container .unselected-btn {
-margin: 4px 0px;
-padding: 4px 4px;
-
-height: 45px;
-width: 120px;
-
-border: none;
-border-radius: 8px;
-
-background: rgba(255, 255, 255, 0.568);
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#user-info-btn-container .unselected-btn:hover {
-background: rgba(188, 188, 188, 0.568);
-
-color: white;
-font-weight: bold;
-
-transition: all 0.3s ease;
-}
-
-#login-user-info {
-margin: 0;
-padding: 2rem;
-
-width: 100%;
-
-border: 1px rgba(255, 255, 255, 0.568) solid;
-border-radius: 8px;
-}
-
-#login-user-info .login-user-info-header {
-display: flex;
-justify-content: space-between;
-align-items: start;
-
-margin-bottom: 25px;
-}
-
-#login-user-info .login-user-info-header h3 {
-margin: 0 0 10px 0;
-padding: 0;
-
-color: white;
-}
-
-#login-user-info .login-user-info-buttons {
-display: flex;
-justify-content: end;
-align-items: center;
-
-gap: 10px;
-}
-
-#login-user-info .login-user-info-header p {
-margin: 0 0 10px 0;
-padding: 2px 5px;
-
-border-radius: 5px;
-
-font-weight: bold;
-background-color: #ff9500;
-}
-
-#login-user-info .login-user-info-header button {
-width: 120px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: #ff9500;
-color: white;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .login-user-info-header button:hover {
-filter: brightness(0.8);
-
-transition: all 0.3s ease;
-}
-
-#login-user-info table {
-border-collapse: collapse;
-border-spacing: 0;
-
-width: 100%;
-}
-
-#login-user-info td {
-padding: 12px;
-
-border: none;
-border-bottom: 1px rgba(255, 255, 255, 0.568) solid;
-}
-
-#login-user-info tr:last-child td {
-border-bottom: none;
-}
-
-#login-user-info td:first-child {
-width: 25%;
-
-font-weight: bold;
-}
-
-#login-user-info .not-found-family-user-info {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-
-height: 350px;
-gap: 10px;
-
-color: white;
-font-weight: bold;
-}
-
-#login-user-info .not-found-family-user-info button {
-width: 180px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: white;
-color: black;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .not-found-family-user-info button:hover {
-background-color: #ff9500;
-color: white;
-
-font-weight: bold;
-
-transition: all 0.3s ease;
-}
-
-#login-user-info .member-container {
-display: flex;
-justify-content: space-between;
-align-items: center;
-
-border-radius: 8px;
-
-margin: 10px 0px;
-padding: 15px;
-
-background-color: rgba(255, 255, 255, 0.568);
-color: black;
-}
-
-#login-user-info .member-container table {
-width: 75%;
-}
-
-#login-user-info .member-container table td {
-border: 0;
-}
-
-#login-user-info .member-btn-container {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: end;
-
-gap: 10px;
-
-width: 25%;
-}
-
-#login-user-info .member-btn-container .update {
-width: 100px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: white;
-color: black;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .member-btn-container .update:hover {
-background-color: #dfdfdf;
-
-transition: all 0.3s ease;
-}
-
-#login-user-info .member-btn-container .delete {
-width: 100px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: #ff5a33;
-color: white;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .member-btn-container .delete:hover {
-background-color: #e43710;
-color: white;
-
-transition: all 0.3s ease;
-}
-
-#login-user-info .family-btn-container {
-display: flex;
-
-justify-content: center;
-align-items: end;
-
-gap: 10px;
-}
-
-#login-user-info .family-btn-container .update {
-width: 120px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: white;
-color: black;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .family-btn-container .update:hover {
-background-color: #dfdfdf;
-
-transition: all 0.3s ease;
-}
-
-#login-user-info .family-btn-container .delete {
-width: 120px;
-height: 40px;
-
-border: 0;
-border-radius: 8px;
-
-background-color: #ff5a33;
-color: white;
-
-text-align: center;
-font-weight: bold;
-
-cursor: pointer;
-transition: all 0.3s ease;
-}
-
-#login-user-info .family-btn-container .delete:hover {
-background-color: #e43710;
-color: white;
-
-transition: all 0.3s ease;
-}
-
-@media screen and (max-width: 720px) {
-    #accounts-main {
-        min-width: 400px;
-        margin: 20px 20px;
-    }
-
-    #login-user-info .login-user-info-header {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    #login-user-info .login-user-info-buttons {
-        width: 100%;
-
-        justify-content: space-between;
-    }
-
-    #login-user-info .login-user-info-buttons button {
-        width: 100%;
-    }
-
-    #login-user-info .family-btn-container {
-        width: 100%;
-
-        justify-content: space-between;
-    }
-
-    #login-user-info .family-btn-container .update {
-        width: 100%;
-    }
-
-    #login-user-info .family-btn-container .delete {
-        width: 100%;
-    }
 }

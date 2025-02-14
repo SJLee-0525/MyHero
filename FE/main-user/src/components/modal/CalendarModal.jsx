@@ -9,13 +9,13 @@ export default function CalendarModal({ title, onCloseConfirm }) {
     <div id="modal-body-thin">
       <div id="modal-bar-thin">
         <h2>{title}</h2>
+        <button onClick={onCloseConfirm} className="close-button">
+          ✖
+        </button>
       </div>
       <CalendarStoreContextProvider>
         <Calendar />
       </CalendarStoreContextProvider>
-      <button onClick={onCloseConfirm} className="button">
-        닫기
-      </button>
     </div>
   )
 }

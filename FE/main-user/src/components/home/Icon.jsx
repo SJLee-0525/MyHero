@@ -6,7 +6,7 @@ export default function Icon({ type, state, imgSrc, altSrc, onClickIcon, childre
       id={type} 
       className={`clicked ? "clicked" : ""}  ${disabled ? "disable" : ""}`}
       onClick={onClickIcon}
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "none" }}
     >
       <img
         src={imgSrc}

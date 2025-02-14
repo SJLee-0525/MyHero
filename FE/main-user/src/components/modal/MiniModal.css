@@ -8,6 +8,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: none;
   }
   
   .modal-content {
@@ -32,7 +33,6 @@
     left: 50%;
     transform: translateX(-50%);
 
-    cursor: pointer;
     font-family: "Raleway", sans-serif;
     font-size: 1rem;
     font-weight: bolder;

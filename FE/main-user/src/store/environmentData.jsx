@@ -7,7 +7,7 @@ import { UserProgressContext } from "./userProgressStore";
 
 export const EnvironmentDataContext = createContext({
     environmentData: {
-        data: {
+        result: {
             family_id: null,
             reported_at: null,
             temperature: null,
@@ -24,7 +24,7 @@ export default function EnvironmentDataContextProvider({ children }) {
     const userProgressStore = useContext(UserProgressContext);
 
     const [environmentData, setEnvironmentData] = useState({
-        data: {
+        result: {
             family_id: null,
             reported_at: null,
             temperature: null,
@@ -50,32 +50,32 @@ export default function EnvironmentDataContextProvider({ children }) {
 
         try {
             const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
-            const resData = response.data;
 
+            const resData = response.data
             if (response.success) {
                 if (resData.message === "Home status retrieved successfully") {
                 setEnvironmentData({
-                    data: {
-                        family_id: resData.data.family_id,
-                        reported_at: resData.data.reported_at,
-                        temperature: resData.data.temperature,
-                        humidity: resData.data.humidity,
-                        dust_level: resData.data.dust_level.toFixed(2),
-                        ethanol: resData.data.ethanol.toFixed(2),
+                    result: {
+                        family_id: resData.result.family_id,
+                        reported_at: resData.result.reported_at,
+                        temperature: resData.result.temperature,
+                        humidity: resData.result.humidity,
+                        dust_level: resData.result.dust_level.toFixed(2),
+                        ethanol: resData.result.ethanol.toFixed(2),
                     } 
                 });
                 }
             } else {
-                console.error("최신 집 내부 정보 조회 실패:", resData.error)
+                console.error("최신 집 내부 정보 조회 실패:", response.error)
                 setEnvironmentData({
-                data: {
-                    family_id: null,
-                    reported_at: null,
-                    temperature: null,
-                    humidity: null,
-                    dust_level: null,
-                    ethanol: null,
-                },
+                    result: {
+                        family_id: null,
+                        reported_at: null,
+                        temperature: null,
+                        humidity: null,
+                        dust_level: null,
+                        ethanol: null,
+                    },
                 })
                 return {
                 success: false,

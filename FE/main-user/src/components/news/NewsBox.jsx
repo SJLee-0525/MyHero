@@ -1,21 +1,31 @@
-import React from "react";
+import React, { useContext } from "react";
+import { NewsStoreContext } from "../../store/newsStore";
+import NewsDetail from "./NewsDetail";
 import "./News.css";
 
 export default function NewsBoxPage({ category, newsData, onBack }) {
+  const { selectedNews, selectNews, clearSelectedNews } = useContext(NewsStoreContext);
+
+  if (selectedNews) {
+    return <NewsDetail news={selectedNews} onBack={clearSelectedNews} />
+  }
+
   return (
     <div className="news-box-page">
-      <button className="back-button" onClick={onBack}>← 뒤로 가기</button>
-      <h2>{category.charAt(0).toUpperCase() + category.slice(1)} 뉴스</h2>
+      <div className="news-header"> 
+        <button className="back-button" onClick={onBack}>←</button>
+        <h2>{category.charAt(0).toUpperCase() + category.slice(1)} 뉴스</h2>
+      </div>
 
       <div className="news-list">
         {newsData.length > 0 ? (
           newsData.map((news) => (
-            <div key={news.article_id} className="news-box" onClick={() => window.open(news.link, "_blank")}>
+            <div key={news.id} className="news-box" onClick={() => selectNews(news)}>
               <img src={news.image_url} alt="News" className="news-image" />
               <div className="news-info">
                 <h3 className="news-title">{news.title}</h3>
                 <p className="news-meta">
-                  {news.creator ? news.creator[0] : "Unknown"} · {new Date(news.pubDate).toLocaleDateString()}
+                  {new Date(news.pub_date).toLocaleDateString()}
                 </p>
               </div>
             </div>

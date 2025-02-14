@@ -10,7 +10,10 @@ export default function NewsDetail({ news, onReply }) {
       <div className="news-detail">
         <h2>뉴스 상세</h2>
         <div className="news-content">
-            <p className={`news-long-text ${news.type}`}>{news.text}</p>
+          <h3>{news.title}</h3>
+          <img src={news.image_url} alt="News" className="news-detail-image" />
+          <p className="news-meta">{new Date(news.pub_date).toLocaleDateString()}</p>
+          <p className="news-text">{news.text}</p>
         </div>
       </div>
     );

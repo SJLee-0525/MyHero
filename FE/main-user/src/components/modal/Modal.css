@@ -9,6 +9,7 @@
   transform: translateY(-20px);
   transition: opacity 0.3s ease-out, transform 0.3s ease-out;
   animation: slide-down-fade-in 0.3s ease-out forwards;
+  cursor: none;
 }
 
 /* 모달이 열린 상태 */
@@ -86,7 +87,6 @@
 }
 
 #modal-bar .button {
-  cursor: pointer;
   font-family: "Raleway", sans-serif;
   font-size: 1rem;
   padding: 0.5rem 1.5rem;
@@ -107,7 +107,6 @@
   left: 50%;
   transform: translateX(-50%);
 
-  cursor: pointer;
   font-family: "Raleway", sans-serif;
   font-size: 1.2rem;
   font-weight: bolder;
@@ -118,6 +117,7 @@
   background-color: #FFFFFF;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   color: #000000;
+  cursor: none;
 }
 
 .redButton {
@@ -125,7 +125,6 @@
   left: 50%;
   transform: translateX(-100%);
 
-  cursor: pointer;
   font-family: "Raleway", sans-serif;
   font-size: 1rem;
   font-weight: 1000;
@@ -136,6 +135,22 @@
   background-color: #FF5858;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   color: #fff;
+  cursor: none;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #333;
+  cursor: none;
+}
+
+.close-button :hover {
+  color: #ff5858;
 }
 
 #setting-box {

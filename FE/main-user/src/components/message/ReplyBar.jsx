@@ -1,29 +1,43 @@
 import React from "react";
 import { useState } from "react";
+import { useUserProgressStore } from "../../store/userProgressStore.jsx";
 import { useMessageStore } from "../../store/messageStore";
 import "./Message.css";
 
 export default function ReplyBar({ onSend }) {
     const [message, setMessage] = useState("");
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
-    const { selectedUser, addMessage } = useMessageStore();
+    const { loginUserInfo } = useUserProgressStore();
+    const { selectedUser, addMessage, sendMessageToServer, fetchMessages } = useMessageStore();
 
     const handleChange = (e) => {
         setMessage(e.target.value);
     };
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (message.trim() === "") return;
 
         const newMessage = {
-            index: Date.now(),
-            from_id: "me",
+            index: Date.now() + 9 * 60 * 60 * 1000,
+            from_id: loginUserInfo.userInfo.id,
             to_id: selectedUser.user_id,
-            created_at: new Date().toLocaleString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
-            content: message
+            created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString(),
+            content: message,
+            sender: "me",
         };
 
-        addMessage(selectedUser.user_id, newMessage);
+        // addMessage(selectedUser.user_id, newMessage);
+
+        const response = await sendMessageToServer(newMessage);
+
+        if (response.success) {
+            console.log("✅ 서버에 메시지 저장 완료:", response.data);
+
+            fetchMessages(selectedUser.user_id);
+        } else {
+            console.error("❌ 메시지 전송 실패:", response.error);
+        }
+
         setMessage("");
         setIsListening(false); // 전송 후 음성 인식 종료
     };
@@ -49,7 +63,7 @@ export default function ReplyBar({ onSend }) {
             
             {/* 음성 인식 완료 시 "다시 말하기" 버튼 추가 */}
             {message && (
-                <button className="retry-button" onClick={handleRetry}>다시 말하기</button>
+                <button className="retry-button" onClick={() => setMessage("")}>다시 말하기</button>
             )}
 
             {/* 입력된 메시지가 없을 경우 전송 버튼 비활성화 */}

@@ -11,16 +11,6 @@ export default function Chatting({ isOpen }) {
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
-    
-    // useEffect(() => {
-    //     if (isOpen && selectedUser.user_id) {
-    //         fetchMessages(selectedUser.user_id);
-    //     }
-        
-    //     return () => {
-    //         console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
-    //     };
-    // }, [isOpen, selectedUser]);
 
     useEffect(() => {
         if (isOpen && selectedUser?.user_id) {
@@ -98,6 +88,7 @@ export default function Chatting({ isOpen }) {
                             
                                     return `${period} ${formattedHours}:${minutes}`;
                                 })()}
+                                imageUrl={msg.image_url || null}
                             />
                         ))
                     )}

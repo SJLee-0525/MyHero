@@ -37,6 +37,13 @@
     max-width: 100%;
 }
 
+.message-image {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
 .mainText {
     background-color: #B4CF66;
     color: #000000;
@@ -55,18 +62,18 @@
     font-size: 0.8rem;
     font-weight: 1000;
     margin-top: 45px;
+    margin-bottom: 15px;
+    align-self: flex-end;
 }
 
 /* 내가 보낸 메시지의 시간 (왼쪽) */
 .message-time.left {
     order: -1;
-    margin-right: 8px;
     text-align: right;
 }
 
 /* 상대방이 보낸 메시지의 시간 (오른쪽) */
 .message-time.right {
-    margin-left: 8px;
     text-align: left;
 }
 
@@ -341,7 +348,7 @@
     will-change: transform, box-shadow;
     backface-visibility: hidden;
 
-    padding: 20px;
+    padding: 10px;
     font-size: 18px;
     font-weight: bold;
     height: 130px;

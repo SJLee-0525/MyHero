@@ -48,12 +48,10 @@ export default function NewsStoreContextProvider({ children }) {
     }
   };
 
-   // ✅ 뉴스 선택 함수 추가 (상세 보기 기능)
-   function selectNews(news) {
+  function selectNews(news) {
     setSelectedNews(news);
   }
 
-  // ✅ 뉴스 상세에서 나갈 때 선택된 뉴스 초기화
   function clearSelectedNews() {
     setSelectedNews(null);
   }

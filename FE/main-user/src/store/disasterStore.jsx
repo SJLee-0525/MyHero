@@ -48,7 +48,6 @@ export default function DisasterStoreContextProvider({ children }) {
 
     async function markNotificationAsRead(notificationIndex) {
         try {
-            console.log(`📡 PATCH 요청: /notify/read/${notificationIndex}`);
             const response = await request(
                 `${userProgressStore.DEV_API_URL}/notify/read/${notificationIndex}`,
                 "PATCH",
@@ -57,8 +56,6 @@ export default function DisasterStoreContextProvider({ children }) {
             );
 
             if (response.success && response.data?.result) {
-                console.log(`✅ 알림(${notificationIndex}) 읽음 처리 완료`, response.data.result);
-
                 setDisasterData((prevData) =>
                     prevData.map((item) =>
                         item.index === notificationIndex ? { ...item, is_read: true } : item

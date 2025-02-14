@@ -20,7 +20,7 @@ from services.news import NewsService
 from services.mental_health import MentalHealthService
 from services.message_service import MessageService
 from utils.cache import CacheManager
-from models import Base, get_db, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport, MemberRelations
+from models import Base, Account, ChatSession, ChatHistory, MentalStatus, FallDetection, Family, ChatKeywords, MentalReport, MemberRelations
 
 from utils.timezone_utils import get_kst_today, to_utc_start_of_day, to_utc, get_kst_now
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Query, Path
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event, exc, select
 
 import os
 import logging
@@ -58,7 +58,9 @@ DATABASE_URL = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD'
 engine = create_engine(
     DATABASE_URL,
     pool_recycle=120,  
-    pool_pre_ping=True  
+    pool_pre_ping=True ,
+    pool_use_lifo=True,
+    echo_pool=True 
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -69,6 +71,9 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
 
@@ -464,6 +469,17 @@ async def startup_event():
 async def shutdown_event():
     db.close()
     engine.dispose()
+
+@event.listens_for(engine, "engine_connect")
+def ping_connection(connection, branch):
+    if branch:
+        return
+
+    try:
+        connection.scalar(select(1))
+    except exc.DBAPIError as err:
+        if err.connection_invalidated:
+            connection.scalar(select(1))
 
 if __name__ == "__main__":
     import uvicorn

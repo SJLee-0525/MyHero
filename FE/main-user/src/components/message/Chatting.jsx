@@ -33,10 +33,10 @@ export default function Chatting({ isOpen }) {
     
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
-            index: Date.now(),  // 임시 ID (서버와 동기화되면 변경 가능)
+            index: Date.now() + 9 * 60 * 60 * 1000,  // 임시 ID (서버와 동기화되면 변경 가능)
             from_id: loginUserInfo.userInfo.id, // 내가 보낸 메시지
             to_id: selectedUser.user_id,
-            created_at: new Date().toISOString(),
+            created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString(),
             content: newMessage,
             sender: "me"
         };
@@ -72,7 +72,17 @@ export default function Chatting({ isOpen }) {
                                 key={msg.index} 
                                 text={msg.content} 
                                 sender={msg.sender} 
-                                time={new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                time={(() => {
+                                    const date = new Date(msg.created_at);
+                                    date.setHours(date.getHours() + 9); // ✅ UTC+9 변환
+                            
+                                    const hours = date.getHours();
+                                    const minutes = date.getMinutes().toString().padStart(2, "0");
+                                    const period = hours >= 12 ? "오후" : "오전"; // ✅ 오전/오후 구분
+                                    const formattedHours = hours % 12 || 12; // 12시간 형식 변환 (0시는 12로)
+                            
+                                    return `${period} ${formattedHours}:${minutes}`;
+                                })()}
                             />
                         ))
                     )}

@@ -71,7 +71,7 @@ export default function MessageProvider({ children }) {
 
         try {
             const startTime = "2020-01-01T00:00:00"; // ✅ 모든 메시지를 가져오기 위해 오래된 날짜 설정
-            const endTime = new Date().toISOString();
+            const endTime = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString();
 
             const existingMessages = conversations[selectedUserId] || [];
 

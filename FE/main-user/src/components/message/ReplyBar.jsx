@@ -18,10 +18,10 @@ export default function ReplyBar({ onSend }) {
         if (message.trim() === "") return;
 
         const newMessage = {
-            index: Date.now(),
+            index: Date.now() + 9 * 60 * 60 * 1000,
             from_id: loginUserInfo.userInfo.id,
             to_id: selectedUser.user_id,
-            created_at: new Date().toISOString(),
+            created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString(),
             content: message,
             sender: "me",
         };

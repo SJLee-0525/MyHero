@@ -10,12 +10,6 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 기술
 
-<img src="https://github.com/user-attachments/assets/caac37cc-577f-4de4-8c11-22d8ada96da8"  width="100" height="100" alt="MySQL"/>
-
-<img src="https://github.com/user-attachments/assets/f8f3d1ec-cfc2-4a02-b7cc-7ef840d7c3c6"  width="100" height="100" alt="Python"/>
-
-<img src="https://github.com/user-attachments/assets/6564662b-0d9f-4368-b1c8-fabf22f7beb3"  width="100" height="100" alt="FastAPI"/>
-
 | **분야** | **사용한 기술** |
 | --- | --- |
 | Database | **MariaDB** 10.3.23 |

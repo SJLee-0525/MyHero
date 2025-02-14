@@ -47,6 +47,8 @@
 .notice-box {
   display: flex;
   padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   border-radius: 8px;
   margin: 5px 0;
   flex-direction: column;
@@ -67,6 +69,12 @@
 
 .notice-box.message {
   background: #fffa8b;
+}
+
+.notice-box.crit {
+  background: #ff6666;
+  color: #fffa8b;
+  font-weight: bold;
 }
 
 .notice-box.warn {

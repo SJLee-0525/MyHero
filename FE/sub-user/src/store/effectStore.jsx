@@ -110,6 +110,7 @@ export default function EffectContextProvider({ children }) {
           login: userProgressStore.loginUserInfo,
         });
         await homeStatusStore.handleGetHomeStatus();
+        await homeStatusStore.handleGetDeviceStatus();
         await healthStore.handleGetHealthData();
         await healthStore.handleGetActivityStatus();
         await healthStore.handleGetMentalStatus();
@@ -133,6 +134,7 @@ export default function EffectContextProvider({ children }) {
           login: userProgressStore.loginUserInfo,
         });
         await homeStatusStore.handleGetHomeStatus();
+        await homeStatusStore.handleGetDeviceStatus();
         await emergencyStore.handleGetNewNotifications();
         await messageStore.getNewMessages();
         console.log("Refresh 요청 끝!");

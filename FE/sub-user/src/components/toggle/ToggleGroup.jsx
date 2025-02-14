@@ -47,10 +47,11 @@ export default function ToggleGroup() {
         <Toggle
           name="알림"
           identifier="notification"
-          status={userProgressStore.toggleStatus.notification ? "good" : "bad"}
-          onClickToggle={userProgressStore.handleToggleStatus}
+          status={
+            homeStatusStore.deviceStatus.is_alarm_enabled ? "good" : "bad"
+          }
           imgSrc={
-            userProgressStore.toggleStatus.notification
+            homeStatusStore.deviceStatus.is_alarm_enabled
               ? notificationOnImage
               : notificationOffImage
           }
@@ -59,26 +60,31 @@ export default function ToggleGroup() {
         <Toggle
           name="카메라"
           identifier="camera"
-          status={userProgressStore.toggleStatus.camera ? "good" : "bad"}
-          onClickToggle={userProgressStore.handleToggleStatus}
+          status={
+            homeStatusStore.deviceStatus.is_camera_enabled ? "good" : "bad"
+          }
           imgSrc={cameraImage}
           altSrc="camera"
         ></Toggle>
         <Toggle
           name="마이크"
           identifier="microphone"
-          status={userProgressStore.toggleStatus.microphone ? "good" : "bad"}
-          onClickToggle={userProgressStore.handleToggleStatus}
+          status={
+            homeStatusStore.deviceStatus.is_microphone_enabled ? "good" : "bad"
+          }
           imgSrc={
-            userProgressStore.toggleStatus.microphone ? micOnImage : micOffImage
+            homeStatusStore.deviceStatus.is_microphone_enabled
+              ? micOnImage
+              : micOffImage
           }
           altSrc="microphone"
         ></Toggle>
         <Toggle
           name="주행"
           identifier="car"
-          status={userProgressStore.toggleStatus.car ? "good" : "bad"}
-          onClickToggle={userProgressStore.handleToggleStatus}
+          status={
+            homeStatusStore.deviceStatus.is_driving_enabled ? "good" : "bad"
+          }
           imgSrc={carImage}
           altSrc="car"
         ></Toggle>

@@ -15,8 +15,16 @@ export const HomeStatusContext = createContext({
       others: { finedust: null, ultrafinedust: null },
     },
   ],
+  deviceStatus: {
+    family_id: "",
+    is_alarm_enabled: false,
+    is_camera_enabled: false,
+    is_microphone_enabled: false,
+    is_driving_enabled: false,
+  },
   setHomeStatus: () => {},
   handleGetHomeStatus: () => {},
+  handleGetDeviceStatus: () => {},
 });
 
 export default function HomeStatusContextProvider({ children }) {
@@ -25,6 +33,13 @@ export default function HomeStatusContextProvider({ children }) {
   const userProgressStore = useContext(UserProgressContext);
 
   const [homeStatus, setHomeStatus] = useState([]);
+  const [deviceStatus, setDeviceStatus] = useState({
+    family_id: "",
+    is_alarm_enabled: false,
+    is_camera_enabled: false,
+    is_microphone_enabled: false,
+    is_driving_enabled: false,
+  });
 
   // useEffect(() => {
   //   try {
@@ -193,11 +208,82 @@ export default function HomeStatusContextProvider({ children }) {
     }
   }
 
+  async function handleGetDeviceStatus() {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/tools/settings/${familyId}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "Settings retrieved successfully") {
+          setDeviceStatus(resData.result);
+          return {
+            success: true,
+            data: resData.result,
+          };
+        } else if (resData.message == "No settings found") {
+          console.error("디바이스 설정 정보가 없습니다.", resData.message);
+          setDeviceStatus({
+            family_id: "",
+            is_alarm_enabled: false,
+            is_camera_enabled: false,
+            is_microphone_enabled: false,
+            is_driving_enabled: false,
+          });
+          return {
+            success: true,
+            data: resData.result,
+          };
+        }
+      } else {
+        console.error("디바이스 설정 정보 조회 실패:", response.error);
+        setDeviceStatus({
+          family_id: "",
+          is_alarm_enabled: false,
+          is_camera_enabled: false,
+          is_microphone_enabled: false,
+          is_driving_enabled: false,
+        });
+        return {
+          success: false,
+          error: {
+            type: response.error.type,
+            message: response.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("디바이스 상태 조회 실패:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   const ctxValue = {
     loading,
     homeStatus,
+    deviceStatus,
     setHomeStatus,
     handleGetHomeStatus,
+    handleGetDeviceStatus,
   };
 
   return (

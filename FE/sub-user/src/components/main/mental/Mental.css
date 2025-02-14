@@ -57,10 +57,12 @@
 }
 
 #keywords-body {
-  display: flex;
+  width: 100%;
   flex-wrap: wrap;
 
-  gap: 10px;
+  display: flex;
+
+  gap: 5px;
 }
 
 #keyword-box {
@@ -154,6 +156,35 @@
   align-items: center;
 
   height: 250px;
+}
+
+#mental-report .report-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#mental-report .report-control-period {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+}
+
+#mental-report .report-control-period input {
+  display: block;
+
+  width: 120px;
+  height: 40px;
+  padding-left: 10px;
+
+  background-color: rgba(255, 255, 255, 0.568);
+
+  border: 0;
+  border-radius: 8px;
 }
 
 #mental-report .mental-report-header {

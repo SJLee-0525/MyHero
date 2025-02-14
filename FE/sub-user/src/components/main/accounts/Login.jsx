@@ -17,7 +17,6 @@ export default function Login() {
     email: false,
     password: false,
   });
-
   const [isCapsLockOn, setIsCapsLockOn] = useState(false);
 
   const emailInput = useRef("");
@@ -123,17 +122,6 @@ export default function Login() {
             )} */}
           </div>
 
-          {isCapsLockOn && (
-            <div className="login-control-error">
-              <p>⚠️ Caps Lock이 켜져 있습니다!</p>
-            </div>
-          )}
-          {!isCapsLockOn && (
-            <div className="login-control-error">
-              <p> </p>
-            </div>
-          )}
-
           <div className="login-control">
             <label htmlFor="password">비밀번호</label>
             <input
@@ -145,12 +133,9 @@ export default function Login() {
               ref={passwordInput}
             />
           </div>
-
-          {/* {formIsInvalid.password && (
-            <div className="login-control-error">
-              <p>비밀번호는 8자 이상입니다.</p>{" "}
-            </div>
-          )} */}
+          <div className="login-control-error">
+            {isCapsLockOn && <p>⚠️ Caps Lock이 켜져 있습니다!</p>}
+          </div>
         </div>
 
         <p className="login-form-action">

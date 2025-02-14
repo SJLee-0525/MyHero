@@ -62,22 +62,16 @@ function App() {
               path="/accounts/register/:familyId"
               element={<RegisterMemberQr />}
             />
-            {/* 로그인 여부에 따라 다른 화면 표시 */}
-            {userProgressStore.loginUserInfo.login ? (
-              <>
-                <Route path="/" element={<Home />} />
-                <Route path="/notification" element={<Notification />} />
-                <Route path="/message" element={<Message />} />
-                {/* <Route path="/emergency" element={<Emergency />} /> */}
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/activity" element={<Activity />} />
-                {/* <Route path="/mental" element={<Mental />} /> */}
-                <Route path="/accounts/*" element={<Accounts />} />
-                {/* <Route path="/settings" element={<Settings />} /> */}
-              </>
-            ) : (
-              <Route path="/" element={<Advertisement />} />
-            )}
+
+            <Route path="/" element={<Home />} />
+            <Route path="/notification" element={<Notification />} />
+            <Route path="/message" element={<Message />} />
+            {/* <Route path="/emergency" element={<Emergency />} /> */}
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/activity" element={<Activity />} />
+            {/* <Route path="/mental" element={<Mental />} /> */}
+            <Route path="/accounts/*" element={<Accounts />} />
+            {/* <Route path="/settings" element={<Settings />} /> */}
           </Routes>
           <NewNotiModal />
           <NewEmergencyModal />

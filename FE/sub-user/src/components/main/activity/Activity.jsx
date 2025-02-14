@@ -2,6 +2,7 @@ import "./Activity.css";
 
 import { useContext } from "react";
 
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import { HealthContext } from "../../../store/healthStore.jsx";
 
 import PageContainer from "../container/PageContainer";
@@ -11,12 +12,20 @@ import ActivityChartContainer from "./ActiviyChartContainer";
 import MentalChartContainer from "../mental/MentalChartContainer.jsx";
 import WeeklyStats from "./WeeklyStats.jsx";
 import MentalReport from "../mental/MentalReport.jsx";
-import Keywords from "../mental/Keywords.jsx";
+import MentalHealth from "../mental/MentalHealth.jsx";
 
 export default function Activity() {
+  const userProgressStore = useContext(UserProgressContext);
   const healthStore = useContext(HealthContext);
 
   const mainUserName = "박순자123";
+
+  if (
+    userProgressStore.loginUserInfo.login &&
+    userProgressStore.loginUserInfo.userInfo.role === "main"
+  ) {
+    return;
+  }
 
   return (
     <div id="activity-main">
@@ -33,14 +42,17 @@ export default function Activity() {
                 <MentalChartContainer />
               )}
             </PageContainer>
-            <Keywords />
-          </div>
-          <div id="activity-elem-right">
             <PageContainer title="주간 건강 리포트">
               <WeeklyStats />
             </PageContainer>
+          </div>
+          <div id="activity-elem-right">
+            {/* <Keywords /> */}
             <PageContainer title="대화 리포트">
               <MentalReport />
+            </PageContainer>
+            <PageContainer title="정신 건강">
+              <MentalHealth />
             </PageContainer>
           </div>
         </div>

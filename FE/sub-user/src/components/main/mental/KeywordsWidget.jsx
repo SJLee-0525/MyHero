@@ -13,26 +13,28 @@ export default function KeywordsWidget() {
 
   return (
     <Widget title={`${mainUserName}님의 대화 키워드`} type="keyword">
-      {healthStore.keywords.map((content, index) => {
-        return (
-          <span
-            key={index}
-            id="keyword-box"
-            style={{
-              backgroundColor:
-                healthStore.keywordColors[
-                  index % healthStore.keywordColors.length
-                ][0],
-              color:
-                healthStore.keywordColors[
-                  index % healthStore.keywordColors.length
-                ][1],
-            }}
-          >
-            {content}
-          </span>
-        );
-      })}
+      <div id="keywords-body">
+        {healthStore.keywords.map((content, index) => {
+          return (
+            <span
+              key={index}
+              id="keyword-box"
+              style={{
+                backgroundColor:
+                  healthStore.keywordColors[
+                    index % healthStore.keywordColors.length
+                  ][0],
+                color:
+                  healthStore.keywordColors[
+                    index % healthStore.keywordColors.length
+                  ][1],
+              }}
+            >
+              {content}
+            </span>
+          );
+        })}
+      </div>
     </Widget>
   );
 }

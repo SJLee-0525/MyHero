@@ -38,7 +38,6 @@ export const HealthContext = createContext({
       },
     },
   ],
-  selectedToggle: "",
   mentalReport: [
     {
       index: 3,
@@ -54,6 +53,51 @@ export const HealthContext = createContext({
       summary: "또 다른 총평 요약",
     },
   ],
+  mentalHealthStatus: {
+    language_patterns: {
+      score: 60,
+      word_choice:
+        "사용자는 '안녕', '뭐 해', '그냥 불러 봤어' 등의 단어를 반복적으로 사용하고 있습니다. 이는 사용자가 특정 단어에 고착화되어 있거나, 그 단어를 통해 특정 감정을 표현하려는 의도가 있을 수 있습니다.",
+      sentence_structure:
+        "사용자의 문장 구조는 대체로 일관되어 있지만, 일부 문장에서는 주어나 동사가 빠진 경우가 있습니다. 이는 사용자가 문장을 완전히 표현하는데 어려움을 겪고 있을 수 있습니다.",
+      expression_clarity:
+        "사용자의 표현은 대체로 명확하지만, 일부 문장에서는 맥락이 불분명하거나 불완전한 문장을 사용하는 경우가 있습니다.",
+    },
+    contextual_analysis: {
+      score: 50,
+      topic_flow:
+        "사용자는 대화 주제를 자연스럽게 전환하는데 어려움이 있습니다. 대화 주제가 불분명하거나 반복적으로 같은 주제로 돌아오는 경향이 있습니다.",
+      context_understanding:
+        "사용자는 대화 맥락을 이해하는데 어려움이 있을 수 있습니다. 동일한 질문을 반복하거나, 이전 대화 내용과 관련 없는 주제로 전환하는 경우가 있습니다.",
+    },
+    cognitive_state: {
+      score: 55,
+      clarity:
+        "사용자의 사고는 대체로 명확하지만, 일부 문장에서는 불분명하거나 혼란스러울 수 있습니다.",
+      reality_perception:
+        "사용자는 현실 인식에 어려움이 있을 수 있습니다. 일부 문장에서는 현실과 다른 상황을 이야기하는 것으로 보입니다.",
+    },
+    overall_assessment: {
+      total_score: 55,
+      risk_level: "medium",
+      concerns: ["언어 패턴의 반복", "대화 맥락 이해도 부족", "현실 인식 문제"],
+      strengths: ["일관된 문장 구조", "대체로 명확한 표현"],
+    },
+    recommendations: [
+      "전문가와 상담을 통해 정신 건강 상태를 평가받아보는 것이 좋습니다.",
+      "일상생활에서 스트레스를 줄이는 방법을 찾아보세요.",
+      "정기적인 운동과 영양 균형 잡힌 식사를 통해 건강을 유지하세요.",
+    ],
+    analysis_period: {
+      start: "2025-02-06T15:00:00",
+      end: "2025-02-13T14:59:59",
+    },
+    data_stats: {
+      total_conversations: 59,
+      analysis_type: "periodic",
+    },
+  },
+  selectedToggle: "",
   weeklyData: [{ name: "", value: 0 }],
   keywords: [],
   keywordColors: [],
@@ -88,6 +132,11 @@ export const HealthContext = createContext({
   handleGetMentalStatus: () => {},
   handleGetMentalReports: () => {},
   handleGetOneDayMentalReport: () => {},
+  handleGetMentalHealthDailyStatus: () => {},
+  handleGetMentalHealthPeriodStatus: (inputStart, inputEnd) => {},
+  handleShowMentalHealthReport: () => {},
+  handleCloseMentalHealthReport: () => {},
+  handleGetKeywords: () => {},
 });
 
 export default function HealthContextProvider({ children }) {
@@ -98,6 +147,7 @@ export default function HealthContextProvider({ children }) {
   const [healthStatus, setHealthStatus] = useState([]);
   const [activityStatus, setActivityStatus] = useState([]);
   const [mentalStatus, setMentalStatus] = useState([]);
+  const [mentalHealthStatus, setMentalHealthStatus] = useState({});
 
   const [selectedToggle, setSelectedToggle] = useState("activity");
   const [mentalReport, setMentalReport] = useState([]);
@@ -107,8 +157,10 @@ export default function HealthContextProvider({ children }) {
     { name: "mental", value: 0 },
   ]);
 
+  const [keywords, setKeywords] = useState([]);
+
   // 대화 키워드 관련련
-  const keywords = ["임영웅", "김치찌개", "두부", "여행", "병원"];
+  // const keywords = ["임영웅", "김치찌개", "두부", "여행", "병원"];
   const keywordColors = [
     ["#146152", "white"],
     ["#44803F", "white"],
@@ -547,12 +599,163 @@ export default function HealthContextProvider({ children }) {
     }
   };
 
+  async function handleGetMentalHealthDailyStatus() {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/status/psychology/${familyId}`
+      );
+
+      console.log("handleGetMentalHealthDailyStatus response", response);
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "Psychology report created successfully") {
+          console.log("정신 건강 상태 불러오기 성공:", resData.result);
+          setMentalHealthStatus({ ...resData.result });
+        } else {
+          console.error("정신 건강 상태 불러오기 실패:", resData.error);
+          setMentalHealthStatus({});
+          return {
+            success: false,
+            error: {
+              type: resData.error.type,
+              message: resData.error.message,
+            },
+          };
+        }
+      }
+    } catch (error) {
+      console.error("정신 건강 상태를 불러오는 데 실패했습니다.", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  async function handleGetMentalHealthPeriodStatus(inputStart, inputEnd) {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/status/psychology/${familyId}?start=${inputStart}&end=${inputEnd}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "Psychology report created successfully") {
+          console.log("정신 건강 상태 불러오기 성공:", resData.result);
+          setMentalHealthStatus({ ...resData.result });
+        } else {
+          console.error("정신 건강 상태 불러오기 실패:", resData.error);
+          setMentalHealthStatus({});
+          return {
+            success: false,
+            error: {
+              type: resData.error.type,
+              message: resData.error.message,
+            },
+          };
+        }
+      }
+    } catch (error) {
+      console.error("정신 건강 상태를 불러오는 데 실패했습니다.", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
+  function handleShowMentalHealthReport() {
+    userProgressStore.handleOpenModal("mental-health-report");
+  }
+
+  function handleCloseMentalHealthReport() {
+    userProgressStore.handleCloseModal();
+    setMentalHealthStatus({});
+  }
+
+  async function handleGetKeywords() {
+    if (!familyId) {
+      console.error("가족 ID가 없습니다.");
+      return {
+        success: false,
+        error: {
+          type: "no_family_id",
+          message: "가족 ID가 없습니다.",
+        },
+      };
+    }
+
+    try {
+      const response = await request(
+        `${userProgressStore.DEV_API_URL}/status/keywords/${familyId}`
+      );
+
+      const resData = response.data;
+
+      if (response.success) {
+        if (resData.message === "Conversation keywords created successfully") {
+          console.log("대화 키워드 불러오기 성공:", resData.result);
+          setKeywords([...resData.result.keywords]);
+        }
+      } else {
+        console.error("대화 키워드 불러오기 실패:", resData.error);
+        return {
+          success: false,
+          error: {
+            type: resData.error.type,
+            message: resData.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("대화 키워드를 불러오는 데 실패했습니다.", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   const ctxValue = {
     loading,
     healthStatus,
     activityStatus,
     mentalStatus,
     mentalReport,
+    mentalHealthStatus,
     selectedToggle,
     weeklyData,
     keywords,
@@ -566,6 +769,11 @@ export default function HealthContextProvider({ children }) {
     handleGetMentalReports,
     handleGetOneDayMentalReport,
     handleGetWeekData,
+    handleGetMentalHealthDailyStatus,
+    handleGetMentalHealthPeriodStatus,
+    handleShowMentalHealthReport,
+    handleCloseMentalHealthReport,
+    handleGetKeywords,
   };
 
   return (

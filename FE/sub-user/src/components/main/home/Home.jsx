@@ -1,8 +1,12 @@
 import "../Main.css";
 
-// import { useContext } from "react";
+import { useContext } from "react";
+
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import Widget from "../../widget/Widget.jsx";
+
+import Advertisement from "../advertisement/Advertisement.jsx";
 
 import CalendarWidget from "../calendar/CalendarWidget.jsx";
 import EmergencyWidget from "../emergency/EmergencyWidget.jsx";
@@ -12,14 +16,13 @@ import ToggleGroup from "../../toggle/ToggleGroup.jsx";
 // import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 export default function Main() {
-  // const userProgressStore = useContext(UserProgressContext);
+  const userProgressStore = useContext(UserProgressContext);
 
   const mainUserName = "박순자123";
 
-  // console.log(userProgressStore.DEV_API_URL);
-  // console.log(userProgressStore.MAIN_API_URL);
-  // console.log(userProgressStore.DEV_KEY);
-  // console.log(userProgressStore.MAIN_KEY);
+  if (!userProgressStore.loginUserInfo.login) {
+    return <Advertisement />;
+  }
 
   return (
     <div id="home-main">

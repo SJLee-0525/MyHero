@@ -1,12 +1,23 @@
 import "./Message.css";
 
-import PageContainer from "../container/PageContainer.jsx";
+import { useContext } from "react";
+
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
 import SelectMessageRoom from "./SelectMessageRoom.jsx";
 import MessageChat from "./MessageChat.jsx";
 import MessageInput from "./MessageInput";
 
 export default function Message() {
+  const userProgressStore = useContext(UserProgressContext);
+
+  if (
+    userProgressStore.loginUserInfo.login &&
+    userProgressStore.loginUserInfo.userInfo.role === "main"
+  ) {
+    return;
+  }
+
   return (
     <div id="message-main">
       <div id="message-left">

@@ -9,7 +9,10 @@ export default function SelectMessageRoom() {
   const userProgressStore = useContext(UserProgressContext);
   const messageStore = useContext(MessageContext);
 
-  if (userProgressStore.loginUserInfo.userInfo.role === "main") {
+  if (
+    userProgressStore.loginUserInfo.login &&
+    userProgressStore.loginUserInfo.userInfo.role === "main"
+  ) {
     return;
   }
 

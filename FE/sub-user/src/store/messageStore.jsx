@@ -166,7 +166,13 @@ export default function MessageContextProvider({ children }) {
           return new Date(a.created_at) - new Date(b.created_at);
         });
 
-        setMessageLog(sortedMessages);
+        setMessageLog((prevLog) => {
+          if (prevLog.length !== sortedMessages.length) {
+            return sortedMessages;
+          } else {
+            return prevLog;
+          }
+        });
       }
     } catch (error) {
       console.error("메시지 기록 수신에 실패헀습니다.", error);
@@ -199,7 +205,7 @@ export default function MessageContextProvider({ children }) {
         if (
           resData.message === "New received messages retrieved successfully"
         ) {
-          // console.log("새 메시지 수신!", resData.result);
+          console.log("새 메시지 수신!", resData.result);
           await handleGetAllMessages();
           return {
             success: true,

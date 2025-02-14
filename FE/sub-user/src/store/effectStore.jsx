@@ -118,7 +118,9 @@ export default function EffectContextProvider({ children }) {
         await healthStore.handleGetWeekData();
         await healthStore.handleGetKeywords();
         await emergencyStore.getAllNotifications();
-        await messageStore.handleGetAllMessages();
+        if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
+          await messageStore.handleGetAllMessages();
+        }
         console.log("API 요청 끝!");
       }
     };
@@ -136,7 +138,9 @@ export default function EffectContextProvider({ children }) {
         await homeStatusStore.handleGetHomeStatus();
         await homeStatusStore.handleGetDeviceStatus();
         await emergencyStore.handleGetNewNotifications();
-        await messageStore.getNewMessages();
+        if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
+          await messageStore.handleGetAllMessages();
+        }
         console.log("Refresh 요청 끝!");
       }
     };

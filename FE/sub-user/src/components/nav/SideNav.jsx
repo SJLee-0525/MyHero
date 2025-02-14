@@ -89,13 +89,15 @@ export default function SideNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <SideNavElems
-            imgSrc={smsIcon}
-            altSrc="message"
-            identifier="MESSAGE"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          {userProgressStore.loginUserInfo.userInfo.role === "sub" && (
+            <SideNavElems
+              imgSrc={smsIcon}
+              altSrc="message"
+              identifier="MESSAGE"
+              activeIdentifier={userProgressStore.isActiveSideBarElem}
+              onClickElem={userProgressStore.handleActiveSideBarElem}
+            />
+          )}
           {/* <SideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
@@ -110,13 +112,16 @@ export default function SideNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <SideNavElems
-            imgSrc={runIcon}
-            altSrc="activity"
-            identifier="ACTIVITY"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          {userProgressStore.loginUserInfo.userInfo.role === "sub" && (
+            <SideNavElems
+              imgSrc={runIcon}
+              altSrc="activity"
+              identifier="ACTIVITY"
+              activeIdentifier={userProgressStore.isActiveSideBarElem}
+              onClickElem={userProgressStore.handleActiveSideBarElem}
+            />
+          )}
+
           {/* <SideNavElems
             imgSrc={vitalSignIcon}
             altSrc="health"

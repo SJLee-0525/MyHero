@@ -198,6 +198,10 @@
   font-size: large;
   opacity: 0; /* 초기 상태에서 메시지가 보이지 않도록 설정 */
   animation: slideUp 0.5s ease-out forwards; /* 애니메이션 적용 */
+
+  word-wrap: break-word; /* 긴 단어도 자동 줄바꿈 */
+  word-break: break-word; /* 긴 단어도 강제 줄바꿈 */
+  overflow-wrap: break-word; /* 브라우저 호환성을 위해 추가 */
 }
 
 #chat .main-chat {

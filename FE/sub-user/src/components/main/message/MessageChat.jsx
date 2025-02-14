@@ -45,7 +45,7 @@ export default function MessageChat() {
                 day: "2-digit",
                 hour: "2-digit",
                 minute: "2-digit",
-                hour12: false, // 24시간제 사용
+                hour12: true, // 24시간제 사용
               }
             );
 

@@ -2,6 +2,7 @@ import "./Activity.css";
 
 import { useContext } from "react";
 
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import { HealthContext } from "../../../store/healthStore.jsx";
 
 import PageContainer from "../container/PageContainer";
@@ -14,9 +15,17 @@ import MentalReport from "../mental/MentalReport.jsx";
 import MentalHealth from "../mental/MentalHealth.jsx";
 
 export default function Activity() {
+  const userProgressStore = useContext(UserProgressContext);
   const healthStore = useContext(HealthContext);
 
   const mainUserName = "박순자123";
+
+  if (
+    userProgressStore.loginUserInfo.login &&
+    userProgressStore.loginUserInfo.userInfo.role === "main"
+  ) {
+    return;
+  }
 
   return (
     <div id="activity-main">

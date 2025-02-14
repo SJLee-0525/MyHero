@@ -64,9 +64,6 @@ class DisasterService:
             logger.error(f"재난문자 업데이트 오류: {str(e)}")
             db.rollback()
 
-        finally:
-            db.close()
-
     async def _fetch_disaster_data(self, address: str, today_str: str) -> List[Dict]:
         try:
             url = "https://www.safetydata.go.kr/V2/api/DSSP-IF-00247"

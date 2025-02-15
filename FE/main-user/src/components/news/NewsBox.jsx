@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { NewsStoreContext } from "../../store/newsStore";
 import NewsDetail from "./NewsDetail";
+import defaultImage from "../../assets/icons/hero.png";
 import "./News.css";
 
 export default function NewsBoxPage({ category, newsData, onBack }) {
@@ -21,7 +22,11 @@ export default function NewsBoxPage({ category, newsData, onBack }) {
         {newsData.length > 0 ? (
           newsData.map((news) => (
             <div key={news.id} className="news-box" onClick={() => selectNews(news)}>
-              <img src={news.image_url} alt="News" className="news-image" />
+              <img 
+                src={news.image_url || defaultImage} 
+                alt="News" 
+                className="news-image" 
+              />
               <div className="news-info">
                 <h3 className="news-title">{news.title}</h3>
                 <p className="news-meta">

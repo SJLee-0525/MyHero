@@ -11,6 +11,7 @@ const MessageContext = createContext({
     fetchReceivableUsers: () => {},
     fetchMessages: () => {},
     selectUser: () => {},
+    clearSelectedUser: () => {},
     addMessage: () => {},
 });
 
@@ -81,9 +82,6 @@ export default function MessageProvider({ children }) {
             const sentResponse = await request(`${userProgressStore.DEV_API_URL}/messages/sent?start=${startTime}&end=${endTime}&order=desc`);
             const sentData = sentResponse.data;
 
-            console.log("📩 받은 메시지 원본 데이터:", receivedData.result);
-            console.log("📤 보낸 메시지 원본 데이터:", sentData.result);
-
             if (!receivedResponse.success || !sentResponse.success) {
                 console.error("❌ 메시지를 가져오지 못했습니다.");
                 return;
@@ -102,9 +100,6 @@ export default function MessageProvider({ children }) {
                 ...msg,
                 sender: "me"
             }));
-
-            console.log("📥 받은 메시지:", receivedMessages);
-            console.log("📤 보낸 메시지:", sentMessages);
 
             if (sentMessages.length === 0) {
                 console.warn("⚠️ 서버에서 보낸 메시지를 찾을 수 없습니다.");
@@ -146,6 +141,10 @@ export default function MessageProvider({ children }) {
         }));
     }
 
+    function clearSelectedUser() {
+        setSelectedUser(null);
+      }
+
     useEffect(() => {
         if (!userProgressStore?.loginUserInfo?.userInfo?.id) {
             console.log("⏳ Waiting for login...");
@@ -165,6 +164,7 @@ export default function MessageProvider({ children }) {
         fetchReceivableUsers,
         sendMessageToServer,
         fetchMessages,
+        clearSelectedUser,
         addMessage,
     }
 

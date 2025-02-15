@@ -6,21 +6,11 @@ import { useMessageStore } from "../../store/messageStore.jsx";
 import { useUserProgressStore } from "../../store/userProgressStore.jsx";
 import "./Message.css";
 
-export default function Chatting({ isOpen }) {
-    const { selectedUser, conversations } = useMessageStore();
+export default function Chatting({ isOpen, onBack }) {
+    const { selectedUser, clearSelectedUser, conversations } = useMessageStore();
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
-    
-    // useEffect(() => {
-    //     if (isOpen && selectedUser.user_id) {
-    //         fetchMessages(selectedUser.user_id);
-    //     }
-        
-    //     return () => {
-    //         console.log("🚪 채팅 창이 닫혔습니다. 메시지 가져오기를 중단합니다.");
-    //     };
-    // }, [isOpen, selectedUser]);
 
     useEffect(() => {
         if (isOpen && selectedUser?.user_id) {
@@ -43,9 +33,46 @@ export default function Chatting({ isOpen }) {
             messageEndRef.current.scrollIntoView({ behavior: "auto", block: "end" });
         }
     }, [conversations[selectedUser.user_id]]);
+
+    const handleBack = () => {
+        console.log("🔙 뒤로 가기 버튼 클릭됨");
+        clearSelectedUser(); // ✅ 선택된 사용자 해제
+        if (typeof onBack === "function") {
+            onBack(); // ✅ 부모(`MessageModal`)에서 `setIsChatting(false)` 실행
+        } else {
+            console.error("❌ onBack is not a function!");
+        }
+    };
     
     if (!selectedUser || !conversations || !conversations[selectedUser.user_id]) return <p className="loading-message">불러오는 중입니다...</p>;
     
+    // ✅ 날짜별 메시지 그룹화 함수
+    const formatDate = (dateString) => {
+        const date = new Date(dateString); // ✅ 한국 시간 변환 제거
+
+        const today = new Date();
+        const yesterday = new Date();
+        
+        // ✅ 오늘과 어제는 한국 시간 기준으로 판별
+        today.setHours(0, 0, 0, 0); 
+        yesterday.setDate(today.getDate() - 1);
+        yesterday.setHours(0, 0, 0, 0);
+
+        if (date >= today) return "오늘";
+        if (date >= yesterday) return "어제";
+        
+        return date.toISOString().split("T")[0];  // ✅ YYYY-MM-DD 형식
+    };
+
+    const groupedMessages = conversations[selectedUser.user_id].reduce((acc, message) => {
+        const dateKey = formatDate(message.created_at);
+        if (!acc[dateKey]) {
+            acc[dateKey] = [];
+        }
+        acc[dateKey].push(message);
+        return acc;
+    }, {});
+
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
             index: Date.now() + 9 * 60 * 60 * 1000,  // 임시 ID (서버와 동기화되면 변경 가능)
@@ -75,6 +102,7 @@ export default function Chatting({ isOpen }) {
     return (
         <div className="message-container">
             <div className="message-header">
+                <button className="back-button" onClick={handleBack}>←</button>
                 <h2 className="chat-title">{selectedUser.name}</h2>
             </div>
             <div className="message-content">
@@ -82,23 +110,47 @@ export default function Chatting({ isOpen }) {
                     {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (
                         <p className="no-messages">대화 내역이 없습니다.</p>
                     ) : (
-                        conversations[selectedUser.user_id].map((msg) => (
-                            <Message 
-                                key={msg.index} 
-                                text={msg.content} 
-                                sender={msg.sender} 
-                                time={(() => {
-                                    const date = new Date(msg.created_at);
-                                    date.setHours(date.getHours() + 9); // ✅ UTC+9 변환
+                        // conversations[selectedUser.user_id].map((msg) => (
+                        //     <Message 
+                        //         key={msg.index} 
+                        //         text={msg.content} 
+                        //         sender={msg.sender} 
+                        //         time={(() => {
+                        //             const date = new Date(msg.created_at);
+                        //             date.setHours(date.getHours() + 9); // ✅ UTC+9 변환
                             
-                                    const hours = date.getHours();
-                                    const minutes = date.getMinutes().toString().padStart(2, "0");
-                                    const period = hours >= 12 ? "오후" : "오전"; // ✅ 오전/오후 구분
-                                    const formattedHours = hours % 12 || 12; // 12시간 형식 변환 (0시는 12로)
+                        //             const hours = date.getHours();
+                        //             const minutes = date.getMinutes().toString().padStart(2, "0");
+                        //             const period = hours >= 12 ? "오후" : "오전"; // ✅ 오전/오후 구분
+                        //             const formattedHours = hours % 12 || 12; // 12시간 형식 변환 (0시는 12로)
                             
-                                    return `${period} ${formattedHours}:${minutes}`;
-                                })()}
-                            />
+                        //             return `${period} ${formattedHours}:${minutes}`;
+                        //         })()}
+                        //         imageUrl={msg.image_url || null}
+                        //     />
+                        // ))
+
+                        Object.entries(groupedMessages).map(([date, messages]) => (
+                            <div key={date} className="message-group">
+                                <h2 className="message-date">{date}</h2> {/* ✅ 날짜 헤더 추가 */}
+                                {messages.map((msg) => (
+                                    <Message 
+                                        key={msg.index} 
+                                        text={msg.content} 
+                                        sender={msg.sender} 
+                                        time={(() => {
+                                            const date = new Date(msg.created_at);
+                                            date.setHours(date.getHours() + 9);
+                                            const hours = date.getHours();
+                                            const minutes = date.getMinutes().toString().padStart(2, "0");
+                                            const period = hours >= 12 ? "오후" : "오전";
+                                            const formattedHours = hours % 12 || 12;
+                                            return `${period} ${formattedHours}:${minutes}`;
+                                        })()}
+                                        imageUrl={msg.image_url || null}
+                                    />
+                                ))}
+                            </div>
                         ))
                     )}
                     <div ref={messageEndRef} />

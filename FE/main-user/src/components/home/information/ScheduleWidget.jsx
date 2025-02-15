@@ -14,15 +14,9 @@ export default function ScheduleWidget() {
       timeZone: "Asia/Seoul",
     }).format(new Date());
     setToday(currentDate);
-
-    console.log("오늘 날짜:", currentDate);
-    console.log("저장된 일정 데이터:", schedules.schedules);
-    console.log("localStorage 데이터:", JSON.parse(localStorage.getItem("schedules")));
   }, [schedules.schedules]);
 
   return (
-      <div className="widget-schedule">
-        <a className="widget-schedule-date">{today}</a>
-      </div>
+      <div className="widget-schedule-date">{today}</div>
   );
 }

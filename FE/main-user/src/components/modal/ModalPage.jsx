@@ -8,7 +8,6 @@ import MessageModal from "./MessageModal.jsx";
 import NoticeModal from "./NoticeModal.jsx";
 import NewsModal from "./NewsModal.jsx";
 import CalendarModal from "./CalendarModal.jsx";
-import ModalSettingBox from "./ModalSettingBox.jsx";
 import SettingModal from "./SettingModal.jsx";
 
 export default function ModalPage() {
@@ -66,7 +65,6 @@ export default function ModalPage() {
           <SettingModal
             title="설정"
             onCloseConfirm={store.handleModalClose}>
-              <ModalSettingBox />
           </SettingModal>
         )}
       </Modal>

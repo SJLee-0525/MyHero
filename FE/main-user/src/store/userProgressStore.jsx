@@ -5,7 +5,7 @@ import { StoreContext } from "./store.jsx"
 
 export const UserProgressContext = createContext({
   loginUserInfo: {
-    login: false, //
+    login: false,
     userInfo: undefined,
   },
   familyInfo: {
@@ -31,7 +31,7 @@ export default function UserProgressContextProvider({ children }) {
 
   const { request, loading } = useMainHttp();
   const [loginUserInfo, setLoginUserInfo] = useState({
-    login: false, //
+    login: false,
     userInfo: undefined,
   });
   const [familyInfo, setFamilyInfo] = useState({
@@ -99,10 +99,6 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
 
-          // // 로그인 정보 저장
-          // handleUpdateSessionLoginInfo(resData.result.user_data);
-
-          // ✅ 중복 저장 방지: 세션에 저장된 정보와 다를 경우에만 업데이트
           const existingSession = sessionStorage.getItem("loginUserInfo");
           if (!existingSession || JSON.parse(existingSession).id !== resData.result.user_data.id) {
               sessionStorage.setItem("loginUserInfo", JSON.stringify(resData.result.user_data));

@@ -1,17 +1,19 @@
-import WeeklyChart from "./WeeklyChart.jsx";
+import WeeklyChart from "./WeeklyChart.jsx"
 
-import WeeklySummary from "./WeeklySummary";
+import WeeklySummary from "./WeeklySummary"
 
 export default function WeeklyStats() {
   return (
     <div id="weekly-stats-container">
+      {/* <div id="summary-container">
+        <h2>지난 7일 요약</h2>
+        <div>
+          <WeeklySummary />
+        </div>
+      </div> */}
       <div id="weekly-chart-container">
-        <h3>건강 통계</h3>
         <WeeklyChart />
       </div>
-      <div id="summary-container">
-        <WeeklySummary />
-      </div>
     </div>
-  );
+  )
 }

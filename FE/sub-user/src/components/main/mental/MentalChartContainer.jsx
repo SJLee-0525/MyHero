@@ -1,13 +1,11 @@
-import "./Mental.css";
+import "./Mental.css"
 
-import MentalChart from "./MentalChart";
+import MentalChart from "./MentalChart"
 
 export default function MentalChartContainer() {
   return (
     <div id="mental-chart-container">
-      <div>
-        <MentalChart />
-      </div>
+      <MentalChart />
     </div>
-  );
+  )
 }

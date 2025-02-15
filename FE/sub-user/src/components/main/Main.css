@@ -26,6 +26,15 @@
   gap: 10px;
 }
 
+#home-widget-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+
+  gap: 10px;
+}
+
 @media screen and (max-width: 720px) {
   #home-main h2 {
     display: none;

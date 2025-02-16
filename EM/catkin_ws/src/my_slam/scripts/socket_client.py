@@ -17,6 +17,10 @@ class SocketClient:
         # ROS 퍼블리셔 설정
         self.camera_pub = rospy.Publisher('camera_status', Bool, queue_size=10)
         self.driving_pub = rospy.Publisher('driving_mode', String, queue_size=10)
+        self.session_pub = rospy.Publisher('session_id', String, queue_size=10)  # session_id 퍼블리셔 추가
+        
+        # 현재 세션 ID 저장
+        self.current_session_id = None
         
         # 소켓 연결
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -33,6 +37,14 @@ class SocketClient:
     def process_message(self, message):
         try:
             data = json.loads(message)
+            
+            # session_id 처리
+            if 'session_id' in data:
+                new_session_id = data['session_id']
+                if new_session_id != self.current_session_id:
+                    self.current_session_id = new_session_id
+                    self.session_pub.publish(new_session_id)
+                    rospy.loginfo(f"New session ID: {new_session_id}")
             
             # cameraOn 상태 처리
             if 'cameraOn' in data:

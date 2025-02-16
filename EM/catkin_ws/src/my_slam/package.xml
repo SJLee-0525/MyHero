@@ -62,6 +62,7 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>tf</exec_depend>
   <depend>backoff_recovery</depend>
+  <depend>hybrid_astar_planner</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

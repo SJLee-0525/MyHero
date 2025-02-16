@@ -110,26 +110,6 @@ export default function Chatting({ isOpen, onBack }) {
                     {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (
                         <p className="no-messages">대화 내역이 없습니다.</p>
                     ) : (
-                        // conversations[selectedUser.user_id].map((msg) => (
-                        //     <Message 
-                        //         key={msg.index} 
-                        //         text={msg.content} 
-                        //         sender={msg.sender} 
-                        //         time={(() => {
-                        //             const date = new Date(msg.created_at);
-                        //             date.setHours(date.getHours() + 9); // ✅ UTC+9 변환
-                            
-                        //             const hours = date.getHours();
-                        //             const minutes = date.getMinutes().toString().padStart(2, "0");
-                        //             const period = hours >= 12 ? "오후" : "오전"; // ✅ 오전/오후 구분
-                        //             const formattedHours = hours % 12 || 12; // 12시간 형식 변환 (0시는 12로)
-                            
-                        //             return `${period} ${formattedHours}:${minutes}`;
-                        //         })()}
-                        //         imageUrl={msg.image_url || null}
-                        //     />
-                        // ))
-
                         Object.entries(groupedMessages).map(([date, messages]) => (
                             <div key={date} className="message-group">
                                 <h2 className="message-date">{date}</h2> {/* ✅ 날짜 헤더 추가 */}

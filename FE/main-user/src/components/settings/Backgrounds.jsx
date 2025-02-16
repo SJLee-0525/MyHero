@@ -1,5 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
+import { useMainHttp } from "../../hooks/useMainHttp";
+import { useUserProgressStore } from "../../store/userProgressStore";
 import "./Settings.css";
 
 import wallpaper1 from "../../assets/wallpaper1.png";
@@ -8,14 +10,37 @@ import wallpaper3 from "../../assets/wallpaper3.jpg";
 import wallpaper4 from "../../assets/wallpaper4.png";
 
 export default function Backgrounds() {
+    // const { request } = useMainHttp();
+    // const { familyInfo, DEV_API_URL } = useUserProgressStore();
+    
     const images = [wallpaper1, wallpaper2, wallpaper3, wallpaper4];
+    // const [backgrounds, setBackgrounds] = useState([]);
     const [selectedBackground, setSelectedBackground] = useState(localStorage.getItem("background") || wallpaper1);
 
+    // useEffect(() => {
+    //     fetchBackgrounds();
+    // }, []);
+
     useEffect(() => {
-        document.body.style.background = `url(${selectedBackground})`;
-        document.body.style.backgroundSize = "cover";
-        document.body.style.backgroundPosition = "center";
+        if (selectedBackground) {
+            document.body.style.background = `url(${selectedBackground})`;
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+        }
     }, [selectedBackground]);
+
+    // async function fetchBackgrounds() {
+    //     if (!familyInfo.familyId) return;
+    //     try {
+    //         const response = await request(`${useUserProgressStore.DEV_API_URL}/backgrounds/${familyInfo.familyId}`, "GET");
+
+    //         if (response.success) {
+    //             setBackgrounds(response.data.backgrounds || []);
+    //         }
+    //     } catch (error) {
+    //         console.error("❌ 배경화면 목록 불러오기 실패:", error);
+    //     }
+    // }
 
     const changeBackground = (image) => {
         setSelectedBackground(image);

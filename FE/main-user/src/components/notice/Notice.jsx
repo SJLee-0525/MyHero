@@ -28,30 +28,55 @@ export default function Notice({ onReply }) {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    date.setHours(date.getHours() + 9);
+
+    const koreaTimeOffset = 9 * 60 * 60 * 1000;
+    const koreaDate = new Date(date.getTime() + koreaTimeOffset);
 
     const today = new Date();
-    today.setHours(today.getHours() + 9);
+    today.setHours(0, 0, 0, 0);
 
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
 
-    if (date.toDateString() === today.toDateString()) return "오늘";
-    if (date.toDateString() === yesterday.toDateString()) return "어제";
-    return date.toISOString().split("T")[0];  // YYYY-MM-DD
+    if (koreaDate >= today) return "오늘";
+    if (koreaDate >= yesterday) return "어제";
+    
+    return koreaDate.toISOString().split("T")[0];
+
+    // const date = new Date(dateString);
+    // date.setHours(date.getHours() + 9);
+
+    // const today = new Date();
+    // today.setHours(today.getHours() + 9);
+
+    // const yesterday = new Date(today);
+    // yesterday.setDate(today.getDate() - 1);
+
+    // if (date.toDateString() === today.toDateString()) return "오늘";
+    // if (date.toDateString() === yesterday.toDateString()) return "어제";
+    // return date.toISOString().split("T")[0];  // YYYY-MM-DD
   };
 
   const formatTime = (dateString) => {
     const date = new Date(dateString);
-    date.setHours(date.getHours() + 9);
-    // return date.toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
-    
-    const hours = date.getHours();
-    const minutes = date.getMinutes().toString().padStart(2, "0");
+    const koreaTimeOffset = 9 * 60 * 60 * 1000;
+    const koreaDate = new Date(date.getTime() + koreaTimeOffset);
+
+    const hours = koreaDate.getHours();
+    const minutes = koreaDate.getMinutes().toString().padStart(2, "0");
     const period = hours >= 12 ? "오후" : "오전";
     const formattedHours = hours % 12 || 12;
 
     return `${period} ${formattedHours}:${minutes}`;
+    // const date = new Date(dateString);
+    // date.setHours(date.getHours() + 9);
+    
+    // const hours = date.getHours();
+    // const minutes = date.getMinutes().toString().padStart(2, "0");
+    // const period = hours >= 12 ? "오후" : "오전";
+    // const formattedHours = hours % 12 || 12;
+
+    // return `${period} ${formattedHours}:${minutes}`;
   };
 
   const openNotice = (notice) => {

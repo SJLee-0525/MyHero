@@ -24,6 +24,10 @@ export default function FamilyUserInfo() {
     userProgressStore.handleOpenModal("delete-family")
   }
 
+  function handleShowKickMember(memberId) {
+    userProgressStore.handleOpenModal("kick-member", memberId)
+  }
+
   return (
     <>
       {!familyUserInfo.isExist && (
@@ -80,7 +84,9 @@ export default function FamilyUserInfo() {
                       </table>
 
                       <div className="member-btn-container">
-                        <button className="delete">추방</button>
+                        <button className="delete" onClick={() => handleShowKickMember(member.id)}>
+                          추방
+                        </button>
                       </div>
                     </div>
                   </div>

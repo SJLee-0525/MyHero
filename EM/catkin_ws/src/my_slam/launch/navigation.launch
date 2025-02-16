@@ -52,9 +52,27 @@
         <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
     </node>
 
-    <!-- Auto Navigation Node -->
-    <node pkg="my_slam" type="auto_navigation.py" name="auto_navigation" output="screen"/>
+    <!-- 주행 모드 매니저 -->
+    <node pkg="my_slam" type="driving_mode_manager.py" name="driving_mode_manager" output="screen"/>
     
+    <!-- 자율 탐색 노드 -->
+    <node pkg="my_slam" type="autonomous_exploration.py" name="autonomous_exploration" output="screen"/>
+    
+    <!-- 사람 추적 노드 -->
+    <node pkg="my_slam" type="person_following.py" name="person_follower" output="screen">
+        <param name="image_width" value="960"/>
+        <param name="max_angular_speed" value="1.2"/>
+        <param name="max_linear_speed" value="0.6"/>
+        <param name="min_linear_speed" value="0.1"/>
+        <param name="Kp_angular" value="0.003"/>
+    </node>
+
+    <!-- 소켓 클라이언트 -->
+    <node pkg="my_slam" type="socket_client.py" name="socket_client" output="screen">
+        <param name="server_ip" value="70.12.247.214"/>
+        <param name="server_port" value="1234"/>
+    </node>
+
     <!-- RViz 설정 -->
     <node pkg="rviz" type="rviz" name="rviz" 
           args="-d $(find my_slam)/rviz/nav2.rviz"

@@ -7,16 +7,16 @@ import { useState, useEffect, useContext } from "react"
 import { UserProgressContext } from "../../store/userProgressStore.jsx"
 import SideNavElems from "./SideNavElems.jsx"
 
-import homeIcon from "../../assets/icons/home.svg"
-import calendarIcon from "../../assets/icons/calendar.svg"
-import smsIcon from "../../assets/icons/sms.svg"
-import notificationIcon from "../../assets/icons/notification.svg"
-// import vitalSignIcon from "../../assets/icons/vital_sign.svg"
+import homeIcon from "../../assets/feature/home.svg"
+import calendarIcon from "../../assets/feature/calendar.svg"
+import smsIcon from "../../assets/feature/message-circle.svg"
+import notificationIcon from "../../assets/feature/bell.svg"
+import activityIcon from "../../assets/feature/activity.svg"
 import mindfulnessIcon from "../../assets/icons/mindfulness.svg"
 import sirenIcon from "../../assets/icons/siren.svg"
 import runIcon from "../../assets/icons/run.svg"
 
-import accountIcon from "../../assets/icons/account_circle.svg"
+import accountIcon from "../../assets/feature/user.svg"
 import settingIcon from "../../assets/icons/settings.svg"
 import catIcon from "../../assets/cat.jpg"
 import logo from "../../assets/spinner/logo.png"
@@ -54,7 +54,14 @@ export default function SideNav() {
     <aside id="side-bar">
       <div>
         <ul className="side-nav-elems">
-          <SideNavElems imgSrc={logo} altSrc="home" identifier="HOME" text="영웅이" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
+          <SideNavElems
+            imgSrc={homeIcon}
+            altSrc="home"
+            identifier="HOME"
+            text="영웅이"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
           <SideNavElems
             imgSrc={notificationIcon}
             altSrc="notification"
@@ -90,7 +97,7 @@ export default function SideNav() {
           />
           {userProgressStore.loginUserInfo.userInfo.role === "sub" && (
             <SideNavElems
-              imgSrc={runIcon}
+              imgSrc={activityIcon}
               altSrc="activity"
               identifier="ACTIVITY"
               text="건강"

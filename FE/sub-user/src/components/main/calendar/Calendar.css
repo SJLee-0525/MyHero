@@ -110,6 +110,10 @@
 }
 
 .calendar-header-change-button button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   background-color: transparent;
 
   border: 0;
@@ -130,8 +134,7 @@
   justify-content: center;
   align-items: center;
 
-  width: 19px;
-  height: 19px;
+  height: 90%;
 }
 
 /* BODY */
@@ -432,7 +435,7 @@
 .calendar-day-widget-schedules .calendar-widget-status-icon {
   display: block;
 
-  width: 30px;
+  width: 28px;
   aspect-ratio: 1;
 }
 
@@ -546,14 +549,14 @@
   margin: 0;
   padding: 0 15px;
   width: 25%;
-  height: 100px;
+  aspect-ratio: 1;
 
   border-radius: 8px;
   background-color: #c5c5c57d;
 }
 
 .calendar-day-status-schedules .main-status-aver img {
-  width: 45px;
+  width: 35px;
 }
 
 .calendar-schedule-results-box {

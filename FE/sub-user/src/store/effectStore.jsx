@@ -1,65 +1,57 @@
-import { useEffect, useContext, createContext } from "react";
+import { useEffect, useContext, createContext } from "react"
 
-import { UserProgressContext } from "./userProgressStore";
-import { HomeStatusContext } from "./homeStatusStore";
-import { HealthContext } from "./healthStore";
-import { EmergencyContext } from "./emergencyStore";
-import { CalendarStoreContext } from "./calendarStore";
-import { MessageContext } from "./messageStore";
+import { UserProgressContext } from "./userProgressStore"
+import { HomeStatusContext } from "./homeStatusStore"
+import { HealthContext } from "./healthStore"
+import { EmergencyContext } from "./emergencyStore"
+import { CalendarStoreContext } from "./calendarStore"
+import { MessageContext } from "./messageStore"
 
-export const EffectContext = createContext({});
+export const EffectContext = createContext({})
 
 export default function EffectContextProvider({ children }) {
-  const ctxValue = {};
+  const ctxValue = {}
 
-  const userProgressStore = useContext(UserProgressContext);
-  const homeStatusStore = useContext(HomeStatusContext);
-  const healthStore = useContext(HealthContext);
-  const emergencyStore = useContext(EmergencyContext);
-  const calendarStore = useContext(CalendarStoreContext);
-  const messageStore = useContext(MessageContext);
+  const userProgressStore = useContext(UserProgressContext)
+  const homeStatusStore = useContext(HomeStatusContext)
+  const healthStore = useContext(HealthContext)
+  const emergencyStore = useContext(EmergencyContext)
+  const calendarStore = useContext(CalendarStoreContext)
+  const messageStore = useContext(MessageContext)
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
-    const storedUserInfo = sessionStorage.getItem("loginUserInfo");
+    const storedUserInfo = sessionStorage.getItem("loginUserInfo")
 
-    const storedActiveSideBarElem = sessionStorage.getItem(
-      "isActiveSideBarElem"
-    );
-    if (!storedUserInfo) return;
+    const storedActiveSideBarElem = sessionStorage.getItem("isActiveSideBarElem")
+    if (!storedUserInfo) return
 
     if (storedUserInfo) {
       try {
-        const parsedUserInfo = JSON.parse(storedUserInfo);
+        const parsedUserInfo = JSON.parse(storedUserInfo)
 
         userProgressStore.setLoginUserInfo({
           login: true,
           userInfo: parsedUserInfo.userInfo,
-        });
+        })
 
         // 사용자 정보 최신화
-        userProgressStore.handleGetUserInfo(parsedUserInfo.userInfo.id);
+        userProgressStore.handleGetUserInfo(parsedUserInfo.userInfo.id)
       } catch (error) {
-        console.error(
-          "Error parsing loginUserInfo from sessionStorage:",
-          error
-        );
-        sessionStorage.removeItem("loginUserInfo"); // 손상된 데이터 제거
+        console.error("Error parsing loginUserInfo from sessionStorage:", error)
+        sessionStorage.removeItem("loginUserInfo") // 손상된 데이터 제거
       }
     }
 
     try {
       if (storedActiveSideBarElem) {
-        userProgressStore.setIsActiveSideBarElem(storedActiveSideBarElem);
+        userProgressStore.setIsActiveSideBarElem(storedActiveSideBarElem)
       }
     } catch (error) {
-      console.error(
-        "Error parsing isActiveSideBarElem from sessionStorage:",
-        error
-      );
-      sessionStorage.removeItem("isActiveSideBarElem"); // 데이터 손상 시 제거
+      console.error("Error parsing isActiveSideBarElem from sessionStorage:", error)
+      sessionStorage.removeItem("isActiveSideBarElem") // 데이터 손상 시 제거
     }
-  }, []);
+  }, [])
 
   // loginUserInfo가 업데이트된 후에 handleCheckFamilyList 호출
   // loginUserInfo가 상태로 관리되고 있다면, setLoginUserInfo 함수가 비동기적으로 실행되기 때문에 바로 loginUserInfo.userInfo.id에 접근할 때 값이 갱신되지 않았을 수 있습니다.
@@ -67,30 +59,23 @@ export default function EffectContextProvider({ children }) {
   useEffect(() => {
     const fetchData = async () => {
       if (!userProgressStore.loginUserInfo.login) {
-        return;
-      } else if (
-        userProgressStore.loginUserInfo.login &&
-        userProgressStore.loginUserInfo.userInfo.id
-      ) {
-        console.log(
-          `${userProgressStore.loginUserInfo.userInfo.role}유저 가족 정보 요청`
-        );
+        return
+      } else if (userProgressStore.loginUserInfo.login && userProgressStore.loginUserInfo.userInfo.id) {
+        console.log(`${userProgressStore.loginUserInfo.userInfo.role}유저 가족 정보 요청`)
         if (userProgressStore.loginUserInfo.userInfo.role === "main") {
-          await userProgressStore.handleCheckFamilyExist(
-            userProgressStore.loginUserInfo.userInfo.id
-          );
+          await userProgressStore.handleCheckFamilyExist(userProgressStore.loginUserInfo.userInfo.id)
         } else if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
-          await userProgressStore.handleCheckFamilyList();
+          await userProgressStore.handleCheckFamilyList()
         }
       }
-    };
+    }
 
-    fetchData();
-  }, [userProgressStore.loginUserInfo.userInfo]);
+    fetchData()
+  }, [userProgressStore.loginUserInfo.userInfo])
 
   useEffect(() => {
     if (!userProgressStore.loginUserInfo.login) {
-      return;
+      return
     }
 
     const fetchData = async () => {
@@ -100,142 +85,121 @@ export default function EffectContextProvider({ children }) {
       //     login: userProgressStore.loginUserInfo,
       //   });
 
-      if (
-        userProgressStore.memberInfo.selectedFamilyId ||
-        userProgressStore.familyInfo.familyInfo.id
-      ) {
+      if (userProgressStore.memberInfo.selectedFamilyId || (userProgressStore.familyInfo.familyInfo && userProgressStore.familyInfo.familyInfo.id)) {
         console.log("API 요청 시작!", {
           member: userProgressStore.memberInfo,
           family: userProgressStore.familyInfo,
           login: userProgressStore.loginUserInfo,
-        });
-        await homeStatusStore.handleGetHomeStatus();
-        await homeStatusStore.handleGetDeviceStatus();
-        await healthStore.handleGetHealthData();
-        await healthStore.handleGetActivityStatus();
-        await healthStore.handleGetMentalStatus();
-        await healthStore.handleGetMentalReports();
-        await healthStore.handleGetWeekData();
-        await healthStore.handleGetKeywords();
-        await emergencyStore.getAllNotifications();
+        })
+        await homeStatusStore.handleGetHomeStatus()
+        await homeStatusStore.handleGetDeviceStatus()
+        await healthStore.handleGetHealthData()
+        await healthStore.handleGetActivityStatus()
+        await healthStore.handleGetMentalStatus()
+        await healthStore.handleGetMentalReports()
+        await healthStore.handleGetWeekData()
+        await healthStore.handleGetKeywords()
+        await emergencyStore.getAllNotifications()
         if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
-          await messageStore.handleGetAllMessages();
+          await messageStore.handleGetAllMessages()
         }
-        console.log("API 요청 끝!");
+        console.log("API 요청 끝!")
       }
-    };
+    }
 
     const refreshData = async () => {
-      if (
-        userProgressStore.memberInfo.selectedFamilyId ||
-        userProgressStore.familyInfo.familyInfo.id
-      ) {
+      if (userProgressStore.memberInfo.selectedFamilyId || userProgressStore.familyInfo.familyInfo.id) {
         console.log("Refresh 요청 시작!", {
           member: userProgressStore.memberInfo,
           family: userProgressStore.familyInfo,
           login: userProgressStore.loginUserInfo,
-        });
-        await homeStatusStore.handleGetHomeStatus();
-        await homeStatusStore.handleGetDeviceStatus();
-        await emergencyStore.handleGetNewNotifications();
+        })
+        await homeStatusStore.handleGetHomeStatus()
+        await homeStatusStore.handleGetDeviceStatus()
+        await emergencyStore.handleGetNewNotifications()
         if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
-          await messageStore.handleGetAllMessages();
+          await messageStore.handleGetAllMessages()
         }
-        console.log("Refresh 요청 끝!");
+        console.log("Refresh 요청 끝!")
       }
-    };
+    }
 
     // 최초 실행
-    fetchData();
+    fetchData()
 
     // setInterval에 fetchData 함수를 넘겨야 함
-    const intervalId = setInterval(refreshData, 10 * 1000);
+    const intervalId = setInterval(refreshData, 10 * 1000)
 
     // Cleanup 함수 추가: 컴포넌트가 언마운트 될 때 interval을 클리어
-    return () => clearInterval(intervalId);
-  }, [
-    userProgressStore.memberInfo.selectedFamilyId,
-    userProgressStore.familyInfo.familyInfo?.id,
-  ]);
+    return () => clearInterval(intervalId)
+  }, [userProgressStore.memberInfo.selectedFamilyId, userProgressStore.familyInfo.familyInfo?.id])
 
   useEffect(() => {
     if (!userProgressStore.loginUserInfo.login) {
-      return;
+      return
     }
 
-    console.log("집 상태 정보 요일 별 객체화");
+    console.log("집 상태 정보 요일 별 객체화")
     const fetchData = async () => {
       if (homeStatusStore.homeStatus.length > 0) {
-        await calendarStore.groupHomeStatusDataByKSTWithAvgScore(
-          homeStatusStore.homeStatus
-        );
+        await calendarStore.groupHomeStatusDataByKSTWithAvgScore(homeStatusStore.homeStatus)
       } else {
-        await calendarStore.groupHomeStatusDataByKSTWithAvgScore({});
+        await calendarStore.groupHomeStatusDataByKSTWithAvgScore({})
       }
-    };
+    }
 
-    fetchData();
-  }, [homeStatusStore.homeStatus]);
+    fetchData()
+  }, [homeStatusStore.homeStatus])
 
   useEffect(() => {
     if (!userProgressStore.loginUserInfo.login) {
-      return;
+      return
     }
 
-    console.log("활동 정보 요일 별 객체화");
+    console.log("활동 정보 요일 별 객체화")
     const fetchData = async () => {
       if (healthStore.activityStatus.length > 0) {
-        await calendarStore.groupDataByKSTWithAvgScore(
-          "health",
-          healthStore.activityStatus
-        );
+        await calendarStore.groupDataByKSTWithAvgScore("health", healthStore.activityStatus)
       } else {
-        await calendarStore.groupDataByKSTWithAvgScore("health", {});
+        await calendarStore.groupDataByKSTWithAvgScore("health", {})
       }
-    };
-
-    fetchData();
-  }, [healthStore.activityStatus]);
-
-  useEffect(() => {
-    if (!userProgressStore.loginUserInfo.login) {
-      return;
     }
 
-    console.log("정신 상태 정보 요일 별 객체화");
-    const fetchData = async () => {
-      if (healthStore.mentalStatus.length > 0) {
-        await calendarStore.groupDataByKSTWithAvgScore(
-          "mental",
-          healthStore.mentalStatus
-        );
-      } else {
-        await calendarStore.groupDataByKSTWithAvgScore("mental", {});
-      }
-    };
-
-    fetchData();
-  }, [healthStore.mentalStatus]);
+    fetchData()
+  }, [healthStore.activityStatus])
 
   useEffect(() => {
     if (!userProgressStore.loginUserInfo.login) {
-      return;
+      return
+    }
+
+    console.log("정신 상태 정보 요일 별 객체화")
+    const fetchData = async () => {
+      if (healthStore.mentalStatus.length > 0) {
+        await calendarStore.groupDataByKSTWithAvgScore("mental", healthStore.mentalStatus)
+      } else {
+        await calendarStore.groupDataByKSTWithAvgScore("mental", {})
+      }
+    }
+
+    fetchData()
+  }, [healthStore.mentalStatus])
+
+  useEffect(() => {
+    if (!userProgressStore.loginUserInfo.login) {
+      return
     }
 
     if (emergencyStore.allNotifications.length === 0) {
-      return;
+      return
     }
 
     const categorizeData = async () => {
-      await emergencyStore.categorizeNotifications(
-        emergencyStore.allNotifications
-      );
-    };
+      await emergencyStore.categorizeNotifications(emergencyStore.allNotifications)
+    }
 
-    categorizeData();
-  }, [emergencyStore.allNotifications]);
+    categorizeData()
+  }, [emergencyStore.allNotifications])
 
-  return (
-    <EffectContext.Provider value={ctxValue}>{children}</EffectContext.Provider>
-  );
+  return <EffectContext.Provider value={ctxValue}>{children}</EffectContext.Provider>
 }

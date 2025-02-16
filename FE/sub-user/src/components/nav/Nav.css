@@ -219,7 +219,7 @@ h5 {
 }
 
 #side-bar img {
-  width: 80%;
+  width: 75%;
 
   transition: none;
   z-index: 123;
@@ -391,7 +391,7 @@ h5 {
 
   height: 45px;
 
-  margin: 10px 0px;
+  margin: 15px 0px;
   padding: 0px 15px;
   z-index: 2000;
 }

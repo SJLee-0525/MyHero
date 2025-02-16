@@ -7,16 +7,16 @@ import { useNavigate } from "react-router-dom"
 import { UserProgressContext } from "../../store/userProgressStore"
 import TopNavSideNavElems from "./TopNavSideElems"
 
-import menuIcon from "../../assets/icons/menu.svg"
-import personIcon from "../../assets/icons/person.svg"
+import menuIcon from "../../assets/feature/menu.svg"
+import personIcon from "../../assets/feature/user.svg"
 import closeIcon from "../../assets/icons/close.svg"
-import homeIcon from "../../assets/icons/home.svg"
-import calendarIcon from "../../assets/icons/calendar.svg"
-import smsIcon from "../../assets/icons/sms.svg"
-import notificationIcon from "../../assets/icons/notification.svg"
+import homeIcon from "../../assets/feature/home.svg"
+import calendarIcon from "../../assets/feature/calendar.svg"
+import smsIcon from "../../assets/feature/message-circle.svg"
+import notificationIcon from "../../assets/feature/bell.svg"
 import vitalSignIcon from "../../assets/icons/vital_sign.svg"
 import sirenIcon from "../../assets/icons/siren.svg"
-import runIcon from "../../assets/icons/run.svg"
+import activityIcon from "../../assets/feature/activity.svg"
 import settingIcon from "../../assets/icons/settings.svg"
 
 export default function TopNav() {
@@ -113,7 +113,13 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems imgSrc={runIcon} altSrc="activity" identifier="건강" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
+          <TopNavSideNavElems
+            imgSrc={activityIcon}
+            altSrc="activity"
+            identifier="건강"
+            activeIdentifier={userProgressStore.isActiveSideBarElem}
+            onClickElem={userProgressStore.handleActiveSideBarElem}
+          />
           {/* <TopNavSideNavElems
             imgSrc={vitalSignIcon}
             altSrc="mental"

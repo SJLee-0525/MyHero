@@ -1,13 +1,13 @@
-import "./Calendar.css";
+import "./Calendar.css"
 
-import { useContext } from "react";
-import { CalendarStoreContext } from "../../../store/calendarStore";
+import { useContext } from "react"
+import { CalendarStoreContext } from "../../../store/calendarStore"
 
-import arrowBackIcon from "../../../assets/icons/arrow_back (2).svg";
-import arrowForwardIcon from "../../../assets/icons/arrow_forward.svg";
+import arrowBackIcon from "../../../assets/feature/chevron-left.svg"
+import arrowForwardIcon from "../../../assets/feature/chevron-right.svg"
 
 export default function CalendarWidgetHeader() {
-  const { dispatch, currentDate } = useContext(CalendarStoreContext);
+  const { dispatch, currentDate } = useContext(CalendarStoreContext)
 
   return (
     <div className="calendar-widget-header-container">
@@ -33,5 +33,5 @@ export default function CalendarWidgetHeader() {
         </button>
       </div>
     </div>
-  );
+  )
 }

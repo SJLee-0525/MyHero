@@ -31,11 +31,14 @@
   box-sizing: border-box;
 
   display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  padding: 0px 10px;
 
   min-width: 49%;
   max-width: 49%;
   height: 80px;
-  padding: 15px;
 
   margin: 4px 0px;
 
@@ -51,7 +54,7 @@
   align-items: center;
 
   width: 100%;
-  gap: 12px;
+  /* gap: 2px; */
 
   color: black;
   text-align: end;
@@ -107,6 +110,10 @@
   transition: all 0.3s ease;
 }
 
+#status-toggle-box .toggle-info {
+  width: 58%;
+}
+
 #status-toggle-box .toggle-button {
   display: flex;
   justify-content: center;
@@ -125,24 +132,24 @@
 }
 
 #status-toggle-box img {
-  width: 70%;
+  width: 60%;
 }
 
 #status-toggle-box .toggle-name {
-  font-size: small;
+  font-size: 16px;
 
   margin: 0;
 }
 
 #status-toggle-box .bad-status {
-  margin: 0 5px;
+  margin: 0;
 
   font-weight: bold;
   color: #ff5a33;
 }
 
 #status-toggle-box .good-status {
-  margin: 0 5px;
+  margin: 0;
 
   font-weight: bold;
   color: #44803f;

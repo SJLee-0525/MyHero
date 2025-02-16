@@ -1,8 +1,7 @@
 import { useState } from "react"; //
 import "./Home.css"; //
 
-import { useContext } from "react";
-import { StoreContext } from "../../store/store.jsx";
+import { useSettingStore } from "../../store/settingStore.jsx";
 
 import alertIcon from "../../assets/alert.png";
 import cameraIcon from "../../assets/camera.png";
@@ -12,57 +11,53 @@ import micIcon from "../../assets/microphone.png";
 import Icon from "./Icon.jsx";
 
 export default function Dock() {
-  const store = useContext(StoreContext);
-  const [clickedIcon, setClickedIcon] = useState(null); //
+  const { alertState, cameraState, driveState, micState, toggleFeature } = useSettingStore();
+  const [clickedIcon, setClickedIcon] = useState(null);
 
   // 클릭 시 애니메이션 추가
-  const handleClick = (iconType, onClickFunction) => {
+  const handleClick = (iconType, featureKey) => {
     setClickedIcon(iconType);
     setTimeout(() => setClickedIcon(null), 200); // 0.2초 후 원래 상태로 복귀
-    onClickFunction();
+    toggleFeature(featureKey);
   };
 
   return (
     <div id="dock">
       <Icon
         type="dock-icon"
-        state={store.alertState}
+        state={alertState}
         imgSrc={alertIcon}
         altSrc="alert"
-        // onClickIcon={store.handleAlertState}
-        onClickIcon={() => handleClick("alert", store.handleAlertState)}
+        onClickIcon={() => handleClick("alert", "alertState")}
         clicked={clickedIcon === "alert"}
-        disabled={!store.alertState}
+        disabled={!alertState}
       />
       <Icon
         type="dock-icon"
-        state={store.cameraState}
+        state={cameraState}
         imgSrc={cameraIcon}
         altSrc="camera"
-        // onClickIcon={store.handleCameraState}
-        onClickIcon={() => handleClick("camera", store.handleCameraState)}
+        onClickIcon={() => handleClick("camera", "cameraState")}
         clicked={clickedIcon === "camera"}
-        disabled={!store.cameraState}
+        disabled={!cameraState}
       />
       <Icon
         type="dock-icon"
-        state={store.driveState}
+        state={driveState}
         imgSrc={carIcon}
         altSrc="car"
-        // onClickIcon={store.handleDriveState}
-        onClickIcon={() => handleClick("car", store.handleDriveState)}
+        onClickIcon={() => handleClick("car", "driveState")}
         clicked={clickedIcon === "car"}
-        disabled={!store.driveState}
+        disabled={!driveState}
       />
       <Icon
         type="dock-icon"
-        state={store.micState}
+        state={micState}
         imgSrc={micIcon}
         altSrc="microphone"
-        // onClickIcon={store.handleMicState}
-        onClickIcon={() => handleClick("mic", store.handleMicState)}
+        onClickIcon={() => handleClick("mic", "micState")}
         clicked={clickedIcon === "mic"}
-        disabled={!store.micState}
+        disabled={!micState}
       />
     </div>
   );

@@ -1,22 +1,25 @@
 #widget {
-  min-width: 400px;
+  min-width: 380px;
   max-width: 400px;
 
   height: fit-content;
 
-  margin: 10px;
-  padding: 10px;
+  /* margin: 10px;
+  padding: 10px; */
 
-  border-radius: 12px;
+  border: solid 1px #cccccc;
+  border-radius: 8px;
 
-  background: linear-gradient(
+  background: white;
+  color: black;
+  /* background: linear-gradient(
       55deg,
       rgba(44, 44, 44, 0.19) 2.82%,
       rgba(227, 227, 227, 0.2) 97.65%
     ),
-    rgba(255, 255, 255, 0.2);
+    rgba(255, 255, 255, 0.2); */
 
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25); */
 }
 
 #widget-top {
@@ -24,7 +27,12 @@
   flex-direction: row;
   justify-content: space-between;
 
-  margin-bottom: 10px;
+  padding: 10px;
+
+  border-radius: 8px 8px 0px 0px;
+
+  background-color: #3e5c76;
+  color: white;
 }
 
 #widget-top h3 {
@@ -36,6 +44,7 @@
   flex-wrap: wrap;
   justify-content: center;
 
+  width: 100%;
   gap: 10px;
 }
 
@@ -45,16 +54,7 @@
     width: 100%;
 
     margin: 15px auto;
-    padding: 10px;
 
     border-radius: 12px;
-
-    background: linear-gradient(
-        55deg,
-        rgba(44, 44, 44, 0.19) 2.82%,
-        rgba(227, 227, 227, 0.2) 97.65%
-      ),
-      rgba(255, 255, 255, 0.2);
-    box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
   }
 }

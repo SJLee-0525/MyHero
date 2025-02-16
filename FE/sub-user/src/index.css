@@ -1,14 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=Caprasimo&family=Roboto+Slab:wght@400;700&display=swap");
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: "Roboto Slab", sans-serif;
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
   line-height: 1.5;
 
-  color: #ebe7ef;
+  color: #dddddd;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -18,24 +22,17 @@ html {
 }
 
 body {
-  box-sizing: border-box;
+  background: #dddddd;
 
-  background: url("./assets/wallpaper/wallpaper-blue2.png");
-
-  /* background: radial-gradient(
-      circle at top,
-      rgba(241, 210, 70, 0.98),
-      rgba(250, 176, 103, 0.87)
-    ),
-    url("bg-pattern-dark.png");
-  background-repeat: repeat; */
+  /* background: radial-gradient(circle at 50% 100%, #c7cdd6, #dddddd),
+    url("bg-pattern-dark.png"); */
+  /* background-repeat: ; */
   background-size: 100% 100%, 30% 30%, 100% 100%;
   min-height: 100vh;
+  /* height: 100%; */
 
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
 }
 
 #side-nav {

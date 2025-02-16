@@ -34,12 +34,7 @@
 
   border-radius: 12px;
 
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
 
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 }
@@ -62,6 +57,7 @@
 
   display: flex;
 
+  padding: 10px;
   gap: 5px;
 }
 
@@ -77,21 +73,25 @@
 
 #mental-chart-container {
   width: 100%;
+  height: 80%;
 
-  padding: 15px;
-
-  border-radius: 15px;
+  border-radius: 8px;
 
   background-color: #b4b4b4;
 }
 
 #mental-chart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
   width: 100%;
-  height: 400px;
+  height: 100%;
 
   padding: 10px 0px 0px;
 
-  border-radius: 13px;
+  border-radius: 8px;
 
   background-color: rgba(255, 255, 255, 0.719);
 }
@@ -142,12 +142,34 @@
   font-size: smaller;
 }
 
-#mental-report {
+#mental-reports {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   gap: 10px;
 
   width: 100%;
+  height: 80%;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  background-color: #3e5c76;
+}
+
+#mental-report {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  height: 85%;
+
+  gap: 10px;
+
+  border-radius: 8px;
+  background-color: #3e5c76;
 }
 
 #mental-report .no-mental-report {
@@ -187,17 +209,23 @@
   border-radius: 8px;
 }
 
-#mental-report .mental-report-header {
+#mental-reports .mental-report-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: start;
 
+  height: 15%;
   padding: 10px;
 
   border-radius: 8px;
 }
 
-#mental-report .mental-report-header button {
+#mental-reports .mental-report-header h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+#mental-reports .mental-report-header button {
   width: 200px;
   height: 40px;
 
@@ -222,10 +250,11 @@
 
 #mental-report .mental-report-overall {
   width: 100%;
+  height: 40%;
 
   padding: 10px;
 
-  background-color: #b4cf66;
+  background-color: #f0ebd8;
 
   border-radius: 8px;
 }
@@ -233,21 +262,28 @@
 #mental-report .mental-report-subtitle {
   margin: 0;
 
-  color: #44803f;
+  font-size: 22px;
+  color: #1d2d44;
 }
 
-#mental-report .mental-report-overall p {
+#mental-report .mental-report-overall ol {
+  list-style: circle;
+
   margin: 0;
+  padding: 10px 10px 10px 30px;
 
   font-weight: bold;
+  font-size: 18px;
+  color: #444444;
 }
 
 #mental-report .mental-report-recommendation {
   padding: 10px;
 
   width: 100%;
+  height: 60%;
 
-  background-color: #d9d9d9;
+  background-color: #ced9e3;
 
   border-radius: 8px;
 }
@@ -258,7 +294,9 @@
   margin: 0;
   padding: 10px 10px 10px 30px;
 
-  color: black;
+  font-weight: bold;
+  font-size: 18px;
+  color: #444444;
 }
 
 #mental-report .detail-report-btn {
@@ -271,19 +309,57 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(55deg, rgba(158, 158, 158, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
 
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 #mental-report .detail-report-btn:hover {
+  background-color: #ff9500;
+
+  transition: all 0.3s ease;
+}
+
+#mental-healths {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+
+  width: 100%;
+  height: 40%;
+
+  padding: 10px;
+
+  border-radius: 8px;
+  background-color: #3e5c76;
+}
+
+#mental-healths h3 {
+  margin: 0;
+  padding: 10px;
+
+  font-size: 22px;
+}
+
+#mental-healths button {
+  width: 100%;
+  height: 55px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+
+  background: linear-gradient(55deg, rgba(158, 158, 158, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#mental-healths button:hover {
   background-color: #ff9500;
 
   transition: all 0.3s ease;
@@ -375,6 +451,314 @@ td {
 .report-recommendations-ul li {
   margin-bottom: 10px;
 }
+
+#mental-health-report {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+
+  min-width: 60vw;
+  width: 100%;
+  height: 100%;
+
+  padding: 15px;
+
+  border-radius: 8px;
+  background-color: #3e5c76;
+}
+
+.mental-health-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+
+  width: 50%;
+  height: 15%;
+
+  border-radius: 8px;
+}
+
+.period-report-control {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  gap: 10px;
+}
+
+.period-report-control input {
+  display: block;
+
+  width: 120px;
+  height: 40px;
+  padding-left: 10px;
+
+  background-color: #d9d9d9;
+
+  border: 0;
+  border-radius: 8px;
+}
+
+#mental-health-report button {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+  text-align: center;
+
+  background: #ff9500;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.order-report h2 {
+  margin: 100px;
+  text-align: center;
+}
+
+#detail-report {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+
+  padding: 10px;
+
+  gap: 10px;
+}
+
+.detail-report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+}
+
+.detail-report-header .medium {
+  padding: 10px 15px;
+  border-radius: 8px;
+
+  color: white;
+  background-color: #ff9500;
+}
+
+.detail-report-header .high {
+  padding: 10px 15px;
+  border-radius: 8px;
+
+  color: white;
+  background-color: #ff5a33;
+}
+
+.concerns-strengths {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+
+  width: 100%;
+}
+
+.concerns {
+  width: 50%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+
+.concerns h3 {
+  margin: 0;
+  padding: 5px 10px;
+
+  color: white;
+  font-size: 22px;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #ff5a33;
+}
+
+.concerns ul {
+  list-style: circle;
+  padding-left: 30px;
+}
+
+.concerns li {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.strengths {
+  width: 50%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+
+.strengths h3 {
+  margin: 0;
+  padding: 5px 10px;
+
+  color: white;
+  font-size: 22px;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #44803f;
+}
+
+.strengths ul {
+  list-style: circle;
+  padding-left: 30px;
+}
+
+.strengths li {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.analysis-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+
+  width: 100%;
+}
+
+.patterns {
+  width: 33%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+
+.patterns-score {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+
+  padding: 5px 10px;
+
+  color: white;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #3e5c76;
+}
+
+.patterns-score h2 {
+  margin: 0;
+
+  font-size: 22px;
+
+  border-radius: 8px 8px 0px 0px;
+}
+
+.patterns-score h3 {
+  margin: 0;
+  padding: 3px 8px;
+
+  border-radius: 8px;
+
+  font-size: 18px;
+
+  background-color: white;
+  color: #1d2d44;
+}
+
+.elem {
+  padding: 10px;
+}
+
+.elem h3 {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.elem p {
+  margin: 0;
+}
+
+.recommendations {
+  width: 100%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+
+.recommendations h3 {
+  margin: 0;
+  padding: 5px 10px;
+
+  color: white;
+  font-size: 22px;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #146152;
+}
+
+.recommendations ul {
+  list-style: circle;
+  padding-left: 30px;
+}
+
+.recommendations li {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+.report-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+
+  gap: 10px;
+}
+
+.report-control .print {
+  width: 80px;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+  text-align: center;
+
+  background: #3e5c76;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.report-control .close {
+  width: 80px;
+  height: 50px;
+
+  border: 0;
+  border-radius: 8px;
+
+  color: white;
+  font-weight: bold;
+  text-align: center;
+
+  background: #ff5a33;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
 @media screen and (max-width: 1200px) {
   #mental-container {
     display: flex;
@@ -389,5 +773,71 @@ td {
 
   #mental-elem-right {
     width: 100%;
+  }
+
+  #mental-health-report {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+  }
+
+  .mental-health-report-header {
+    width: 100%;
+  }
+
+  .period-report-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .concerns-strengths {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+  }
+
+  .concerns {
+    width: 100%;
+  }
+
+  .strengths {
+    width: 100%;
+  }
+
+  .analysis-summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+  }
+
+  .patterns {
+    width: 100%;
+  }
+
+  .recommendations {
+    width: 100%;
+  }
+
+  .report-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    gap: 10px;
   }
 }

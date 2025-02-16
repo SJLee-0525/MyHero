@@ -15,19 +15,38 @@ export default function PublicEmergencyNotifications() {
 
   return (
     <div id="public-emergency-notifications-container">
+      <div id="public-emergency-notifications-header">
+        <h3>공공재난 문자</h3>
+      </div>
       <div id="public-emergency-notifications">
         {emergencyStore.categorizedNotifications.warn
           .slice()
-          .filter((notification) => !notification.is_read)
+          // .filter((notification) => !notification.is_read)
           .map((notification) => {
+            const createdAtKST = new Date(
+              notification.created_at + "Z"
+            ).toLocaleString("ko-KR", {
+              timeZone: "Asia/Seoul",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true, // 24시간제
+            });
+
             return (
               <button
-                className="public-emergency-notification-btn"
+                className="public-emergency-notification-click-btn"
                 key={notification.index}
                 onClick={() => handleReadNotification(notification.index)}
               >
                 <div
-                  className="public-emergency-notification"
+                  className={
+                    notification.is_read
+                      ? "public-emergency-notification-checked"
+                      : "public-emergency-notification-notification"
+                  }
                   key={notification.index}
                 >
                   <div className="public-emergency-notification-header">
@@ -44,7 +63,7 @@ export default function PublicEmergencyNotifications() {
                       {notification.description.RCPTN_RGN_NM}
                     </p> */}
                     <p className="public-emergency-notification-date">
-                      {notification.description.CRT_DT}
+                      {createdAtKST}
                     </p>
                   </div>
                 </div>

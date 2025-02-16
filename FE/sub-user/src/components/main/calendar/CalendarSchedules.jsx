@@ -1,54 +1,52 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef } from "react"
 
-import { CalendarStoreContext } from "../../../store/calendarStore";
-import { HealthContext } from "../../../store/healthStore";
+import { CalendarStoreContext } from "../../../store/calendarStore"
+import { HealthContext } from "../../../store/healthStore"
 
-import MentalReportDetail from "../mental/MentalReportDetail";
+import MentalReportDetail from "../mental/MentalReportDetail"
 
-import activityImage from "../../../assets/icons/run.svg";
-import mindfulnessImage from "../../../assets/icons/mindfulness.svg";
-import thermostatImage from "../../../assets/icons/thermostat.svg";
-import airImage from "../../../assets/icons/airwave.svg";
-import heatImage from "../../../assets/icons/heat.svg";
-import humidityImage from "../../../assets/icons/humidity.svg";
+import activityImage from "../../../assets/icons/run.svg"
+import mindfulnessImage from "../../../assets/icons/mindfulness.svg"
+import thermostatImage from "../../../assets/feature/temp-hot-line.png"
+import airImage from "../../../assets/feature/sparkling-line.png"
+import heatImage from "../../../assets/feature/blaze-line.png"
+import humidityImage from "../../../assets/feature/water-percent-line.png"
 
 export default function CalendarSchedules() {
-  const { selectedDate, schedules } = useContext(CalendarStoreContext);
-  const { mentalStatus, handleShowDetailReport } = useContext(HealthContext);
+  const { selectedDate, schedules } = useContext(CalendarStoreContext)
+  const { mentalStatus, handleShowDetailReport } = useContext(HealthContext)
 
-  const healthData = schedules.schedules.health;
-  const mentalData = schedules.schedules.mental;
-  const homeStatusData = schedules.schedules.homeStatus;
+  const healthData = schedules.schedules.health
+  const mentalData = schedules.schedules.mental
+  const homeStatusData = schedules.schedules.homeStatus
 
-  const inputScheduleRef = useRef(""); // ref 초기화
+  const inputScheduleRef = useRef("") // ref 초기화
 
   function handleOpenSpecificMentalReport(targetIndex) {
-    const copyMentalStatus = [...mentalStatus];
+    const copyMentalStatus = [...mentalStatus]
 
-    const arrayIndex = copyMentalStatus.findIndex(
-      (report) => report.index === targetIndex
-    );
+    const arrayIndex = copyMentalStatus.findIndex((report) => report.index === targetIndex)
 
     if (arrayIndex !== -1) {
       // 선택된 감정 보고서 출력
-      handleShowDetailReport(arrayIndex);
+      handleShowDetailReport(arrayIndex)
     } else {
-      console.error("해당되는 감정 보고서를 찾을 수 없습니다.");
+      console.error("해당되는 감정 보고서를 찾을 수 없습니다.")
     }
   }
 
   function handleSubmitSchedule(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    const newSchedule = inputScheduleRef.current.value; // 입력값 가져오기
+    const newSchedule = inputScheduleRef.current.value // 입력값 가져오기
     if (newSchedule.trim()) {
-      schedules.addSchedule(selectedDate.date, newSchedule); // 새 일정 추가
-      inputScheduleRef.current.value = ""; // 입력값 초기화
+      schedules.addSchedule(selectedDate.date, newSchedule) // 새 일정 추가
+      inputScheduleRef.current.value = "" // 입력값 초기화
     }
   }
 
   return (
-    <>
+    <div className="calendar-schedule-container">
       <div className="calendar-schedule-date">
         <a>{selectedDate.date}</a>
       </div>
@@ -57,59 +55,29 @@ export default function CalendarSchedules() {
       <div className="calendar-schedule-reports-box">
         <li className="calendar-day-status-schedules">
           <ul className="main-status-aver">
-            <img
-              className="calendar-widget-status-icon"
-              src={thermostatImage}
-              alt="temperature"
-            />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].temperature.toFixed(1)}℃`
-              : "-"}
+            <img className="calendar-widget-status-icon" src={thermostatImage} alt="temperature" />
+            {homeStatusData[selectedDate.date] ? `${homeStatusData[selectedDate.date].temperature.toFixed(1)}℃` : "-"}
           </ul>
           <ul className="main-status-aver">
-            <img
-              className="calendar-widget-status-icon"
-              src={humidityImage}
-              alt="humidity"
-            />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].humidity.toFixed(1)}%`
-              : "-"}
+            <img className="calendar-widget-status-icon" src={humidityImage} alt="humidity" />
+            {homeStatusData[selectedDate.date] ? `${homeStatusData[selectedDate.date].humidity.toFixed(1)}%` : "-"}
           </ul>
           <ul className="main-status-aver">
-            <img
-              className="calendar-widget-status-icon"
-              src={airImage}
-              alt="dust-level"
-            />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].dust_level.toFixed(
-                  1
-                )}㎍/㎥`
-              : "-"}
+            <img className="calendar-widget-status-icon" src={airImage} alt="dust-level" />
+            {homeStatusData[selectedDate.date] ? `${homeStatusData[selectedDate.date].dust_level.toFixed(1)}㎍/㎥` : "-"}
           </ul>
           <ul className="main-status-aver">
-            <img
-              className="calendar-widget-status-icon"
-              src={heatImage}
-              alt="ethanol"
-            />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].ethanol.toFixed(1)}%`
-              : "-"}
+            <img className="calendar-widget-status-icon" src={heatImage} alt="ethanol" />
+            {homeStatusData[selectedDate.date] ? `${homeStatusData[selectedDate.date].ethanol.toFixed(1)}%` : "-"}
           </ul>
         </li>
       </div>
 
-      <div className="calendar-schedule-reports-box">
+      <div className="calendar-schedule-results-box">
         <div className="calendar-health-reports">
           <div className="calendar-health-reports-header">
             <img src={activityImage} alt="activity" />
-            {healthData[selectedDate.date] ? (
-              <h3>평균: {healthData[selectedDate.date].averageScore}</h3>
-            ) : (
-              <h3>-</h3>
-            )}
+            {healthData[selectedDate.date] ? <h3>평균: {healthData[selectedDate.date].averageScore}</h3> : <h3>-</h3>}
           </div>
           {/* 해당 날짜 일정 출력 */}
           <ul>
@@ -119,37 +87,26 @@ export default function CalendarSchedules() {
                 .reverse()
                 .map((record, index) => {
                   // UTC+9 변환
-                  const reportedAtKST = new Date(
-                    record.reported_at
-                  ).toLocaleString("ko-KR", {
+                  const reportedAtKST = new Date(record.reported_at).toLocaleString("ko-KR", {
                     timeZone: "Asia/Seoul",
                     hour: "2-digit",
                     minute: "2-digit",
                     hour12: true, // 24시간제
-                  });
+                  })
 
                   return (
                     <li key={index}>
                       <button>
                         <div className="health-report">
-                          <span
-                            className={
-                              record.is_critical
-                                ? "critical-score"
-                                : "health-score"
-                            }
-                          >
-                            {record.score}
-                          </span>
+                          <span className={record.is_critical ? "critical-score" : "health-score"}>{record.score}</span>
                           <div className="health-report-header">
-                            <span>{reportedAtKST}</span>{" "}
-                            {/* 변환된 시간 사용 */}
+                            <span>{reportedAtKST}</span> {/* 변환된 시간 사용 */}
                             <p>{record.action}</p>
                           </div>
                         </div>
                       </button>
                     </li>
-                  );
+                  )
                 })
             ) : (
               <div className="no-data">기록된 활동 정보가 없습니다.</div>
@@ -159,11 +116,7 @@ export default function CalendarSchedules() {
         <div className="calendar-mental-reports">
           <div className="calendar-mental-reports-header">
             <img src={mindfulnessImage} alt="mental" />
-            {mentalData[selectedDate.date] ? (
-              <h3>평균: {mentalData[selectedDate.date].averageScore}</h3>
-            ) : (
-              <h3>-</h3>
-            )}
+            {mentalData[selectedDate.date] ? <h3>평균: {mentalData[selectedDate.date].averageScore}</h3> : <h3>-</h3>}
           </div>
           <ul>
             {/* 해당 날짜 일정 출력력 */}
@@ -173,32 +126,18 @@ export default function CalendarSchedules() {
                 .reverse()
                 .map((record, index) => {
                   // UTC+9 변환
-                  const reportedAtKST = new Date(
-                    record.reported_at
-                  ).toLocaleString("ko-KR", {
+                  const reportedAtKST = new Date(record.reported_at).toLocaleString("ko-KR", {
                     timeZone: "Asia/Seoul",
                     hour: "2-digit",
                     minute: "2-digit",
                     hour12: true, // 24시간제
-                  });
+                  })
 
                   return (
                     <li key={index}>
-                      <button
-                        onClick={() =>
-                          handleOpenSpecificMentalReport(record.index)
-                        }
-                      >
+                      <button onClick={() => handleOpenSpecificMentalReport(record.index)}>
                         <div className="mental-report">
-                          <span
-                            className={
-                              record.is_critical
-                                ? "critical-score"
-                                : "mental-score"
-                            }
-                          >
-                            {record.score}
-                          </span>
+                          <span className={record.is_critical ? "critical-score" : "mental-score"}>{record.score}</span>
                           <div className="mental-report-header">
                             <span>{reportedAtKST}</span>
                             <p>{record.description.overall_emotional_state}</p>
@@ -206,7 +145,7 @@ export default function CalendarSchedules() {
                         </div>
                       </button>
                     </li>
-                  );
+                  )
                 })
             ) : (
               <div className="no-data">가록된 정신 건강 정보가 없습니다.</div>
@@ -225,6 +164,6 @@ export default function CalendarSchedules() {
         />
         <button type="submit">+</button>
       </form> */}
-    </>
-  );
+    </div>
+  )
 }

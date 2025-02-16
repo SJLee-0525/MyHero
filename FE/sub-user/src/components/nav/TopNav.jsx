@@ -1,51 +1,51 @@
-import "./Nav.css";
+import "./Nav.css"
 
-import ReactDOM from "react-dom";
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import ReactDOM from "react-dom"
+import { useState, useEffect, useContext } from "react"
+import { useNavigate } from "react-router-dom"
 
-import { UserProgressContext } from "../../store/userProgressStore";
-import TopNavSideNavElems from "./TopNavSideElems";
+import { UserProgressContext } from "../../store/userProgressStore"
+import TopNavSideNavElems from "./TopNavSideElems"
 
-import menuIcon from "../../assets/icons/menu.svg";
-import personIcon from "../../assets/icons/person.svg";
-import closeIcon from "../../assets/icons/close.svg";
-import homeIcon from "../../assets/icons/home.svg";
-import calendarIcon from "../../assets/icons/calendar.svg";
-import smsIcon from "../../assets/icons/sms.svg";
-import notificationIcon from "../../assets/icons/notification.svg";
-import vitalSignIcon from "../../assets/icons/vital_sign.svg";
-import sirenIcon from "../../assets/icons/siren.svg";
-import runIcon from "../../assets/icons/run.svg";
-import settingIcon from "../../assets/icons/settings.svg";
+import menuIcon from "../../assets/feature/menu.svg"
+import personIcon from "../../assets/feature/user.svg"
+import closeIcon from "../../assets/icons/close.svg"
+import homeIcon from "../../assets/feature/home.svg"
+import calendarIcon from "../../assets/feature/calendar.svg"
+import smsIcon from "../../assets/feature/message-circle.svg"
+import notificationIcon from "../../assets/feature/bell.svg"
+import vitalSignIcon from "../../assets/icons/vital_sign.svg"
+import sirenIcon from "../../assets/icons/siren.svg"
+import activityIcon from "../../assets/feature/activity.svg"
+import settingIcon from "../../assets/icons/settings.svg"
 
 export default function TopNav() {
-  const userProgressStore = useContext(UserProgressContext);
-  const navigate = useNavigate();
+  const userProgressStore = useContext(UserProgressContext)
+  const navigate = useNavigate()
 
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 720);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 720)
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 720);
-    };
+      setIsMobile(window.innerWidth <= 720)
+    }
 
     // 이벤트 리스너 등록
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize)
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
     return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [])
 
   // 화면 너비가 720px 이하일 때만 렌더링
-  if (!isMobile) return null;
+  if (!isMobile) return null
 
-  const loginUserInfo = userProgressStore.loginUserInfo;
+  const loginUserInfo = userProgressStore.loginUserInfo
 
   function handleChangeFamilyId(familyId) {
-    userProgressStore.handleChangeFamilyId(familyId);
+    userProgressStore.handleChangeFamilyId(familyId)
   }
 
   return ReactDOM.createPortal(
@@ -56,15 +56,11 @@ export default function TopNav() {
             <img src={menuIcon} alt="menu" />
           </button>
         </div>
-        <h3>
-          {!userProgressStore.isActiveSideBarElem
-            ? "SUNGJOONKING"
-            : userProgressStore.isActiveSideBarElem.toUpperCase()}
-        </h3>
+        <h3>{!userProgressStore.isActiveSideBarElem ? "SUNGJOONKING" : userProgressStore.isActiveSideBarElem.toUpperCase()}</h3>
         <div className="top-bar-toggle-menu">
           <button
             onClick={() => {
-              navigate("/accounts");
+              navigate("/accounts")
             }}
           >
             <img src={personIcon} alt="userinfo" />
@@ -72,33 +68,21 @@ export default function TopNav() {
         </div>
       </nav>
 
-      <aside
-        className={`top-side-bar ${
-          userProgressStore.sidebarIsOpened ? "open" : "closed"
-        }`}
-      >
+      <aside className={`top-side-bar ${userProgressStore.sidebarIsOpened ? "open" : "closed"}`}>
         <div className="top-side-bar-header">
           <div className="top-side-bar-header-elem">
-            {loginUserInfo.userInfo.role === "sub" &&
-              userProgressStore.memberInfo.registerData && (
-                <select
-                  onChange={(event) => handleChangeFamilyId(event.target.value)}
-                >
-                  {userProgressStore.memberInfo.registerData.map((info) => (
-                    <option key={info.family_id} value={info.family_id}>
-                      {info.family_name}
-                    </option>
-                  ))}
-                </select>
-              )}
-            {loginUserInfo.userInfo.role === "sub" &&
-              !userProgressStore.memberInfo.registerData && <h5>모임 없음</h5>}
-            {loginUserInfo.userInfo.role === "main" &&
-              userProgressStore.familyInfo.isExist && (
-                <h5>{userProgressStore.familyInfo.familyInfo.family_name}</h5>
-              )}
-            {loginUserInfo.userInfo.role === "main" &&
-              !userProgressStore.familyInfo.isExist && <h5>모임 없음</h5>}
+            {loginUserInfo.userInfo.role === "sub" && userProgressStore.memberInfo.registerData && (
+              <select onChange={(event) => handleChangeFamilyId(event.target.value)}>
+                {userProgressStore.memberInfo.registerData.map((info) => (
+                  <option key={info.family_id} value={info.family_id}>
+                    {info.family_name}
+                  </option>
+                ))}
+              </select>
+            )}
+            {loginUserInfo.userInfo.role === "sub" && !userProgressStore.memberInfo.registerData && <h5>모임 없음</h5>}
+            {loginUserInfo.userInfo.role === "main" && userProgressStore.familyInfo.isExist && <h5>{userProgressStore.familyInfo.familyInfo.family_name}</h5>}
+            {loginUserInfo.userInfo.role === "main" && !userProgressStore.familyInfo.isExist && <h5>모임 없음</h5>}
           </div>
           <button onClick={userProgressStore.handleSidebarToggle}>
             <img src={closeIcon} alt="close" />
@@ -106,27 +90,15 @@ export default function TopNav() {
         </div>
 
         <ul className="top-side-bar-nav">
-          <TopNavSideNavElems
-            imgSrc={homeIcon}
-            altSrc="home"
-            identifier="HOME"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          <TopNavSideNavElems imgSrc={homeIcon} altSrc="home" identifier="홈" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
           <TopNavSideNavElems
             imgSrc={notificationIcon}
             altSrc="notification"
-            identifier="NOTIFICATION"
+            identifier="알림"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems
-            imgSrc={smsIcon}
-            altSrc="message"
-            identifier="MESSAGE"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          <TopNavSideNavElems imgSrc={smsIcon} altSrc="message" identifier="메시지" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
           {/* <TopNavSideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
@@ -137,14 +109,14 @@ export default function TopNav() {
           <TopNavSideNavElems
             imgSrc={calendarIcon}
             altSrc="calendar"
-            identifier="CALENDAR"
+            identifier="캘린더"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
           <TopNavSideNavElems
-            imgSrc={runIcon}
+            imgSrc={activityIcon}
             altSrc="activity"
-            identifier="ACTIVITY"
+            identifier="건강"
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
@@ -166,5 +138,5 @@ export default function TopNav() {
       </aside>
     </div>,
     document.getElementById("mobile-nav")
-  );
+  )
 }

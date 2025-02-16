@@ -8,25 +8,44 @@ h5 {
   justify-content: space-between;
 
   height: 100%;
-  width: 65px;
+  width: 70px;
 
-  border-radius: 0px 10px 10px 0px;
+  padding: 50px 0px;
+
+  /* border-radius: 0px 10px 10px 0px; */
+
+  background-color: #1d2d44;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(
+  /* background: linear-gradient(
       55deg,
       rgba(44, 44, 44, 0.19) 2.82%,
       rgba(163, 163, 163, 0.2) 97.65%
     ),
-    rgba(163, 163, 163, 0.2);
-  backdrop-filter: blur(30px); /* 블러 효과 */
-  -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
+    rgba(163, 163, 163, 0.2);  */
+  /* backdrop-filter: blur(30px);  */
+  /* -webkit-backdrop-filter: blur(30px); */
 
-  box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
+  /* box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25); */
 
   overflow: hidden; /* 확장 전 텍스트 숨김 */
 
   transition: all 0.3s ease;
+}
+
+#side-bar #logo-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 50px;
+
+  margin: 12px 0px;
+}
+
+#side-bar #logo-header img {
+  width: 50px;
+  height: 50px;
 }
 
 #side-bar #side-nav-header {
@@ -47,13 +66,14 @@ h5 {
   display: block;
 
   width: 92%;
-  height: 80%;
+  height: 100%;
 
   border: 0;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.568);
 
   text-align: center;
+  font-size: 14px;
   color: #142020;
 
   cursor: pointer;
@@ -129,12 +149,7 @@ h5 {
   border-radius: 12px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(163, 163, 163, 0.2) 97.65%
-    ),
-    rgba(163, 163, 163, 0.2);
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
@@ -204,7 +219,7 @@ h5 {
 }
 
 #side-bar img {
-  width: 80%;
+  width: 75%;
 
   transition: none;
   z-index: 123;
@@ -219,6 +234,7 @@ h5 {
 
   margin-left: 10px;
 
+  font-size: 17px;
   color: white;
 }
 
@@ -230,17 +246,19 @@ h5 {
   justify-content: space-between;
   align-items: center;
 
-  height: 65px;
+  height: 70px;
   padding: 0 20px;
 
+  background-color: #1d2d44;
+
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(
+  /* background: linear-gradient(
       55deg,
       rgba(44, 44, 44, 0.19) 2.82%,
       rgba(163, 163, 163, 0.2) 97.65%
     ),
     rgba(163, 163, 163, 0.2);
-  backdrop-filter: blur(30px); /* 블러 효과 */
+  backdrop-filter: blur(30px);  */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
   color: white;
 }
@@ -269,14 +287,16 @@ h5 {
   height: 100%;
   width: 300px;
 
+  background-color: #1d2d44;
+
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(
+  /* background: linear-gradient(
       55deg,
       rgba(44, 44, 44, 0.19) 2.82%,
       rgba(163, 163, 163, 0.2) 97.65%
     ),
     rgba(163, 163, 163, 0.2);
-  backdrop-filter: blur(30px); /* 블러 효과 */
+  backdrop-filter: blur(30px);  */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
 
   z-index: 1000;
@@ -371,7 +391,7 @@ h5 {
 
   height: 45px;
 
-  margin: 10px 0px;
+  margin: 15px 0px;
   padding: 0px 15px;
   z-index: 2000;
 }
@@ -383,7 +403,7 @@ h5 {
 }
 
 #mobile-bar .top-side-bar-nav-li button img {
-  height: 40px;
+  height: 35px;
 }
 
 #mobile-bar .top-side-bar-nav-li button:active {
@@ -398,12 +418,7 @@ h5 {
   border: 0;
   border-radius: 12px;
 
-  background: linear-gradient(
-      55deg,
-      rgba(44, 44, 44, 0.19) 2.82%,
-      rgba(227, 227, 227, 0.2) 97.65%
-    ),
-    rgba(255, 255, 255, 0.2);
+  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
 }
 
@@ -444,6 +459,6 @@ h5 {
 
 #mobile-bar .top-side-bar-nav-text {
   padding-left: 3px;
-  font-size: 15px;
+  font-size: 18px;
   color: white;
 }

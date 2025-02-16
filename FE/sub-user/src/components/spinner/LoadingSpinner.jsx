@@ -1,7 +1,7 @@
-import "./Spinner.css";
+import "./Spinner.css"
 
 // import cat from "../../assets/spinner/cat_spinner.gif";
-import nana from "../../assets/spinner/nana_spinner.gif";
+import nana from "../../assets/spinner/nana_spinner.gif"
 export default function LoadingSpinner() {
   return (
     // <div className="loading-overlay">
@@ -10,5 +10,5 @@ export default function LoadingSpinner() {
     <div className="loading-overlay">
       <img src={nana} alt="Loading..." className="spinner-img" />
     </div>
-  );
+  )
 }

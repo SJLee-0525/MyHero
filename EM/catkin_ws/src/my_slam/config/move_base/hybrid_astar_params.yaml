@@ -1,0 +1,26 @@
+global_planner:
+  # 1. 시각화 관련 파라미터
+  display_search_tree: false    # 검색 트리 시각화를 활성화하려면 true, 기본값은 false
+  display_path: true            # 최종 경로 시각화를 활성화, 기본값은 true
+
+  # 2. 경로 종료 조건
+  dist_threshold: 0.5           # 목표에 도달했다고 간주하는 최소 거리 (단위: m), 기본값: 0.5
+
+  # 3. 그리드 해상도 관련 파라미터
+  planner_grid_resolution: 0.1  # Hybrid A* 검색용 그리드 셀 크기 (단위: m), 기본값: 0.1
+  map_grid_resolution: 0.05     # costmap_2d와 일치시킬 그리드 해상도 (단위: m), 기본값: 0.05
+
+  # 4. 비용 관련 파라미터 (navfn의 기본값과 유사)
+  lethal_cost: 253              # 치명적 장애물로 간주하는 비용, 기본값: 253
+  neutral_cost: 40              # 중립 비용, 기본값: 40
+  cost_factor: 5.0              # costmap 비용에 곱해지는 계수, 기본값: 5.0
+
+  # 5. 오리엔테이션 설정 파라미터
+  orientation_mode: 1           # 경로 포인트의 orientation 결정 모드 (예: 1이면 특정 방식 적용)
+  orientation_window_size: 1    # orientation 계산 시 고려할 인접 포인트 수, 기본값: 1
+
+  # 6. 재계획 및 Voronoi 필드 관련 파라미터
+  replan_on_disturbance: true   # 장애물 등으로 경로가 방해받을 때만 재계획 수행 (true: 재계획 조건부, false: 매번 재계획)
+  use_voronoi: true             # Voronoi 필드를 사용하여 경로 평활화 효과를 적용 (true: 사용, false: 미사용)
+  max_voronoi_dist: 5.0         # Voronoi 필드의 효과가 적용될 최대 거리 (단위: m), 기본값: 5.0
+  alpha: 0.9                    # Voronoi 필드의 가중치 계수, 기본값: 0.9

@@ -13,7 +13,7 @@
         <rosparam file="$(find my_slam)/config/move_base/global_costmap_params.yaml" command="load" />
         <rosparam file="$(find my_slam)/config/move_base/local_costmap_params.yaml" command="load" />
         <rosparam file="$(find my_slam)/config/move_base/dwa_local_planner.yaml" command="load" />
-        <rosparam file="$(find my_slam)/config/move_base/global_planner_params.yaml" command="load" ns="global_planner" />
+        <!-- <rosparam file="$(find my_slam)/config/move_base/global_planner_params.yaml" command="load" ns="global_planner" /> -->
 
         <!-- Recovery Behaviors -->
         <rosparam file="$(find my_slam)/config/move_base/recovery_params.yaml" command="load" />
@@ -24,12 +24,17 @@
         <param name="controller_frequency" value="10.0" />
         <param name="controller_patience" value="1.0" />    <!-- 유효한 제어 명령 대기 시간-->
         <param name="shutdown_costmaps" value="false" />    
-        <param name="base_global_planner" value="navfn/NavfnROS"/>
+        <!-- <param name="base_global_planner" value="navfn/NavfnROS"/> -->
         <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
 
         <!-- Move Base 파라미터 추가! -->
         <param name="planner_frequency" value="0.05" />  <!-- global planner 주기 -->
     </node>
+
+    <!-- Hybrid A* 글로벌 플래너 실행 -->
+    <rosparam file="$(find my_slam)/config/move_base/hybrid_astar_params.yaml" command="load" ns="global_planner" />
+    <include file="$(find hybrid_astar_planner)/launch/hybrid_astar.launch" />
+
 
     <!-- 조이스틱 노드 -->
     <node pkg="joy" type="joy_node" name="joy_node">

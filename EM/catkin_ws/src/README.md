@@ -8,21 +8,32 @@ LiDAR 센서 기반의 SLAM과 자율주행이 가능한 차량형 로봇 시스
 - Hector SLAM을 이용한 실시간 지도 작성
 - ROS Navigation Stack 기반 자율주행
 - I2C 통신 기반 모터 제어
+- 사람 추종 기능
 
 ## 하드웨어 구성
 - YDLidar X4
 - DC 모터 (PCA9685 I2C 제어)
 - 서보 모터 (애커만 조향)
+- 카메라 (사람 추종용)
 
----
+## 사용 플러그인
+1. Hybrid A* Planner (hybrid_astar_planner/HybridAStarPlanner)
+   - 전역 경로 계획
+   - 차량 기구학적 제약 고려
+   - Reeds-Shepp 곡선 기반 경로 생성
+
+2. Backoff Recovery (backoff_recovery/BackoffRecovery)
+   - 후진 기반 복구 행동
+   - 충돌/막힘 상황 대응
 
 ## 프로젝트 구성
 프로젝트는 다음 ROS 패키지들로 구성되어 있습니다:
 
 1. my_slam
    - Hector SLAM 기반 SLAM 및 Navigation 설정
-   - Move Base 파라미터 설정 
+   - Move Base 파라미터 설정
    - 자율주행을 위한 costmap, local planner 설정
+   - 사람 추종 노드 구현
 
 2. hector_slam
    - LiDAR 기반 SLAM
@@ -37,7 +48,10 @@ LiDAR 센서 기반의 SLAM과 자율주행이 가능한 차량형 로봇 시스
    - YDLidar X4 드라이버
    - laser scan 토픽 발행
 
----
+5. yolo_pkg
+   - 딥러닝 기반 사람 인식
+   - YOLO 객체 검출
+   - 실시간 영상 처리
 
 ## 실행 방법
 전체 시스템은 단일 launch 파일로 실행됩니다:
@@ -45,33 +59,31 @@ LiDAR 센서 기반의 SLAM과 자율주행이 가능한 차량형 로봇 시스
 roslaunch my_slam navigation.launch
 ```
 
-> 이 launch 파일은 다음 노드들을 실행합니다:
->
-> Hector SLAM
-> YDLidar 드라이버
-> Motor Controller
-> Move Base
-> RViz
+- Hector SLAM
+- YDLidar 드라이버
+- Motor Controller
+- Move Base
+- YOLO 객체 검출
+- 사람 추종 노드
+- RViz
 
-RViz에서 2D Nav Goal 선택을 통해 주행이 가능합니다.
-
----
+주행 모드:
+- RViz에서 2D Nav Goal 선택을 통한 자율주행
+- YOLO 기반 사람 추종 모드
 
 ## 주요 설정
-- costmap 장애물 인식 범위: 2.5m
+- costmap 장애물 인식 범위: 5m
 - 후진 기반 recovery behavior
 - 차량 크기: 30cm x 16cm
-- 최대 선속도: 0.5 m/s
+- 최대 선속도: 0.6 m/s
+- 최대 회전속도: 1.2 rad/s 
+- 최소 선속도: 0.1 m/s
 - local costmap clearing 활성화
 - DWA Local Planner 사용
+- YOLO 디스플레이 크기: 960x540
 
 ## 참고사항
 - IMU/엔코더 없이 LiDAR만으로 위치 추정
 - 애커만 조향 방식으로 제자리 회전 불가
 - Hector SLAM이 위치 추정 담당
-- AMCL은 코드에 포함되어 있으나 사용하지 않음
-
-> AMCL은 엔코더/IMU 등 odom 생성용 센서가 필요
-> Hector SLAM의 scan matching으로 pseudo odom을 생성할 수 있으나, 맵 저장 시 초기 위치와 자세에 매우 의존적이어서 실제 적용이 어려움
-
-
+- 사람 추종 모드에서 bbox_center 토픽으로 제어

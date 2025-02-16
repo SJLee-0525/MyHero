@@ -22,7 +22,7 @@ export default function Accounts() {
   return (
     <div id="accounts-main">
       <div id="accounts-header">
-        <h2>계정 관리</h2>
+        <h2>계정</h2>
         <div className="login-form-action">
           <div className="danger-zone">
             <button className={userProgressStore.autoLogin ? "auto-login-btn-on" : "auto-login-btn"} onClick={userProgressStore.handleAutoLogin}>

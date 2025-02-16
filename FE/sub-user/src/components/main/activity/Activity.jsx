@@ -18,10 +18,19 @@ export default function Activity() {
   const userProgressStore = useContext(UserProgressContext)
   const healthStore = useContext(HealthContext)
 
-  const mainUserName = "박순자123"
-
   if (userProgressStore.loginUserInfo.login && userProgressStore.loginUserInfo.userInfo.role === "main") {
     return
+  }
+
+  if (userProgressStore.loginUserInfo.login && userProgressStore.loginUserInfo.userInfo.role === "sub" && !userProgressStore.memberInfo.isExist) {
+    return (
+      <div id="activity-main">
+        <h2 id="main-container-title">건강</h2>
+        <div id="activity-no-member-container">
+          <h3>연결된 가족 모임 정보가 없습니다.</h3>
+        </div>
+      </div>
+    )
   }
 
   return (

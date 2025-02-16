@@ -64,7 +64,7 @@ export default function KickMember() {
             X
           </button>
         </div>
-        <p className="signout-control">
+        <div className="signout-control">
           <label htmlFor="password">비밀번호</label>
           <input type="password" ref={inputPassword} onKeyDown={handleKeyDown} onKeyUp={handleKeyUp} />
           <div className="login-control-error">
@@ -74,7 +74,7 @@ export default function KickMember() {
           <button className="logout-btn" onClick={handleKickMember}>
             추방
           </button>
-        </p>
+        </div>
       </div>
     </Modal>
   )

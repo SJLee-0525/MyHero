@@ -10,7 +10,7 @@ h5 {
   height: 100%;
   width: 70px;
 
-  padding: 30px 0px;
+  padding: 50px 0px;
 
   /* border-radius: 0px 10px 10px 0px; */
 
@@ -403,7 +403,7 @@ h5 {
 }
 
 #mobile-bar .top-side-bar-nav-li button img {
-  height: 40px;
+  height: 35px;
 }
 
 #mobile-bar .top-side-bar-nav-li button:active {

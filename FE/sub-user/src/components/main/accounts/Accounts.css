@@ -21,7 +21,7 @@
 
 #accounts-main h2 {
   color: #0d1321;
-  font-size: 36px;
+  font-size: 48px;
   margin: 0px 20px 10px;
 }
 
@@ -141,6 +141,7 @@
   background-color: #44803f;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -164,7 +165,8 @@
 
   background-color: transparent;
 
-  color: white;
+  color: #142020;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -191,6 +193,7 @@
   background-color: #ff9500;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -435,6 +438,7 @@
   background-color: transparent;
 
   color: #ff5a33;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -461,6 +465,7 @@
   background-color: #44803f;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -484,7 +489,8 @@
 
   background-color: transparent;
 
-  color: #ff9500;
+  color: #e43710;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -511,6 +517,7 @@
   background-color: #ff5a33;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -552,6 +559,7 @@
   background-color: #44803f;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -574,9 +582,10 @@
   border-radius: 8px;
 
   background-color: transparent;
-  border: 1px solid #44803f;
+  border: 2px solid #44803f;
 
   color: #44803f;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;
@@ -603,6 +612,7 @@
   background-color: #ff5a33;
 
   color: white;
+  font-size: 15px;
   font-weight: bold;
 
   cursor: pointer;

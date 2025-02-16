@@ -1,55 +1,55 @@
-import "./Advertisement.css";
+import "./Advertisement.css"
 
-import { useRef, useState, useContext, useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef, useState, useContext, useEffect } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx";
+import { UserProgressContext } from "../../../store/userProgressStore.jsx"
 
-import LoginModal from "./LoginModal.jsx";
+import LoginModal from "./LoginModal.jsx"
 
-import ad1 from "../../../assets/advertisement/ad1.png";
+import ad1 from "../../../assets/advertisement/ad1.png"
 
-import mobileAd1 from "../../../assets/advertisement/mobile-ad1.png";
+import mobileAd1 from "../../../assets/advertisement/mobile-ad1.png"
 
 // test
-import ls from "../../../assets/advertisement/ls.webp";
-import ms from "../../../assets/advertisement/ms.webp";
-import nana from "../../../assets/advertisement/nana.webp";
-import sora from "../../../assets/advertisement/sora.webp";
-import yw from "../../../assets/advertisement/yw.webp";
-import member from "../../../assets/advertisement/member.webp";
+import ls from "../../../assets/advertisement/ls.webp"
+import ms from "../../../assets/advertisement/ms.webp"
+import nana from "../../../assets/advertisement/nana.webp"
+import sora from "../../../assets/advertisement/sora.webp"
+import yw from "../../../assets/advertisement/yw.webp"
+import member from "../../../assets/advertisement/member.webp"
 
 export default function Advertisement() {
-  const userProgressStore = useContext(UserProgressContext);
+  const userProgressStore = useContext(UserProgressContext)
 
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720)
 
-  const boxRef = useRef("");
-  const memberTextRef = useRef("");
-  const memberRef = useRef("");
-  const boxRefs = useRef([]); // 여러 개의 요소를 참조할 배열 생성
+  const boxRef = useRef("")
+  const memberTextRef = useRef("")
+  const memberRef = useRef("")
+  const boxRefs = useRef([]) // 여러 개의 요소를 참조할 배열 생성
 
   useEffect(() => {
     const handleResize = () => {
-      setIsDesktop(window.innerWidth > 720);
-    };
+      setIsDesktop(window.innerWidth > 720)
+    }
 
     // 이벤트 리스너 등록
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize)
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
     return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+      window.removeEventListener("resize", handleResize)
+    }
+  }, [])
 
   // gsap.fromTo()의 첫 번째 인자는 애니메이션을 적용할 요소, 두 번째와 세 번째 인자는 각각 초기 상태, 애니메이션 대상 상태를 넣어야 함.
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger)
 
     if (memberRef.current) {
-      gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger)
 
       gsap.to(memberRef.current, {
         scale: 1.5,
@@ -66,11 +66,11 @@ export default function Advertisement() {
           //   gsap.set(memberRef.current, { scale: scaleValue })
           // },
         },
-      });
+      })
     }
 
     if (memberTextRef.current) {
-      gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger)
 
       gsap.to(memberTextRef.current, {
         scale: 1.5,
@@ -82,7 +82,7 @@ export default function Advertisement() {
           scrub: true,
           pin: false,
         },
-      });
+      })
     }
 
     // 여러 개의 이미지 박스 애니메이션 적용
@@ -102,8 +102,8 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      );
-    });
+      )
+    })
 
     // 비디오 박스 애니메이션 추가
     if (boxRef.current) {
@@ -123,9 +123,9 @@ export default function Advertisement() {
             scrub: true, // 스크롤과 함께 애니메이션 진행
           },
         }
-      );
+      )
     }
-  }, []);
+  }, [])
 
   return (
     <div id="advertisement">
@@ -136,9 +136,7 @@ export default function Advertisement() {
             <h1>
               실버 케어 로봇 서비스<br></br>영웅이네 오신 것을 환영합니다.
             </h1>
-            <button onClick={() => userProgressStore.handleOpenModal("login")}>
-              로그인하고 시작하기
-            </button>
+            <button onClick={() => userProgressStore.handleOpenModal("login")}>로그인하고 시작하기</button>
           </div>
         </div>
       )}
@@ -148,15 +146,13 @@ export default function Advertisement() {
             <h1>
               실버 케어 로봇 서비스<br></br>영웅이네 오신 것을 환영합니다.
             </h1>
-            <button onClick={() => userProgressStore.handleOpenModal("login")}>
-              로그인하고 시작하기
-            </button>
+            <button onClick={() => userProgressStore.handleOpenModal("login")}>로그인하고 시작하기</button>
           </div>
           <img src={mobileAd1} alt="mobile-ad-main-img" />
         </div>
       )}
 
-      <div id="big-container">
+      {/* <div id="big-container">
         <div className="image-box" ref={memberRef}>
           <h2>영웅이를 소개합니다!!</h2>
           <img src={member} alt="" />
@@ -197,9 +193,9 @@ export default function Advertisement() {
       <h2>생생한 영웅이 사용 후기!</h2>
       <p>- 정말 너무 좋아요 별 다섯개</p>
       <p>- 너무 안심ㅁ돼요!!! 짱ㅈ</p>
-      <h2>상세 스펙</h2>
+      <h2>상세 스펙</h2> */}
       {/* 모달 관련 */}
       <LoginModal />
     </div>
-  );
+  )
 }

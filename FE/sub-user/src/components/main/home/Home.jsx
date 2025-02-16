@@ -18,8 +18,6 @@ import ToggleGroup from "../../toggle/ToggleGroup.jsx"
 export default function Main() {
   const userProgressStore = useContext(UserProgressContext)
 
-  const mainUserName = "박순자123"
-
   if (!userProgressStore.loginUserInfo.login) {
     return <Advertisement />
   }
@@ -30,7 +28,7 @@ export default function Main() {
 
       <h2>홈</h2>
       <div id="page-container">
-        <div>
+        <div id="home-widget-container">
           <Widget title="전체 알림" type="emergency">
             <EmergencyWidget />
           </Widget>
@@ -39,7 +37,7 @@ export default function Main() {
           <CalendarWidget />
         </Widget>
         <div id="home-widget-container">
-          <Widget title={`${mainUserName}님의 집`}>
+          <Widget title="영웅이 상태">
             <ToggleGroup />
           </Widget>
           <KeywordsWidget />

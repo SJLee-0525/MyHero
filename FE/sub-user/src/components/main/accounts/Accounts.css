@@ -534,6 +534,63 @@
   width: 100%;
 }
 
+.danger-zone .auto-login-btn-on {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100px;
+  height: 50px;
+
+  margin-top: 10px;
+  gap: 2px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: #44803f;
+
+  color: white;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.danger-zone .auto-login-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100px;
+  height: 50px;
+
+  margin-top: 10px;
+  gap: 2px;
+
+  border: 0;
+  border-radius: 8px;
+
+  background-color: transparent;
+  border: 1px solid #44803f;
+
+  color: #44803f;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.danger-zone .auto-login-btn:hover {
+  background-color: #44803f;
+
+  color: white;
+
+  transition: all 0.3s ease;
+}
+
 .danger-zone .logout-btn {
   width: 100px;
   height: 50px;
@@ -550,6 +607,10 @@
 
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.danger-zone p {
+  margin: 0;
 }
 
 .danger-zone .logout-btn:hover {
@@ -902,6 +963,8 @@ hr {
 
 #login-user-info .member-container table td {
   border: 0;
+
+  width: 25%;
 }
 
 #login-user-info .member-btn-container {

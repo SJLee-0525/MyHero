@@ -22,6 +22,7 @@ export const UserProgressContext = createContext({
     login: false,
     userInfo: undefined,
   },
+  autoLogin: false,
   familyInfo: {
     isExist: false,
     familyInfo: undefined,
@@ -44,6 +45,7 @@ export const UserProgressContext = createContext({
   setModalProgress: () => {},
   setSelectedModalId: () => {},
   setLoginUserInfo: () => {},
+  setAutoLogin: () => {},
   setFamilyInfo: () => {},
   setMemberInfo: () => {},
   handleUpdateSessionLoginInfo: (userInfo) => {},
@@ -55,6 +57,7 @@ export const UserProgressContext = createContext({
   handleCloseModal: () => {},
   handleChangeFamilyId: (familyId) => {},
   handleLogin: (userInfo) => {},
+  handleAutoLogin: () => {},
   handleGetUserInfo: (id) => {},
   handleLogout: () => {},
   handleCheckEmail: (email) => {},
@@ -110,6 +113,9 @@ export default function UserProgressContextProvider({ children }) {
     login: false,
     userInfo: undefined,
   })
+
+  // 자동 로그인 여부 관리
+  const [autoLogin, setAutoLogin] = useState(false)
 
   // 가족 정보 관리
   const [familyInfo, setFamilyInfo] = useState({
@@ -239,6 +245,38 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  async function handleAutoLogin() {
+    try {
+      const response = await request(`${DEV_API_URL}/auth/auto-login`, "PATCH")
+
+      const resData = response.data
+
+      if (response.success) {
+        if (resData.message === "Auto login set successfully") {
+          console.log("자동 로그인 설정 성공", resData)
+
+          // 로그인 정보 저장
+          localStorage.setItem("loginUserInfo", JSON.stringify(loginUserInfo))
+
+          setAutoLogin(true)
+
+          return { success: true, data: resData }
+        }
+      } else {
+        alert("자동 로그인 설정 실패\n권한이 없습니다.")
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error)
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      }
+    }
+  }
+
   // 최신 회원 정보 조회
   async function handleGetUserInfo(id) {
     try {
@@ -299,6 +337,10 @@ export default function UserProgressContextProvider({ children }) {
           // 세션 스토리지에서 로그인 정보 삭제
           sessionStorage.removeItem("loginUserInfo")
           sessionStorage.removeItem("session_id")
+
+          // 로컬 스토리지에서 로그인 정보 삭제
+          localStorage.removeItem("loginUserInfo")
+          localStorage.removeItem("session_id")
 
           // 사이드바 관리
           setIsActiveSideBarElem("accounts")
@@ -1168,6 +1210,7 @@ export default function UserProgressContextProvider({ children }) {
     modalProgress,
     selectedModalId,
     loginUserInfo,
+    autoLogin,
     familyInfo,
     memberInfo,
     DEV_API_URL,
@@ -1182,6 +1225,7 @@ export default function UserProgressContextProvider({ children }) {
     setModalProgress,
     setSelectedModalId,
     setLoginUserInfo,
+    setAutoLogin,
     setFamilyInfo,
     setMemberInfo,
     handleUpdateSessionLoginInfo,
@@ -1193,6 +1237,7 @@ export default function UserProgressContextProvider({ children }) {
     handleCloseModal,
     handleChangeFamilyId,
     handleLogin,
+    handleAutoLogin,
     handleGetUserInfo,
     handleLogout,
     handleCheckEmail,

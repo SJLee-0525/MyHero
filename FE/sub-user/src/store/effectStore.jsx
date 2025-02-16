@@ -21,35 +21,49 @@ export default function EffectContextProvider({ children }) {
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
-    const storedUserInfo = sessionStorage.getItem("loginUserInfo")
-
+    const storedLocalUserInfo = localStorage.getItem("loginUserInfo")
+    const storedSessionUserInfo = sessionStorage.getItem("loginUserInfo")
     const storedActiveSideBarElem = sessionStorage.getItem("isActiveSideBarElem")
-    if (!storedUserInfo) return
 
-    if (storedUserInfo) {
+    let userInfo = null
+
+    if (storedLocalUserInfo) {
       try {
-        const parsedUserInfo = JSON.parse(storedUserInfo)
-
-        userProgressStore.setLoginUserInfo({
-          login: true,
-          userInfo: parsedUserInfo.userInfo,
-        })
-
-        // 사용자 정보 최신화
-        userProgressStore.handleGetUserInfo(parsedUserInfo.userInfo.id)
+        userInfo = JSON.parse(storedLocalUserInfo)
+        userProgressStore.setAutoLogin(true) // 자동 로그인 활성화
+      } catch (error) {
+        console.error("Error parsing loginUserInfo from localStorage:", error)
+        localStorage.removeItem("loginUserInfo") // 손상된 데이터 제거
+      }
+    } else if (storedSessionUserInfo) {
+      try {
+        userInfo = JSON.parse(storedSessionUserInfo)
+        userProgressStore.setAutoLogin(false) // 자동 로그인 비활성화
       } catch (error) {
         console.error("Error parsing loginUserInfo from sessionStorage:", error)
         sessionStorage.removeItem("loginUserInfo") // 손상된 데이터 제거
       }
     }
 
-    try {
-      if (storedActiveSideBarElem) {
+    // 유저 정보가 있으면 설정
+    if (userInfo) {
+      userProgressStore.setLoginUserInfo({
+        login: true,
+        userInfo: userInfo.userInfo,
+      })
+
+      // 사용자 정보 최신화
+      userProgressStore.handleGetUserInfo(userInfo.userInfo.id)
+    }
+
+    // 사이드바 상태 복원
+    if (storedActiveSideBarElem) {
+      try {
         userProgressStore.setIsActiveSideBarElem(storedActiveSideBarElem)
+      } catch (error) {
+        console.error("Error parsing isActiveSideBarElem from sessionStorage:", error)
+        sessionStorage.removeItem("isActiveSideBarElem") // 데이터 손상 시 제거
       }
-    } catch (error) {
-      console.error("Error parsing isActiveSideBarElem from sessionStorage:", error)
-      sessionStorage.removeItem("isActiveSideBarElem") // 데이터 손상 시 제거
     }
   }, [])
 

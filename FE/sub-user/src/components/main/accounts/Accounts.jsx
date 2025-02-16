@@ -25,10 +25,13 @@ export default function Accounts() {
         <h2>계정 관리</h2>
         <div className="login-form-action">
           <div className="danger-zone">
-            <button className="logout-btn" onClick={handleLogout}>
-              Log Out
+            <button className={userProgressStore.autoLogin ? "auto-login-btn-on" : "auto-login-btn"} onClick={userProgressStore.handleAutoLogin}>
+              <p>자동 로그인</p>
+              <p>{userProgressStore.autoLogin ? "켜짐" : "꺼짐"}</p>
             </button>
-
+            <button className="logout-btn" onClick={handleLogout}>
+              로그아웃
+            </button>
             <button className="logout-btn" onClick={handleShowSignOut}>
               회원 탈퇴
             </button>

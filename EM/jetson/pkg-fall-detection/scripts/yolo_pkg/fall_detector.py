@@ -13,15 +13,17 @@ from yolo_pkg.pose_analyzer import EnhancedPoseAnalyzer
 from yolo_pkg.fps_tracker import FPSTracker
 
 class EnhancedFallDetector:
-    """향상된 낙상 감지 클래스"""
+    """향상된 낙상 감지 클래스 + 쿨다운 추가"""
     def __init__(self):
         self.config = Config()
         self.pose_analyzer = EnhancedPoseAnalyzer()
+        self.last_fall_notification_time = None
+        self.notification_colldown = 60
         try:
             self.model = YOLO(self.config.model_path)
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
             self.model.to(self.device)
-            print(f"모델 로드 완료 여기yolo_pkg(Device: {self.device})")
+            print(f"모델 로드 완료 (Device: {self.device})")
         except Exception as e:
             print(f"모델 로드 실패: {e}")
             raise
@@ -131,18 +133,21 @@ class EnhancedFallDetector:
             return frame
 
     async def handle_fall_detection(self, frame):
-        print("핸들 폴 디텍션 시작")
+        current_time = datetime.now()
+
+        if (self.last_fall_notification_time and 
+            (current_time - self.last_fall_notification_time).total_seconds() < self.notification_cooldown):
+            print("알림 쿨다운 중...")
+            return
+
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            print(f"타임스탬프 : {timestamp}")
             image_path = os.path.join(self.config.save_dir, f'fall_{timestamp}.jpg')
             cv2.imwrite(image_path, frame)
             
             headers = {
-                'Cookie': "session_id=47e68028d6b481de141e2ef05b0e898e; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                'Cookie': "session_id=60be008afcfbaae56e289f6c243eb6d8; Path=/; Domain=itdice.net; Secure; HttpOnly;"
             }
-
-            print("낙상 감지 - 이미지 저장 완료")
             
             async with aiohttp.ClientSession() as session:
                 # 1. 이미지 업로드
@@ -181,6 +186,7 @@ class EnhancedFallDetector:
                     timeout=aiohttp.ClientTimeout(total=5)
                 ) as notify_response:
                     if notify_response.status == 201:
+                        self.last_fall_notification_time = current_time
                         print(f"낙상 알림 전송 성공: {timestamp}")
                     else:
                         print(f"낙상 알림 전송 실패: {notify_response.status}")

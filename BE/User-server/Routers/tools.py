@@ -316,3 +316,18 @@ async def update_settings(family_id: str, updated_settings: Settings, request_id
                 "input": jsonable_encoder(updated_settings)
             }
         )
+
+# 가족 배경화면 앨범에 새로운 사진을 추가하는 기능
+@router.post("/background/{family_id}", status_code=status.HTTP_201_CREATED)
+async def add_background(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    pass
+
+# 가족 배경화면 앨범에 저장되어 있는 사진을 불러오는 기능
+@router.get("/background/{family_id}", status_code=status.HTTP_200_OK)
+async def get_background(family_id: str, uploader: str, request_id: str = Depends(Database.check_current_user)):
+    pass
+
+# 가족 배경화면 앨범에 저장되어 있는 사진을 삭제하는 기능
+@router.delete("/background/{family_id}/{image_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_background(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    pass

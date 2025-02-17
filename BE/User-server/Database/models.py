@@ -37,6 +37,10 @@ class NotificationGrade(BaseEnum):
     CRIT = "crit"
     NONE = "none"
 
+class Uploader(BaseEnum):
+    ALL = "all"
+    MINE = "mine"
+
 # ========== DB Tables ==========
 
 class AccountsTable(Base):
@@ -397,4 +401,23 @@ class SettingsTable(Base):
                 f"is_camera_enabled='{self.is_camera_enabled}', " +
                 f"is_microphone_enabled='{self.is_microphone_enabled}', " +
                 f"is_driving_enabled='{self.is_driving_enabled}')>"
+        )
+
+class BackgroundsTable(Base):
+    """
+    저장된 배경화면 정보
+    """
+    __tablename__ = "backgrounds"
+
+    id = Column(String(16), primary_key=True, nullable=False, autoincrement=True)
+    family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
+    uploader_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
+    image_url = Column(TEXT, nullable=False)
+
+    def __repr__(self):
+        return (f"" +
+                f"<Background(id='{self.id}', " +
+                f"family_id='{self.family_id}', " +
+                f"uploader_id='{self.uploader_id}', " +
+                f"image_url='{self.image_url}')>"
         )

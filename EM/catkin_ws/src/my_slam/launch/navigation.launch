@@ -63,7 +63,7 @@
     
     <!-- 사람 추적 노드 -->
     <node pkg="my_slam" type="person_following.py" name="person_follower" output="screen">
-        <param name="image_width" value="960"/>
+        <param name="image_width" value="640"/>
         <param name="max_angular_speed" value="1.2"/>
         <param name="max_linear_speed" value="0.6"/>
         <param name="min_linear_speed" value="0.1"/>
@@ -73,7 +73,7 @@
     <!-- 소켓 클라이언트 -->
     <node pkg="my_slam" type="socket_client.py" name="socket_client" output="screen">
         <param name="server_ip" value="70.12.247.214"/>
-        <param name="server_port" value="1234"/>
+        <param name="server_port" value="12345"/>
     </node>
 
     <!-- RViz 설정 -->

@@ -12,7 +12,7 @@ class SocketClient:
         
         # 소켓 통신 설정
         self.HOST = rospy.get_param('~server_ip', '70.12.247.214')
-        self.PORT = rospy.get_param('~server_port', 1234)
+        self.PORT = rospy.get_param('~server_port', 12345)
         
         # ROS 퍼블리셔 설정
         self.camera_pub = rospy.Publisher('camera_status', Bool, queue_size=10)

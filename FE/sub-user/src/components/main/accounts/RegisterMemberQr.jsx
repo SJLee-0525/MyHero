@@ -33,7 +33,7 @@ export default function RegisterMemberQr() {
   async function handleCheckFamily() {
     try {
       const response = await fetch(
-        `${userProgressStore.DEV_API_URL}/families/${familyId}`,
+        `${userProgressStore.DEV_API_URL}/families/name/${familyId}`,
         {
           method: "GET",
           headers: {
@@ -55,6 +55,20 @@ export default function RegisterMemberQr() {
 
           return { success: true, data: resData };
         }
+      } else {
+        if (resData.detail.message === "You do not have permission") {
+          alert("가족 모임 조회 실패:\n권한이 없습니다.");
+        } else if (resData.detail.message === "Family not found") {
+          alert("가족 모임 조회 실패:\n조회된 모임이 없습니다.");
+        }
+        return {
+          success: false,
+          error: {
+            type: resData.detail?.type,
+            message: resData.detail?.message,
+            input: resData.detail?.input,
+          },
+        };
       }
     } catch (error) {
       // 네트워크 오류 처리

@@ -128,6 +128,18 @@
   
     transition: all 0.3s ease;
   }
+
+  .calendar-day.today {
+    background-color: #A0D468;
+    color: white;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  .calendar-day.selected-date.today {
+    background-color: #44803F; /* 선택된 날짜가 오늘이라면 진한 초록색 유지 */
+  }
   
   .calendar-day-schedules {
     display: flex;

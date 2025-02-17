@@ -15,17 +15,20 @@
     background: white;
     padding: 20px;
     border-radius: 10px;
-    width: 300px;
+    width: 500px;
   }  
   
   .modal-content h2 {
+    text-align: center;
     margin: 0;
+    margin-bottom: 2rem;
   }
 
   .modal-content ul {
     font-size: 1.2rem;
     margin-top: 0.5rem;
     margin-bottom: 1rem;  
+    margin-left: 2rem;
   }
 
   .mini-button {

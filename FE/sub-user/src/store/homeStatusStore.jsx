@@ -145,13 +145,20 @@ export default function HomeStatusContextProvider({ children }) {
     }
 
     try {
-      const response = await request(
-        `${userProgressStore.DEV_API_URL}/status/home/${familyId}?start=${inputStart}&end=${inputEnd}&order=${order}`
+      const response = await fetch(
+        `${userProgressStore.DEV_API_URL}/status/home/${familyId}?start=${inputStart}&end=${inputEnd}&order=${order}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
       );
 
-      const resData = response.data;
+      const resData = await response.json().catch(() => null);
 
-      if (response.success) {
+      if (response.ok) {
         if (resData.message === "Home status retrieved successfully") {
           // others 값이 "{'testData':123, 'ultrafinedust': 1234}"처럼 작은따옴표(' ')로 감싸져 있습니다.
           // JavaScript의 JSON.parse()는 작은따옴표가 아닌 큰따옴표(" ")를 사용해야 정상적으로 파싱됩니다.
@@ -221,13 +228,20 @@ export default function HomeStatusContextProvider({ children }) {
     }
 
     try {
-      const response = await request(
-        `${userProgressStore.DEV_API_URL}/tools/settings/${familyId}`
+      const response = await fetch(
+        `${userProgressStore.DEV_API_URL}/tools/settings/${familyId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
       );
 
-      const resData = response.data;
+      const resData = await response.json().catch(() => null);
 
-      if (response.success) {
+      if (response.ok) {
         if (resData.message === "Settings retrieved successfully") {
           setDeviceStatus(resData.result);
           return {

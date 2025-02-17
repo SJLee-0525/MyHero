@@ -1,45 +1,51 @@
-import "./Mental.css"
+import "./Mental.css";
 
-import { useRef, useContext } from "react"
+import { useRef, useContext } from "react";
 
-import { HealthContext } from "../../../store/healthStore"
-import { UserProgressContext } from "../../../store/userProgressStore"
+import { HealthContext } from "../../../store/healthStore";
+import { UserProgressContext } from "../../../store/userProgressStore";
 
-import Modal from "../../modal/Modal"
+import Modal from "../../modal/Modal";
 
 function handlePrint() {
-  window.print() // 현재 페이지의 내용을 출력
+  window.print(); // 현재 페이지의 내용을 출력
 }
 
 function DetailReport() {
-  const healthStore = useContext(HealthContext)
-  const detailReport = { ...healthStore.mentalHealthStatus }
+  const healthStore = useContext(HealthContext);
+  const detailReport = { ...healthStore.mentalHealthStatus };
 
   if (!detailReport) {
-    return null
+    return null;
   }
 
-  const startDate = new Date(detailReport.analysis_period.start + "Z").toLocaleString("ko-KR", {
+  const startDate = new Date(
+    detailReport.analysis_period.start + "Z"
+  ).toLocaleString("ko-KR", {
     timeZone: "Asia/Seoul",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  })
+  });
 
-  const endDate = new Date(detailReport.analysis_period.end + "Z").toLocaleString("ko-KR", {
+  const endDate = new Date(
+    detailReport.analysis_period.end + "Z"
+  ).toLocaleString("ko-KR", {
     timeZone: "Asia/Seoul",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  })
+  });
 
   return (
     <div id="detail-report">
       <div className="detail-report-header">
-        <h2 className="detail-report-subtitle">
+        <h2>
           {startDate}부터 {endDate}까지의 정신 건강 분석 결과
         </h2>
-        <h2 className={detailReport.overall_assessment.risk_level}>{detailReport.overall_assessment.total_score}</h2>
+        <h2 className={detailReport.overall_assessment.risk_level}>
+          {detailReport.overall_assessment.total_score}
+        </h2>
       </div>
 
       <div className="concerns-strengths">
@@ -48,7 +54,7 @@ function DetailReport() {
             <h3>강점</h3>
             <ul>
               {detailReport.overall_assessment.strengths.map((strength) => {
-                return <li key={strength}>{strength}</li>
+                return <li key={strength}>{strength}</li>;
               })}
             </ul>
           </div>
@@ -59,7 +65,7 @@ function DetailReport() {
             <h3>우려되는 점</h3>
             <ul>
               {detailReport.overall_assessment.concerns.map((concern) => {
-                return <li key={concern}>{concern}</li>
+                return <li key={concern}>{concern}</li>;
               })}
             </ul>
           </div>
@@ -125,7 +131,7 @@ function DetailReport() {
           <h3>추천 사항</h3>
           <ul>
             {detailReport.recommendations.map((recommendation) => {
-              return <li key={recommendation}>{recommendation}</li>
+              return <li key={recommendation}>{recommendation}</li>;
             })}
           </ul>
         </div>
@@ -135,63 +141,95 @@ function DetailReport() {
         <button className="print" onClick={handlePrint}>
           출력
         </button>
-        <button className="close" onClick={healthStore.handleCloseMentalHealthReport}>
+        <button
+          className="close"
+          onClick={healthStore.handleCloseMentalHealthReport}
+        >
           닫기
         </button>
       </div>
     </div>
-  )
+  );
 }
 
 export default function MentalHealthModal() {
-  const healthStore = useContext(HealthContext)
-  const userProgressStore = useContext(UserProgressContext)
+  const healthStore = useContext(HealthContext);
+  const userProgressStore = useContext(UserProgressContext);
 
-  const startDateRef = useRef(null)
-  const endDateRef = useRef(null)
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
 
   async function handleGetMentalHealthCustomReport() {
-    const startDate = startDateRef.current.value
-    const endDate = endDateRef.current.value
+    const startDate = startDateRef.current.value;
+    const endDate = endDateRef.current.value;
 
     if (!startDate || !endDate) {
-      alert("날짜를 모두 입력해주세요!")
-      return
+      alert("날짜를 모두 입력해주세요!");
+      return;
     }
 
     // 원하는 형식으로 변환
-    const startDateTime = `${startDate}T00:00:00`
-    const endDateTime = `${endDate}T23:59:59`
+    const startDateTime = `${startDate}T00:00:00`;
+    const endDateTime = `${endDate}T23:59:59`;
 
     try {
-      const response = await healthStore.handleGetMentalHealthPeriodStatus(startDateTime, endDateTime)
+      const response = await healthStore.handleGetMentalHealthPeriodStatus(
+        startDateTime,
+        endDateTime
+      );
 
       if (!response.success) {
-        alert("정신 건강 상태 분석에 실패했습니다.")
+        alert("정신 건강 상태 분석에 실패했습니다.");
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   return (
-    <Modal open={userProgressStore.modalProgress === "mental-health-report"} onClose={userProgressStore.modalProgress === "mental-health-report" ? healthStore.handleCloseMentalHealthReport : null}>
+    <Modal
+      open={userProgressStore.modalProgress === "mental-health-report"}
+      onClose={
+        userProgressStore.modalProgress === "mental-health-report"
+          ? healthStore.handleCloseMentalHealthReport
+          : null
+      }
+    >
       <div id="mental-health-report">
         <div className="mental-health-report-header">
           <div className="period-report-control">
-            <input type="date" id="start-date" name="start_date" ref={startDateRef} required />
-            <input type="date" id="end-date" name="end_date" ref={endDateRef} required />
-            <button onClick={handleGetMentalHealthCustomReport}>기간 분석 의뢰</button>
+            <input
+              type="date"
+              id="start-date"
+              name="start_date"
+              ref={startDateRef}
+              required
+            />
+            <input
+              type="date"
+              id="end-date"
+              name="end_date"
+              ref={endDateRef}
+              required
+            />
+            <button onClick={handleGetMentalHealthCustomReport}>
+              기간 분석 의뢰
+            </button>
           </div>
         </div>
-        <button onClick={healthStore.handleGetMentalHealthDailyStatus}>하루치 분석 의뢰</button>
+        <button onClick={healthStore.handleGetMentalHealthDailyStatus}>
+          하루치 분석 의뢰
+        </button>
       </div>
 
       {Object.keys(healthStore.mentalHealthStatus).length === 0 ? (
         <div className="order-report">
           <h2>감정을 의뢰해 보세요.</h2>
           <div className="report-control">
-            <button className="close" onClick={healthStore.handleCloseMentalHealthReport}>
+            <button
+              className="close"
+              onClick={healthStore.handleCloseMentalHealthReport}
+            >
               닫기
             </button>
           </div>
@@ -200,5 +238,5 @@ export default function MentalHealthModal() {
         <DetailReport />
       )}
     </Modal>
-  )
+  );
 }

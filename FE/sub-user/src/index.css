@@ -22,7 +22,7 @@ html {
 }
 
 body {
-  background: #dddddd;
+  background: #eeeeee;
 
   /* background: radial-gradient(circle at 50% 100%, #c7cdd6, #dddddd),
     url("bg-pattern-dark.png"); */
@@ -49,6 +49,10 @@ body {
 
 #new-noti-modal {
   z-index: 9999;
+}
+
+#spinner {
+  z-index: 10000;
 }
 
 @media screen and (max-width: 720px) {

@@ -78,7 +78,7 @@
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 #login-form .login-header h2 {
@@ -90,12 +90,11 @@
   height: 40px;
 
   border: 0;
-  border-radius: 12px;
+  border-radius: 8px;
 
-  background-color: transparent;
-  color: #ff5a33;
+  background-color: #ff5a33;
+  color: white;
 
-  font-size: larger;
   text-align: center;
 
   cursor: pointer;
@@ -103,10 +102,7 @@
 }
 
 #login-form .login-header button:hover {
-  background-color: #ff5a33;
-
-  color: white;
-
+  background-color: #e43710;
   transition: all 0.3s ease;
 }
 
@@ -230,7 +226,7 @@
   justify-content: space-between;
   align-items: center;
 
-  margin-bottom: 10px;
+  margin-bottom: 1.5rem;
 }
 
 .signup-header h2 {
@@ -244,12 +240,11 @@
   height: 40px;
 
   border: 0;
-  border-radius: 12px;
+  border-radius: 8px;
 
-  background-color: transparent;
-  color: #ff5a33;
+  background-color: #ff5a33;
+  color: white;
 
-  font-size: larger;
   text-align: center;
 
   cursor: pointer;
@@ -257,10 +252,7 @@
 }
 
 .signup-header button:hover {
-  background-color: #ff5a33;
-
-  color: white;
-
+  background-color: #e43710;
   transition: all 0.3s ease;
 }
 

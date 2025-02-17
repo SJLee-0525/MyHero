@@ -30,7 +30,7 @@ export default function NewNotiModal() {
           {emergencyStore.newNotifications.slice().map((notification) => {
             // UTC+9 변환
             const createdAtKST = new Date(
-              notification.created_at
+              notification.created_at + "Z"
             ).toLocaleString("ko-KR", {
               timeZone: "Asia/Seoul",
               month: "2-digit",

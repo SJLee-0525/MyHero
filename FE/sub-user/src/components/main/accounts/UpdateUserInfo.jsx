@@ -1,11 +1,11 @@
-import "./Accounts.css"
+import "./Accounts.css";
 
-import { useRef, useState, useContext } from "react"
-import { useNavigate } from "react-router-dom"
+import { useRef, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import Modal from "../../modal/Modal.jsx"
+import Modal from "../../modal/Modal.jsx";
 
 const regions = [
   {
@@ -71,7 +71,18 @@ const regions = [
   },
   {
     name: "인천광역시",
-    cities: ["계양구", "미추홀구", "남동구", "동구", "부평구", "서구", "연수구", "중구", "강화군", "옹진군"],
+    cities: [
+      "계양구",
+      "미추홀구",
+      "남동구",
+      "동구",
+      "부평구",
+      "서구",
+      "연수구",
+      "중구",
+      "강화군",
+      "옹진군",
+    ],
   },
   {
     name: "경상북도",
@@ -103,11 +114,37 @@ const regions = [
   },
   {
     name: "부산광역시",
-    cities: ["강서구", "금정구", "기장군", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구"],
+    cities: [
+      "강서구",
+      "금정구",
+      "기장군",
+      "남구",
+      "동구",
+      "동래구",
+      "부산진구",
+      "북구",
+      "사상구",
+      "사하구",
+      "서구",
+      "수영구",
+      "연제구",
+      "영도구",
+      "중구",
+      "해운대구",
+    ],
   },
   {
     name: "대구광역시",
-    cities: ["남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"],
+    cities: [
+      "남구",
+      "달서구",
+      "달성군",
+      "동구",
+      "북구",
+      "서구",
+      "수성구",
+      "중구",
+    ],
   },
   {
     name: "광주광역시",
@@ -123,19 +160,81 @@ const regions = [
   },
   {
     name: "강원도",
-    cities: ["춘천시", "원주시", "강릉시", "동해시", "태백시", "속초시", "삼척시", "홍천군", "횡성군", "영월군", "평창군", "정선군", "철원군", "화천군", "양구군", "인제군", "고성군", "양양군"],
+    cities: [
+      "춘천시",
+      "원주시",
+      "강릉시",
+      "동해시",
+      "태백시",
+      "속초시",
+      "삼척시",
+      "홍천군",
+      "횡성군",
+      "영월군",
+      "평창군",
+      "정선군",
+      "철원군",
+      "화천군",
+      "양구군",
+      "인제군",
+      "고성군",
+      "양양군",
+    ],
   },
   {
     name: "충청북도",
-    cities: ["청주시", "충주시", "제천시", "보은군", "옥천군", "영동군", "증평군", "진천군", "괴산군", "음성군", "단양군"],
+    cities: [
+      "청주시",
+      "충주시",
+      "제천시",
+      "보은군",
+      "옥천군",
+      "영동군",
+      "증평군",
+      "진천군",
+      "괴산군",
+      "음성군",
+      "단양군",
+    ],
   },
   {
     name: "충청남도",
-    cities: ["천안시", "공주시", "보령시", "아산시", "서산시", "논산시", "계룡시", "당진시", "금산군", "부여군", "서천군", "청양군", "홍성군", "예산군", "태안군"],
+    cities: [
+      "천안시",
+      "공주시",
+      "보령시",
+      "아산시",
+      "서산시",
+      "논산시",
+      "계룡시",
+      "당진시",
+      "금산군",
+      "부여군",
+      "서천군",
+      "청양군",
+      "홍성군",
+      "예산군",
+      "태안군",
+    ],
   },
   {
     name: "전라북도",
-    cities: ["전주시", "군산시", "익산시", "정읍시", "남원시", "김제시", "완주군", "진안군", "무주군", "장수군", "임실군", "순창군", "고창군", "부안군"],
+    cities: [
+      "전주시",
+      "군산시",
+      "익산시",
+      "정읍시",
+      "남원시",
+      "김제시",
+      "완주군",
+      "진안군",
+      "무주군",
+      "장수군",
+      "임실군",
+      "순창군",
+      "고창군",
+      "부안군",
+    ],
   },
   {
     name: "전라남도",
@@ -168,45 +267,49 @@ const regions = [
     name: "제주특별자치도",
     cities: ["제주시", "서귀포시"],
   },
-]
+];
 
 export default function UpdateUserInfo() {
-  const userProgressStore = useContext(UserProgressContext)
-  const navigate = useNavigate()
+  const userProgressStore = useContext(UserProgressContext);
+  const navigate = useNavigate();
 
   // 유효성 검사 상태
   const [formIsInvalid, setFormIsInvalid] = useState({
     email: false,
     emailCheck: "",
-  })
+  });
 
-  const userInformation = userProgressStore.loginUserInfo.userInfo
+  const userInformation = userProgressStore.loginUserInfo.userInfo;
 
-  const emailInput = useRef("")
+  const emailInput = useRef("");
 
-  const addressParts = userInformation.address ? userInformation.address.toString().split(" ") : ["", ""]
+  const addressParts = userInformation.address
+    ? userInformation.address.toString().split(" ")
+    : ["", ""];
 
-  const initialState = addressParts[0] || "" // 시/도 초기값
-  const initialCity = addressParts[1] || "" // 시/군/구 초기값
+  const initialState = addressParts[0] || ""; // 시/도 초기값
+  const initialCity = addressParts[1] || ""; // 시/군/구 초기값
 
-  const [selectedState, setSelectedState] = useState(initialState)
-  const [cities, setCities] = useState(regions.find((region) => region.name === initialState)?.cities || [])
-  const [selectedCity, setSelectedCity] = useState(initialCity)
+  const [selectedState, setSelectedState] = useState(initialState);
+  const [cities, setCities] = useState(
+    regions.find((region) => region.name === initialState)?.cities || []
+  );
+  const [selectedCity, setSelectedCity] = useState(initialCity);
 
   // 이메일 확인 함수
   async function handleEmailCheck() {
-    const enteredEmail = emailInput.current.value
+    const enteredEmail = emailInput.current.value;
 
     // 이메일이 입력되지 않았을 때 중단
     if (enteredEmail.length === 0) {
-      return
+      return;
     }
 
     // 이메일 형식 유효성 검사
-    const emailIsInvalid = !enteredEmail.includes("@")
+    const emailIsInvalid = !enteredEmail.includes("@");
 
     if (emailIsInvalid) {
-      return // 이메일 형식이 잘못되면 중단
+      return; // 이메일 형식이 잘못되면 중단
     }
 
     // 이메일 상태 업데이트
@@ -214,86 +317,88 @@ export default function UpdateUserInfo() {
       ...prevForm,
       email: emailIsInvalid,
       emailCheck: emailIsInvalid ? null : prevForm.emailCheck,
-    }))
+    }));
 
     try {
-      console.log("확인 호출")
-      const isEmailAvailable = await userProgressStore.handleCheckEmail(enteredEmail)
+      console.log("확인 호출");
+      const isEmailAvailable = await userProgressStore.handleCheckEmail(
+        enteredEmail
+      );
 
       if (isEmailAvailable === true) {
         setFormIsInvalid((prevForm) => ({
           ...prevForm,
           emailCheck: "verified", // 이메일 사용 가능
-        }))
+        }));
       } else if (isEmailAvailable === false) {
         setFormIsInvalid((prevForm) => ({
           ...prevForm,
           emailCheck: "not-available", // 이메일 사용 불가능
-        }))
+        }));
       } else {
-        console.error("Email check result is null. Unable to verify.")
+        console.error("Email check result is null. Unable to verify.");
         setFormIsInvalid((prevForm) => ({
           ...prevForm,
           emailCheck: "not-verified", // 이메일 확인 결과가 없을 때
-        }))
+        }));
       }
     } catch (error) {
-      console.error("Email check error:", error?.message || error)
+      console.error("Email check error:", error?.message || error);
       setFormIsInvalid((prevForm) => ({
         ...prevForm,
         emailCheck: "not-verified", // 이메일 확인 실패
-      }))
+      }));
     }
   }
 
   function handleStateChange(event) {
-    const stateName = event.target.value
-    setSelectedState(stateName)
+    const stateName = event.target.value;
+    setSelectedState(stateName);
 
-    const region = regions.find((region) => region.name === stateName)
-    setCities(region ? region.cities : [])
-    setSelectedCity("") // 시/군/구 초기화
+    const region = regions.find((region) => region.name === stateName);
+    setCities(region ? region.cities : []);
+    setSelectedCity(""); // 시/군/구 초기화
   }
 
   function handleCityChange(event) {
-    setSelectedCity(event.target.value)
+    setSelectedCity(event.target.value);
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    const fd = new FormData(event.target)
-    const data = Object.fromEntries(fd.entries())
+    const fd = new FormData(event.target);
+    const data = Object.fromEntries(fd.entries());
 
-    let isValid = true
-    let newFormState = { ...formIsInvalid }
+    let isValid = true;
+    let newFormState = { ...formIsInvalid };
 
     // 이메일 수정을 할 경우 유효성 검사
     if (data.email.length > 0) {
       if (!data.email.includes("@")) {
-        newFormState.email = true
-        isValid = false
+        newFormState.email = true;
+        isValid = false;
       } else {
-        newFormState.email = false
+        newFormState.email = false;
       }
 
       // 이메일 중복 확인 여부 검사
       if (formIsInvalid.emailCheck !== "verified") {
-        newFormState.emailCheck = "not-verified"
-        isValid = false
+        newFormState.emailCheck = "not-verified";
+        isValid = false;
       } else {
-        newFormState.emailCheck = "verified"
+        newFormState.emailCheck = "verified";
       }
 
       if (!isValid) {
-        setFormIsInvalid(newFormState)
-        return
+        setFormIsInvalid(newFormState);
+        return;
       }
     }
 
     if (data.user_name.length < 2 || data.user_name.length > 32) {
-      alert("이름은 2자 이상 32자 이하로 입력해주세요.")
-      return
+      alert("이름은 2자 이상 32자 이하로 입력해주세요.");
+      return;
     }
 
     // 입력받은 데이터 객체화
@@ -308,41 +413,42 @@ export default function UpdateUserInfo() {
       },
       gender: data.gender,
       address: data.state + " " + data.city,
-    }
+    };
 
-    userProgressStore.handleCloseModal()
+    userProgressStore.handleCloseModal();
 
     // 백 요청 전송
     try {
-      const result = await userProgressStore.handleUpdateUserInfo(payload)
+      const result = await userProgressStore.handleUpdateUserInfo(payload);
 
       if (result.success) {
-        console.log("회원 정보 수정 성공:", result.data)
-        alert("회원 정보 수정이 완료되었습니다.")
-        navigate("/accounts") // 유저 정보 페이지 이동
+        console.log("회원 정보 수정 성공:", result.data);
+        alert("회원 정보 수정이 완료되었습니다.");
+        navigate("/accounts"); // 유저 정보 페이지 이동
       } else {
-        userProgressStore.handleOpenModal("update-user-info")
+        userProgressStore.handleOpenModal("update-user-info");
 
-        console.error("회원 정보 수정 실패:", result.error)
-        if (result.error.message === "Invalid value provided for account details (birth date)") {
-          alert("생년월일을 다시 확인해 주세요.")
-        } else {
-          alert(`에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`)
-        }
+        console.error("회원 정보 수정 실패:", result.error);
       }
     } catch (error) {
-      console.error("요청 처리 중 오류 발생:", error)
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.")
+      console.error("요청 처리 중 오류 발생:", error);
     }
   }
 
   return (
-    <Modal open={userProgressStore.modalProgress === "update-user-info"} onClose={userProgressStore.modalProgress === "update-user-info" ? userProgressStore.handleCloseModal : null}>
+    <Modal
+      open={userProgressStore.modalProgress === "update-user-info"}
+      onClose={
+        userProgressStore.modalProgress === "update-user-info"
+          ? userProgressStore.handleCloseModal
+          : null
+      }
+    >
       <form id="signup-form" onSubmit={handleSubmit}>
         <div className="signup-header">
           <h2>회원 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
-            X
+            ⨉
           </button>
         </div>
 
@@ -358,7 +464,11 @@ export default function UpdateUserInfo() {
               ref={emailInput}
             />
             {formIsInvalid.emailCheck === "" && (
-              <button type="button" onClick={handleEmailCheck} className="email-check">
+              <button
+                type="button"
+                onClick={handleEmailCheck}
+                className="email-check"
+              >
                 중복
                 <br />
                 확인
@@ -369,8 +479,13 @@ export default function UpdateUserInfo() {
                 확인됨
               </button>
             )}
-            {(formIsInvalid.emailCheck === "not-verified" || formIsInvalid.emailCheck === "not-available") && (
-              <button type="button" onClick={handleEmailCheck} className="email-not-verified">
+            {(formIsInvalid.emailCheck === "not-verified" ||
+              formIsInvalid.emailCheck === "not-available") && (
+              <button
+                type="button"
+                onClick={handleEmailCheck}
+                className="email-not-verified"
+              >
                 중복
                 <br />
                 확인
@@ -426,7 +541,9 @@ export default function UpdateUserInfo() {
                 type="date"
                 // id="birth-date"
                 name="birth_date"
-                defaultValue={userInformation.birth_date ? userInformation.birth_date : ""}
+                defaultValue={
+                  userInformation.birth_date ? userInformation.birth_date : ""
+                }
                 required
               />
             </div>
@@ -479,7 +596,12 @@ export default function UpdateUserInfo() {
           <div className="signup-wrapper">
             <div className="signup-control">
               <label htmlFor="gender">성별</label>
-              <select id="gender" name="gender" defaultValue={userInformation.gender} required>
+              <select
+                id="gender"
+                name="gender"
+                defaultValue={userInformation.gender}
+                required
+              >
                 <option value="male">남성</option>
                 <option value="female">여성</option>
               </select>
@@ -487,7 +609,12 @@ export default function UpdateUserInfo() {
 
             <div className="signup-control">
               <label htmlFor="role">사용자 유형</label>
-              <select id="role" name="role" defaultValue={userInformation.role} required>
+              <select
+                id="role"
+                name="role"
+                defaultValue={userInformation.role}
+                required
+              >
                 <option value="main">주 사용자</option>
                 <option value="sub">보조 사용자</option>
               </select>
@@ -503,5 +630,5 @@ export default function UpdateUserInfo() {
         </button>
       </form>
     </Modal>
-  )
+  );
 }

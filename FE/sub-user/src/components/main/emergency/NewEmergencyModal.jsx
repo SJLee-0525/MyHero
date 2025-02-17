@@ -13,6 +13,16 @@ export default function NewEmergencyModal() {
   const userProgressStore = useContext(UserProgressContext);
   const emergencyStore = useContext(EmergencyContext);
 
+  function handleCall(index) {
+    emergencyStore.handleReadNotification(index);
+    window.location.href = "tel:01012345678";
+  }
+
+  function handleMessage(index) {
+    emergencyStore.handleReadNotification(index);
+    window.location.href = "/message";
+  }
+
   return (
     <Modal
       className="emergency-log-modal"
@@ -45,69 +55,46 @@ export default function NewEmergencyModal() {
             parsedDescription = emergencyAlert.description; // JSON 파싱 실패 시 원본 유지
           }
 
-          // 임시 변수
-          const res = false;
-
           return (
             <div
               key={emergencyAlert.index}
-              className={res ? "alert-box-check" : "alert-box"}
+              className={
+                emergencyAlert.is_read ? "alert-box-check" : "alert-box"
+              }
             >
               <div className="title-container">
-                <h1 className={res ? "common" : "no-answer-title"}>
+                <h1
+                  className={
+                    emergencyAlert.is_read ? "common" : "no-answer-title"
+                  }
+                >
                   123옆 공간에서 낙상 감지
                 </h1>
               </div>
-              <p className="date">{emergencyAlert.date}</p>
-              <div>
-                <p>
-                  <strong>낙상 확인 여부 : </strong>
-                  <span className={res ? "check" : "no-answer"}>
-                    {res ? (
-                      <strong>오인 응답</strong>
-                    ) : (
-                      <strong>응답 없음</strong>
-                    )}
-                  </span>
-                </p>
-                <p>
-                  <strong>확인 여부 : </strong>
-                  <span className={res ? "check" : "no-answer"}>
-                    {res ? <strong>확인</strong> : <strong>미확인</strong>}
-                  </span>
-                </p>
-              </div>
+              <p className="date">{createdAtKST}</p>
 
               {/* 이미지 출력단 */}
               <div>
                 <img src={emergencyAlert.image_url} alt="temp" />
               </div>
               <div className="widget-button-container">
-                {!res && (
+                {!emergencyAlert.is_read && (
                   <div className="widget-button-container">
                     <button
                       className="report"
-                      onClick={() =>
-                        emergencyStore.handleReadNotification(
-                          emergencyAlert.index
-                        )
-                      }
+                      onClick={() => handleMessage(emergencyAlert.index)}
                     >
-                      신고 요청 보내기
+                      메시지 전송
                     </button>
                     <button
                       className="call"
-                      onClick={() =>
-                        emergencyStore.handleReadNotification(
-                          emergencyAlert.index
-                        )
-                      }
+                      onClick={() => handleCall(emergencyAlert.index)}
                     >
                       전화 연결
                     </button>
                   </div>
                 )}
-                {res && (
+                {emergencyAlert.is_read && (
                   <div className="widget-button-container">
                     <button
                       className="call"

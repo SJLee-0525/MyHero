@@ -325,17 +325,9 @@ export default function FindFamily() {
         userProgressStore.handleOpenModal("find-family");
       } else {
         userProgressStore.handleOpenModal("find-family");
-
-        console.error("회원 가입 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
       }
     } catch (error) {
       userProgressStore.handleOpenModal("find-family");
-
-      console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 
@@ -353,7 +345,7 @@ export default function FindFamily() {
           <div className="signup-header">
             <h2>가족 모임 찾기.</h2>
             <button type="button" onClick={userProgressStore.handleCloseModal}>
-              X
+              ⨉
             </button>
           </div>
           {/* <p></p> */}

@@ -34,7 +34,12 @@
 
   border-radius: 12px;
 
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
 
   box-shadow: 4px 4px 6px 2px rgba(0, 0, 0, 0.25);
 }
@@ -309,7 +314,12 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(55deg, rgba(158, 158, 158, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(158, 158, 158, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -353,7 +363,12 @@
   color: white;
   font-weight: bold;
 
-  background: linear-gradient(55deg, rgba(158, 158, 158, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(158, 158, 158, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -367,44 +382,89 @@
 
 .detail-report-title {
   text-align: center;
-  margin: 10px 0px 0px;
+  margin: 10px 0px;
 }
 
 .detail-report-date {
+  font-weight: normal;
   text-align: end;
+}
+
+.detail-report-description {
+  width: 100%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
 }
 
 .detail-report-overall {
   margin: 0;
+  padding: 5px 10px;
 
-  color: #44803f;
+  border-radius: 8px 8px 0px 0px;
+  background-color: #44803f;
 
-  text-align: center;
+  color: white;
+}
+
+.detail-report-insights {
+  margin: 0;
+  padding: 5px 10px;
+
+  font-weight: normal;
+
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.time-based-emotions {
+  width: 100%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
 }
 
 .detail-report-subtitle {
-  text-align: center;
+  margin: 0;
+  padding: 5px 10px;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #3e5c76;
+
+  color: white;
+}
+
+.emotion-detail-table-container {
+  width: 100%;
+
+  padding: 10px;
 }
 
 .emotion-detail-table {
   width: 100%;
 
   border: 2px solid rgb(124, 124, 124);
-  border-collapse: collapse;
 
-  padding: 0;
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden; /* 추가: 둥근 테두리를 유지 */
 
   text-align: center;
 }
 
 .emotion-detail-table th,
 td {
-  border: 1px solid rgb(124, 124, 124);
+  border: 0.8px solid #3e5c76;
   padding: 5px;
 }
 
 .emotion-detail-table th {
-  background-color: rgb(189, 189, 189);
+  background-color: #aabbcc;
+}
+
+.emotion-detail-table td {
+  background-color: #eeeeee;
 }
 
 .emotion-detail-table span {
@@ -414,42 +474,71 @@ td {
 }
 
 .emotion-detail-table .very-positive {
+  padding: 5px;
+
   background-color: #146152;
 
-  color: white;
+  color: #ffffff;
 }
 
 .emotion-detail-table .positive {
+  padding: 5px;
+
   background-color: #44803f;
 
   color: white;
 }
 
 .emotion-detail-table .neutral {
+  padding: 5px;
+
   background-color: #b4cf66;
 
-  color: black;
+  color: white;
 }
 
 .emotion-detail-table .negative {
+  padding: 5px;
+
   background-color: #ffec5c;
 
   color: black;
 }
 
 .emotion-detail-table .very-negative {
+  padding: 5px;
+
   background-color: #ff5a33;
 
   color: black;
 }
 
+.recommendations-container {
+  width: 100%;
+
+  border-radius: 8px;
+  background-color: #d9d9d9;
+}
+
+.recommendations-container .detail-recommendations-subtitle {
+  margin: 0;
+  padding: 5px 10px;
+
+  border-radius: 8px 8px 0px 0px;
+  background-color: #146152;
+
+  color: white;
+}
+
 .report-recommendations-ul {
   list-style: circle;
-  padding-left: 30px;
+
+  margin: 0;
+  padding: 10px 35px 5px;
 }
 
 .report-recommendations-ul li {
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 #mental-health-report {
@@ -544,18 +633,47 @@ td {
   width: 100%;
 }
 
-.detail-report-header .medium {
-  padding: 10px 15px;
-  border-radius: 8px;
+.detail-report-header .low {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  height: 100%;
+
+  padding: 15px;
+  border-radius: 100%;
+
+  aspect-ratio: 1;
+  color: white;
+  background-color: #44803f;
+}
+
+.detail-report-header .medium {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+
+  padding: 15px;
+  border-radius: 100%;
+
+  aspect-ratio: 1;
   color: white;
   background-color: #ff9500;
 }
 
 .detail-report-header .high {
-  padding: 10px 15px;
-  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  height: 100%;
+
+  padding: 15px;
+  border-radius: 100%;
+
+  aspect-ratio: 1;
   color: white;
   background-color: #ff5a33;
 }
@@ -681,10 +799,13 @@ td {
 .elem h3 {
   margin: 0;
   margin-bottom: 8px;
+
+  color: #1d2d44;
 }
 
 .elem p {
   margin: 0;
+  font-weight: normal;
 }
 
 .recommendations {

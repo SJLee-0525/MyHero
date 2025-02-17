@@ -246,14 +246,20 @@ export default function HealthContextProvider({ children }) {
     }
 
     try {
-      const response = await request(
-        `${userProgressStore.DEV_API_URL}/status/health/${familyId}?start=${start}&end=${end}&order=${order}`
+      const response = await fetch(
+        `${userProgressStore.DEV_API_URL}/status/health/${familyId}?start=${start}&end=${end}&order=${order}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
       );
 
-      // console.log("handleGetHealthData response", response);
-      const resData = response.data;
+      const resData = await response.json().catch(() => null);
 
-      if (response.success) {
+      if (response.ok) {
         if (resData.message === "Health status retrieved successfully") {
           setHealthStatus([...resData.result]);
           return {
@@ -526,8 +532,8 @@ export default function HealthContextProvider({ children }) {
     try {
       // const response = await request(`${userProgressStore.DEV_API_URL}/status/mental/new/${familyId}`, 'POST', {})
       const response = await request(
-        `http://70.12.246.26:8000/generate-emotional-report/${familyId}`,
-        "POST"
+        `${userProgressStore.DEV_API_URL}/status/mental/new/${familyId}`,
+        "GET"
       );
 
       const resData = response.data;
@@ -623,6 +629,10 @@ export default function HealthContextProvider({ children }) {
         if (resData.message === "Psychology report created successfully") {
           console.log("정신 건강 상태 불러오기 성공:", resData.result);
           setMentalHealthStatus({ ...resData.result });
+          return {
+            success: true,
+            data: resData.result,
+          };
         } else {
           console.error("정신 건강 상태 불러오기 실패:", resData.error);
           setMentalHealthStatus({});
@@ -670,6 +680,10 @@ export default function HealthContextProvider({ children }) {
         if (resData.message === "Psychology report created successfully") {
           console.log("정신 건강 상태 불러오기 성공:", resData.result);
           setMentalHealthStatus({ ...resData.result });
+          return {
+            success: true,
+            data: resData.result,
+          };
         } else {
           console.error("정신 건강 상태 불러오기 실패:", resData.error);
           setMentalHealthStatus({});

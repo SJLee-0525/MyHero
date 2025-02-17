@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 
 import Modal from "../../modal/Modal.jsx";
 
@@ -11,6 +11,33 @@ export default function EmergencyLog() {
   const userProgressStore = useContext(UserProgressContext);
   const emergencyStore = useContext(EmergencyContext);
 
+  const [notifications, setNotifications] = useState([]);
+
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+
+  useEffect(() => {
+    setNotifications([...emergencyStore.categorizedNotifications.crit]);
+  }, []);
+
+  function handlePeriodAnalysis() {
+    const startDate = startDateRef.current.value;
+    const endDate = endDateRef.current.value;
+
+    const filteredNotifications = emergencyStore.categorizedNotifications.crit
+      .slice()
+      .filter((notification) => {
+        const dateKST = new Date(notification.created_at);
+        dateKST.setHours(dateKST.getHours() + 9);
+        return (
+          new Date(dateKST) >= new Date(startDate) &&
+          new Date(dateKST) <= new Date(endDate)
+        );
+      });
+
+    setNotifications(filteredNotifications);
+  }
+
   return (
     <Modal
       className="emergency-log-modal"
@@ -21,60 +48,70 @@ export default function EmergencyLog() {
           : null
       }
     >
-      <h2>긴급 상황 알림 기록</h2>
+      <div id="emergency-alert-modal-title">
+        <h2>지난 알림 기록</h2>
+        <div className="period-report-control">
+          <input
+            type="date"
+            id="start-date"
+            name="start_date"
+            ref={startDateRef}
+            required
+          />
+          <input
+            type="date"
+            id="end-date"
+            name="end_date"
+            ref={endDateRef}
+            required
+          />
+          <button onClick={handlePeriodAnalysis}>기간 설정</button>
+        </div>
+      </div>
 
       <div id="emergency-alert-modal-box">
-        {emergencyStore.categorizedNotifications.crit.map(
-          (emergencyAlert, index) => {
-            const res = emergencyAlert.response;
-            const callRes = emergencyAlert.check;
+        {notifications.map((emergencyAlert, index) => {
+          const createdAtKST = new Date(
+            emergencyAlert.created_at + "Z"
+          ).toLocaleString("ko-KR", {
+            timeZone: "Asia/Seoul",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true, // 24시간제
+          });
 
-            return (
-              <div
-                key={emergencyAlert.index}
-                className={callRes ? "alert-box-check" : "alert-box"}
-              >
-                <div className="title-container">
-                  <h1 className={res ? "common" : "no-answer-title"}>
-                    {emergencyAlert.location}옆 공간에서 낙상 감지
-                  </h1>
-                </div>
-                <p className="date">{emergencyAlert.date}</p>
-                <div>
-                  <p>
-                    <strong>낙상 확인 여부 : </strong>
-                    <span className={res ? "check" : "no-answer"}>
-                      {res ? (
-                        <strong>오인 응답</strong>
-                      ) : (
-                        <strong>응답 없음</strong>
-                      )}
-                    </span>
-                  </p>
-                  <p>
-                    <strong>확인 여부 : </strong>
-                    <span className={callRes ? "check" : "no-answer"}>
-                      {callRes ? (
-                        <strong>확인</strong>
-                      ) : (
-                        <strong>미확인</strong>
-                      )}
-                    </span>
-                  </p>
-                </div>
-
-                {/* 이미지 출력단 */}
-                <div>
-                  <img src={emergencyAlert.image_url} alt="temp" />
-                </div>
+          return (
+            <div
+              key={emergencyAlert.index}
+              className={
+                emergencyAlert.is_check ? "alert-box-check" : "alert-box"
+              }
+            >
+              <div className="title-container">
+                <h1
+                  className={
+                    emergencyAlert.is_check ? "common" : "no-answer-title"
+                  }
+                >
+                  {emergencyAlert.description}
+                </h1>
               </div>
-            );
-          }
-        )}
+              <p className="time">{createdAtKST}</p>
+
+              {/* 이미지 출력단 */}
+              <div>
+                <img src={emergencyAlert.image_url} alt="temp" />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="emergency-alert-modal-actions">
-        <button onClick={userProgressStore.handleCloseModal}>Close</button>
+        <button onClick={userProgressStore.handleCloseModal}>닫기</button>
       </div>
     </Modal>
   );

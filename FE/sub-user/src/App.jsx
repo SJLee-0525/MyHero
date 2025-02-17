@@ -39,7 +39,13 @@ function App() {
   const emergencyStore = useContext(EmergencyContext);
   const calendarStore = useContext(CalendarStoreContext);
 
-  const loading = userProgressStore.loading || healthStore.loading;
+  const loading =
+    userProgressStore.loading ||
+    homeStatusStore.loading ||
+    healthStore.loading ||
+    emergencyStore.loading ||
+    calendarStore.loading ||
+    false;
 
   return (
     <BrowserRouter>

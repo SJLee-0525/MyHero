@@ -36,7 +36,9 @@ export default function EmergencyWidgetAlert({ notification }) {
         <div className="notification-btn-warn">
           <div className="home-notification-content">
             <div className="home-notification-content-header">
-              <h2>{parsedDescription.DST_SE_NM}</h2>
+              <h2 className="home-notification-content-emergency">
+                {parsedDescription.DST_SE_NM}
+              </h2>
             </div>
             <p>{parsedDescription.EMRG_STEP_NM}</p>
 
@@ -52,7 +54,9 @@ export default function EmergencyWidgetAlert({ notification }) {
         <div className="notification-btn-crit">
           <div className="home-notification-content">
             <div className="home-notification-content-header">
-              <h2>{parsedDescription}</h2>
+              <h2 className="home-notification-content-emergency">
+                {parsedDescription}
+              </h2>
             </div>
             <div>
               <img className="crit-image" src={notification.image_url} alt="" />

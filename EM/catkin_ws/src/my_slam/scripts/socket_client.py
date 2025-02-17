@@ -25,18 +25,24 @@ class SocketClient:
         self.current_session_id = None
         self.current_user_id = None
         self.current_family_id = None
+        self.is_connected = False
         
         # 소켓 연결
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket = None
         self.connect_to_server()
 
     def connect_to_server(self):
-        try:
-            self.socket.connect((self.HOST, self.PORT))
-            rospy.loginfo(f"Connected to server at {self.HOST}:{self.PORT}")
-        except Exception as e:
-            rospy.logerr(f"Connection failed: {e}")
-            return
+        while not rospy.is_shutdown() and not self.is_connected:
+            try:
+                if self.socket:
+                    self.socket.close()
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.connect((self.HOST, self.PORT))
+                self.is_connected = True
+                rospy.loginfo(f"Connected to server at {self.HOST}:{self.PORT}")
+            except Exception as e:
+                rospy.logerr(f"Connection failed: {e}")
+                rospy.sleep(5)  # 5초 대기 후 재시도
 
     def process_message(self, message):
         try:
@@ -87,19 +93,25 @@ class SocketClient:
         
         while not rospy.is_shutdown():
             try:
-                # 서버로부터 데이터 수신
+                if not self.is_connected:
+                    self.connect_to_server()
+                    continue
+                
                 data = self.socket.recv(1024)
                 if data:
                     message = data.decode()
                     rospy.loginfo(f"Received raw message: {message}")
                     self.process_message(message)
+                
             except Exception as e:
                 rospy.logerr(f"Connection error: {e}")
-                break
+                self.is_connected = False
+                continue
                 
             rate.sleep()
 
-        self.socket.close()
+        if self.socket:
+            self.socket.close()
 
 if __name__ == '__main__':
     try:

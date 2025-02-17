@@ -19,6 +19,9 @@ class EnhancedFallDetector:
         self.pose_analyzer = EnhancedPoseAnalyzer()
         self.last_fall_notification_time = None
         self.notification_colldown = 60
+        self.camera_enabled = True
+        self.family_id = None
+        self.session_id = None
         try:
             self.model = YOLO(self.config.model_path)
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -28,6 +31,18 @@ class EnhancedFallDetector:
             print(f"모델 로드 실패: {e}")
             raise
         self.fps_tracker = FPSTracker()
+
+    def set_camera_status(self, status):
+        """카메라 상태를 설정하는 메서드"""
+        self.camera_enabled = status
+        
+    def set_family_id(self, family_id):
+        """family_id를 설정하는 메서드"""
+        self.family_id = family_id
+        
+    def set_session_id(self, session_id):
+        """session_id를 설정하는 메서드"""
+        self.session_id = session_id
 
     async def process_frame(self, frame):
         original_frame = frame.copy()
@@ -145,44 +160,57 @@ class EnhancedFallDetector:
             return
 
         try:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            image_path = os.path.join(self.config.save_dir, f'fall_{timestamp}.jpg')
-            cv2.imwrite(image_path, frame)
-            
+            image_url = None
+            if self.camera_enabled:  # 카메라가 활성화된 경우에만 이미지 처리
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                image_path = os.path.join(self.config.save_dir, f'fall_{timestamp}.jpg')
+                cv2.imwrite(image_path, frame)
+                
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        headers = {
+                            'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                        }
+                        
+                        # 1. 이미지 업로드
+                        data = aiohttp.FormData()
+                        data.add_field('file',
+                                    open(image_path, 'rb'),
+                                    filename=f'fall_{timestamp}.jpg',
+                                    content_type='image/jpeg')
+                        
+                        async with session.post(
+                            'https://image.itdice.net/upload',
+                            data=data,
+                            headers=headers,
+                            timeout=aiohttp.ClientTimeout(total=30)
+                        ) as response:
+                            if response.status == 201:
+                                upload_result = await response.json()
+                                image_url = upload_result['result']['file_path']
+                                print(f"이미지 업로드 성공 - URL: {image_url}")
+                            else:
+                                print(f"이미지 업로드 실패: {response.status}")
+                finally:
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+
+            # 알림 API 호출 (이미지 유무와 관계없이)
             headers = {
-                'Cookie': "session_id=60be008afcfbaae56e289f6c243eb6d8; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
             }
             
+            notification_data = {
+                "family_id": self.family_id,
+                "notification_grade": "CRIT",
+                "descriptions": "낙상감지"
+            }
+            
+            # 이미지 URL이 있는 경우에만 추가
+            if image_url:
+                notification_data["image_url"] = image_url
+
             async with aiohttp.ClientSession() as session:
-                # 1. 이미지 업로드
-                data = aiohttp.FormData()
-                data.add_field('file',
-                            open(image_path, 'rb'),
-                            filename=f'fall_{timestamp}.jpg',
-                            content_type='image/jpeg')
-                
-                async with session.post(
-                    'https://image.itdice.net/upload',
-                    data=data,
-                    headers=headers,
-                    timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    if response.status != 201:
-                        print(f"이미지 업로드 실패: {response.status}")
-                        return
-                        
-                    upload_result = await response.json()
-                    image_url = upload_result['result']['file_path']
-                    print(f"이미지 업로드 성공 - URL: {image_url}")
-                    
-                # 2. 알림 API 호출
-                notification_data = {
-                    "family_id": "FlcuDLxVC9SolW70",
-                    "notification_grade": "CRIT",
-                    "descriptions": "낙상감지",
-                    "image_url": image_url
-                }
-                
                 async with session.post(
                     'https://dev-api.itdice.net/notify',
                     json=notification_data,
@@ -191,12 +219,9 @@ class EnhancedFallDetector:
                 ) as notify_response:
                     if notify_response.status == 201:
                         self.last_fall_notification_time = current_time
-                        print(f"낙상 알림 전송 성공: {timestamp}")
+                        print(f"낙상 알림 전송 성공: {datetime.now().strftime('%Y%m%d_%H%M%S')}")
                     else:
                         print(f"낙상 알림 전송 실패: {notify_response.status}")
 
         except Exception as e:
             print("낙상 처리 중 오류 발생:", e)
-        finally:
-            if os.path.exists(image_path):
-                os.remove(image_path)

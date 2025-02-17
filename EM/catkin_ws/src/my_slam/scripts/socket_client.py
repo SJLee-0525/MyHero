@@ -17,10 +17,14 @@ class SocketClient:
         # ROS 퍼블리셔 설정
         self.camera_pub = rospy.Publisher('camera_status', Bool, queue_size=10)
         self.driving_pub = rospy.Publisher('driving_mode', String, queue_size=10)
-        self.session_pub = rospy.Publisher('session_id', String, queue_size=10)  # session_id 퍼블리셔 추가
+        self.session_pub = rospy.Publisher('session_id', String, queue_size=10)
+        self.user_id_pub = rospy.Publisher('user_id', String, queue_size=10)
+        self.family_id_pub = rospy.Publisher('family_id', String, queue_size=10)
         
-        # 현재 세션 ID 저장
+        # 현재 상태 저장
         self.current_session_id = None
+        self.current_user_id = None
+        self.current_family_id = None
         
         # 소켓 연결
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -38,6 +42,14 @@ class SocketClient:
         try:
             data = json.loads(message)
             
+            # user_id 처리
+            if 'user_id' in data:
+                new_user_id = data['user_id']
+                if new_user_id != self.current_user_id:
+                    self.current_user_id = new_user_id
+                    self.user_id_pub.publish(new_user_id)
+                    rospy.loginfo(f"New user ID: {new_user_id}")
+            
             # session_id 처리
             if 'session_id' in data:
                 new_session_id = data['session_id']
@@ -46,19 +58,24 @@ class SocketClient:
                     self.session_pub.publish(new_session_id)
                     rospy.loginfo(f"New session ID: {new_session_id}")
             
-            # cameraOn 상태 처리
-            if 'cameraOn' in data:
-                self.camera_pub.publish(data['cameraOn'])
-                rospy.loginfo(f"Camera status: {data['cameraOn']}")
+            # family_id 처리
+            if 'family_id' in data:
+                new_family_id = data['family_id']
+                if new_family_id != self.current_family_id:
+                    self.current_family_id = new_family_id
+                    self.family_id_pub.publish(new_family_id)
+                    rospy.loginfo(f"New family ID: {new_family_id}")
             
-            # drivingMode 상태 처리
-            if 'drivingMode' in data:
-                mode = data['drivingMode']
-                if mode in ['stop', 'tracking', 'autonomous']:
-                    self.driving_pub.publish(mode)
-                    rospy.loginfo(f"Driving mode: {mode}")
-                else:
-                    rospy.logwarn(f"Invalid driving mode received: {mode}")
+            # 카메라 상태 처리
+            if 'is_camera_enabled' in data:
+                self.camera_pub.publish(data['is_camera_enabled'])
+                rospy.loginfo(f"Camera status: {data['is_camera_enabled']}")
+            
+            # 주행 상태 처리
+            if 'is_driving_enabled' in data:
+                driving_status = 'tracking' if data['is_driving_enabled'] else 'stop'
+                self.driving_pub.publish(driving_status)
+                rospy.loginfo(f"Driving status: {driving_status}")
                     
         except json.JSONDecodeError as e:
             rospy.logerr(f"JSON decode error: {e}")

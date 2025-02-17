@@ -1,4 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
+import { useNotificationStore } from "../../store/notificationStore";
 import { DisasterStoreContext } from "../../store/disasterStore";
 import NoticeBox from "./NoticeBox";
 import NoticeDetail from "./NoticeDetail";
@@ -6,7 +7,12 @@ import "./Notice.css";
 
 export default function Notice({ onReply }) {
   const { disasterData, isLoading, markNotificationAsRead, setDisasterData } = useContext(DisasterStoreContext);
+  const { notifications, fetchNotifications } = useNotificationStore();
   const [selectedNotice, setSelectedNotice] = useState(null);
+
+  useEffect(() => { //
+    fetchNotifications();
+  }, []);
 
   const disasterNotices = Array.isArray(disasterData) ? disasterData.map(notice => ({
     id: `disaster-${notice.index}`,
@@ -22,7 +28,17 @@ export default function Notice({ onReply }) {
     is_read: notice.is_read,
   })) : [];
 
-  const allNotices = [...disasterNotices].sort(
+  /////
+  const messageNotices = notifications.map(notice => ({
+    id: `dm-${notice.id}`,
+    text: notice.text,
+    created_at: notice.created_at,
+    notification_grade: "dm",
+    is_read: notice.is_read,
+  }));
+  /////
+
+  const allNotices = [...disasterNotices, ...messageNotices].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
   );
 
@@ -60,14 +76,30 @@ export default function Notice({ onReply }) {
   const openNotice = (notice) => {
     setSelectedNotice(notice);
 
-    const extractedIndex = notice.id ? parseInt(notice.id.replace(/\D/g, ""), 10) : null;
+    // const extractedIndex = notice.id ? parseInt(notice.id.replace(/\D/g, ""), 10) : null;
 
-    if (!notice.is_read && extractedIndex) {
-        setDisasterData((prevData) =>
-          prevData.map((item) => (item.index === extractedIndex ? { ...item, is_read: true } : item))
-        );
+    // if (!notice.is_read && extractedIndex) {
+    //     setDisasterData((prevData) =>
+    //       prevData.map((item) => (item.index === extractedIndex ? { ...item, is_read: true } : item))
+    //     );
 
-        markNotificationAsRead(extractedIndex);
+    //     markNotificationAsRead(extractedIndex);
+    // }
+
+    if (!notice.is_read) {
+      if (notice.id.startsWith("disaster-")) {
+        const extractedIndex = parseInt(notice.id.replace(/\D/g, ""), 10);
+        if (extractedIndex) {
+          setDisasterData((prevData) =>
+            prevData.map((item) =>
+              item.index === extractedIndex ? { ...item, is_read: true } : item
+            )
+          );
+          markNotificationAsRead(extractedIndex);
+        }
+      } else if (notice.id.startsWith("dm-")) {
+        markNotificationAsRead(notice.id.replace("dm-", "")); // 메시지 알림 읽음 처리
+      }
     }
   };
 

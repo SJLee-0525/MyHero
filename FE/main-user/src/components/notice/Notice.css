@@ -60,6 +60,9 @@
   box-sizing: border-box;
   min-height: 80px;
   position: relative;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 /* 읽은 알림 음영 처리 */
@@ -68,8 +71,9 @@
   transition: opacity 0.3s ea;
 }
 
-.notice-box.message {
+.notice-box.dm {
   background: #fffa8b;
+  width: 100%;
 }
 
 .notice-box.crit {

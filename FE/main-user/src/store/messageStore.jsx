@@ -1,6 +1,7 @@
 import React from "react";
-import { createContext, useState, useContext, useEffect } from "react";
+import { createContext, useState, useContext, useEffect, useRef } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
+import { useNotificationStore } from "./notificationStore";
 import { UserProgressContext } from "./userProgressStore";
 
 const MessageContext = createContext({
@@ -27,6 +28,9 @@ export default function MessageProvider({ children }) {
     const [selectedUser, setSelectedUser] = useState(null); // 선택한 대화 상대
     const [conversations, setConversations] = useState({}); // 유저별 대화 저장
     const [isLoading, setIsLoading] = useState(false);
+
+    const notificationStore = useNotificationStore(); // 알림 스토어 가져오기
+    const lastCheckedTimeRef = useRef(new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString()); // 마지막 체크한 시간 저장
 
     let loginUserId = userProgressStore.loginUserInfo.userInfo?.id || "";
     
@@ -86,6 +90,26 @@ export default function MessageProvider({ children }) {
                 console.error("❌ 메시지를 가져오지 못했습니다.");
                 return;
             }
+
+            /////
+            const now = new Date().toISOString(); // 현재 시간 기준
+            const newMessages = receivedData.result.filter(
+                (msg) => msg.to_id === loginUserId && msg.from_id === selectedUserId && msg.created_at > lastCheckedTimeRef.current
+            );
+
+            if (newMessages.length > 0) {
+                newMessages.forEach(msg => {
+                    notificationStore.addNotification({
+                        id: msg.index,
+                        text: `${msg.from_id}님으로부터 새로운 메시지가 도착했습니다!`,
+                        notification_grade: "message",
+                        is_read: false
+                    });
+                });
+            }
+
+            lastCheckedTimeRef.current = now;
+            /////
 
             const receivedMessages = receivedData.result.filter(
                 (msg) => msg.to_id === loginUserId && msg.from_id === selectedUserId

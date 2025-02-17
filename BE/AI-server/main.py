@@ -70,24 +70,7 @@ class DBSessionManager:
             autoflush=False
         )
         self._db = None
-        
-        # 이벤트 리스너 등록
-        @event.listens_for(self.engine, "handle_error")
-        def handle_error(context):
-            if isinstance(context.original_exception, exc.OperationalError):
-                if "MySQL server has gone away" in str(context.original_exception):
-                    for attempt in range(3):
-                        try:
-                            self.initialize_db()
-                            # 실패한 쿼리 재시도
-                            return context.execution_context.statement
-                        except:
-                            if attempt == 2:
-                                raise
-                            continue
-        
         self.initialize_db()
-        event.listens_for(self.engine, "engine_connect")(self.ping_connection)
 
     def initialize_db(self):
         if self._db:
@@ -95,39 +78,13 @@ class DBSessionManager:
                 self._db.close()
             except:
                 pass
-                
-        for attempt in range(3):
-            try:
-                db = self.SessionLocal()
-                db.execute(text('SELECT 1'))
-                self._db = db
-                return
-            except Exception as e:
-                if attempt == 2:  
-                    raise
-                if 'db' in locals():
-                    try:
-                        db.close()
-                    except:
-                        pass
+        self._db = self.SessionLocal()
 
     @property
     def db(self):
-        try:
-            self._db.execute(text('SELECT 1'))
-            return self._db
-        except:
+        if self._db is None:
             self.initialize_db()
-            return self._db
-
-    def ping_connection(self, connection, branch):
-        if branch:
-            return
-        try:
-            connection.scalar(select(1))
-        except exc.DBAPIError as err:
-            if err.connection_invalidated:
-                self.initialize_db()
+        return self._db
 
 db_manager = DBSessionManager(DATABASE_URL)
 db = db_manager.db
@@ -195,7 +152,15 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         db.rollback()
         logger.error(f"Chat processing error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+
+        try:
+           chat_service = ChatService(openai_client, db)
+           response = await chat_service.process_chat(request.user_id, request.user_message, request.session_id)
+           db.commit()
+           return response
+        except Exception as retry_e:
+           db.rollback()
+           raise HTTPException(status_code=500, detail=str(retry_e))
     
 @app.get("/weather/{user_id}")
 async def get_weather(user_id: str):
@@ -219,7 +184,27 @@ async def get_weather(user_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"Weather error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+        # 캐시 확인
+            cached_data = cache_manager.get_weather(user_id)
+            if cached_data:
+                return cached_data
+
+            # 새로운 날씨 데이터 조회
+            weather_data = await weather_service.get_weather_for_user(user_id, db)
+            if not weather_data:
+                raise HTTPException(status_code=404, detail="날씨 정보를 찾을 수 없습니다")
+
+            # 캐시 업데이트
+            cache_manager.set_weather(user_id, weather_data)
+            print(weather_data)
+            db.commit()
+            return weather_data
+
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Weather error: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/news")
 async def get_news():
@@ -230,7 +215,14 @@ async def get_news():
         return news_data
     except Exception as e:
         logger.error(f"News error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            news_data = await news_service.get_news()
+            if not news_data:
+                raise HTTPException(status_code=404, detail="뉴스 정보를 찾을 수 없습니다")
+            return news_data
+        except Exception as e:
+            logger.error(f"News error: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 async def update_notifications_periodically():
     while True:
@@ -255,7 +247,20 @@ async def generate_emotional_report(family_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"Emotion report error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            emotion_service = EmotionService(openai_client, db)
+            report = await emotion_service.generate_report(family_id)
+            
+            if not report:
+                raise HTTPException(status_code=404, detail="감정 분석을 위한 대화 내용이 충분하지 않습니다")
+            
+            db.commit()
+            return report
+
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Emotion report error: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/generate-emotional-report/period/{family_id}")
 async def gnerate_periodic_report(
@@ -271,7 +276,16 @@ async def gnerate_periodic_report(
     except Exception as e:
         db.rollback()
         logger.error(f"Periodic report error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            emotion_service = EmotionService(openai_client, db)
+            report = await emotion_service.generate_periodic_report(family_id, period.start_date, period.end_date)
+            db.commit()
+            return report
+        
+        except Exception as e:
+            db.rollback()
+            logger.error(f"Periodic report error: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/generate-keyword/{family_id}")
 async def generate_keywords(family_id: str):
@@ -333,7 +347,65 @@ async def generate_keywords(family_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"키워드 생성 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            today = get_kst_today()
+            today_utc = to_utc_start_of_day(today)
+
+            chat_history = db.query(ChatHistory)\
+                .join(Family, Family.main_user == ChatHistory.user_id)\
+                .filter(Family.id == family_id)\
+                .filter(ChatHistory.created_at >= today_utc)\
+                .all()
+                
+            if not chat_history:
+                return {"keywords": ["대화를 시작해보세요"]}
+
+            messages = []
+            for chat in chat_history:
+                messages.append({"role": "user", "content": chat.user_message})
+                messages.append({"role": "assistant", "content": chat.bot_message})
+
+            response = openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """대화 기록을 기반으로 user가 관심을 가지고 있는 것 같은
+                        키워드 5개를 추출해서 쉼표(,)로 구분된 형태로 응답해주세요.
+                        예시: 건강,취미,가족,운동,음식"""
+                    },
+                    {"role": "user", "content": str(messages)}
+                ]
+            )
+
+            keywords = response.choices[0].message.content.strip()
+            keyword_list = keywords.split(',')
+            keyword_list = [keyword.strip() for keyword in keyword_list]
+
+            existing_keywords = db.query(ChatKeywords)\
+                .filter(ChatKeywords.family_id == family_id)\
+                .filter(ChatKeywords.created_at >= datetime.now().date())\
+                .first()
+            
+            if existing_keywords:
+                existing_keywords.keywords = keywords
+            
+            else:
+                new_keywords = ChatKeywords(
+                    family_id=family_id,
+                    keywords=keywords
+                )
+                db.add(new_keywords)
+
+            db.commit()
+
+            
+            return {"keywords": keyword_list}
+        
+        except Exception as e:
+            db.rollback()
+            logger.error(f"키워드 생성 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.post('/analyze-mental-health/{family_id}')
 async def analyze_mental_health(
@@ -381,7 +453,25 @@ async def send_message(request: MessageRequest):
     except Exception as e:
         db.rollback()
         logger.error(f"메시지 전송 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            message_service = MessageService(db)
+            success, count = await message_service.broadcast_message(
+                from_id=request.from_id,
+                content=request.content
+            )
+            
+            if success:
+                db.commit()
+                return {
+                    "status": "success",
+                    "message": f"메시지가 {count}명의 가족 구성원에게 전송되었습니다"
+                }
+            db.rollback()
+            raise HTTPException(status_code=500, detail="메시지 전송에 실패했습니다")
+        except Exception as e:
+            db.rollback()
+            logger.error(f"메시지 전송 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
     
 @app.post("/chat/message/single")
 async def send_single_message(request: MessageRequestone):
@@ -402,7 +492,24 @@ async def send_single_message(request: MessageRequestone):
     except Exception as e:
         db.rollback()
         logger.error(f"메시지 전송 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            message_service = MessageService(db)
+            success = await message_service.send_message(
+                from_id=request.from_id,
+                to_id=request.to_id,
+                content=request.content
+            )
+            
+            if success:
+                db.commit()
+                return {"status": "success", "message": "메시지가 전송되었습니다"}
+            db.rollback()
+            raise HTTPException(status_code=500, detail="메시지 전송에 실패했습니다")
+        
+        except Exception as e:
+            db.rollback()
+            logger.error(f"메시지 전송 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/chat/messages/{user_id}", response_model=List[MessageResponse])
 async def get_unread_messages(user_id: str):
@@ -441,7 +548,42 @@ async def get_unread_messages(user_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"메시지 조회 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            message_service = MessageService(db)
+            messages = message_service.get_unread_messages(user_id)
+            
+            response_messages = []
+            for msg in messages:
+                # 발신자의 가족 정보 조회
+                main_user_family = db.query(Family)\
+                    .filter(Family.main_user == msg.to_id)\
+                    .first()
+                    
+                if main_user_family:
+                    member_relation = db.query(MemberRelations)\
+                        .filter(
+                            MemberRelations.family_id == main_user_family.id,
+                            MemberRelations.user_id == msg.from_id
+                        ).first()
+                    nickname = member_relation.nickname if member_relation else "가족"
+                else:
+                    nickname = "가족"
+                    
+                response_messages.append(MessageResponse(
+                    index=msg.index,
+                    sender_nickname=nickname,
+                    content=msg.content,
+                    created_at=msg.created_at,
+                    is_read=bool(msg.is_read)
+                ))
+            
+            db.commit()
+            return response_messages
+            
+        except Exception as e:
+            db.rollback()
+            logger.error(f"메시지 조회 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/chat/messages/read/{message_id}")
 async def mark_message_as_read(message_id: int):
@@ -455,7 +597,17 @@ async def mark_message_as_read(message_id: int):
     except Exception as e:
         db.rollback()
         logger.error(f"메시지 읽음 처리 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            message_service = MessageService(db)
+            if await message_service.mark_as_read(message_id):
+                db.commit()
+                return {"status": "success", "message": "메시지를 읽음 처리했습니다"}
+            db.rollback()
+            raise HTTPException(status_code=404, detail="메시지를 찾을 수 없습니다")
+        except Exception as e:
+            db.rollback()
+            logger.error(f"메시지 읽음 처리 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 @app.get('/family/main/{user_id}')
 async def get_family_by_main_user(user_id: str):
@@ -476,7 +628,23 @@ async def get_family_by_main_user(user_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"가족 정보 조회 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            family = db.query(Family).filter(Family.main_user == user_id).first()
+
+            if not family:
+                raise HTTPException(status_code=404, detail="가족 정보를 찾을 수 없습니다")
+            
+            db.commit()
+            return {
+                "id": family.id,  
+                "main_user": family.main_user
+                
+            }
+            
+        except Exception as e:
+            db.rollback()
+            logger.error(f"가족 정보 조회 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
     
   
 @app.get('/family/{family_id}/members')
@@ -502,7 +670,29 @@ async def get_family_members(family_id: str):
     except Exception as e:
         db.rollback()
         logger.error(f"가족 구성원 조회 오류: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        try:
+            members = db.query(MemberRelations)\
+                .filter(MemberRelations.family_id == family_id)\
+                .all()
+            
+            if not members:
+                raise HTTPException(status_code=404, detail='가족 구성원을 찾을 수 없습니다')
+            
+            member_list = [
+                {
+                    "user_id": member.user_id,
+                    "nickname": member.nickname,
+                } for member in members
+            ]
+            
+            db.commit()
+            return member_list
+        
+        except Exception as e:
+            db.rollback()
+            logger.error(f"가족 구성원 조회 오류: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+
 
 async def schedule_news_updates():
     while True:

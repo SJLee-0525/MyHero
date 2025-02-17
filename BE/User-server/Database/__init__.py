@@ -91,5 +91,10 @@ from .tools import (
     create_settings,
     get_settings,
     update_settings,
-    delete_settings
+    delete_settings,
+    add_background,
+    get_backgrounds,
+    get_latest_background,
+    get_one_background,
+    delete_background
 )

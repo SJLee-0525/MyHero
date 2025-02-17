@@ -12,7 +12,7 @@ from fastapi.encoders import jsonable_encoder
 import httpx
 import Database
 from Database.models import *
-from Endpoint.models import Settings
+from Endpoint.models import Settings, Background
 from External.ai import korean_weather, check_connection
 
 from datetime import date
@@ -314,5 +314,171 @@ async def update_settings(family_id: str, updated_settings: Settings, request_id
                 "type": "server error",
                 "message": "Failed to update settings",
                 "input": jsonable_encoder(updated_settings)
+            }
+        )
+
+# 가족 배경화면 앨범에 새로운 사진을 추가하는 기능
+@router.post("/background", status_code=status.HTTP_201_CREATED)
+async def add_background(background_data: Background, request_id: str = Depends(Database.check_current_user)):
+    # 필수 입력 정보 점검
+    missing_location: list = ["body"]
+
+    if background_data.family_id is None or background_data.family_id == "":
+        missing_location.append("family_id")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Family ID is required"
+            }
+        )
+
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 앨범에 사진을 추가할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(background_data.family_id)
+    member_data: list = Database.get_all_members(family_id=background_data.family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission",
+                "input": jsonable_encoder(background_data)
+            }
+        )
+
+    # 새로운 배경화면 정보 생성
+    new_background_data: BackgroundsTable = BackgroundsTable(
+        family_id=background_data.family_id,
+        uploader_id=request_id,
+        image_url=background_data.image_url
+    )
+
+    # 업로드
+    result: bool = Database.add_background(new_background_data)
+
+    if result:
+        uploaded_data: dict = Database.get_latest_background(family_id=background_data.family_id, uploader=request_id)
+
+        if uploaded_data:
+            return {
+                "message": "New background added successfully",
+                "result": jsonable_encoder(uploaded_data)
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail={
+                    "type": "server error",
+                    "message": "Failed to add new background"
+                }
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to add new background"
+            }
+        )
+
+# 가족 배경화면 앨범에 저장되어 있는 사진을 불러오는 기능
+@router.get("/background/{family_id}", status_code=status.HTTP_200_OK)
+async def get_background(
+        family_id: str,
+        uploader: Optional[Uploader] = Query(Uploader.ALL, description="Background's uploader"),
+        request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 앨범에 사진에 접근할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 배경화면 불러오기
+    result: list = []
+
+    if uploader == Uploader.ALL:
+        result = Database.get_backgrounds(family_id=family_id)
+    elif uploader == Uploader.MINE:
+        result = Database.get_backgrounds(family_id=family_id, uploader=request_id)
+
+    if result:
+        return {
+            "message": "Background retrieved successfully",
+            "result": jsonable_encoder(result)
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Background not found"
+            }
+        )
+
+# 가족 배경화면 앨범에 저장되어 있는 사진을 삭제하는 기능
+@router.delete("/background/{family_id}/{image_id}", status_code=status.HTTP_200_OK)
+async def delete_background(family_id: str, image_id: int, request_id: str = Depends(Database.check_current_user)):
+    # 시스템 계정을 제외한 가족의 주 사용자, 보조 사용자만 가족 앨범에 사진을 삭제할 수 있음
+    request_data: dict = Database.get_one_account(request_id)
+    family_data: dict = Database.get_one_family(family_id)
+    member_data: list = Database.get_all_members(family_id=family_id)
+    permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                [user_data["user_id"] for user_data in member_data])
+
+    if not request_data or (request_data["role"] != Role.SYSTEM and request_id not in permission_id):
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 존재하는 배경화면인지 확인
+    background_data: dict = Database.get_one_background(image_id)
+
+    if not background_data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Background not found"
+            }
+        )
+
+    # 배경화면 삭제하기
+    result: bool = Database.delete_background(image_id)
+
+    if result:
+        return {
+            "message": "Background deleted successfully"
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to delete background"
             }
         )

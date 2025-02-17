@@ -11,7 +11,7 @@ from Database.models import *
 
 from datetime import datetime, date
 
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 from sqlalchemy.exc import SQLAlchemyError
 
 from Utilities.logging_tools import *
@@ -266,6 +266,170 @@ def delete_settings(family_id: str) -> bool:
         except SQLAlchemyError as error:
             session.rollback()
             logger.error(f"Error deleting settings data: {str(error)}")
+            result = False
+        finally:
+            session.commit()
+            return result
+
+# 배경화면을 추가하는 기능
+def add_background(background_data: BackgroundsTable) -> bool:
+    """
+    배경화면을 추가하는 기능
+    :param background_data: BackgroundsTable로 미리 Mapping된 데이터
+    :return: 성공적으로 추가되었는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            session.add(background_data)
+            logger.info(f"New background Added: {background_data}")
+            result = True
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error adding new background: {str(error)}")
+            result = False
+        finally:
+            session.commit()
+            return result
+
+# 저장된 배경화면을 불러오는 기능
+def get_backgrounds(family_id: str, uploader: str = None) -> list[dict]:
+    """
+    저장된 배경화면을 불러오는 기능
+    :param family_id: 가족의 ID
+    :param uploader: 업로드 한 사용자의 ID
+    :return: 조건에 맞는 배경화면 데이터 list[dict]
+    """
+    result: list[dict] = []
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            background_list = session.query(
+                BackgroundsTable.index,
+                BackgroundsTable.family_id,
+                BackgroundsTable.uploader_id,
+                BackgroundsTable.image_url
+            )
+
+            # 조건에 따라 필터링
+            filtered_background_list = None
+
+            if uploader is None:
+                filtered_background_list = background_list.filter(BackgroundsTable.family_id == family_id).all()
+            else:
+                filtered_background_list = background_list.filter(
+                    and_(BackgroundsTable.family_id == family_id,
+                         BackgroundsTable.uploader_id == uploader)).all()
+
+            serialized_data: list[dict] = [{
+                "id": data[0],
+                "family_id": data[1],
+                "uploader_id": data[2],
+                "image_url": data[3]
+            } for data in filtered_background_list]
+
+            result = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting background data: {str(error)}")
+            result = []
+        finally:
+            return result
+
+# 방금 업로드 된 배경화면 불러오는 기능
+def get_latest_background(family_id: str, uploader:str) -> dict:
+    """
+    방금 업로드 된 배경하면 불러오는 기능
+    :param family_id: 가족의 ID
+    :param uploader: 업로드 한 사용자의 ID
+    :return: 배경화면 정보 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            background_data = session.query(
+                BackgroundsTable.index,
+                BackgroundsTable.family_id,
+                BackgroundsTable.uploader_id,
+                BackgroundsTable.image_url
+            ).filter(and_(BackgroundsTable.family_id == family_id, BackgroundsTable.uploader_id == uploader)).first()
+
+            serialized_data = {
+                "index": background_data[0],
+                "family_id": background_data[1],
+                "uploader_id": background_data[2],
+                "image_url": background_data[3]
+            }
+
+            result = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting background data: {str(error)}")
+            result = {}
+        finally:
+            return result
+
+# 특정 배경화면 하나를 불러오는 기능
+def get_one_background(image_id: int) -> dict:
+    """
+    특정 배경화면 하나를 불러오는 기능
+    :param image_id: 이미지의 ID
+    :return: 해당하는 배경화면 정보 dict
+    """
+    result: dict = {}
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            background_data = session.query(
+                BackgroundsTable.index,
+                BackgroundsTable.family_id,
+                BackgroundsTable.uploader_id,
+                BackgroundsTable.image_url
+            ).filter(BackgroundsTable.index == image_id).first()
+
+            serialized_data = {
+                "id": background_data[0],
+                "family_id": background_data[1],
+                "uploader_id": background_data[2],
+                "image_url": background_data[3]
+            }
+
+            result = serialized_data
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error getting background data: {str(error)}")
+            result = {}
+        finally:
+            return result
+
+# 배경화면을 삭제하는 기능
+def delete_background(image_id: int) -> bool:
+    """
+    등록된 배경화면을 삭제하는 기능
+    :param image_id: 이미지의 ID
+    :return: 성공적으로 삭제되었는지 여부 bool
+    """
+    result: bool = False
+
+    database_pre_session = database.get_pre_session()
+    with database_pre_session() as session:
+        try:
+            background_data = session.query(BackgroundsTable).filter(BackgroundsTable.index == image_id).first()
+            if background_data is not None:
+                session.delete(background_data)
+                logger.info(f"Background data deleted: {background_data}")
+                result = True
+            else:
+                result = False
+        except SQLAlchemyError as error:
+            session.rollback()
+            logger.error(f"Error deleting background data: {str(error)}")
             result = False
         finally:
             session.commit()

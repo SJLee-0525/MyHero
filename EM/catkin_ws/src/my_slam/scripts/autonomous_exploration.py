@@ -24,7 +24,7 @@ class AutonomousExploration:
         
         # 조이스틱 구독 추가 (토글용)
         self.joy_sub = rospy.Subscriber('/joy', Joy, self.joy_callback)
-        self.auto_mode = True  # 기본은 자동 모드
+        self.auto_mode = False  # 기본은 자동 모드
         
         # 활성화 상태 구독
         self.enable_sub = rospy.Subscriber('/exploration_enable', Bool, self.enable_callback)

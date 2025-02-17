@@ -526,8 +526,8 @@ export default function HealthContextProvider({ children }) {
     try {
       // const response = await request(`${userProgressStore.DEV_API_URL}/status/mental/new/${familyId}`, 'POST', {})
       const response = await request(
-        `http://70.12.246.26:8000/generate-emotional-report/${familyId}`,
-        "POST"
+        `${userProgressStore.DEV_API_URL}/status/mental/new/${familyId}`,
+        "GET"
       );
 
       const resData = response.data;

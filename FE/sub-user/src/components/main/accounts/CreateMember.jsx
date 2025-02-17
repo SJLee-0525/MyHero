@@ -21,6 +21,16 @@ export default function CreateFamily() {
   async function handleCheckFamily() {
     const familyId = inputFamilyId.current.value;
 
+    if (!familyId) {
+      alert("가족 모임 ID를 입력해주세요.");
+      return;
+    }
+
+    if (familyId.includes("/")) {
+      alert("가족 모임 ID에 사용 불가능한 문자가 사용되었습니다.");
+      return;
+    }
+
     try {
       const response = await fetch(
         `${userProgressStore.DEV_API_URL}/families/name/${familyId}`,
@@ -32,8 +42,6 @@ export default function CreateFamily() {
           credentials: "include",
         }
       );
-
-      console.log("가족 구성원 조회 요청:", response);
 
       const resData = await response.json();
 

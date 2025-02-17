@@ -49,11 +49,19 @@ export default function MessageChat() {
               }
             );
 
+            const isEmergency =
+              log.content.length > 4 &&
+              log.content.substring(0, 4) === "[긴급]";
+
             return (
               (log.from_id === messageStore.messagePerson &&
                 log.to_id === userProgressStore.loginUserInfo.userInfo.id && (
                   <div key={log.index} className="main">
-                    <div className="main-chat">
+                    <div
+                      className={
+                        isEmergency ? "emergency-main-chat" : "main-chat"
+                      }
+                    >
                       {log.image_url && (
                         <img src={log.image_url} alt="이미지" />
                       )}

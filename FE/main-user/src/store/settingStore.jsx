@@ -33,54 +33,78 @@ export const SettingStoreContext = createContext({
 
     const familyId = userProgressStore.familyInfo?.familyId || "";
 
+    // ✅ WebSocket 연결 함수
+    const connectWebSocket = () => {
+        if (socket && socket.readyState === WebSocket.OPEN) return;
+
+        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const wsUrl = `${protocol}70.12.247.214:8765`;
+
+        try {
+            const ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => console.log("✅ WebSocket 연결 성공!");
+            ws.onerror = (error) => console.error("❌ WebSocket 오류 발생:", error);
+            ws.onclose = () => console.log("⚠️ WebSocket 연결 해제됨. 재연결을 시도할 수 있습니다.");
+            
+            setSocket(ws);
+        } catch (error) {
+            console.error("❌ WebSocket 초기화 실패:", error);
+        }
+    };
+
     // 웹 소켓 설정
     useEffect(() => {
-        const ws = new WebSocket('http://70.12.247.214:8765');
+        connectWebSocket();
         
-        ws.onopen = () => {
-            console.log('웹 소켓 연결');
-        };
-
-        ws.onerror = (error) => {
-            console.error('웹 소켓 에러:', error);
-        };
-
-        ws.onclose = () => {
-            console.log('웹 소켓 연결 해제');
-        };
-
-        setSocket(ws);
-
         return () => {
-            ws.close();
+            if (socket) socket.close();
         };
     }, []);
 
+    // const sendWebSocket = async (data) => {
+    //     try {
+    //         if (socket?.readyState === WebSocket.CLOSED) {
+    //             const ws = new WebSocket('ws://localhost:8765');
+    //             await new Promise((resolve, reject) => {
+    //                 ws.onopen = () => resolve();
+    //                 ws.onerror = () => reject();
+    //             });
+    //             setSocket(ws);
+    //         }
+    
+    //         if (socket?.readyState === WebSocket.OPEN) {
+    //             const wsMessage = {
+    //                 type: "settings",
+    //                 data: data
+    //             };
+    //             socket.send(JSON.stringify(wsMessage));
+    //             return true;
+    //         }
+    //         return false;
+    //     } catch (error) {
+    //         console.error('WebSocket send error:', error);
+    //         return false;
+    //     }
+    // }
+
+    // ✅ WebSocket을 통한 데이터 전송 함수
     const sendWebSocket = async (data) => {
         try {
-            if (socket?.readyState === WebSocket.CLOSED) {
-                const ws = new WebSocket('ws://localhost:8765');
-                await new Promise((resolve, reject) => {
-                    ws.onopen = () => resolve();
-                    ws.onerror = () => reject();
-                });
-                setSocket(ws);
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                console.warn("⚠️ WebSocket이 닫혀 있어 재연결을 시도합니다.");
+                connectWebSocket();
+                return false;
             }
-    
-            if (socket?.readyState === WebSocket.OPEN) {
-                const wsMessage = {
-                    type: "settings",
-                    data: data
-                };
-                socket.send(JSON.stringify(wsMessage));
-                return true;
-            }
-            return false;
+
+            const wsMessage = { type: "settings", data };
+            socket.send(JSON.stringify(wsMessage));
+            return true;
         } catch (error) {
-            console.error('WebSocket send error:', error);
+            console.error("❌ WebSocket 전송 오류:", error);
             return false;
         }
-    }
+    };
 
     async function fetchSettings() {
         if (!familyId) return;

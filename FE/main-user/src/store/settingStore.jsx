@@ -20,7 +20,6 @@ export const SettingStoreContext = createContext({
     const userProgressStore = useContext(UserProgressContext);
     const [socket, setSocket] = useState(null);
 
-
     const [settings, setSettings] = useState({
         alertState: false,
         cameraState: false,
@@ -30,7 +29,7 @@ export const SettingStoreContext = createContext({
 
     const familyId = userProgressStore.familyInfo?.familyId || "";
 
-    // 웹 소켓 설정정
+    // 웹 소켓 설정
     useEffect(() => {
         const ws = new WebSocket('ws://localhost:8765');
         
@@ -106,6 +105,27 @@ export const SettingStoreContext = createContext({
         }
     }
 
+    async function audioToggle() {
+        try {
+            const updatedMicState = !settings.micState;
+            setSettings((prev) => ({ ...prev, micState: updatedMicState }));
+
+            const response = await request(`http://70.12.247.214:8001/bluetooth/speaker/toggle`, "POST", { is_microphone_enabled: updatedMicState });
+
+            const resData = response.data;
+
+            if (response.success && resData.message === "Speaker and microphone settings updated") {
+                console.log("✅ 마이크 상태 변경 성공:", resData);
+            } else {
+                console.error("❌ 마이크 상태 변경 실패:", response.error);
+                setSettings((prev) => ({ ...prev, micState: !updatedMicState }));
+            }
+        } catch (error) {
+            console.error("❌ 네트워크 오류 발생:", error);
+            setSettings((prev) => ({ ...prev, micState: !prev.micState }));
+        }
+    }
+
     // 📌 2️⃣ 상태를 PATCH 요청으로 변경
     async function toggleFeature(featureKey) {
         if (!familyId) return;
@@ -162,6 +182,7 @@ export const SettingStoreContext = createContext({
       ...settings,
       toggleFeature,
       fetchSettings,
+      audioToggle,
     };
   
     return (

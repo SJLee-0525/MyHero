@@ -4,6 +4,17 @@ import NewsDetail from "./NewsDetail";
 import defaultImage from "../../assets/icons/hero.png";
 import "./News.css";
 
+const categoryMap = {
+  business: "경제",
+  entertainment: "엔터",
+  environment: "환경",
+  health: "건강",
+  politics: "정치",
+  science: "과학",
+  sports: "스포츠",
+  technology: "기술"
+};
+
 export default function NewsBoxPage({ category, newsData, onBack }) {
   const { selectedNews, selectNews, clearSelectedNews } = useContext(NewsStoreContext);
 
@@ -15,7 +26,7 @@ export default function NewsBoxPage({ category, newsData, onBack }) {
     <div className="news-box-page">
       <div className="news-header"> 
         <button className="back-button" onClick={onBack}>←</button>
-        <h2>{category.charAt(0).toUpperCase() + category.slice(1)} 뉴스</h2>
+        <h2>{categoryMap[category] || category} 뉴스</h2>
       </div>
 
       <div className="news-list">

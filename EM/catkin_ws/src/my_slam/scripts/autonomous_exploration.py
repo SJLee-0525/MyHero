@@ -7,7 +7,6 @@ from nav_msgs.msg import OccupancyGrid
 from geometry_msgs.msg import PoseStamped
 from visualization_msgs.msg import Marker, MarkerArray
 from actionlib_msgs.msg import GoalStatusArray
-from sensor_msgs.msg import Joy  # 추가
 import tf
 from std_msgs.msg import Bool
 
@@ -21,10 +20,6 @@ class AutonomousExploration:
         self.goal_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
         self.marker_pub = rospy.Publisher('/navigation_points', MarkerArray, queue_size=1)
         self.status_sub = rospy.Subscriber('/move_base/status', GoalStatusArray, self.status_callback)
-        
-        # 조이스틱 구독 추가 (토글용)
-        self.joy_sub = rospy.Subscriber('/joy', Joy, self.joy_callback)
-        self.auto_mode = False  # 기본은 자동 모드
         
         # 활성화 상태 구독
         self.enable_sub = rospy.Subscriber('/exploration_enable', Bool, self.enable_callback)
@@ -83,11 +78,6 @@ class AutonomousExploration:
             rospy.loginfo("현재 자율 탐색이 비활성화되어 있습니다.")
             return
         
-        # 수동 모드일 경우 새 목표 발행하지 않음
-        if not self.auto_mode:
-            rospy.loginfo("현재 수동 모드입니다. 자동으로 새로운 목적지 선택하지 않습니다.")
-            return
-        
         if self.occupancy_grid is None or self.global_costmap is None:
             rospy.logwarn("맵이나 비용정보를 아직 받지 못했습니다.")
             return
@@ -103,8 +93,6 @@ class AutonomousExploration:
             (current_pos, _) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             return
-
-        # ... 기존 forward_points 계산 코드 ...
 
         if forward_points:
             selected_point = random.choice(forward_points)
@@ -141,19 +129,7 @@ class AutonomousExploration:
         
         # 5초 대기
         rospy.sleep(7.0)
-    
-    def joy_callback(self, joy_msg):
-        # X 버튼(index 2) 또는 Y 버튼(index 3) 눌림 감지
-        if joy_msg.buttons[2] or joy_msg.buttons[3]:
-            # 이전 모드를 기억하고 토글
-            prev_mode = self.auto_mode
-            self.auto_mode = not self.auto_mode
-            mode = "자동" if self.auto_mode else "수동"
-            rospy.loginfo(f"내비게이션 모드가 {mode}(으로) 전환되었습니다.")
-            # 만약 수동 모드에서 자동 모드로 전환되었고, 현재 이동 중이 아니라면 새 목표 선택
-            if self.auto_mode and not prev_mode and not self.is_moving:
-                self.select_and_send_new_goal()
-    
+
     def enable_callback(self, msg):
         self.is_enabled = msg.data
         if self.is_enabled:

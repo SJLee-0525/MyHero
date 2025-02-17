@@ -73,7 +73,7 @@ class SocketClient:
             
             # 주행 상태 처리
             if 'is_driving_enabled' in data:
-                driving_status = 'tracking' if data['is_driving_enabled'] else 'stop'
+                driving_status = 'autonomous' if data['is_driving_enabled'] else 'stop'
                 self.driving_pub.publish(driving_status)
                 rospy.loginfo(f"Driving status: {driving_status}")
                     

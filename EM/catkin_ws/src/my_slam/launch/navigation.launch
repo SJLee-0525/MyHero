@@ -75,7 +75,7 @@
 
     <!-- RViz 설정 -->
     <node pkg="rviz" type="rviz" name="rviz" 
-          args="-d $(find my_slam)/rviz/nav2.rviz"
+          args="-d $(find my_slam)/rviz/nav.rviz"
           respawn="true"
           output="screen"/>
 

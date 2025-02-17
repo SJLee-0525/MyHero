@@ -50,8 +50,8 @@ export default function EnvironmentDataContextProvider({ children }) {
 
         try {
             const response = await request(`${userProgressStore.DEV_API_URL}/status/home/latest/${encodeURIComponent(familyId)}`)
-
             const resData = response.data
+
             if (response.success) {
                 if (resData.message === "Home status retrieved successfully") {
                 setEnvironmentData({

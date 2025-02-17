@@ -377,25 +377,25 @@
 }
 
 .user-button {
-    --w: 10em;
+    /* --w: 10em;
     --bg: rgb(var(--rgb));
     --bga: rgba(var(--rgb), 0.4);
 
     width: var(--w);
     height: var(--w);
     background: var(--bg);
-    box-shadow: 0 3px 12px 2px var(--bga);
+    box-shadow: 0 3px 12px 2px var(--bga); */
 
     transition: 0.1s transform, 0.3s box-shadow;
     will-change: transform, box-shadow;
     backface-visibility: hidden;
-
+    
     padding: 10px;
-    font-size: 18px;
+    font-size: 24px;
     font-weight: bold;
     height: 130px;
     color: white;
-    background-color: #44803F;
+    background-color: #4f814b;
     border: none;
     border-radius: 10px;
     text-align: center;

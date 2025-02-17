@@ -7,20 +7,12 @@ export const StoreContext = createContext({
   openNotificationState: "",
   openCalendarState: "",
   openSettingState: "",
-  alertState: "",
-  cameraState: "",
-  driveState: "",
-  micState: "",
   setOpenNewsState: () => {},
   setOpenMessageState: () => {},
   setOpenEmergencyState: () => {},
   setOpenNotificationState: () => {},
   setOpenCalendarState: () => {},
   setOpenSettingState: () => {},
-  setAlertState: () => {},
-  setCameraState: () => {},
-  setDriveState: () => {},
-  setMicState: () => {},
   handleNewsState: () => {},
   handleMessageState: () => {},
   handleMessageChange: () => {},
@@ -38,11 +30,6 @@ export default function StoreContextProvider({ children }) {
   const [openNewsState, setOpenNewsState] = useState(false);
   const [openCalendarState, setOpenCalendarState] = useState(false);
   const [openSettingState, setOpenSettingState] = useState(false);
-
-  const [alertState, setAlertState] = useState(true);
-  const [cameraState, setCameraState] = useState(true);
-  const [driveState, setDriveState] = useState(true);
-  const [micState, setMicState] = useState(true);
 
   function handleMessageState() {
     setOpenMessageState(true);
@@ -93,34 +80,6 @@ export default function StoreContextProvider({ children }) {
     setOpenSettingState(false);
   }
 
-  function handleAlertState() {
-    setAlertState((prevState) => {
-      return !prevState;
-    });
-    console.log("Alert: ", !alertState);
-  }
-
-  function handleCameraState() {
-    setCameraState((prevState) => {
-      return !prevState;
-    });
-    console.log("Camera: ", !cameraState);
-  }
-
-  function handleDriveState() {
-    setDriveState((prevState) => {
-      return !prevState;
-    });
-    console.log("Drive: ", !driveState);
-  }
-
-  function handleMicState() {
-    setMicState((prevState) => {
-      return !prevState;
-    });
-    console.log("Microphone: ", !micState);
-  }
-
   const ctxValue = {
     openMessageState,
     openEmergencyState,
@@ -128,20 +87,12 @@ export default function StoreContextProvider({ children }) {
     openNewsState,
     openCalendarState,
     openSettingState,
-    alertState,
-    cameraState,
-    driveState,
-    micState,
     setOpenMessageState,
     setOpenEmergencyState,
     setOpenNotificationState,
     setOpenNewsState,
     setOpenCalendarState,
     setOpenSettingState,
-    setAlertState,
-    setCameraState,
-    setDriveState,
-    setMicState,
     handleMessageState,
     handleMessageChange,
     handleSendMessage,
@@ -151,10 +102,6 @@ export default function StoreContextProvider({ children }) {
     handleCalendarState,
     handleSettingState,
     handleModalClose,
-    handleAlertState,
-    handleCameraState,
-    handleDriveState,
-    handleMicState,
   };
 
   return (

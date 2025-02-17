@@ -6,6 +6,7 @@ import App from "./App.jsx";
 
 import StoreContextProvider from "./store/store.jsx";
 import UserProgressContextProvider from "./store/userProgressStore.jsx";
+import SettingStoreContextProvider from "./store/settingStore.jsx";
 import MessageProvider from "./store/messageStore.jsx";
 import DisasterStoreContextProvider from "./store/disasterStore.jsx";
 import EnvironmentDataContextProvider from "./store/environmentData.jsx";
@@ -19,17 +20,19 @@ const startApp = async () => {
     <StrictMode>
       <StoreContextProvider>
         <UserProgressContextProvider>
-          <MessageProvider>
-            <DisasterStoreContextProvider> 
-              <EnvironmentDataContextProvider>
-                <WeatherStoreContextProvider>
-                  <NewsStoreContextProvider>
-                    <App />
-                  </NewsStoreContextProvider>
-                </WeatherStoreContextProvider>  
-              </EnvironmentDataContextProvider>
-            </DisasterStoreContextProvider>
-          </MessageProvider>
+          <SettingStoreContextProvider>
+            <MessageProvider>
+              <DisasterStoreContextProvider> 
+                <EnvironmentDataContextProvider>
+                  <WeatherStoreContextProvider>
+                    <NewsStoreContextProvider>
+                      <App />
+                    </NewsStoreContextProvider>
+                  </WeatherStoreContextProvider>  
+                </EnvironmentDataContextProvider>
+              </DisasterStoreContextProvider>
+            </MessageProvider>
+          </SettingStoreContextProvider>
         </UserProgressContextProvider>
       </StoreContextProvider>
     </StrictMode>

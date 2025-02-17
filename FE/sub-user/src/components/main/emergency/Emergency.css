@@ -762,10 +762,13 @@
   gap: 15px;
 }
 
-#notification .home-notification-content-header h2 {
+#notification .home-notification-content-emergency {
+  font-size: 36px;
+  color: red;
   margin: 0;
 }
-p {
+
+#notification .home-notification-content-header p {
   margin: 0 0 8px;
   font-weight: bold;
 }

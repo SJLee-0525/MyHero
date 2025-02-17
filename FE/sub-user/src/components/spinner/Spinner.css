@@ -63,6 +63,7 @@
   z-index: 99999;
 
   animation: l20-1 0.8s infinite linear alternate, l20-2 1.6s infinite linear;
+  transition: all 0.3s ease-in-out;
 }
 
 @keyframes l20-1 {

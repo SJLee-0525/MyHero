@@ -161,13 +161,20 @@ export default function EmergencyContextProvider({ children }) {
     }
 
     try {
-      const response = await request(
-        `${userProgressStore.DEV_API_URL}/notify/new/${familyId}?order=${order}`
+      const response = await fetch(
+        `${userProgressStore.DEV_API_URL}/notify/new/${familyId}?order=${order}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
       );
 
-      const resData = response.data;
+      const resData = await response.json().catch(() => null); // JSON 변환 실패 방지
 
-      if (response.success) {
+      if (response.ok) {
         if (resData.message === "New notification retrieved successfully") {
           const newNotifications = resData.result;
 

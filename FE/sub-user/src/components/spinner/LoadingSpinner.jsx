@@ -1,14 +1,17 @@
-import "./Spinner.css"
+import "./Spinner.css";
+import { createPortal } from "react-dom";
+import nana from "../../assets/spinner/nana_spinner.gif";
 
-// import cat from "../../assets/spinner/cat_spinner.gif";
-import nana from "../../assets/spinner/nana_spinner.gif"
 export default function LoadingSpinner() {
-  return (
-    // <div className="loading-overlay">
-    //   <div className="spinner"></div>
-    // </div>
+  const spinnerRoot = document.getElementById("spinner"); // HTML의 `#spinner` 요소 찾기
+
+  if (!spinnerRoot) return null; // `#spinner`가 없으면 렌더링 안 함
+
+  return createPortal(
     <div className="loading-overlay">
-      <img src={nana} alt="Loading..." className="spinner-img" />
-    </div>
-  )
+      {/* <img src={nana} alt="Loading..." className="spinner-img" /> */}
+      <div class="loader"></div>
+    </div>,
+    spinnerRoot
+  );
 }

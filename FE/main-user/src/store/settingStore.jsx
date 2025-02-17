@@ -31,7 +31,7 @@ export const SettingStoreContext = createContext({
 
     // 웹 소켓 설정
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8765');
+        const ws = new WebSocket('http://70.12.247.214:8765');
         
         ws.onopen = () => {
             console.log('웹 소켓 연결');

@@ -11,6 +11,7 @@ export default function Chatting({ isOpen, onBack }) {
     const { loginUserInfo } = useUserProgressStore();
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
+    const messageListRef = useRef(null);
 
     useEffect(() => {
         if (isOpen && selectedUser?.user_id) {
@@ -33,6 +34,16 @@ export default function Chatting({ isOpen, onBack }) {
             messageEndRef.current.scrollIntoView({ behavior: "auto", block: "end" });
         }
     }, [conversations[selectedUser.user_id]]);
+
+    const handleTouchStart = (e) => {
+        messageListRef.current.startY = e.touches[0].clientY;
+    };
+
+    const handleTouchMove = (e) => {
+        const diff = messageListRef.current.startY - e.touches[0].clientY;
+        messageListRef.current.scrollTop += diff;
+        messageListRef.current.startY = e.touches[0].clientY;
+    };
 
     const handleBack = () => {
         console.log("🔙 뒤로 가기 버튼 클릭됨");
@@ -105,7 +116,12 @@ export default function Chatting({ isOpen, onBack }) {
                 <button className="back-button" onClick={handleBack}>←</button>
                 <h2 className="chat-title">{selectedUser.name}</h2>
             </div>
-            <div className="message-content">
+            <div 
+                className="message-content"
+                ref={messageListRef}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+            >
                 <div className="message-list">
                     {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (
                         <p className="no-messages">대화 내역이 없습니다.</p>

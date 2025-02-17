@@ -29,9 +29,10 @@ logger = get_logger("DB_Authentication")
 
 # 세션 만료 시간 불러오기
 load_dotenv()
-session_expire_time: int = int(os.getenv("SESSION_EXPIRE_TIME", 1800))
-remember_expire_time: int = int(os.getenv("REMEMBER_EXPIRE_TIME", 2592000))
-session_cleanup_interval: int = int(os.getenv("SESSION_CLEANUP_INTERVAL", 600))
+session_expire_time: int = int(os.getenv("SESSION_EXPIRE_TIME", 1800))  # 일반 사용자 만료 : 기본 - 30분
+extended_session_expire_time: int = int(os.getenv("EXTENDED_SESSION_EXPIRE_TIME", 259200))  # 주 사용자 만료 : 기본 - 3일
+remember_expire_time: int = int(os.getenv("REMEMBER_EXPIRE_TIME", 2592000))  # 자동 로그인 사용자 만료 : 기본 - 30일
+session_cleanup_interval: int = int(os.getenv("SESSION_CLEANUP_INTERVAL", 600))  # Session 정리 주기 : 기본 - 10분
 
 # 로그인을 위해 Session을 생성하는 기능
 def create_session(session_data: LoginSessionsTable) -> bool:
@@ -106,13 +107,19 @@ def check_current_user(request: Request) -> str:
             if login_data is None:
                 return user_id
 
-            # Main User가 아닌 경우 세션 만료를 적용
-            if not login_data.is_main_user:
-                current_time: int = int(time())
-                last_active_time = login_data.last_active.replace(tzinfo=timezone.utc)
-                last_active: int = int(last_active_time.timestamp())
+            # 현재 시간 및 만료 시간 확인
+            current_time: int = int(time())
+            last_active_time = login_data.last_active.replace(tzinfo=timezone.utc)
+            last_active: int = int(last_active_time.timestamp())
 
-                # 시간 초과로 세션이 만료되었는지 확인
+            # 사용자 유형별로 세션 만료 여부 확인
+            if login_data.is_main_user is True:  # Main User에 해당하는 세션 만료 확인
+                if (login_data.is_remember and current_time - last_active > remember_expire_time) or \
+                    (not login_data.is_remember and current_time - last_active > extended_session_expire_time):
+                    session.delete(login_data)
+                    session.commit()
+                    return user_id
+            elif login_data.is_main_user is False:  # 그외 User에 해당하는 세션 만료 확인
                 if (login_data.is_remember and current_time - last_active > remember_expire_time) or \
                     (not login_data.is_remember and current_time - last_active > session_expire_time):
                     session.delete(login_data)
@@ -210,6 +217,7 @@ async def cleanup_login_sessions() -> None:
             try:
                 current_time: datetime = datetime.now(tz=timezone.utc)
                 expired_time: datetime = current_time - timedelta(seconds=session_expire_time)
+                extended_expired_time: datetime = current_time - timedelta(seconds=extended_session_expire_time)
                 remember_expired_time: datetime = current_time - timedelta(seconds=remember_expire_time)
 
                 expired_sessions = session.query(
@@ -218,8 +226,10 @@ async def cleanup_login_sessions() -> None:
                     and_(LoginSessionsTable.last_active < expired_time,
                          LoginSessionsTable.is_main_user == False,
                          LoginSessionsTable.is_remember == False),
+                    and_(LoginSessionsTable.last_active < extended_expired_time,
+                         LoginSessionsTable.is_main_user == True,
+                         LoginSessionsTable.is_remember == False),
                     and_(LoginSessionsTable.last_active < remember_expired_time,
-                         LoginSessionsTable.is_main_user == False,
                          LoginSessionsTable.is_remember == True)
                 )).all()
 

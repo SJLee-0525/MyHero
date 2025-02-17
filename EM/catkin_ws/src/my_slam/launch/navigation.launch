@@ -52,6 +52,9 @@
         <param name="priority" value="true"/>  <!-- 게임패드 우선순위 -->
     </node>
 
+    <!-- YOLO Pose 노드 -->
+    <include file="$(find yolo_pkg)/launch/zz.launch" />
+
     <!-- 주행 모드 매니저 -->
     <node pkg="my_slam" type="driving_mode_manager.py" name="driving_mode_manager" output="screen"/>
     

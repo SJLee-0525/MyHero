@@ -63,6 +63,7 @@ class AccountsTable(Base):
     login_sessions = relationship("LoginSessionsTable", cascade="all, delete")
     message_sent = relationship("MessageTable", foreign_keys="[MessageTable.from_id]" ,cascade="all, delete")
     message_received = relationship("MessageTable", foreign_keys="[MessageTable.to_id]" ,cascade="all, delete")
+    background_accounts_relations = relationship("BackgroundsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -94,6 +95,7 @@ class FamiliesTable(Base):
     mental_reports = relationship("MentalReportsTable", cascade="all, delete")
     notifications_relations = relationship("NotificationsTable", cascade="all, delete")
     settings_relations = relationship("SettingsTable", cascade="all, delete")
+    background_families_relations = relationship("BackgroundsTable", cascade="all, delete")
 
     def __repr__(self):
         return (f"" +
@@ -409,14 +411,14 @@ class BackgroundsTable(Base):
     """
     __tablename__ = "backgrounds"
 
-    id = Column(String(16), primary_key=True, nullable=False, autoincrement=True)
+    index = Column(INT, primary_key=True, nullable=False, autoincrement=True)
     family_id = Column(String(16), ForeignKey('families.id'), nullable=False)
     uploader_id = Column(String(16), ForeignKey('accounts.id'), nullable=False)
-    image_url = Column(TEXT, nullable=False)
+    image_url = Column(TEXT, nullable=True)
 
     def __repr__(self):
         return (f"" +
-                f"<Background(id='{self.id}', " +
+                f"<Background(index='{self.index}', " +
                 f"family_id='{self.family_id}', " +
                 f"uploader_id='{self.uploader_id}', " +
                 f"image_url='{self.image_url}')>"

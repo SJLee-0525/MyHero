@@ -174,3 +174,10 @@ class Settings(BaseModel):
     is_camera_enabled: Optional[bool] = None
     is_microphone_enabled: Optional[bool] = None
     is_driving_enabled: Optional[bool] = None
+
+class Background(BaseModel):
+    """
+    가족 배경화면 앨범에 새로운 사진을 추가하기 위해 Client가 보내는 데이터
+    """
+    family_id: Optional[str] = None
+    image_url: Optional[str] = None

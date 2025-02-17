@@ -227,7 +227,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 | 6 | `delete_notification(notification_id)` | 알림을 삭제하기 | `bool` |
 
 > **Tools 부분**
-> 
+>
 
 | Order | Function Name  | Description | Return |
 | --- | --- | --- | --- |
@@ -238,6 +238,9 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 | 5 | `get_settings(family_id)` | 설정 값 불러오기 | `dict` |
 | 6 | `update_settings(family_id, updated_settings)` | 설정 값 변경하기 | `bool` |
 | 7 | `delete_settings(family_id)` | 설정 값 삭제하기 | `bool` |
+| 8 | `add_background(background_data)` | 배경화면 추가하기 | `bool` |
+| 9 | `get_backgrond(family_id, uploader)` | 배경화면 불러오기 | `list[dict]` |
+| 10 | `delete_background(image_id)` | 배경화면 삭제하기 | `bool` |
 
 ### 변경 기록
 
@@ -309,3 +312,8 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     - Carebot의 Settings를 불러오고 변경할 수 있는 기능 완성
 - **[Release] `1.0.0`**
     - 최종 버전 배포
+- **[Fix] `1.0.1`**
+    - Family를 생성하기 전에 Settings를 생성하려는 문제 해결
+- **[Add] `1.0.2`**
+    - Family를 등록하기 위해 ID 검증과 이름을 확인하는 기능 추가
+    - 가족 단위 별 Background를 추가, 삭제, 불러오는 기능 추가

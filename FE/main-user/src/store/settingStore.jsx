@@ -18,6 +18,8 @@ export const SettingStoreContext = createContext({
   export default function SettingStoreContextProvider({ children }) {
     const { request } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
+    const [socket, setSocket] = useState(null);
+
 
     const [settings, setSettings] = useState({
         alertState: false,
@@ -27,6 +29,55 @@ export const SettingStoreContext = createContext({
     });
 
     const familyId = userProgressStore.familyInfo?.familyId || "";
+
+    // 웹 소켓 설정정
+    useEffect(() => {
+        const ws = new WebSocket('ws://localhost:8765');
+        
+        ws.onopen = () => {
+            console.log('웹 소켓 연결');
+        };
+
+        ws.onerror = (error) => {
+            console.error('웹 소켓 에러:', error);
+        };
+
+        ws.onclose = () => {
+            console.log('웹 소켓 연결 해제');
+        };
+
+        setSocket(ws);
+
+        return () => {
+            ws.close();
+        };
+    }, []);
+
+    const sendWebSocket = async (data) => {
+        try {
+            if (socket?.readyState === WebSocket.CLOSED) {
+                const ws = new WebSocket('ws://localhost:8765');
+                await new Promise((resolve, reject) => {
+                    ws.onopen = () => resolve();
+                    ws.onerror = () => reject();
+                });
+                setSocket(ws);
+            }
+    
+            if (socket?.readyState === WebSocket.OPEN) {
+                const wsMessage = {
+                    type: "settings",
+                    data: data
+                };
+                socket.send(JSON.stringify(wsMessage));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('WebSocket send error:', error);
+            return false;
+        }
+    }
 
     // 📌 1️⃣ 초기 설정값 불러오기 (GET 요청)
     async function fetchSettings() {
@@ -77,6 +128,14 @@ export const SettingStoreContext = createContext({
                     is_driving_enabled: updatedSettings.driveState,
                 }
             );
+            
+            // 웹 소켓에 변경값 전송
+            sendWebSocket({ 
+                is_alarm_enabled: updatedSettings.alertState,
+                is_camera_enabled: updatedSettings.cameraState,
+                is_microphone_enabled: updatedSettings.micState,
+                is_driving_enabled: updatedSettings.driveState,
+            });
 
             console.log("📡 PATCH 요청 결과:", response);
 

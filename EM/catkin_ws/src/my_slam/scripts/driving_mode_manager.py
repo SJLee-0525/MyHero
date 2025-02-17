@@ -34,7 +34,7 @@ class DrivingModeManager:
             self.current_mode = new_mode
     
     def handle_mode_change(self, new_mode):
-        # 모든 모드 비활성화
+        # 모든 모드 비활성화 (로그 제거)
         self.exploration_enable_pub.publish(False)
         self.tracking_enable_pub.publish(False)
         
@@ -43,32 +43,28 @@ class DrivingModeManager:
         self.cmd_vel_pub.publish(stop_cmd)
         
         # 새로운 모드 활성화
+        rospy.sleep(0.5)  # 안정화를 위한 대기
         if new_mode == "autonomous":
-            rospy.sleep(0.5)  # 안정화를 위한 대기
             self.exploration_enable_pub.publish(True)
+            rospy.loginfo("자율 주행 모드로 전환")
         elif new_mode == "tracking":
-            rospy.sleep(0.5)  # 안정화를 위한 대기
             self.tracking_enable_pub.publish(True)
-        # "stop" 모드는 이미 처리됨
+            rospy.loginfo("사람 추적 모드로 전환")
+        elif new_mode == "stop":
+            rospy.loginfo("정지 모드로 전환")
 
     def joy_callback(self, msg):
         # X 버튼 (인덱스 2)로 exploration 모드 토글
         if msg.buttons[2] == 1 and self.prev_x_button == 0:
-            if self.current_mode == "stop":
-                self.handle_mode_change("autonomous")
-                self.current_mode = "autonomous"
-            elif self.current_mode == "autonomous":
-                self.handle_mode_change("stop")
-                self.current_mode = "stop"
+            new_mode = "autonomous" if self.current_mode == "stop" else "stop"
+            self.handle_mode_change(new_mode)
+            self.current_mode = new_mode
         
         # Y 버튼 (인덱스 3)으로 tracking 모드 토글
         if msg.buttons[3] == 1 and self.prev_y_button == 0:
-            if self.current_mode == "stop":
-                self.handle_mode_change("tracking")
-                self.current_mode = "tracking"
-            elif self.current_mode == "tracking":
-                self.handle_mode_change("stop")
-                self.current_mode = "stop"
+            new_mode = "tracking" if self.current_mode == "stop" else "stop"
+            self.handle_mode_change(new_mode)
+            self.current_mode = new_mode
         
         # 버튼 상태 저장
         self.prev_x_button = msg.buttons[2]

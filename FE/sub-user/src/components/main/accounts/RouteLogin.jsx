@@ -39,12 +39,6 @@ export default function LoginModal() {
     }
     if (!response.success) {
       userProgressStore.setModalProgress("route-login");
-
-      if (response.error.message === "Invalid email or password") {
-        alert("이메일 또는 비밀번호가 일치하지 않습니다.");
-      } else {
-        alert(`로그인 실패:\n${response.error.message}`);
-      }
     }
   }
 

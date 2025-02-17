@@ -55,24 +55,6 @@ export default function RegisterMemberQr() {
 
           return { success: true, data: resData };
         }
-      } else {
-        // 서버에서 반환된 에러 정보 처리
-        if (resData.detail.type === "not found") {
-          console.error("에러 유형:", resData.detail.type);
-          console.error("에러 메시지:", resData.detail.message);
-          alert("가족 모임 ID를 확인해주세요.");
-        } else {
-          // console.error("/는 사용 불가합니다.");
-          alert("사용 불가능한 문자가 사용되었습니다.");
-        }
-        return {
-          success: false,
-          error: {
-            type: resData.detail?.type,
-            message: resData.detail?.message,
-            input: resData.detail?.input,
-          },
-        };
       }
     } catch (error) {
       // 네트워크 오류 처리
@@ -126,15 +108,9 @@ export default function RegisterMemberQr() {
         return;
       } else {
         userProgressStore.handleOpenModal("create-member-user-info");
-
-        console.error("가족 모임 등록 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 

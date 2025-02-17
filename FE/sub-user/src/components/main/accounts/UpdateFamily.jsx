@@ -43,15 +43,9 @@ export default function UpdateFamily() {
         navigate("/accounts");
       } else {
         userProgressStore.handleOpenModal("update-family-user-info");
-
-        console.error("가족 모임 정보 수정 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 

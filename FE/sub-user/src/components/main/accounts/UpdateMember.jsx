@@ -41,15 +41,9 @@ export default function UpdateMember() {
         navigate("/accounts");
       } else {
         userProgressStore.handleOpenModal("update-member-user-info");
-
-        console.error("닉네임 수정 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 

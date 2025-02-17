@@ -47,11 +47,6 @@ export default function CreateFamily() {
         navigate("/accounts");
       } else {
         userProgressStore.handleOpenModal("create-family-user-info");
-
-        console.error("가족 모임 생성 실패:", result.error);
-        alert(
-          `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-        );
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);

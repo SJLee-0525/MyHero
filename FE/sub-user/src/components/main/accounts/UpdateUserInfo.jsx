@@ -429,20 +429,9 @@ export default function UpdateUserInfo() {
         userProgressStore.handleOpenModal("update-user-info");
 
         console.error("회원 정보 수정 실패:", result.error);
-        if (
-          result.error.message ===
-          "Invalid value provided for account details (birth date)"
-        ) {
-          alert("생년월일을 다시 확인해 주세요.");
-        } else {
-          alert(
-            `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-          );
-        }
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 

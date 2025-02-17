@@ -52,19 +52,9 @@ export default function Signout() {
         navigate("/accounts");
       } else {
         userProgressStore.handleOpenModal("sign-out");
-
-        console.error("회원 탈퇴 실패:", result.error);
-        if (result.error.message === "Invalid password") {
-          alert("비밀번호가 일치하지 않습니다.");
-        } else {
-          alert(
-            `에러 발생: ${result.error.type}\n상세 메시지: ${result.error.message}`
-          );
-        }
       }
     } catch (error) {
       console.error("요청 처리 중 오류 발생:", error);
-      alert("요청 처리 중 문제가 발생했습니다. 다시 시도해주세요.");
     }
   }
 

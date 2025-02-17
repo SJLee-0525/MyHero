@@ -49,27 +49,38 @@ class EnhancedFallDetector:
         processed_frame = frame.copy()
         fall_detected = False
         debug_info = {}
-        center_point = None  # 바운딩 박스 중심점 추가
+        center_point = None
         
         try:
             results = self.model(frame, verbose=False)
             
             for result in results:
-                # 바운딩 박스 중심점 계산 로직 추가
-                if len(result.boxes) > 0:
-                    box = result.boxes[0]  # 첫 번째 박스
-                    x1, y1, x2, y2 = map(int, box.xyxy[0])
-                    # 중심점 계산
-                    center_x = (x1 + x2) // 2
-                    center_y = (y1 + y2) // 2
-                    center_point = (center_x, center_y)
-                
-                if result.keypoints is None:
+                if result.keypoints is None or len(result.boxes) == 0:
                     continue
+                    
+                # 가장 큰 바운딩 박스를 찾습니다
+                boxes = result.boxes
+                areas = []
+                for box in boxes:
+                    x1, y1, x2, y2 = map(int, box.xyxy[0])
+                    area = (x2 - x1) * (y2 - y1)
+                    areas.append(area)
+                
+                # 가장 큰 바운딩 박스의 인덱스
+                largest_idx = areas.index(max(areas))
+                
+                # 가장 큰 바운딩 박스의 중심점 계산
+                x1, y1, x2, y2 = map(int, boxes[largest_idx].xyxy[0])
+                center_x = (x1 + x2) // 2
+                center_y = (y1 + y2) // 2
+                center_point = (center_x, center_y)
+                
+                # 해당하는 키포인트만 처리
                 keypoints = result.keypoints.data
-                for person_idx, kps in enumerate(keypoints):
+                if largest_idx < len(keypoints):
+                    kps = keypoints[largest_idx]
                     is_fallen, person_debug_info = self.pose_analyzer.analyze_pose(kps)
-                    debug_info[f'person_{person_idx}'] = person_debug_info
+                    debug_info['person'] = person_debug_info
 
                     processed_frame = self.visualize_detection(
                         processed_frame,
@@ -86,12 +97,10 @@ class EnhancedFallDetector:
             cv2.putText(
                 processed_frame,
                 f"FPS: {fps:.1f}",
-                (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX,
+                (10, 30), cv2.FONT_HERSHEY_SIMPLEX,
                 1, self.config.colors['fps_text'], 2
             )
 
-            # center_point 추가하여 반환
             ret = (processed_frame, fall_detected, debug_info, center_point)
             return ret
 

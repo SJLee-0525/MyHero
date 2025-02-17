@@ -3,6 +3,7 @@
 
 import rospy
 from geometry_msgs.msg import Point, Twist
+from sensor_msgs.msg import LaserScan
 import numpy as np
 
 class PersonFollower:
@@ -15,6 +16,10 @@ class PersonFollower:
         self.max_linear_speed = rospy.get_param('~max_linear_speed', 0.6)   # DWA planner와 일치
         self.min_linear_speed = rospy.get_param('~min_linear_speed', 0.1)   # DWA planner와 일치
         self.Kp_angular = rospy.get_param('~Kp_angular', 0.003)  # 넓어진 이미지에 맞춰 조정
+        
+        # 장애물 감지 관련 변수 초기화
+        self.obstacle_detected = False
+        self.latest_scan = None
         
         # 카메라와 LiDAR 파라미터
         self.camera_fov = rospy.get_param('~camera_fov', 60)  # 카메라 화각 (도)
@@ -40,6 +45,14 @@ class PersonFollower:
         # 마지막 검출 시간 저장
         self.last_detection_time = rospy.Time.now()
         self.detection_timeout = rospy.Duration(1.0)  # 1초 동안 검출이 없으면 정지
+
+        # LiDAR scan 관련 변수 초기화
+        self.latest_scan = None
+        self.scan_sub = rospy.Subscriber('/scan', LaserScan, self.scan_callback)
+        
+        # 안전 거리 관련 파라미터 추가
+        self.safety_distance = rospy.get_param('~safety_distance', 0.5)  # 안전 거리 (미터)
+        self.min_front_distance = float('inf')  # 전방 최소 거리 초기화
         
     def get_target_angle_and_distance(self, bbox_x, scan_msg):
         # 이미지 x 좌표를 라디안으로 변환
@@ -96,6 +109,14 @@ class PersonFollower:
         twist.angular.z = angular_z
         self.cmd_vel_pub.publish(twist)
         
+    def scan_callback(self, msg):
+        self.latest_scan = msg
+        # 전방 90도(-45도~+45도) 내의 최소 거리 계산
+        front_angles = np.arange(len(msg.ranges))[len(msg.ranges)//4:3*len(msg.ranges)//4]
+        front_ranges = np.array(msg.ranges)[front_angles]
+        valid_ranges = front_ranges[np.isfinite(front_ranges)]
+        self.min_front_distance = np.min(valid_ranges) if len(valid_ranges) > 0 else float('inf')
+
     def run(self):
         rate = rospy.Rate(10)  # 10Hz
         

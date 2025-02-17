@@ -13,7 +13,9 @@ export default function SettingModal({ title, onCloseConfirm }) {
         <Settings
             type="box"
         >
-            배경화면 변경
+            <div id="setting-name">
+              배경화면 변경
+            </div>
             <Backgrounds/>
         </Settings>
       </div>

@@ -419,6 +419,67 @@
   margin-top: 0;
 }
 
+#emergency-alert-modal-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  height: 50px;
+
+  margin-bottom: 10px;
+  padding: 10px;
+
+  border-radius: 8px 8px 0px 0px;
+}
+
+#emergency-alert-modal-title h2 {
+  margin: 0;
+}
+
+#emergency-alert-modal-title .period-report-control {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+
+  width: 60%;
+  gap: 10px;
+}
+
+#emergency-alert-modal-title .period-report-control input {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  padding: 5px 8px;
+
+  background-color: #00000030;
+}
+
+#emergency-alert-modal-title .period-report-control button {
+  width: 120px;
+  height: 40px;
+
+  border: 0;
+  border-radius: 8px;
+
+  padding: 5px 8px;
+
+  font-weight: bold;
+  background-color: #ff9500;
+  color: white;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#emergency-alert-modal-title .period-report-control button:hover {
+  filter: brightness(0.8);
+  transition: all 0.3s ease;
+}
+
 #emergency-alert-modal-box {
   display: flex;
   flex-direction: column;

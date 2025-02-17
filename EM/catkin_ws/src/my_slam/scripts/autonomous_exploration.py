@@ -9,10 +9,11 @@ from visualization_msgs.msg import Marker, MarkerArray
 from actionlib_msgs.msg import GoalStatusArray
 from sensor_msgs.msg import Joy  # 추가
 import tf
+from std_msgs.msg import Bool
 
-class AutoNavigation:
+class AutonomousExploration:
     def __init__(self):
-        rospy.init_node('auto_navigation', anonymous=True)
+        rospy.init_node('autonomous_exploration', anonymous=True)
         
         # 맵, 비용 정보, 상태, 마커, 목표 발행 관련 노드
         self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
@@ -24,6 +25,10 @@ class AutoNavigation:
         # 조이스틱 구독 추가 (토글용)
         self.joy_sub = rospy.Subscriber('/joy', Joy, self.joy_callback)
         self.auto_mode = True  # 기본은 자동 모드
+        
+        # 활성화 상태 구독
+        self.enable_sub = rospy.Subscriber('/exploration_enable', Bool, self.enable_callback)
+        self.is_enabled = False
         
         self.occupancy_grid = None
         self.global_costmap = None
@@ -74,6 +79,10 @@ class AutoNavigation:
             return 0.0
     
     def select_and_send_new_goal(self):
+        if not self.is_enabled:
+            rospy.loginfo("현재 자율 탐색이 비활성화되어 있습니다.")
+            return
+        
         # 수동 모드일 경우 새 목표 발행하지 않음
         if not self.auto_mode:
             rospy.loginfo("현재 수동 모드입니다. 자동으로 새로운 목적지 선택하지 않습니다.")
@@ -144,6 +153,14 @@ class AutoNavigation:
             # 만약 수동 모드에서 자동 모드로 전환되었고, 현재 이동 중이 아니라면 새 목표 선택
             if self.auto_mode and not prev_mode and not self.is_moving:
                 self.select_and_send_new_goal()
+    
+    def enable_callback(self, msg):
+        self.is_enabled = msg.data
+        if self.is_enabled:
+            rospy.loginfo("자율 탐색 모드 활성화")
+            self.select_and_send_new_goal()
+        else:
+            rospy.loginfo("자율 탐색 모드 비활성화")
     
     def find_empty_spaces(self, occupancy_grid):
         empty_points = []
@@ -263,7 +280,7 @@ class AutoNavigation:
 
 if __name__ == '__main__':
     try:
-        auto_nav = AutoNavigation()
+        auto_nav = AutonomousExploration()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

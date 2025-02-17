@@ -94,10 +94,12 @@ class EmotionService:
             messages.append({"role": "user", "content": conv_text})
 
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o",
                 messages=messages,
-                temperature=0.3,  # 낮은 temperature로 더 일관된 응답 유도
-                max_tokens=500
+                temperature=0.1,  
+                max_tokens=1000,  
+                presence_penalty=-0.5, 
+                frequency_penalty=-0.5
             )
 
             try:

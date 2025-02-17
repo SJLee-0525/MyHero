@@ -3,10 +3,13 @@ import { useMainHttp } from "../hooks/useMainHttp";
 import { UserProgressContext } from "./userProgressStore";
 
 export const SettingStoreContext = createContext({
+    backgrounds: [],
     alertState: true,
     cameraState: true,
     driveState: true,
     micState: true,
+    fetchBackgrounds: () => {},
+    addBackground: () => {},
     toggleFeature: () => {},
     fetchSettings: () => {},
   });
@@ -19,6 +22,7 @@ export const SettingStoreContext = createContext({
     const { request } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
     const [socket, setSocket] = useState(null);
+    const [backgrounds, setBackgrounds] = useState([]);
 
     const [settings, setSettings] = useState({
         alertState: false,
@@ -78,7 +82,6 @@ export const SettingStoreContext = createContext({
         }
     }
 
-    // 📌 1️⃣ 초기 설정값 불러오기 (GET 요청)
     async function fetchSettings() {
         if (!familyId) return;
 
@@ -110,7 +113,7 @@ export const SettingStoreContext = createContext({
             const updatedMicState = !settings.micState;
             setSettings((prev) => ({ ...prev, micState: updatedMicState }));
 
-            const response = await request(`http://70.12.247.214:8001/bluetooth/speaker/toggle`, "POST", { is_microphone_enabled: updatedMicState });
+            const response = await request(`http://70.12.247.214:8001/bluetooth/speaker/toggle`, "POST");
 
             const resData = response.data;
 
@@ -126,7 +129,6 @@ export const SettingStoreContext = createContext({
         }
     }
 
-    // 📌 2️⃣ 상태를 PATCH 요청으로 변경
     async function toggleFeature(featureKey) {
         if (!familyId) return;
 
@@ -149,7 +151,6 @@ export const SettingStoreContext = createContext({
                 }
             );
             
-            // 웹 소켓에 변경값 전송
             sendWebSocket({ 
                 is_alarm_enabled: updatedSettings.alertState,
                 is_camera_enabled: updatedSettings.cameraState,
@@ -160,15 +161,61 @@ export const SettingStoreContext = createContext({
             console.log("📡 PATCH 요청 결과:", response);
 
             if (!response.success) {
-                // 🔥 3️⃣ 요청 실패 시 원래 상태로 복구
                 setSettings(settings);
                 console.error(`❌ ${featureKey} 상태 변경 실패:`, response.error);
             } else {
                 console.log(`✅ ${featureKey} 상태 변경 성공:`, updatedSettings);
             }
         } catch (error) {
-            // 🔥 4️⃣ 네트워크 오류 발생 시 원래 상태로 복구
             console.error(`❌ ${featureKey} 상태 변경 중 오류 발생:`, error);
+        }
+    }
+
+    async function fetchBackgrounds() {
+        if (!familyId) return;
+
+        try {
+            const response = await request(
+                `${userProgressStore.DEV_API_URL}/tools/background/${familyId}?uploader=mine`,
+                "GET"
+            );
+
+            const resData = response.data;
+
+            if (response.success) {
+                setBackgrounds(resData.result.map(bg => ({
+                    index: bg.id,
+                    imageUrl: bg.image_url
+                })));
+            } else {
+                console.warn("⚠️ 배경화면 목록이 비어 있습니다.");
+                setBackgrounds([]);
+            }
+        } catch (error) {
+            console.error("❌ 배경화면 목록 불러오기 실패:", error);
+        }
+    }
+
+    async function addBackground(imageUrl) {
+        if (!imageUrl || !familyId) return;
+
+        try {
+            const response = await request(`${userProgressStore.DEV_API_URL}/tools/background`, "POST", {
+                family_id: familyId,
+                image_url: imageUrl,
+            });
+
+            const resData = response.data;
+
+            if (response.success && resData.result) {
+                alert("📸 이미지가 저장되었습니다!");
+            } else {
+                console.error("❌ 배경 추가 실패:", response.error);
+                alert("❌ 이미지 저장에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+            alert("❌ 네트워크 오류로 인해 저장에 실패했습니다.");
         }
     }
 
@@ -179,10 +226,13 @@ export const SettingStoreContext = createContext({
     }, [familyId]);
   
     const ctxValue = {
-      ...settings,
-      toggleFeature,
-      fetchSettings,
-      audioToggle,
+        backgrounds,
+        ...settings,
+        fetchBackgrounds,
+        addBackground,
+        toggleFeature,
+        fetchSettings,
+        audioToggle,
     };
   
     return (

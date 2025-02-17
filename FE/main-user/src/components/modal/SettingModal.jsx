@@ -3,7 +3,7 @@ import "../settings/Settings";
 import Backgrounds from "../settings/Backgrounds";"../settings/Backgrounds";
 import Settings from "../settings/Settings";
 
-export default function SettingModal({ title, onCloseConfirm, children }) {
+export default function SettingModal({ title, onCloseConfirm }) {
   return (
     <div id="modal-body">
       <div id="modal-bar">

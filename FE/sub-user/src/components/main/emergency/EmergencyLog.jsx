@@ -111,7 +111,7 @@ export default function EmergencyLog() {
       </div>
 
       <div className="emergency-alert-modal-actions">
-        <button onClick={userProgressStore.handleCloseModal}>Close</button>
+        <button onClick={userProgressStore.handleCloseModal}>닫기</button>
       </div>
     </Modal>
   );

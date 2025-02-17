@@ -72,7 +72,7 @@ export default function CreateFamily() {
         <div className="signup-header">
           <h2>가족 모임 생성</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
-            X
+            ⨉
           </button>
         </div>
         <p className="signup-control">

@@ -68,7 +68,7 @@ export default function UpdateFamily() {
         <div className="signup-header">
           <h2>가족 모임 정보 수정</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
-            X
+            ⨉
           </button>
         </div>
         <p className="signup-control">

@@ -110,7 +110,7 @@ export default function PastNotifications() {
           })}
         </div>
         <div className="emergency-alert-modal-actions">
-          <button onClick={userProgressStore.handleCloseModal}>Close</button>
+          <button onClick={userProgressStore.handleCloseModal}>닫기</button>
         </div>
       </div>
     </Modal>

@@ -100,7 +100,7 @@ export default function ChangePassword() {
         <div className="signup-header">
           <h2>비밀번호 변경</h2>
           <button type="button" onClick={userProgressStore.handleCloseModal}>
-            X
+            ⨉
           </button>
         </div>
         <div className="login-control">

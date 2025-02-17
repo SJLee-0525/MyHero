@@ -143,7 +143,7 @@ export default function RegisterMemberQr() {
       <div className="signup-header">
         <h2>가족 모임 연결</h2>
         <button type="button" onClick={userProgressStore.handleCloseModal}>
-          X
+          ⨉
         </button>
       </div>
 

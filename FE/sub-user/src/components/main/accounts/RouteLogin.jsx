@@ -69,7 +69,7 @@ export default function LoginModal() {
             type="button"
             onClick={() => userProgressStore.handleCloseModal()}
           >
-            X
+            ⨉
           </button>
         </div>
         <div className="login-form-row">

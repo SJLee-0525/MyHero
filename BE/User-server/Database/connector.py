@@ -28,8 +28,8 @@ class Database:
             f"mysql+pymysql://{self.user}:"+
             f"{self.password}@{self.host}:{self.port}/"+
             f"{self.schema}?charset={self.charset}",
-            pool_size=3,
-            max_overflow=2,
+            pool_size=10,
+            max_overflow=5,
             pool_recycle=120,
             pool_pre_ping=True,
             echo=False

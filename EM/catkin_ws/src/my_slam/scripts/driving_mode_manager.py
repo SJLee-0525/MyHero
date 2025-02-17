@@ -4,6 +4,7 @@
 import rospy
 from std_msgs.msg import String, Bool
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Joy  # Joy 메시지 import 추가
 
 class DrivingModeManager:
     def __init__(self):
@@ -14,12 +15,17 @@ class DrivingModeManager:
         
         # Subscribers
         self.mode_sub = rospy.Subscriber('driving_mode', String, self.mode_callback)
+        self.joy_sub = rospy.Subscriber('joy', Joy, self.joy_callback)  # 조이스틱 구독자 추가
         
         # Publishers
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
         self.exploration_enable_pub = rospy.Publisher('/exploration_enable', Bool, queue_size=1)
         self.tracking_enable_pub = rospy.Publisher('/tracking_enable', Bool, queue_size=1)
         
+        # 버튼 상태 저장 (이전 상태와 비교하기 위함)
+        self.prev_x_button = 0
+        self.prev_y_button = 0
+    
     def mode_callback(self, msg):
         new_mode = msg.data
         if new_mode != self.current_mode:
@@ -44,6 +50,29 @@ class DrivingModeManager:
             rospy.sleep(0.5)  # 안정화를 위한 대기
             self.tracking_enable_pub.publish(True)
         # "stop" 모드는 이미 처리됨
+
+    def joy_callback(self, msg):
+        # X 버튼 (인덱스 2)로 exploration 모드 토글
+        if msg.buttons[2] == 1 and self.prev_x_button == 0:
+            if self.current_mode == "stop":
+                self.handle_mode_change("autonomous")
+                self.current_mode = "autonomous"
+            elif self.current_mode == "autonomous":
+                self.handle_mode_change("stop")
+                self.current_mode = "stop"
+        
+        # Y 버튼 (인덱스 3)으로 tracking 모드 토글
+        if msg.buttons[3] == 1 and self.prev_y_button == 0:
+            if self.current_mode == "stop":
+                self.handle_mode_change("tracking")
+                self.current_mode = "tracking"
+            elif self.current_mode == "tracking":
+                self.handle_mode_change("stop")
+                self.current_mode = "stop"
+        
+        # 버튼 상태 저장
+        self.prev_x_button = msg.buttons[2]
+        self.prev_y_button = msg.buttons[3]
 
 if __name__ == '__main__':
     try:

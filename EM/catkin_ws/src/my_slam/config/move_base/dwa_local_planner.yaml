@@ -34,7 +34,7 @@ DWAPlannerROS:
 
   # === Oscillation Prevention Parameters ===
   oscillation_reset_dist: 0.1  # 기본값: 0.05 | Oscillation 리셋 최소 이동 거리 (m)
-  oscillation_timeout: 2.0     # 기본값: (예: 2.0) | Oscillation 타임아웃 (초)
+  oscillation_timeout: 1.0     # 기본값: (예: 2.0) | Oscillation 타임아웃 (초)
 
   # === Trajectory Scoring Parameters ===
   path_distance_bias: 32.0     # 기본값: 32.0 | 경로 추종 가중치

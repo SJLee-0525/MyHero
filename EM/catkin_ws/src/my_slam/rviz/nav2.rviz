@@ -54,7 +54,7 @@ Visualization Manager:
       Color: 255; 0; 0
       Enabled: true
       Name: Global Plan
-      Topic: /move_base/NavfnROS/plan
+      Topic: /move_base/HybridAStarPlanner/plan
       Line Style: Lines
       Line Width: 0.03
       

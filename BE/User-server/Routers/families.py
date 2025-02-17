@@ -368,6 +368,39 @@ async def get_family(family_id: str, request_id: str = Depends(Database.check_cu
             }
         )
 
+@router.get("/name/{family_id}", status_code=status.HTTP_200_OK)
+async def get_name_family(family_id: str, request_id: str = Depends(Database.check_current_user)):
+    # 계정이 있는 사용자가 가족의 이름을 조회해볼 수 있음
+    request_data: dict = Database.get_one_account(request_id);
+
+    if not request_data:
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 가족의 정보를 불러오기
+    family_data: dict = Database.get_one_family(family_id)
+
+    if family_data:
+        return {
+            "message": "Family retrieved successfully",
+            "result": {"family_name": family_data["family_name"] if family_data["family_name"] else None}
+        }
+    else:
+        logger.warning(f"Family not found: {family_id}")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail={
+                "type": "not found",
+                "message": "Family not found"
+            }
+        )
+
 # 가족 정보를 수정하는 기능 (family_name만 수정 가능)
 @router.patch("/{family_id}", status_code=status.HTTP_200_OK)
 async def update_family(family_id: str, updated_family: Family, request_id: str = Depends(Database.check_current_user)):

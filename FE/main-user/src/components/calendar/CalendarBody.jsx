@@ -33,6 +33,7 @@ export default function CalendarBody({ openModal }) {
               ${selectedDate.date === date.date ? "selected-date" : ""}
               ${currentDate.month !== date.month ? "not-current-month" : ""}
               ${date.dayIndexOfWeek === 0 ? "sunday" : ""}
+              ${currentDate.day === date.day && selectedDate.date !== date.date ? "today" : ""}
             `}
           >
             <div>

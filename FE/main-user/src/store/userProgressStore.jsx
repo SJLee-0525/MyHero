@@ -108,6 +108,8 @@ export default function UserProgressContextProvider({ children }) {
               });
           }
 
+          await connectRasp(email, password);
+
           return { success: true, data: resData.user_id };
         }
       } else {
@@ -129,6 +131,23 @@ export default function UserProgressContextProvider({ children }) {
           message: "네트워크 오류가 발생했습니다.",
         },
       };
+    }
+  }
+
+  async function connectRasp(email, password) {
+    try {
+      const response = await request(`http://70.12.247.214:8001/api/login`, "POST", {
+        email,
+        password,
+      });
+  
+      if (response.success) {
+        console.log("✅ 라즈베리파이 로그인 성공:", response);
+      } else {
+        console.log("❌ 라즈베리파이 로그인 실패:", response);
+      }
+    } catch (error) {
+      console.error("❌ 라즈베리파이 네트워크 에러", error);
     }
   }
 
@@ -163,20 +182,6 @@ export default function UserProgressContextProvider({ children }) {
     
     } catch (error) {
       console.error(error)
-    }
-  }
-
-  async function connectRasp() {
-    try {
-      const response = await request(`http://70.12.247.214:8001/api/userid`, 'POST', {email: loginUserInfo.userInfo.email, password: loginUserInfo.userInfo.password})
-
-      if (response.success) {
-        console.log("연결되었습니다.", response);
-      } else {
-        console.log("문제가 있습니다.", response);
-      }
-    } catch (error) {
-      console.error("네트워크 에러", error);
     }
   }
 

@@ -11,13 +11,19 @@ import micIcon from "../../assets/microphone.png";
 import Icon from "./Icon.jsx";
 
 export default function Dock() {
-  const { alertState, cameraState, driveState, micState, toggleFeature } = useSettingStore();
+  const { alertState, cameraState, driveState, micState, audioToggle, toggleFeature } = useSettingStore();
   const [clickedIcon, setClickedIcon] = useState(null);
 
   // 클릭 시 애니메이션 추가
   const handleClick = (iconType, featureKey) => {
     setClickedIcon(iconType);
     setTimeout(() => setClickedIcon(null), 200); // 0.2초 후 원래 상태로 복귀
+
+    if (featureKey === "micState") {
+      console.log("🎤 마이크 상태 변경, audioToggle() 실행!");
+      audioToggle(); // ✅ featureKey가 micState일 때 실행
+    }
+    
     toggleFeature(featureKey);
   };
 

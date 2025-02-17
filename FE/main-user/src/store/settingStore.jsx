@@ -3,10 +3,13 @@ import { useMainHttp } from "../hooks/useMainHttp";
 import { UserProgressContext } from "./userProgressStore";
 
 export const SettingStoreContext = createContext({
+    backgrounds: [],
     alertState: true,
     cameraState: true,
     driveState: true,
     micState: true,
+    fetchBackgrounds: () => {},
+    addBackground: () => {},
     toggleFeature: () => {},
     fetchSettings: () => {},
   });
@@ -18,6 +21,8 @@ export const SettingStoreContext = createContext({
   export default function SettingStoreContextProvider({ children }) {
     const { request } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
+    const [socket, setSocket] = useState(null);
+    const [backgrounds, setBackgrounds] = useState([]);
 
     const [settings, setSettings] = useState({
         alertState: false,
@@ -28,7 +33,55 @@ export const SettingStoreContext = createContext({
 
     const familyId = userProgressStore.familyInfo?.familyId || "";
 
-    // 📌 1️⃣ 초기 설정값 불러오기 (GET 요청)
+    // 웹 소켓 설정
+    useEffect(() => {
+        const ws = new WebSocket('http://70.12.247.214:8765');
+        
+        ws.onopen = () => {
+            console.log('웹 소켓 연결');
+        };
+
+        ws.onerror = (error) => {
+            console.error('웹 소켓 에러:', error);
+        };
+
+        ws.onclose = () => {
+            console.log('웹 소켓 연결 해제');
+        };
+
+        setSocket(ws);
+
+        return () => {
+            ws.close();
+        };
+    }, []);
+
+    const sendWebSocket = async (data) => {
+        try {
+            if (socket?.readyState === WebSocket.CLOSED) {
+                const ws = new WebSocket('ws://localhost:8765');
+                await new Promise((resolve, reject) => {
+                    ws.onopen = () => resolve();
+                    ws.onerror = () => reject();
+                });
+                setSocket(ws);
+            }
+    
+            if (socket?.readyState === WebSocket.OPEN) {
+                const wsMessage = {
+                    type: "settings",
+                    data: data
+                };
+                socket.send(JSON.stringify(wsMessage));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('WebSocket send error:', error);
+            return false;
+        }
+    }
+
     async function fetchSettings() {
         if (!familyId) return;
 
@@ -55,7 +108,27 @@ export const SettingStoreContext = createContext({
         }
     }
 
-    // 📌 2️⃣ 상태를 PATCH 요청으로 변경
+    async function audioToggle() {
+        try {
+            const updatedMicState = !settings.micState;
+            setSettings((prev) => ({ ...prev, micState: updatedMicState }));
+
+            const response = await request(`http://70.12.247.214:8001/bluetooth/speaker/toggle`, "POST");
+
+            const resData = response.data;
+
+            if (response.success && resData.message === "Speaker and microphone settings updated") {
+                console.log("✅ 마이크 상태 변경 성공:", resData);
+            } else {
+                console.error("❌ 마이크 상태 변경 실패:", response.error);
+                setSettings((prev) => ({ ...prev, micState: !updatedMicState }));
+            }
+        } catch (error) {
+            console.error("❌ 네트워크 오류 발생:", error);
+            setSettings((prev) => ({ ...prev, micState: !prev.micState }));
+        }
+    }
+
     async function toggleFeature(featureKey) {
         if (!familyId) return;
 
@@ -77,19 +150,72 @@ export const SettingStoreContext = createContext({
                     is_driving_enabled: updatedSettings.driveState,
                 }
             );
+            
+            sendWebSocket({ 
+                is_alarm_enabled: updatedSettings.alertState,
+                is_camera_enabled: updatedSettings.cameraState,
+                is_microphone_enabled: updatedSettings.micState,
+                is_driving_enabled: updatedSettings.driveState,
+            });
 
             console.log("📡 PATCH 요청 결과:", response);
 
             if (!response.success) {
-                // 🔥 3️⃣ 요청 실패 시 원래 상태로 복구
                 setSettings(settings);
                 console.error(`❌ ${featureKey} 상태 변경 실패:`, response.error);
             } else {
                 console.log(`✅ ${featureKey} 상태 변경 성공:`, updatedSettings);
             }
         } catch (error) {
-            // 🔥 4️⃣ 네트워크 오류 발생 시 원래 상태로 복구
             console.error(`❌ ${featureKey} 상태 변경 중 오류 발생:`, error);
+        }
+    }
+
+    async function fetchBackgrounds() {
+        if (!familyId) return;
+
+        try {
+            const response = await request(
+                `${userProgressStore.DEV_API_URL}/tools/background/${familyId}?uploader=mine`,
+                "GET"
+            );
+
+            const resData = response.data;
+
+            if (response.success) {
+                setBackgrounds(resData.result.map(bg => ({
+                    index: bg.id,
+                    imageUrl: bg.image_url
+                })));
+            } else {
+                console.warn("⚠️ 배경화면 목록이 비어 있습니다.");
+                setBackgrounds([]);
+            }
+        } catch (error) {
+            console.error("❌ 배경화면 목록 불러오기 실패:", error);
+        }
+    }
+
+    async function addBackground(imageUrl) {
+        if (!imageUrl || !familyId) return;
+
+        try {
+            const response = await request(`${userProgressStore.DEV_API_URL}/tools/background`, "POST", {
+                family_id: familyId,
+                image_url: imageUrl,
+            });
+
+            const resData = response.data;
+
+            if (response.success && resData.result) {
+                alert("📸 이미지가 저장되었습니다!");
+            } else {
+                console.error("❌ 배경 추가 실패:", response.error);
+                alert("❌ 이미지 저장에 실패했습니다.");
+            }
+        } catch (error) {
+            console.error("❌ 네트워크 오류:", error);
+            alert("❌ 네트워크 오류로 인해 저장에 실패했습니다.");
         }
     }
 
@@ -100,9 +226,13 @@ export const SettingStoreContext = createContext({
     }, [familyId]);
   
     const ctxValue = {
-      ...settings,
-      toggleFeature,
-      fetchSettings,
+        backgrounds,
+        ...settings,
+        fetchBackgrounds,
+        addBackground,
+        toggleFeature,
+        fetchSettings,
+        audioToggle,
     };
   
     return (

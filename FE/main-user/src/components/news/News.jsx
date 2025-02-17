@@ -4,7 +4,7 @@ import NewsBox from "./NewsBox";
 import "./News.css";
 
 const defaultCategories = {
-  "사회": "business", 
+  "경제": "business", 
   "엔터": "entertainment", 
   "환경": "environment", 
   "건강": "health",

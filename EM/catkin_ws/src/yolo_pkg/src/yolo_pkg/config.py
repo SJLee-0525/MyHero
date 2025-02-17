@@ -27,7 +27,6 @@ class Config:
         self.model_path = 'yolov8n-pose.pt'
         self.confidence_threshold = 0.4
         self.save_dir = 'fall_detection_logs'
-        self.api_url = 'http://localhost:8000/fall-alert'
         self.display_size = (960, 540)
         self.skeleton_connections = [
             (0,1), (0,2), (1,3), (2,4),  # 얼굴

@@ -19,7 +19,7 @@ async def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
     pkg_root = os.path.abspath(os.path.join(script_dir, ".."))
     video_path = os.path.join(pkg_root, "test_video", "test4.mp4")
-    # video_path = 0  # 웹캠 사용
+    video_path = 0  # 웹캠 사용
 
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():

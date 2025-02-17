@@ -13,12 +13,10 @@ from yolo_pkg.pose_analyzer import EnhancedPoseAnalyzer
 from yolo_pkg.fps_tracker import FPSTracker
 
 class EnhancedFallDetector:
-    """향상된 낙상 감지 클래스 + 쿨다운 추가"""
+    """향상된 낙상 감지 클래스"""
     def __init__(self):
         self.config = Config()
         self.pose_analyzer = EnhancedPoseAnalyzer()
-        self.last_fall_notification_time = None
-        self.notification_colldown = 60
         try:
             self.model = YOLO(self.config.model_path)
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -34,13 +32,15 @@ class EnhancedFallDetector:
         processed_frame = frame.copy()
         fall_detected = False
         debug_info = {}
-        center_point = None  # 바운딩 박스 중심점 추가
+        center_point = None  # 바운딩 박스 중심점 초기화
         
         try:
             results = self.model(frame, verbose=False)
-            
             for result in results:
-                # 바운딩 박스 중심점 계산 로직 추가
+                if result.keypoints is None:
+                    continue
+                
+                # 첫 번째 검출된 사람의 바운딩 박스 중심점만 사용
                 if len(result.boxes) > 0:
                     box = result.boxes[0]  # 첫 번째 박스
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
@@ -49,8 +49,6 @@ class EnhancedFallDetector:
                     center_y = (y1 + y2) // 2
                     center_point = (center_x, center_y)
                 
-                if result.keypoints is None:
-                    continue
                 keypoints = result.keypoints.data
                 for person_idx, kps in enumerate(keypoints):
                     is_fallen, person_debug_info = self.pose_analyzer.analyze_pose(kps)
@@ -76,9 +74,7 @@ class EnhancedFallDetector:
                 1, self.config.colors['fps_text'], 2
             )
 
-            # center_point 추가하여 반환
-            ret = (processed_frame, fall_detected, debug_info, center_point)
-            return ret
+            return processed_frame, fall_detected, debug_info, center_point
 
         except Exception as e:
             print(f"프레임 처리 중 오류 발생: {e}")
@@ -137,66 +133,27 @@ class EnhancedFallDetector:
             return frame
 
     async def handle_fall_detection(self, frame):
-        current_time = datetime.now()
-
-        if (self.last_fall_notification_time and 
-            (current_time - self.last_fall_notification_time).total_seconds() < self.notification_cooldown):
-            print("알림 쿨다운 중...")
-            return
-
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             image_path = os.path.join(self.config.save_dir, f'fall_{timestamp}.jpg')
             cv2.imwrite(image_path, frame)
-            
-            headers = {
-                'Cookie': "session_id=60be008afcfbaae56e289f6c243eb6d8; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+
+            alert_data = {
+                "image_path": image_path,
+                "timestamp": timestamp,
+                "device_id": "camera_1"
             }
-            
+
             async with aiohttp.ClientSession() as session:
-                # 1. 이미지 업로드
-                data = aiohttp.FormData()
-                data.add_field('file',
-                            open(image_path, 'rb'),
-                            filename=f'fall_{timestamp}.jpg',
-                            content_type='image/jpeg')
-                
                 async with session.post(
-                    'https://image.itdice.net/upload',
-                    data=data,
-                    headers=headers,
-                    timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    if response.status != 201:
-                        print(f"이미지 업로드 실패: {response.status}")
-                        return
-                        
-                    upload_result = await response.json()
-                    image_url = upload_result['result']['file_path']
-                    print(f"이미지 업로드 성공 - URL: {image_url}")
-                    
-                # 2. 알림 API 호출
-                notification_data = {
-                    "family_id": "FlcuDLxVC9SolW70",
-                    "notification_grade": "CRIT",
-                    "descriptions": "낙상감지",
-                    "image_url": image_url
-                }
-                
-                async with session.post(
-                    'https://dev-api.itdice.net/notify',
-                    json=notification_data,
-                    headers=headers,
+                    self.config.api_url,
+                    json=alert_data,
                     timeout=aiohttp.ClientTimeout(total=5)
-                ) as notify_response:
-                    if notify_response.status == 201:
-                        self.last_fall_notification_time = current_time
+                ) as response:
+                    if response.status == 200:
                         print(f"낙상 알림 전송 성공: {timestamp}")
                     else:
-                        print(f"낙상 알림 전송 실패: {notify_response.status}")
+                        print(f"낙상 알림 전송 실패: {response.status}")
 
         except Exception as e:
             print("낙상 처리 중 오류 발생:", e)
-        finally:
-            if os.path.exists(image_path):
-                os.remove(image_path)

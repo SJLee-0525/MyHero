@@ -47,6 +47,9 @@ class SocketClient:
     def process_message(self, message):
         try:
             data = json.loads(message)
+            # 전체 JSON 데이터 출력 추가
+            rospy.loginfo("Received JSON data:")
+            rospy.loginfo(json.dumps(data, indent=2, ensure_ascii=False))
             
             # user_id 처리
             if 'user_id' in data:

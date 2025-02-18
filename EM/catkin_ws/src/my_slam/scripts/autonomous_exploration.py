@@ -74,31 +74,22 @@ class AutonomousExploration:
             return 0.0
     
     def select_and_send_new_goal(self):
-        if not self.is_enabled:
-            rospy.loginfo("현재 자율 탐색이 비활성화되어 있습니다.")
-            return
-        
-        if self.occupancy_grid is None or self.global_costmap is None:
-            rospy.logwarn("맵이나 비용정보를 아직 받지 못했습니다.")
+        if not self.is_enabled or self.occupancy_grid is None or self.global_costmap is None:
             return
             
         empty_points = self.find_empty_spaces(self.occupancy_grid)
         if not empty_points:
-            rospy.logwarn("적절한 빈 영역을 찾지 못했습니다.")
+            rospy.logwarn("전방 60도 내에서 적절한 빈 영역을 찾지 못했습니다.")
             return
 
-        forward_points = []
-        current_orientation = self.get_robot_orientation()
         try:
             (current_pos, _) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             return
 
-        if forward_points:
-            selected_point = random.choice(forward_points)
-        else:
-            rospy.logwarn("전방에 빈 영역이 없습니다. 빈 영역에서 임의의 점을 선택합니다.")
-            selected_point = random.choice(empty_points)
+        # 가장 먼 포인트 선택 (더 멀리 탐색하도록)
+        selected_point = max(empty_points, 
+                            key=lambda p: math.sqrt((p[0]-current_pos[0])**2 + (p[1]-current_pos[1])**2))
 
         self.nav_points = [selected_point]
         self.visualize_points()
@@ -146,60 +137,69 @@ class AutonomousExploration:
         
         try:
             (current_pos, _) = self.tf_listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+            current_orientation = self.get_robot_orientation()
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             if self.prev_goal:
                 current_pos = (self.prev_goal.pose.position.x, self.prev_goal.pose.position.y, 0)
+                current_orientation = math.atan2(
+                    2 * self.prev_goal.pose.orientation.w * self.prev_goal.pose.orientation.z,
+                    1 - 2 * self.prev_goal.pose.orientation.z * self.prev_goal.pose.orientation.z
+                )
             else:
                 return empty_points
 
         # 파라미터 조정
-        grid_step = 10  # 격자 간격을 늘려 샘플링 포인트 수를 줄임
+        grid_step = 10  # 격자 간격
         max_distance = 5.0  # 최대 거리
-        min_distance = 2.0  # 최소 거리 (너무 가까운 점은 제외)
-        cost_threshold = 50  # 비용 임계값을 낮춰 더 많은 영역을 허용
-
-        # 주변 셀 체크를 위한 범위
-        check_range = 2
+        min_distance = 2.0  # 최소 거리
+        cost_threshold = 50  # 비용 임계값
+        check_range = 5  # 1m 반경 체크 (resolution이 0.05m일 때)
+        angle_range = math.pi/3  # 60도
 
         for i in range(0, width, grid_step):
             for j in range(0, height, grid_step):
                 index = j * width + i
                 
-                # 인덱스 범위 체크
                 if index >= len(occupancy_grid.data) or index >= len(self.global_costmap.data):
                     continue
 
-                # 현재 셀이 빈 공간이고 비용이 임계값보다 낮은지 확인
-                if occupancy_grid.data[index] == 0 and self.global_costmap.data[index] < cost_threshold:
-                    # 주변 셀들도 확인
-                    is_safe = True
-                    for di in range(-check_range, check_range + 1):
-                        for dj in range(-check_range, check_range + 1):
-                            ni = i + di
-                            nj = j + dj
-                            if 0 <= ni < width and 0 <= nj < height:
-                                neighbor_index = nj * width + ni
-                                if (neighbor_index < len(occupancy_grid.data) and 
-                                    occupancy_grid.data[neighbor_index] > 0):  # 장애물이면
-                                    is_safe = False
-                                    break
-                        if not is_safe:
-                            break
+                # 현재 위치에서 격자점까지의 방향 계산
+                x = i * resolution + occupancy_grid.info.origin.position.x
+                y = j * resolution + occupancy_grid.info.origin.position.y
+                angle_to_point = math.atan2(y - current_pos[1], x - current_pos[0])
+                
+                # 각도 차이 계산 (-π에서 π 사이로 정규화)
+                angle_diff = angle_to_point - current_orientation
+                while angle_diff > math.pi: angle_diff -= 2*math.pi
+                while angle_diff < -math.pi: angle_diff += 2*math.pi
+                
+                # 전방 ±60도 범위 안에 있는지 확인
+                if abs(angle_diff) > angle_range:
+                    continue
 
-                    if is_safe:
-                        x = i * resolution + occupancy_grid.info.origin.position.x
-                        y = j * resolution + occupancy_grid.info.origin.position.y
-                        
-                        distance = math.sqrt((x - current_pos[0])**2 + (y - current_pos[1])**2)
-                        if min_distance <= distance <= max_distance:
-                            empty_points.append((x, y))
+                # 1m x 1m 영역이 비어있는지 확인
+                is_area_safe = True
+                for di in range(-check_range, check_range + 1):
+                    for dj in range(-check_range, check_range + 1):
+                        ni = i + di
+                        nj = j + dj
+                        if 0 <= ni < width and 0 <= nj < height:
+                            neighbor_index = nj * width + ni
+                            if (neighbor_index < len(occupancy_grid.data) and 
+                                (occupancy_grid.data[neighbor_index] > 0 or  # 장애물이거나
+                                 self.global_costmap.data[neighbor_index] >= cost_threshold)):  # 비용이 높으면
+                                is_area_safe = False
+                                break
+                    if not is_area_safe:
+                        break
 
-        if not empty_points:
-            rospy.logwarn("빈 공간을 찾지 못했습니다. 파라미터를 조정합니다.")
-            return self.find_empty_spaces_fallback(occupancy_grid)
-        
-        return self.filter_points(empty_points)
+                if is_area_safe:
+                    distance = math.sqrt((x - current_pos[0])**2 + (y - current_pos[1])**2)
+                    if min_distance <= distance <= max_distance:
+                        empty_points.append((x, y))
 
+        return empty_points
+    
     def find_empty_spaces_fallback(self, occupancy_grid):
         # 더 관대한 조건으로 재시도
         empty_points = []

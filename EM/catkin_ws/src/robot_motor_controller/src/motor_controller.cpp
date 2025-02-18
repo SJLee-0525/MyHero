@@ -39,14 +39,23 @@ void MotorController::cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
     if (fgInitsetting)
     {
         velCmdUpdateCount++;
-        target_linear_vel_ = static_cast<float>(msg->linear.x);
-        target_linear_vel_ = (target_linear_vel_ > MAX_LINEAR_VEL) ? MAX_LINEAR_VEL : (target_linear_vel_ < -MAX_LINEAR_VEL) ? -MAX_LINEAR_VEL
-                                                                                                                             : target_linear_vel_;
 
+        // angular velocity 먼저 처리
         target_angular_vel_ = static_cast<float>(msg->angular.z);
         target_angular_vel_ = (target_angular_vel_ > MAX_ANGULAR_VEL) ? MAX_ANGULAR_VEL : (target_angular_vel_ < -MAX_ANGULAR_VEL) ? -MAX_ANGULAR_VEL
                                                                                                                                    : target_angular_vel_;
 
+        // linear velocity 처리
+        target_linear_vel_ = static_cast<float>(msg->linear.x) * 2.0f;
+
+        // linear velocity 제한
+        target_linear_vel_ = (target_linear_vel_ > MAX_LINEAR_VEL) ? MAX_LINEAR_VEL : (target_linear_vel_ < -MAX_LINEAR_VEL) ? -MAX_LINEAR_VEL
+                                                                                                                             : target_linear_vel_;
+
+        if (fabs(target_angular_vel_) >= 0.75 && target_linear_vel_ >= 0.1)
+        {
+            target_linear_vel_ = 1.2f;
+        }
         last_cmd_time_ = ros::Time::now();
     }
 }
@@ -72,9 +81,24 @@ void MotorController::controlTimerCallback(const ros::TimerEvent &event)
     current_linear_vel_ = smoothControl(target_linear_vel_, current_linear_vel_, ACCEL_LIMIT);
     current_angular_vel_ = smoothControl(target_angular_vel_, current_angular_vel_, ACCEL_LIMIT);
 
+    // 급격한 회전시 속도 제한
+    if (fabs(current_angular_vel_) >= 0.8)
+    {
+        if (current_angular_vel_ < 0)
+        {                                                                  // 우회전일 경우
+            current_angular_vel_ = -0.7;                                   // 우회전 각도 감소
+            current_linear_vel_ = (current_linear_vel_ >= 0) ? 1.0 : -1.0; // 속도 증가
+        }
+        else
+        {                                                                    // 좌회전일 경우
+            current_angular_vel_ = (current_angular_vel_ >= 0) ? 0.8 : -0.8; // 기존 동작 유지
+            current_linear_vel_ = (current_linear_vel_ >= 0) ? 0.8 : -0.8;   // 기존 동작 유지
+        }
+    }
+
     // 모터 제어값 계산
-    float throttle = current_linear_vel_ / MAX_LINEAR_VEL; // -1.0 ~ 1.0
-    float angle = current_angular_vel_ * 45;               // rad to degree
+    float throttle = current_linear_vel_;    // -1.0 ~ 1.0
+    float angle = current_angular_vel_ * 45; // rad to degree
 
     // 실제 모터 제어
     motor_.setThrottle(throttle);

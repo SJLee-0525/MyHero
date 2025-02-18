@@ -17,7 +17,7 @@ class PersonFollower:
         
         # 제어 속도 제한
         self.max_angular_speed = rospy.get_param('~max_angular_speed', 1.0)
-        self.base_speed = 0.45  # 기본 선속도
+        self.base_speed = 0.40  # 기본 선속도
         
         # Subscriber와 Publisher 설정
         self.bbox_sub = rospy.Subscriber('/bbox_center', Point, self.bbox_callback)
@@ -49,9 +49,13 @@ class PersonFollower:
         if abs(error) < self.deadzone:
             angular_z = 0.0
         else:
-            # 단순한 비례 제어로 변경
-            direction = 1 if error > 0 else -1
-            angular_z = direction * self.max_angular_speed
+            # 오차에 비례하는 각속도 계산
+            # error를 -1 ~ 1 범위로 정규화
+            normalized_error = (error - (-self.camera_center)) / (self.camera_center * 2)
+            angular_z = normalized_error * self.max_angular_speed * 1.2
+            
+            # 각속도 제한
+            angular_z = np.clip(angular_z, -self.max_angular_speed, self.max_angular_speed)
         
         # 제어 명령 생성
         twist = Twist()

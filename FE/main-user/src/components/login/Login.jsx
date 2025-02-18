@@ -81,30 +81,6 @@ export default function Login() {
 
   return (
     <>
-      {/* <form id="login-form" onSubmit={handleLogin}>
-        <div className="login-header">
-          <h2>영웅이네 오신 것을 환영합니다.</h2>
-        </div>
-        <div className="login-form-row">
-          <div className="login-control">
-            <label htmlFor="email">이메일 아이디</label>
-            <input type="email" name="email" ref={emailInput} />
-          </div>
-
-          <div className="login-control">
-            <label htmlFor="password">비밀번호</label>
-            <input
-              type="password"
-              name="password"
-              ref={passwordInput}
-            />
-          </div>
-        </div>
-
-        <button type="submit" className="login-btn">
-          로그인
-        </button>
-      </form> */}
       <div className={`welcome-text ${showWelcome ? "centered" : "moved-up"}`}>
         <h2>영웅이네 오신 것을 환영합니다.</h2>
       </div>

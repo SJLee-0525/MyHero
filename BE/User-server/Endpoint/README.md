@@ -139,7 +139,12 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     | **`to_id`** | 메시지를 수신하는 사용자의 ID **[필수]** | `String` |
     | **`content`** | 메시지에 담을 내용 | `String` |
     | **`image_url`** | 메시지와 함께 보낼 이미지 링크 | `URL` |
-17. **`Settings`** : Carebot의 설정 값을 업데이트하기 위해 받는 데이터
+17. **`IndexList`** : 여러 개의 메시지와 알림 읽음을 처리하기 위해 받는 데이터
+
+    | key | description | type |
+    | --- | --- | --- |
+    | **`index_list`** | Index를 모아둔 리스트 **[필수]** | `List` |
+18. **`Settings`** : Carebot의 설정 값을 업데이트하기 위해 받는 데이터
 
     | key | description | type |
     | --- | --- | --- |
@@ -147,7 +152,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     | **`is_camera_enabled`** | 카메라 기능이 켜져있는지 여부 | `bool` |
     | **`is_microphone_enabled`** | 마이크 기능이 켜져있는지 여부 | `bool` |
     | **`is_driving_enabled`** | 자율 주행 기능이 켜져있는지 여부 | `bool` |
-18. **`Background`** : 가족 공유 배경화면 앨범에 새로운 사진을 추가하기 위해 받는 데이터
+19. **`Background`** : 가족 공유 배경화면 앨범에 새로운 사진을 추가하기 위해 받는 데이터
 
     | key | description | type |
     | --- | --- | --- |

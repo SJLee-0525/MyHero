@@ -251,6 +251,106 @@ async def read_notification(notification_id: int, request_id = Depends(Database.
             }
         )
 
+@router.patch("/read-many", status_code=status.HTTP_200_OK)
+async def read_many_notification(index_data: IndexList, request_id = Depends(Database.check_current_user)):
+    # 사용자 계정으로 요청하는지 점검
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not request_data:
+        logger.warning(f"Can not access account: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 필수 입력 정보를 전달했는지 점검
+    missing_location: list = ["body"]
+
+    if index_data.index_list is None or len(index_data.index_list) < 1:
+        missing_location.append("index_list")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Notification id data is required",
+                "input": jsonable_encoder(index_data)
+            }
+        )
+
+    # 읽음 처리 수행하기
+    result: list[dict] = []
+    is_failed: bool = False
+    index_list: list[int] = index_data.index_list
+
+    for index in index_list:
+        notification_data: dict = Database.get_one_notification(index)
+        request_data: dict = Database.get_one_account(request_id)
+        family_data: dict = Database.get_one_family(notification_data["family_id"]) if notification_data else None
+        member_data: list = Database.get_all_members(family_id=notification_data["family_id"]) if notification_data else []
+        permission_id: list[str] = (([family_data["main_user"]] if family_data else []) +
+                                    [user_data["user_id"] for user_data in member_data])
+
+        if not notification_data:
+            logger.warning(f"Notification not found: {index}")
+            result.append({
+                "index": index,
+                "is_processed": False,
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "Notification does not exist"
+            })
+        elif request_data["role"] != Role.SYSTEM and request_id not in permission_id:
+            logger.warning(f"You do not have permission: {request_id}")
+            result.append({
+                "index": index,
+                "is_processed": False,
+                "code": status.HTTP_403_FORBIDDEN,
+                "message": "You do not have permission"
+            })
+        else:
+            part_result: bool = Database.check_read_notification(index)
+
+            if part_result:
+                logger.info(f"Notification check read successfully: {index}")
+                result.append({
+                    "index": index,
+                    "is_processed": True,
+                    "code": status.HTTP_200_OK,
+                    "message": "Notification check read successfully"
+                })
+            else:
+                is_failed = True
+                logger.error(f"Failed to check read notification: {index}")
+                result.append({
+                    "index": index,
+                    "is_processed": False,
+                    "code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "Failed to check read notification"
+                })
+
+    # 처리 결과 최종 전송
+    if not is_failed:
+        return {
+            "message": "Results of the read notification operation",
+            "result": jsonable_encoder(result)
+        }
+    else:
+        logger.error("Failed to read many notifications")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to read many notifications",
+                "result": jsonable_encoder(result)
+            }
+        )
+
 # 알림을 삭제하는 기능
 @router.delete("/delete/{notification_id}", status_code=status.HTTP_200_OK)
 async def delete_notification(notification_id: int, request_id = Depends(Database.check_current_user)):

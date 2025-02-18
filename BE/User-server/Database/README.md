@@ -319,3 +319,6 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     - 가족 단위 별 Background를 추가, 삭제, 불러오는 기능 추가
 - **[Add] `1.0.3`**
     - Main User의 활동이 3일 이상  없는 경우에 Session을 삭제하도록 기능 추가
+- **[Add] `1.0.4`**
+    - Session 권한 점검할 때 Cookie 점검 대신 Body에 Session ID를 담게 하고 브라우저에 Cookie가 저장되도록 변경
+    - 여러 개의 메시지와 알림을 읽음 처리할 수 있는 기능 추가

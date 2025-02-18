@@ -21,7 +21,8 @@
   align-items: start;
 
   width: 100%;
-  height: 90%;
+  min-height: 90%;
+  max-height: 90%;
 
   gap: 10px;
   border-radius: 8px;

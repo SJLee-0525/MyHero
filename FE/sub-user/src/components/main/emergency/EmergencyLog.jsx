@@ -87,7 +87,7 @@ export default function EmergencyLog() {
             <div
               key={emergencyAlert.index}
               className={
-                emergencyAlert.is_check ? "alert-box-check" : "alert-box"
+                emergencyAlert.is_read ? "alert-box-check" : "alert-box"
               }
             >
               <div className="title-container">
@@ -102,9 +102,11 @@ export default function EmergencyLog() {
               <p className="time">{createdAtKST}</p>
 
               {/* 이미지 출력단 */}
-              <div>
-                <img src={emergencyAlert.image_url} alt="temp" />
-              </div>
+              {emergencyAlert.image_url && (
+                <div>
+                  <img src={emergencyAlert.image_url} alt="temp" />
+                </div>
+              )}
             </div>
           );
         })}

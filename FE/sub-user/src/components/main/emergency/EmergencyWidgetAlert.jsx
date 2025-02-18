@@ -55,8 +55,11 @@ export default function EmergencyWidgetAlert({ notification }) {
           <div className="home-notification-content">
             <div className="home-notification-content-header">
               <h2 className="home-notification-content-emergency">
-                {parsedDescription}
+                {parsedDescription.split(",")[0]}
               </h2>
+              {parsedDescription.split(",").length > 1 && (
+                <span>{parsedDescription.split(",")[1]}</span>
+              )}
             </div>
             {notification.image_url && (
               <div>

@@ -83,6 +83,8 @@ export default function EmergencyLog() {
             hour12: true, // 24시간제
           });
 
+          const descriptions = emergencyAlert.description.split(",");
+
           return (
             <div
               key={emergencyAlert.index}
@@ -96,8 +98,9 @@ export default function EmergencyLog() {
                     emergencyAlert.is_check ? "common" : "no-answer-title"
                   }
                 >
-                  {emergencyAlert.description}
+                  {descriptions[0]}
                 </h1>
+                {descriptions.length > 1 && <p>{descriptions[1]}</p>}
               </div>
               <p className="time">{createdAtKST}</p>
 

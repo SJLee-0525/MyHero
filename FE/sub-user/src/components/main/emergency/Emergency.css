@@ -494,7 +494,7 @@
 #emergency-alert-modal-box {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: start;
 
   width: 50vw;
   height: 60vh;

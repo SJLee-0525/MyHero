@@ -15,7 +15,7 @@ API에서는 반복적으로 사용되면서 일관된 결과 값을 요구되�
 | **분야** | **사용한 기술** |
 | --- | --- |
 | Program Language | **Python** 3.11.9 |
-| **Encryption** | **bcrypt** 4.2.1 |
+| Encryption | **bcrypt** 4.2.1 |
 
 ### 시스템 구조
 

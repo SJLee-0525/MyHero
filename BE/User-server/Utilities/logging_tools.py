@@ -10,7 +10,7 @@ import logging
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(levelname).4s:     [%(name)s] %(message)s",
+    format="%(levelname)s: \t  [%(name)s] %(message)s",
 )
 
 # 각 파일별 logger 반환 기능

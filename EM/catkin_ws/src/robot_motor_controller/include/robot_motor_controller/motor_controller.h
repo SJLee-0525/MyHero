@@ -24,10 +24,10 @@ private:
     const int SERVO_ADDR = 0x60;
 
     // 제어 파라미터 고정값
-    const float MAX_LINEAR_VEL = 0.5f;  // m/s
-    const float MAX_ANGULAR_VEL = 1.0f; // rad/s
-    const float CONTROL_RATE = 50.0f;   // Hz
-    const float ACCEL_LIMIT = 0.1f;     // 가속도 제한
+    const float MAX_LINEAR_VEL = 1.0f;   // m/s
+    const float MAX_ANGULAR_VEL = 0.85f; // rad/s
+    const float CONTROL_RATE = 50.0f;    // Hz
+    const float ACCEL_LIMIT = 0.1f;      // 가속도 제한
 
     // I2C 관련 객체들
     I2CDevice i2c_dc_;

@@ -81,6 +81,21 @@ void MotorController::controlTimerCallback(const ros::TimerEvent &event)
     current_linear_vel_ = smoothControl(target_linear_vel_, current_linear_vel_, ACCEL_LIMIT);
     current_angular_vel_ = smoothControl(target_angular_vel_, current_angular_vel_, ACCEL_LIMIT);
 
+    // 급격한 회전시 속도 제한
+    if (fabs(current_angular_vel_) >= 0.8)
+    {
+        if (current_angular_vel_ < 0)
+        {                                                                  // 우회전일 경우
+            current_angular_vel_ = -0.7;                                   // 우회전 각도 감소
+            current_linear_vel_ = (current_linear_vel_ >= 0) ? 1.0 : -1.0; // 속도 증가
+        }
+        else
+        {                                                                    // 좌회전일 경우
+            current_angular_vel_ = (current_angular_vel_ >= 0) ? 0.8 : -0.8; // 기존 동작 유지
+            current_linear_vel_ = (current_linear_vel_ >= 0) ? 0.8 : -0.8;   // 기존 동작 유지
+        }
+    }
+
     // 모터 제어값 계산
     float throttle = current_linear_vel_;    // -1.0 ~ 1.0
     float angle = current_angular_vel_ * 45; // rad to degree

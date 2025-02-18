@@ -815,3 +815,15 @@
   font-size: 14px;
   text-align: end;
 }
+
+@media screen and (max-width: 720px) {
+  #emergency-alert-modal-title {
+    flex-direction: column;
+    height: 100px;
+  }
+
+  #emergency-alert-modal-title .period-report-control {
+    width: 100%;
+    gap: 10px;
+  }
+}

@@ -27,9 +27,11 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
         </div>
 
         {/* 이미지 출력단 */}
-        <div className="emergency-image-container">
-          <img src={emergencyAlert.image_url} alt="temp" />
-        </div>
+        {emergencyAlert.image_url && (
+          <div className="emergency-image-container">
+            <img src={emergencyAlert.image_url} alt="temp" />
+          </div>
+        )}
       </div>
 
       {/* 버튼 조작부 */}

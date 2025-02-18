@@ -21,45 +21,42 @@ export default function EffectContextProvider({ children }) {
 
   // 페이지 로드 시 로그인 상태 확인 후 활성화된 사이드 바 상태 가져오기
   useEffect(() => {
-    const storedLocalUserInfo = localStorage.getItem("loginUserInfo");
-    const storedSessionUserInfo = sessionStorage.getItem("loginUserInfo");
+    const storedLocalSessionId = localStorage.getItem("session_id");
+    const storedSessionSessionId = sessionStorage.getItem("session_id");
     const storedActiveSideBarElem = sessionStorage.getItem(
       "isActiveSideBarElem"
     );
 
-    let userInfo = null;
+    let sessionId = null;
 
-    if (storedLocalUserInfo) {
+    if (storedLocalSessionId) {
       try {
-        userInfo = JSON.parse(storedLocalUserInfo);
-        userProgressStore.setAutoLogin(true); // 자동 로그인 활성화
+        userProgressStore.handleGetSession(storedLocalSessionId);
+        userProgressStore.setAutoLogin(true);
       } catch (error) {
-        console.error("Error parsing loginUserInfo from localStorage:", error);
-        localStorage.removeItem("loginUserInfo"); // 손상된 데이터 제거
+        console.error("Error parsing session_id from localStorage:", error);
+        localStorage.removeItem("session_id"); // 손상된 데이터 제거
       }
-    } else if (storedSessionUserInfo) {
+    } else if (storedSessionSessionId) {
       try {
-        userInfo = JSON.parse(storedSessionUserInfo);
-        userProgressStore.setAutoLogin(false); // 자동 로그인 비활성화
+        userProgressStore.handleGetSession(storedSessionSessionId);
       } catch (error) {
-        console.error(
-          "Error parsing loginUserInfo from sessionStorage:",
-          error
-        );
-        sessionStorage.removeItem("loginUserInfo"); // 손상된 데이터 제거
+        console.error("Error parsing session_id from sessionStorage:", error);
+        sessionStorage.removeItem("session_id"); // 손상된 데이터 제거
       }
     }
 
     // 유저 정보가 있으면 설정
-    if (userInfo) {
-      userProgressStore.setLoginUserInfo({
-        login: true,
-        userInfo: userInfo.userInfo,
-      });
+    // if (userInfo) {
+    //   console.log(userInfo, 1213123123123213123123);
+    //   userProgressStore.setLoginUserInfo({
+    //     login: true,
+    //     userInfo: userInfo.userInfo,
+    //   });
 
-      // 사용자 정보 최신화
-      userProgressStore.handleGetUserInfo(userInfo.userInfo.id);
-    }
+    //   // 사용자 정보 최신화
+    //   userProgressStore.handleGetUserInfo(userInfo.userInfo.id);
+    // }
 
     // 사이드바 상태 복원
     if (storedActiveSideBarElem) {

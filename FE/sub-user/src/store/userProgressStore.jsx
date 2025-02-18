@@ -57,6 +57,7 @@ export const UserProgressContext = createContext({
   handleCloseModal: () => {},
   handleChangeFamilyId: (familyId) => {},
   handleLogin: (userInfo) => {},
+  handleGetSession: (sessionId) => {},
   handleAutoLogin: () => {},
   handleGetUserInfo: (id) => {},
   handleLogout: () => {},
@@ -217,6 +218,24 @@ export default function UserProgressContextProvider({ children }) {
         if (resData.message === "Login successful") {
           console.log("로그인 성공", resData);
 
+          // 자동 로그인 설정
+          const autoLoginConfirm =
+            window.confirm("자동 로그인을 설정하시겠습니까?");
+          if (autoLoginConfirm) {
+            await handleAutoLogin();
+            const autoLoginUserInfo = {
+              login: true,
+              userInfo: resData.result.user_data,
+            };
+            localStorage.setItem("session_id", resData.result.session_id);
+            localStorage.setItem(
+              "loginUserInfo",
+              JSON.stringify(autoLoginUserInfo)
+            );
+          } else {
+            sessionStorage.setItem("session_id", resData.result.session_id);
+          }
+
           // 로그인 정보 저장
           await handleUpdateSessionLoginInfo({
             login: true,
@@ -248,6 +267,46 @@ export default function UserProgressContextProvider({ children }) {
     }
   }
 
+  async function handleGetSession(sessionId) {
+    if (!sessionId) return;
+
+    try {
+      const response = await request(`${DEV_API_URL}/auth/check`, "POST", {
+        session_id: sessionId,
+      });
+
+      const resData = response.data;
+      if (response.success) {
+        if (resData.message === "Permission check successful") {
+          console.log("세션 확인 성공", resData);
+          setLoginUserInfo({
+            login: true,
+            userInfo: resData.result.user_data,
+          });
+          return { success: true, data: resData };
+        }
+      } else {
+        console.error("세션 확인 실패:", response.error);
+        return {
+          success: false,
+          error: {
+            type: response.error.type,
+            message: response.error.message,
+          },
+        };
+      }
+    } catch (error) {
+      console.error("네트워크 오류 또는 기타 예외:", error);
+      return {
+        success: false,
+        error: {
+          type: "network_error",
+          message: "네트워크 오류가 발생했습니다.",
+        },
+      };
+    }
+  }
+
   async function handleAutoLogin() {
     try {
       const response = await request(`${DEV_API_URL}/auth/auto-login`, "PATCH");
@@ -257,9 +316,6 @@ export default function UserProgressContextProvider({ children }) {
       if (response.success) {
         if (resData.message === "Auto login set successfully") {
           console.log("자동 로그인 설정 성공", resData);
-
-          // 로그인 정보 저장
-          localStorage.setItem("loginUserInfo", JSON.stringify(loginUserInfo));
 
           setAutoLogin(true);
 
@@ -1377,6 +1433,7 @@ export default function UserProgressContextProvider({ children }) {
     handleChangeFamilyId,
     handleLogin,
     handleAutoLogin,
+    handleGetSession,
     handleGetUserInfo,
     handleLogout,
     handleCheckEmail,

@@ -1,22 +1,22 @@
-import { useContext } from "react"
-import { Routes, Route, Outlet } from "react-router-dom"
+import { useContext } from "react";
+import { Routes, Route, Outlet } from "react-router-dom";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import UserInfo from "./UserInfo.jsx"
-import RegisterMemberQr from "./RegisterMemberQr.jsx"
+import UserInfo from "./UserInfo.jsx";
+import RegisterMemberQr from "./RegisterMemberQr.jsx";
 
 export default function Accounts() {
-  const userProgressStore = useContext(UserProgressContext)
+  const userProgressStore = useContext(UserProgressContext);
 
   function handleLogout(event) {
-    event.preventDefault()
+    event.preventDefault();
 
-    userProgressStore.handleLogout()
+    userProgressStore.handleLogout();
   }
 
   async function handleShowSignOut() {
-    userProgressStore.handleOpenModal("sign-out")
+    userProgressStore.handleOpenModal("sign-out");
   }
 
   return (
@@ -25,7 +25,13 @@ export default function Accounts() {
         <h2>계정</h2>
         <div className="login-form-action">
           <div className="danger-zone">
-            <button className={userProgressStore.autoLogin ? "auto-login-btn-on" : "auto-login-btn"} onClick={userProgressStore.handleAutoLogin}>
+            <button
+              className={
+                userProgressStore.autoLogin
+                  ? "auto-login-btn-on"
+                  : "auto-login-btn"
+              }
+            >
               <p>자동 로그인</p>
               <p>{userProgressStore.autoLogin ? "켜짐" : "꺼짐"}</p>
             </button>
@@ -40,5 +46,5 @@ export default function Accounts() {
       </div>
       <UserInfo />
     </div>
-  )
+  );
 }

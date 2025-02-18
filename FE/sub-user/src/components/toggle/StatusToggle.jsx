@@ -1,6 +1,13 @@
-import "./Toggle.css"
+import "./Toggle.css";
 
-export default function StatusToggle({ name, imgSrc, altSrc, statusLevel, status }) {
+export default function StatusToggle({
+  name,
+  imgSrc,
+  altSrc,
+  statusLevel,
+  status,
+  symbol,
+}) {
   return (
     <div id="status-toggle">
       <div id="status-toggle-box">
@@ -9,9 +16,12 @@ export default function StatusToggle({ name, imgSrc, altSrc, statusLevel, status
         </div>
         <div className="toggle-info">
           <p className="toggle-name">{name}</p>
-          <p className={`${statusLevel}-status`}>{status}</p>
+          <p className={`${statusLevel}-status`}>
+            {status + " "}
+            <span style={{ fontSize: "0.7rem" }}>{symbol}</span>
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

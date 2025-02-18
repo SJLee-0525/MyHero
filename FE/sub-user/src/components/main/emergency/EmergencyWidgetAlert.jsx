@@ -58,9 +58,15 @@ export default function EmergencyWidgetAlert({ notification }) {
                 {parsedDescription}
               </h2>
             </div>
-            <div>
-              <img className="crit-image" src={notification.image_url} alt="" />
-            </div>
+            {notification.image_url && (
+              <div>
+                <img
+                  className="crit-image"
+                  src={notification.image_url}
+                  alt=""
+                />
+              </div>
+            )}
             <p className="home-notification-date">{createdAtKST}</p>
           </div>
         </div>

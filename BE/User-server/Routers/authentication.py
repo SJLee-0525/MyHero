@@ -4,7 +4,6 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Parts of Members
 """
-from urllib import request
 
 # Libraries
 from fastapi import HTTPException, APIRouter, status, Response, Request, Depends

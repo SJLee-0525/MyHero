@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useEffect, useContext, useState, useRef } from "react";
 import { useNotificationStore } from "../../store/notificationStore";
 import { DisasterStoreContext } from "../../store/disasterStore";
 import NoticeBox from "./NoticeBox";
@@ -9,6 +9,7 @@ export default function Notice({ onReply }) {
   const { disasterData, isLoading, markNotificationAsRead, setDisasterData } = useContext(DisasterStoreContext);
   const { notifications, fetchNotifications } = useNotificationStore();
   const [selectedNotice, setSelectedNotice] = useState(null);
+  const noticeScrollRef = useRef(null);
 
   useEffect(() => { //
     fetchNotifications();
@@ -113,10 +114,25 @@ export default function Notice({ onReply }) {
     return acc;
   }, {});
 
+  const handleTouchStart = (e) => {
+    noticeScrollRef.current.startY = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    const diff = noticeScrollRef.current.startY - e.touches[0].clientY;
+    noticeScrollRef.current.scrollTop += diff;
+    noticeScrollRef.current.startY = e.touches[0].clientY;
+  };
+
   return (
     <div className="notice-container">
       <div className="notice-list">
-        <div className="notice-scroll">
+        <div 
+          className="notice-scroll"
+          ref={noticeScrollRef}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+        >
           {Object.entries(groupedNotices).map(([date, notices]) => (
             <div key={date} className="notice-group">
               <h2>{date}</h2>

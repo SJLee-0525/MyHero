@@ -332,7 +332,7 @@ async def read_message(message_id: int, request_id: str = Depends(Database.check
     # 수신자만이 메시지의 읽음 처리를 수행할 수 있음
     request_data = Database.get_one_account(request_id)
 
-    if message_data["to_id"] != request_id:
+    if not request_data or message_data["to_id"] != request_id:
         logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -363,6 +363,105 @@ async def read_message(message_id: int, request_id: str = Depends(Database.check
                 "message": "Failed to check read message"
             }
         )
+
+@router.patch("/read-many", status_code=status.HTTP_200_OK)
+async def read_many_message(index_data: IndexList, request_id: str = Depends(Database.check_current_user)):
+    # 사용자 계정으로 요청하는지 점검
+    request_data = Database.get_one_account(request_id)
+
+    if not request_data:
+        logger.warning(f"You do not have permission: {request_id}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "type": "can not access",
+                "message": "You do not have permission"
+            }
+        )
+
+    # 필수 입력 정보를 전달했는지 점검
+    missing_location: list = ["body"]
+
+    if index_data.index_list is None or len(index_data.index_list) < 1:
+        missing_location.append("index_list")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Message id data is required",
+                "input": jsonable_encoder(index_data)
+            }
+        )
+    
+    # 읽음 처리 수행하기
+    result: list[dict] = []
+    is_failed: bool = False
+    index_list: list[int] = index_data.index_list
+
+    for index in index_list:
+        # 메시지가 존재하는지, 수신자와 요청자가 같은지 확인
+        message_data: dict = Database.get_one_message(index)
+        if not message_data:
+            logger.warning(f"Message does not exist: {index}")
+            result.append({
+                "index": index,
+                "is_processed": False,
+                "code": status.HTTP_404_NOT_FOUND,
+                "message": "This message does not exist"
+            })
+        elif message_data["to_id"] != request_id:
+            logger.warning(f"You do not have permission: {request_id}")
+            result.append({
+                "index": index,
+                "is_processed": False,
+                "code": status.HTTP_403_FORBIDDEN,
+                "message": "You do not have permission"
+            })
+        else:  # 문제가 없는 경우 수행
+            part_result: bool = Database.check_read_message(index)
+
+            if part_result:
+                logger.info(f"Message read successfully: {index}")
+                result.append({
+                    "index": index,
+                    "is_processed": True,
+                    "code": status.HTTP_200_OK,
+                    "message": "Message read successfully"
+                })
+            else:
+                is_failed = True
+                logger.error(f"Failed to read message: {index}")
+                result.append({
+                    "index": index,
+                    "is_processed": False,
+                    "code": status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    "message": "Failed to check read message"
+                })
+
+
+    # 처리 결과 최종 전송
+    if not is_failed:
+        return {
+            "message": "Results of the read message operation",
+            "result": jsonable_encoder(result)
+        }
+    else:
+        logger.error("Failed to read many messages")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={
+                "type": "server error",
+                "message": "Failed to read messages",
+                "result": jsonable_encoder(result)
+            }
+        )
+        
+
+
 
 # 메시지를 삭제하는 기능
 @router.delete("/delete/{message_id}", status_code=status.HTTP_200_OK)

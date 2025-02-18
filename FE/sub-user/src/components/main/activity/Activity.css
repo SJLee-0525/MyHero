@@ -8,6 +8,8 @@
   height: 100%;
 
   gap: 10px;
+
+  font-family: Pretendard;
 }
 
 #activity-main h2 {
@@ -199,6 +201,8 @@ hr {
   border: none;
   border-radius: 8px;
 
+  font-family: "Pretendard-Variable";
+
   background: white;
 
   cursor: pointer;
@@ -220,6 +224,8 @@ hr {
 
   border: none;
   border-radius: 8px;
+
+  font-family: "Pretendard-Variable";
 
   background: #d9d9d9ac;
 

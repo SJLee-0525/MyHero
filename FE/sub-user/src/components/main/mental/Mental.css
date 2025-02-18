@@ -1,6 +1,8 @@
 #mental-main {
   width: 100%;
   min-width: 380px;
+
+  font-family: Pretendard;
 }
 
 #mental-container {
@@ -210,6 +212,8 @@
 
   background-color: rgba(255, 255, 255, 0.568);
 
+  font-family: Pretendard;
+
   border: 0;
   border-radius: 8px;
 }
@@ -240,6 +244,8 @@
   color: white;
   font-weight: bold;
   text-align: center;
+
+  font-family: Pretendard;
 
   background: #ff9500;
 
@@ -313,6 +319,7 @@
 
   color: white;
   font-weight: bold;
+  font-family: Pretendard;
 
   background: linear-gradient(
       55deg,
@@ -373,6 +380,7 @@
   color: white;
   font-weight: bold;
   text-align: center;
+  font-family: Pretendard;
 
   background: #ff9500;
 
@@ -508,7 +516,7 @@ td {
 
   background-color: #b4cf66;
 
-  color: white;
+  color: black;
 }
 
 .emotion-detail-table .negative {
@@ -602,6 +610,8 @@ td {
 
   background-color: #d9d9d9;
 
+  font-family: Pretendard;
+
   border: 0;
   border-radius: 8px;
 }
@@ -616,6 +626,7 @@ td {
   color: white;
   font-weight: bold;
   text-align: center;
+  font-family: Pretendard;
 
   background: #ff9500;
 

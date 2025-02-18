@@ -8,6 +8,8 @@
   height: 100%;
 
   gap: 10px;
+
+  font-family: Pretendard;
 }
 
 #calendar-main h2 {
@@ -621,6 +623,8 @@
   border: 0;
   border-radius: 8px;
 
+  font-family: Pretendard;
+
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -639,6 +643,8 @@
   height: 60px;
 
   padding: 5px;
+
+  font-family: Pretendard;
 }
 
 .calendar-health-reports ul .critical-score {
@@ -684,6 +690,7 @@
 
 .calendar-health-reports ul .health-report-header p {
   text-align: end;
+  font-weight: normal;
 
   margin: 0;
 }
@@ -762,6 +769,8 @@
 
   height: 60px;
 
+  font-family: Pretendard;
+
   padding: 5px;
 }
 
@@ -808,6 +817,8 @@
 
 .calendar-mental-reports ul .mental-report-header p {
   text-align: end;
+
+  font-weight: normal;
 
   margin: 0;
 }

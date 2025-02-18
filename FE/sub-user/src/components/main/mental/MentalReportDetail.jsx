@@ -33,7 +33,7 @@ function TimeBasedEmotions({ emotions }) {
                   emotionClass = "very-positive";
                 } else if (emotion === "긍정적") {
                   emotionClass = "positive";
-                } else if (emotion === "중립") {
+                } else if (emotion === "중립적") {
                   emotionClass = "neutral";
                 } else if (emotion === "부정적") {
                   emotionClass = "negative";

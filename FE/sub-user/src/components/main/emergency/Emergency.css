@@ -120,6 +120,7 @@
 
   background-color: #d9d9d9;
   color: black;
+  font-family: Pretendard;
 }
 
 #emergency-alert-box-checked {
@@ -133,6 +134,8 @@
 
   background-color: #d9d9d9;
   color: black;
+  font-family: Pretendard;
+
   filter: opacity(60%);
 }
 
@@ -140,6 +143,8 @@
   display: flex;
   justify-content: end;
   align-items: center;
+
+  font-family: Pretendard;
 
   margin: 5px;
 }
@@ -149,6 +154,7 @@
   border-radius: 5px;
   background-color: #3e5c76;
 
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
   padding: 5px 8px;
@@ -250,6 +256,7 @@
   border: 0;
   border-radius: 8px;
 
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
 
@@ -304,6 +311,7 @@
   border: 0;
   border-radius: 8px;
 
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
 
@@ -375,6 +383,7 @@
 
   color: white;
   font-weight: bold;
+  font-family: Pretendard;
 
   background: linear-gradient(
       55deg,
@@ -404,6 +413,7 @@
   background-color: #aabbcc;
   color: white;
   font-weight: bold;
+  font-family: Pretendard;
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -467,6 +477,7 @@
 
   padding: 5px 8px;
 
+  font-family: Pretendard;
   font-weight: bold;
   background-color: #ff9500;
   color: white;
@@ -610,6 +621,7 @@
 
   color: black;
   font-weight: bold;
+  font-family: Pretendard;
 
   background: white;
 
@@ -643,6 +655,7 @@
   border: 0;
   border-radius: 8px;
 
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
 
@@ -686,6 +699,8 @@
 
   padding: 10px;
 
+  font-family: Pretendard;
+
   border-radius: 8px;
   background-color: #e8f0f8;
 }
@@ -698,6 +713,8 @@
 
   padding: 10px;
 
+  font-family: Pretendard;
+
   border-radius: 8px;
   background-color: #f8f3e8;
 }
@@ -709,6 +726,8 @@
   width: 100%;
 
   padding: 10px;
+
+  font-family: Pretendard;
 
   border-radius: 8px;
   background-color: #f8e8e8;

@@ -9,6 +9,8 @@
   min-width: 380px;
 
   gap: 10px;
+
+  font-family: Pretendard;
 }
 
 #notification-main h2 {
@@ -91,6 +93,8 @@
 }
 
 #home-notifications .notification-btn {
+  font-family: Pretendard;
+
   background-color: transparent;
   border: none;
 
@@ -208,6 +212,8 @@ p {
   padding: 5px 8px;
 
   background-color: #3e5c76;
+
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
 
@@ -269,6 +275,7 @@ p {
 
   padding: 5px 8px;
 
+  font-family: Pretendard;
   font-weight: bold;
   background-color: #ff9500;
   color: white;
@@ -328,6 +335,7 @@ p {
   background-color: #ff5a33;
   color: white;
   font-weight: bold;
+  font-family: Pretendard;
 
   cursor: pointer;
   transition: all 0.3s ease;
@@ -368,6 +376,8 @@ p {
   height: 100%;
 
   gap: 10px;
+
+  font-family: Pretendard;
 
   background-color: transparent;
   border: none;
@@ -459,6 +469,8 @@ p {
   width: 100%;
   gap: 15px;
 
+  font-family: Pretendard;
+
   background-color: #d9d9d9;
   color: black;
 }
@@ -475,6 +487,8 @@ p {
 
   width: 100%;
   gap: 15px;
+
+  font-family: Pretendard;
 
   background-color: #d9d9d9;
   color: black;
@@ -543,6 +557,7 @@ p {
   border-radius: 5px;
   background-color: #3e5c76;
 
+  font-family: Pretendard;
   font-weight: bold;
   color: white;
 

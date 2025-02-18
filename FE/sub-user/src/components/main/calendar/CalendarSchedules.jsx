@@ -62,9 +62,16 @@ export default function CalendarSchedules() {
               src={thermostatImage}
               alt="temperature"
             />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].temperature.toFixed(1)}℃`
-              : "-"}
+            <div>
+              {homeStatusData[selectedDate.date] ? (
+                <>
+                  {homeStatusData[selectedDate.date].temperature.toFixed(1)}
+                  <span style={{ fontSize: "0.8em" }}> ℃</span>
+                </>
+              ) : (
+                "-"
+              )}
+            </div>
           </ul>
           <ul className="main-status-aver">
             <img
@@ -72,9 +79,16 @@ export default function CalendarSchedules() {
               src={humidityImage}
               alt="humidity"
             />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].humidity.toFixed(1)}%`
-              : "-"}
+            <div>
+              {homeStatusData[selectedDate.date] ? (
+                <>
+                  {homeStatusData[selectedDate.date].humidity.toFixed(1)}
+                  <span style={{ fontSize: "0.8rem" }}> %</span>
+                </>
+              ) : (
+                "-"
+              )}
+            </div>
           </ul>
           <ul className="main-status-aver">
             <img
@@ -82,11 +96,16 @@ export default function CalendarSchedules() {
               src={airImage}
               alt="dust-level"
             />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].dust_level.toFixed(
-                  1
-                )}㎍/㎥`
-              : "-"}
+            <div>
+              {homeStatusData[selectedDate.date] ? (
+                <>
+                  {homeStatusData[selectedDate.date].dust_level.toFixed(1)}
+                  <span style={{ fontSize: "0.8rem" }}> ㎍/㎥</span>
+                </>
+              ) : (
+                "-"
+              )}
+            </div>
           </ul>
           <ul className="main-status-aver">
             <img
@@ -94,9 +113,16 @@ export default function CalendarSchedules() {
               src={heatImage}
               alt="ethanol"
             />
-            {homeStatusData[selectedDate.date]
-              ? `${homeStatusData[selectedDate.date].ethanol.toFixed(1)}%`
-              : "-"}
+            <div>
+              {homeStatusData[selectedDate.date] ? (
+                <>
+                  {homeStatusData[selectedDate.date].ethanol.toFixed(1)}
+                  <span style={{ fontSize: "0.8rem" }}> %</span>
+                </>
+              ) : (
+                "-"
+              )}
+            </div>
           </ul>
         </li>
       </div>

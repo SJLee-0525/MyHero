@@ -191,13 +191,13 @@ hr {
   justify-content: center;
   align-items: center;
 
-  min-width: 48%;
+  min-width: 50%;
   max-width: 150px;
   height: 80px;
   padding: 15px;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
 
   background: white;
 
@@ -219,7 +219,7 @@ hr {
   padding: 15px;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
 
   background: #d9d9d9ac;
 

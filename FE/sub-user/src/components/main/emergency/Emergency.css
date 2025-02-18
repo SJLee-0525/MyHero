@@ -496,8 +496,8 @@
   flex-direction: column;
   justify-content: start;
 
-  width: 50vw;
-  height: 60vh;
+  min-width: 50vw;
+  /* height: 60vh; */
   max-height: 60vh;
 
   padding: 16px;

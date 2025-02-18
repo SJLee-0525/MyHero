@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import { NewsStoreContext } from "../../store/newsStore";
 import NewsDetail from "./NewsDetail";
 import defaultImage from "../../assets/icons/hero.png";
@@ -17,10 +17,21 @@ const categoryMap = {
 
 export default function NewsBoxPage({ category, newsData, onBack }) {
   const { selectedNews, selectNews, clearSelectedNews } = useContext(NewsStoreContext);
+  const newsListRef = useRef(null);
 
   if (selectedNews) {
     return <NewsDetail news={selectedNews} onBack={clearSelectedNews} />
   }
+
+  const handleTouchStart = (e) => {
+    newsListRef.current.startY = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    const diff = newsListRef.current.startY - e.touches[0].clientY;
+    newsListRef.current.scrollTop += diff;
+    newsListRef.current.startY = e.touches[0].clientY;
+  };
 
   return (
     <div className="news-box-page">
@@ -29,7 +40,12 @@ export default function NewsBoxPage({ category, newsData, onBack }) {
         <h2>{categoryMap[category] || category} 뉴스</h2>
       </div>
 
-      <div className="news-list">
+      <div 
+        className="news-list"
+        ref={newsListRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
         {newsData.length > 0 ? (
           newsData.map((news) => (
             <div key={news.id} className="news-box" onClick={() => selectNews(news)}>

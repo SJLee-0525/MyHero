@@ -77,6 +77,9 @@
   gap: 15px;
   max-height: 280px;
   overflow-y: scroll;
+  cursor: none;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .news-box {

@@ -10,7 +10,7 @@ export default function EmergencyModal({ title, onCloseConfirm }) {
       <Emergency />
       <div id="double-button">
         <button onClick={onCloseConfirm} className="redButton">
-            신고하기
+            신고
         </button>
         <button onClick={onCloseConfirm} className="button">
             닫기

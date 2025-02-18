@@ -52,8 +52,15 @@
 }
 
 #emergency-modal-body {
+  width: 870px; /* 고정 크기 설정 */
+  height: 500px; /* 고정 크기 설정 */
   background-color: #ffec5c79;
-  padding: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px; /* 둥근 테두리 */
 }
 
 #modal-bar {
@@ -80,11 +87,19 @@
 }
 
 #emergency-modal-bar h2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0;
-  color: #FF5858;
+  font-size: 4rem; /* 글씨 크기 증가 */
+  font-weight: bold;
+  color: #FF0000;
+  text-align: center;
+  margin: 20px;
+}
+
+/* 긴급 메시지 스타일 */
+#emergency-alert-content {
+  font-size: 3rem; /* 더 크고 강조 */
+  font-weight: bold;
+  color: #FF0000;
+  text-align: center;
 }
 
 #modal-bar .button {
@@ -100,7 +115,8 @@
 
 #double-button {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  gap: 120px;
 }
 
 .button {
@@ -109,7 +125,7 @@
   transform: translateX(-50%);
 
   font-family: "Raleway", sans-serif;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: bolder;
   padding: 0.5rem 1.5rem;
   margin-top: 20px;
@@ -127,9 +143,9 @@
   transform: translateX(-100%);
 
   font-family: "Raleway", sans-serif;
-  font-size: 1rem;
+  font-size: 1.4rem;
   font-weight: 1000;
-  padding: 0.5rem 1.5rem;
+  padding: 12px 25px;
   margin-top: 20px;
   border: none;
   border-radius: 4px;
@@ -137,6 +153,10 @@
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
   color: #fff;
   cursor: none;
+}
+
+.redButton:hover {
+  background-color: #D00000;
 }
 
 .close-button {

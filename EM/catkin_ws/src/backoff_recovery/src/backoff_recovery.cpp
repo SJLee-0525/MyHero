@@ -65,7 +65,6 @@ namespace backoff_recovery
         // if (false)
         if (hasGoalChanged(msg))
         {
-            ROS_INFO("Goal position changed, stopping backoff recovery");
             should_stop_ = true;
         }
     }
@@ -155,8 +154,6 @@ namespace backoff_recovery
                 stop_cmd.linear.y = 0;
                 stop_cmd.angular.z = 0;
                 vel_pub.publish(stop_cmd);
-
-                ROS_INFO("Backoff recovery interrupted by User");
                 return;
             }
             try

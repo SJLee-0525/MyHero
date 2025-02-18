@@ -610,6 +610,10 @@ p {
   #notification-elem-right {
     width: 100%;
   }
+
+  #past-notifications {
+    width: 100%;
+  }
 }
 
 @media screen and (max-width: 720px) {
@@ -623,5 +627,14 @@ p {
 
   #emergency-alert {
     height: 50vh;
+  }
+
+  #past-notifications-title {
+    flex-direction: column;
+    height: 100px;
+  }
+
+  #past-notifications-title .period-report-control {
+    width: 100%;
   }
 }

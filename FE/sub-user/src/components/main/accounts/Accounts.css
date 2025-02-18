@@ -1281,7 +1281,11 @@ hr {
   }
 
   #signup-form {
-    height: 80vh;
+    height: 60vh;
+  }
+
+  #signout-form {
+    height: 60vh;
   }
 
   .login-user-info-header {

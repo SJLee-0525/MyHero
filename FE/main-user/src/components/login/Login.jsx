@@ -1,4 +1,4 @@
-import { useRef, useState, useContext } from "react";
+import { useRef, useState, useContext, useEffect } from "react";
 import { UserProgressContext } from "../../store/userProgressStore.jsx";
 import { StoreContext } from "../../store/store.jsx";
 import "./Login.css";
@@ -15,6 +15,21 @@ export default function Login() {
 
   const emailInput = useRef("");
   const passwordInput = useRef("");
+
+  /////
+
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+
+  useEffect(() => {
+    // 1.5초 후 환영 문구를 위로 이동시키고, 로그인 폼을 나타나게 함
+    setTimeout(() => {
+      setShowWelcome(false);
+      setShowForm(true);
+    }, 1500);
+  }, []);
+
+  /////
 
   async function handleLogin(event) {
     event.preventDefault();
@@ -66,7 +81,7 @@ export default function Login() {
 
   return (
     <>
-      <form id="login-form" onSubmit={handleLogin}>
+      {/* <form id="login-form" onSubmit={handleLogin}>
         <div className="login-header">
           <h2>영웅이네 오신 것을 환영합니다.</h2>
         </div>
@@ -86,11 +101,29 @@ export default function Login() {
           </div>
         </div>
 
-        <p className="login-form-action">
-          <button type="submit" className="login-btn">
-            로그인
-          </button>
-        </p>
+        <button type="submit" className="login-btn">
+          로그인
+        </button>
+      </form> */}
+      <div className={`welcome-text ${showWelcome ? "centered" : "moved-up"}`}>
+        <h2>영웅이네 오신 것을 환영합니다.</h2>
+      </div>
+      <form id="login-form" className={showForm ? "fade-in" : ""} onSubmit={handleLogin}>
+        <div className="login-form-row">
+          <div className="login-control">
+            <label htmlFor="email">이메일 아이디</label>
+            <input type="email" name="email" ref={emailInput} />
+          </div>
+
+          <div className="login-control">
+            <label htmlFor="password">비밀번호</label>
+            <input type="password" name="password" ref={passwordInput} />
+          </div>
+        </div>
+
+        <button type="submit" className="login-btn">
+          로그인
+        </button>
       </form>
     </>
   );

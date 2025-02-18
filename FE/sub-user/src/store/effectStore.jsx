@@ -162,7 +162,7 @@ export default function EffectContextProvider({ children }) {
     fetchData();
 
     // setInterval에 fetchData 함수를 넘겨야 함
-    const intervalId = setInterval(refreshData, 10 * 1000);
+    const intervalId = setInterval(refreshData, 5 * 1000);
 
     // Cleanup 함수 추가: 컴포넌트가 언마운트 될 때 interval을 클리어
     return () => clearInterval(intervalId);

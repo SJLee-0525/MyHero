@@ -172,6 +172,12 @@ class Message(BaseModel):
     content: Optional[str] = None
     image_url: Optional[str] = None
 
+class IndexList(BaseModel):
+    """
+    여러 메시지, 알림을 읽음 처리하기 위해 Client가 보내는 데이터
+    """
+    index_list: Optional[list] = None
+
 class Settings(BaseModel):
     """
     로봇의 설정 값을 업데이트하기 위해 Client가 보내는 데이터

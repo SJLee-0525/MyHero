@@ -117,8 +117,6 @@ export default function MentalReportDetail() {
         })
     : null;
 
-  const mainUserName = "박순자123";
-
   return (
     <Modal
       open={userProgressStore.modalProgress === "detail-mental-report"}
@@ -128,9 +126,7 @@ export default function MentalReportDetail() {
           : null
       }
     >
-      <h1 className="detail-report-title">
-        {mainUserName}님의 감정 상태 상세 보고서
-      </h1>
+      <h1 className="detail-report-title">감정 상태 상세 보고서</h1>
       <p className="detail-report-date">
         {reportedAt ? reportedAt : null} 발행
       </p>

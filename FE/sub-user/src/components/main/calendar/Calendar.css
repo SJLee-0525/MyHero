@@ -640,7 +640,7 @@
   justify-content: space-between;
   align-items: center;
 
-  height: 60px;
+  min-height: 60px;
 
   padding: 5px;
 
@@ -683,9 +683,11 @@
   justify-content: space-between;
   align-items: end;
 
+  gap: 5px;
+
   padding: 0px 8px;
 
-  height: 40px;
+  min-height: 40px;
 }
 
 .calendar-health-reports ul .health-report-header p {
@@ -767,7 +769,7 @@
   justify-content: space-between;
   align-items: center;
 
-  height: 60px;
+  min-height: 60px;
 
   font-family: Pretendard;
 
@@ -810,17 +812,21 @@
   justify-content: space-between;
   align-items: end;
 
+  gap: 5px;
+
   padding: 0px 8px;
 
-  height: 40px;
+  width: 80%;
+  min-height: 40px;
 }
 
 .calendar-mental-reports ul .mental-report-header p {
-  text-align: end;
-
+  text-align: start;
   font-weight: normal;
 
   margin: 0;
+
+  width: 100%;
 }
 
 @media screen and (max-width: 1200px) {

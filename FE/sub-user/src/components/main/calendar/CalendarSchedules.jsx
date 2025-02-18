@@ -227,7 +227,11 @@ export default function CalendarSchedules() {
                           </span>
                           <div className="mental-report-header">
                             <span>{reportedAtKST}</span>
-                            <p>{record.description.overall_emotional_state}</p>
+                            <span>
+                              <p>
+                                {record.description.overall_emotional_state}
+                              </p>
+                            </span>
                           </div>
                         </div>
                       </button>

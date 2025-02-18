@@ -38,7 +38,7 @@ export default function NewEmergencyModal() {
       <div id="emergency-alert-modal-box">
         {emergencyStore.newCritNotifications.slice().map((emergencyAlert) => {
           const createdAtKST = new Date(
-            emergencyAlert.created_at
+            emergencyAlert.created_at + "Z"
           ).toLocaleString("ko-KR", {
             timeZone: "Asia/Seoul",
             month: "2-digit",

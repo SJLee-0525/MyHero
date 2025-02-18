@@ -32,8 +32,11 @@ export default function Accounts() {
                   : "auto-login-btn"
               }
             >
-              <p>자동 로그인</p>
-              <p>{userProgressStore.autoLogin ? "켜짐" : "꺼짐"}</p>
+              <p>
+                자동 로그인
+                <br />
+                {userProgressStore.autoLogin ? "켜짐" : "꺼짐"}
+              </p>
             </button>
             <button className="logout-btn" onClick={handleLogout}>
               로그아웃

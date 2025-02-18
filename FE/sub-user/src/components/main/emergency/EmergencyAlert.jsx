@@ -12,6 +12,8 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
     }
   );
 
+  const descriptions = emergencyAlert.description.split(",");
+
   return (
     <div
       id={
@@ -22,9 +24,10 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
     >
       <div>
         <div className="title-container">
-          <h2>{emergencyAlert.description}</h2>
-          <p className="date">{createdAtKST}</p>
+          <h2>{descriptions[0]}</h2>
+          {descriptions.length > 1 && <p>{descriptions[1]}</p>}
         </div>
+        <p className="date">{createdAtKST}</p>
 
         {/* 이미지 출력단 */}
         {emergencyAlert.image_url && (
@@ -33,28 +36,6 @@ export default function EmergencyAlert({ emergencyAlert, onCheckAlert }) {
           </div>
         )}
       </div>
-
-      {/* 버튼 조작부 */}
-      {/* {!res && (
-        <div className="button-container">
-          <button className="report" onClick={handleReport}>
-            신고 요청 보내기
-          </button>
-          <button className="call" onClick={handleCall}>
-            전화 연결
-          </button>
-        </div>
-      )}
-      {res && (
-        <div className="button-container">
-          <button className="call" onClick={handleCall}>
-            전화 연결
-          </button>
-          <button className="close" onClick={handleCheck}>
-            닫기
-          </button>
-        </div>
-      )} */}
     </div>
   );
 }

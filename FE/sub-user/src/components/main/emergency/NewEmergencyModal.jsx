@@ -48,12 +48,7 @@ export default function NewEmergencyModal() {
             hour12: true,
           });
 
-          let parsedDescription;
-          try {
-            parsedDescription = JSON.parse(emergencyAlert.description);
-          } catch (e) {
-            parsedDescription = emergencyAlert.description; // JSON 파싱 실패 시 원본 유지
-          }
+          const descriptions = emergencyAlert.description.split(",");
 
           return (
             <div
@@ -68,8 +63,9 @@ export default function NewEmergencyModal() {
                     emergencyAlert.is_read ? "common" : "no-answer-title"
                   }
                 >
-                  123옆 공간에서 낙상 감지
+                  {descriptions[0]}
                 </h1>
+                {descriptions.length > 1 && <p>{descriptions[1]}</p>}
               </div>
               <p className="date">{createdAtKST}</p>
 

@@ -156,8 +156,10 @@
     width: 100%;
     max-width: 100%;
     padding-bottom: 10px;
-    overflow: hidden;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
     cursor: none;
+    user-select: none;
 }
 
 .message-list {
@@ -172,8 +174,22 @@
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
     cursor: none;
+    user-select: none;
     touch-action: pan-y;
     overscroll-behavior: contain;
+}
+
+.message-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+    background-color: #54736D;
+    border-radius: 10px;
+}
+
+.message-list::-webkit-scrollbar-track {
+    background: #ccc;
 }
 
 .message-group {
@@ -234,6 +250,7 @@
     border-top: 1px solid #ddd;
     border-radius: 8px;
     position: relative;
+    cursor: none;
 }
 
 .reply-bar input {
@@ -241,6 +258,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    cursor: none;
 }
 
 /* 전송 버튼 (활성화 상태) */

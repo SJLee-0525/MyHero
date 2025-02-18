@@ -79,7 +79,21 @@
   overflow-y: scroll;
   cursor: none;
   touch-action: pan-y;
+  user-select: none;
   overscroll-behavior: contain;
+}
+
+.news-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.news-list::-webkit-scrollbar-thumb {
+  background-color: #54736D;
+  border-radius: 10px;
+}
+
+.news-list::-webkit-scrollbar-track {
+  background: #ccc;
 }
 
 .news-box {

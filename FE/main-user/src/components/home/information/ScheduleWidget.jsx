@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { CalendarStoreContext } from "../../../store/calendarStore";
+import "../Home.css"
 
 export default function ScheduleWidget() {
   const { schedules } = useContext(CalendarStoreContext);

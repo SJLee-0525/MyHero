@@ -12,6 +12,9 @@ export default function Chatting({ isOpen, onBack }) {
     const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
     const messageListRef = useRef(null);
+    const isDragging = useRef(false);
+    const startY = useRef(0);
+    const scrollTop = useRef(0);
 
     useEffect(() => {
         if (isOpen && selectedUser?.user_id) {
@@ -35,18 +38,23 @@ export default function Chatting({ isOpen, onBack }) {
         }
     }, [conversations[selectedUser.user_id]]);
 
-    const handleTouchStart = (e) => {
-        messageListRef.current.startY = e.touches[0].clientY;
+    const handleMouseDown = (e) => {
+        isDragging.current = true;
+        startY.current = e.clientY;
+        scrollTop.current = messageListRef.current.scrollTop;
     };
 
-    const handleTouchMove = (e) => {
-        const diff = messageListRef.current.startY - e.touches[0].clientY;
-        messageListRef.current.scrollTop += diff;
-        messageListRef.current.startY = e.touches[0].clientY;
+    const handleMouseMove = (e) => {
+        if (!isDragging.current) return;
+        const deltaY = e.clientY - startY.current;
+        messageListRef.current.scrollTop = scrollTop.current - deltaY;
+    };
+
+    const handleMouseUp = () => {
+        isDragging.current = false;
     };
 
     const handleBack = () => {
-        console.log("🔙 뒤로 가기 버튼 클릭됨");
         clearSelectedUser(); // ✅ 선택된 사용자 해제
         if (typeof onBack === "function") {
             onBack(); // ✅ 부모(`MessageModal`)에서 `setIsChatting(false)` 실행
@@ -119,8 +127,10 @@ export default function Chatting({ isOpen, onBack }) {
             <div 
                 className="message-content"
                 ref={messageListRef}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
             >
                 <div className="message-list">
                     {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (

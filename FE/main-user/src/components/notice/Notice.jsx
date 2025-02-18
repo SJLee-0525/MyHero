@@ -10,8 +10,11 @@ export default function Notice({ onReply }) {
   const { notifications, fetchNotifications } = useNotificationStore();
   const [selectedNotice, setSelectedNotice] = useState(null);
   const noticeScrollRef = useRef(null);
+  const isDragging = useRef(false);
+  const startY = useRef(0);
+  const scrollTop = useRef(0);
 
-  useEffect(() => { //
+  useEffect(() => {
     fetchNotifications();
   }, []);
 
@@ -29,7 +32,6 @@ export default function Notice({ onReply }) {
     is_read: notice.is_read,
   })) : [];
 
-  /////
   const messageNotices = notifications.map(notice => ({
     id: `dm-${notice.id}`,
     text: notice.text,
@@ -37,7 +39,6 @@ export default function Notice({ onReply }) {
     notification_grade: "dm",
     is_read: notice.is_read,
   }));
-  /////
 
   const allNotices = [...disasterNotices, ...messageNotices].sort(
     (a, b) => new Date(b.created_at) - new Date(a.created_at)
@@ -77,16 +78,6 @@ export default function Notice({ onReply }) {
   const openNotice = (notice) => {
     setSelectedNotice(notice);
 
-    // const extractedIndex = notice.id ? parseInt(notice.id.replace(/\D/g, ""), 10) : null;
-
-    // if (!notice.is_read && extractedIndex) {
-    //     setDisasterData((prevData) =>
-    //       prevData.map((item) => (item.index === extractedIndex ? { ...item, is_read: true } : item))
-    //     );
-
-    //     markNotificationAsRead(extractedIndex);
-    // }
-
     if (!notice.is_read) {
       if (notice.id.startsWith("disaster-")) {
         const extractedIndex = parseInt(notice.id.replace(/\D/g, ""), 10);
@@ -114,14 +105,20 @@ export default function Notice({ onReply }) {
     return acc;
   }, {});
 
-  const handleTouchStart = (e) => {
-    noticeScrollRef.current.startY = e.touches[0].clientY;
+  const handleMouseDown = (e) => {
+    isDragging.current = true;
+    startY.current = e.clientY;
+    scrollTop.current = noticeScrollRef.current.scrollTop;
   };
 
-  const handleTouchMove = (e) => {
-    const diff = noticeScrollRef.current.startY - e.touches[0].clientY;
-    noticeScrollRef.current.scrollTop += diff;
-    noticeScrollRef.current.startY = e.touches[0].clientY;
+  const handleMouseMove = (e) => {
+    if (!isDragging.current) return;
+    const deltaY = e.clientY - startY.current;
+    noticeScrollRef.current.scrollTop = scrollTop.current - deltaY;
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
   };
 
   return (
@@ -130,8 +127,10 @@ export default function Notice({ onReply }) {
         <div 
           className="notice-scroll"
           ref={noticeScrollRef}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
           {Object.entries(groupedNotices).map(([date, notices]) => (
             <div key={date} className="notice-group">

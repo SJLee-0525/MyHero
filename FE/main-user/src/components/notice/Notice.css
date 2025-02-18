@@ -102,8 +102,10 @@
 .notice-unselected {
   flex-grow: 1;
   position: relative;
+  margin-left: 10px;
   padding: 10px;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
   padding: 10px;
   border-radius: 5px;
 }
@@ -146,6 +148,10 @@
   margin: 0 0;
 }
 
+.divider {
+  margin: 0;
+}
+
 /* 스크롤 스타일 */
 .notice-scroll {
   overflow-y: auto;
@@ -153,20 +159,21 @@
   padding-right: 5px;
   cursor: none;
   touch-action: pan-y;
+  user-select: none;
   overscroll-behavior: contain;
 }
 
 .notice-scroll::-webkit-scrollbar {
-  width: 5px;
+  width: 10px;
 }
 
 .notice-scroll::-webkit-scrollbar-thumb {
-  background-color: #aaa;
+  background-color: #54736D;
   border-radius: 10px;
 }
 
 .notice-scroll::-webkit-scrollbar-track {
-  background: transparent;
+  background: #ccc;
 }
 
 .reply-button {

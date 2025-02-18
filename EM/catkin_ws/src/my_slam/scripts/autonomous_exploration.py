@@ -75,11 +75,9 @@ class AutonomousExploration:
     
     def select_and_send_new_goal(self):
         if not self.is_enabled:
-            rospy.loginfo("현재 자율 탐색이 비활성화되어 있습니다.")
             return
         
         if self.occupancy_grid is None or self.global_costmap is None:
-            rospy.logwarn("맵이나 비용정보를 아직 받지 못했습니다.")
             return
             
         empty_points = self.find_empty_spaces(self.occupancy_grid)

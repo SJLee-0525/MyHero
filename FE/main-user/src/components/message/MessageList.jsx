@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useMessageStore } from '../../store/messageStore';
-import Chatting from './Chatting';
 import './Message.css';
 
 export default function MessageList({ onSelectUser }) {

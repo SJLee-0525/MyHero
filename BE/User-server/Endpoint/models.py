@@ -60,6 +60,12 @@ class IDCheck(BaseModel):
     """
     id: Optional[str] = None  # 확인 및 점검을 위한 ID
 
+class SessionCheck(BaseModel):
+    """
+    Session이 유효한지 확인하기 위해 Client가 보내는 데이터
+    """
+    session_id: Optional[str] = None  # 재 로그인을 위한 Session ID
+
 class Family(BaseModel):
     """
     가족 생성을 위해 client가 보내는 데이터

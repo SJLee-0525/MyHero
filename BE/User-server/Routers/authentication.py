@@ -4,6 +4,7 @@
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 Parts of Members
 """
+from urllib import request
 
 # Libraries
 from fastapi import HTTPException, APIRouter, status, Response, Request, Depends
@@ -286,9 +287,9 @@ async def change_password(change_password_data: ChangePassword, request_id: str 
 
 # 자동 로그인을 설정하는 기능
 @router.patch("/auto-login", status_code=status.HTTP_200_OK)
-async def set_auto_login(request: Request, request_id: str = Depends(Database.check_current_user)):
+async def set_auto_login(user_request: Request, request_id: str = Depends(Database.check_current_user)):
     # 보낸 Session 정보가 정상적인지 검증하기
-    session_id: str = request.cookies.get("session_id")
+    session_id: str = user_request.cookies.get("session_id")
     session_data: dict = Database.get_login_session(session_id)
 
     if not session_id or not request_id or not session_data:
@@ -319,14 +320,33 @@ async def set_auto_login(request: Request, request_id: str = Depends(Database.ch
         )
 
 # 지금 유효한 권한을 가지고 있는지 확인하는 기능
-@router.get("/check", status_code=status.HTTP_200_OK)
-async def check_permission(request_id: str = Depends(Database.check_current_user)):
-    if request_id:
-        logger.info(f"Check permission successful: {request_id}")
-        return {
-            "message": "You have permission"
-        }
-    else:
+@router.post("/check", status_code=status.HTTP_200_OK)
+async def check_permission(session_data: SessionCheck, response: Response):
+    missing_location: list = ["body"]
+
+    if session_data.session_id is None or session_data.session_id == "":
+        missing_location.append("session_id")
+
+    if len(missing_location) > 1:
+        logger.error(f"No data provided: {missing_location}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "type": "no data",
+                "loc": missing_location,
+                "message": "Permission check data is required",
+                "input": jsonable_encoder(session_data)
+            }
+        )
+
+    # 보낸 세션 ID가 유효한지 확인
+    session_id: str = session_data.session_id
+    session_data: dict = Database.get_login_session(session_id)
+    request_id: str = session_data["user_id"] if session_data else None
+    request_data: dict = Database.get_one_account(request_id)
+
+    if not session_data or not request_data:
+        logger.warning(f"You do not have permission: {request_id}")
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail={
@@ -334,3 +354,23 @@ async def check_permission(request_id: str = Depends(Database.check_current_user
                 "message": "You do not have permission"
             }
         )
+
+    # 식별용 쿠키 설정
+    response.set_cookie(
+        key="session_id",
+        value=session_id,
+        httponly=True,
+        secure=SECURE_SET,
+        samesite=SAME_SET,
+        domain=DOMAIN_SET,
+    )
+
+    logger.info(f">>> Re-Login successful: {session_id} <<<")
+
+    return {
+        "message": "Permission check successful",
+        "result": {
+            "session_id": session_id,
+            "user_data": jsonable_encoder(request_data)
+        }
+    }

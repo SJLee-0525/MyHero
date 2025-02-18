@@ -39,6 +39,7 @@ export default function RegisterMemberQr() {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         }
       );
 

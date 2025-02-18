@@ -39,13 +39,23 @@ void MotorController::cmdVelCallback(const geometry_msgs::Twist::ConstPtr &msg)
     if (fgInitsetting)
     {
         velCmdUpdateCount++;
-        target_linear_vel_ = static_cast<float>(msg->linear.x);
-        target_linear_vel_ = (target_linear_vel_ > MAX_LINEAR_VEL) ? MAX_LINEAR_VEL : (target_linear_vel_ < -MAX_LINEAR_VEL) ? -MAX_LINEAR_VEL
-                                                                                                                             : target_linear_vel_;
 
+        // angular velocity 먼저 처리
         target_angular_vel_ = static_cast<float>(msg->angular.z);
         target_angular_vel_ = (target_angular_vel_ > MAX_ANGULAR_VEL) ? MAX_ANGULAR_VEL : (target_angular_vel_ < -MAX_ANGULAR_VEL) ? -MAX_ANGULAR_VEL
                                                                                                                                    : target_angular_vel_;
+
+        // linear velocity 처리 - angular velocity 크기에 따라 조정
+        if (fabs(target_angular_vel_) >= 0.9)
+        {
+            target_linear_vel_ = 0.6;
+        }
+        else
+        {
+            target_linear_vel_ = static_cast<float>(msg->linear.x);
+            target_linear_vel_ = (target_linear_vel_ > MAX_LINEAR_VEL) ? MAX_LINEAR_VEL : (target_linear_vel_ < -MAX_LINEAR_VEL) ? -MAX_LINEAR_VEL
+                                                                                                                                 : target_linear_vel_;
+        }
 
         last_cmd_time_ = ros::Time::now();
     }

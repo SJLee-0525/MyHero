@@ -33,79 +33,6 @@ export const SettingStoreContext = createContext({
 
     const familyId = userProgressStore.familyInfo?.familyId || "";
 
-    // ✅ WebSocket 연결 함수
-    const connectWebSocket = () => {
-        if (socket && socket.readyState === WebSocket.OPEN) return;
-
-        const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
-        const wsUrl = `${protocol}70.12.247.214:8765`;
-
-        try {
-            const ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => console.log("✅ WebSocket 연결 성공!");
-            ws.onerror = (error) => console.error("❌ WebSocket 오류 발생:", error);
-            ws.onclose = () => console.log("⚠️ WebSocket 연결 해제됨. 재연결을 시도할 수 있습니다.");
-            
-            setSocket(ws);
-        } catch (error) {
-            console.error("❌ WebSocket 초기화 실패:", error);
-        }
-    };
-
-    // 웹 소켓 설정
-    useEffect(() => {
-        connectWebSocket();
-        
-        return () => {
-            if (socket) socket.close();
-        };
-    }, []);
-
-    // const sendWebSocket = async (data) => {
-    //     try {
-    //         if (socket?.readyState === WebSocket.CLOSED) {
-    //             const ws = new WebSocket('ws://localhost:8765');
-    //             await new Promise((resolve, reject) => {
-    //                 ws.onopen = () => resolve();
-    //                 ws.onerror = () => reject();
-    //             });
-    //             setSocket(ws);
-    //         }
-    
-    //         if (socket?.readyState === WebSocket.OPEN) {
-    //             const wsMessage = {
-    //                 type: "settings",
-    //                 data: data
-    //             };
-    //             socket.send(JSON.stringify(wsMessage));
-    //             return true;
-    //         }
-    //         return false;
-    //     } catch (error) {
-    //         console.error('WebSocket send error:', error);
-    //         return false;
-    //     }
-    // }
-
-    // ✅ WebSocket을 통한 데이터 전송 함수
-    const sendWebSocket = async (data) => {
-        try {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                console.warn("⚠️ WebSocket이 닫혀 있어 재연결을 시도합니다.");
-                connectWebSocket();
-                return false;
-            }
-
-            const wsMessage = { type: "settings", data };
-            socket.send(JSON.stringify(wsMessage));
-            return true;
-        } catch (error) {
-            console.error("❌ WebSocket 전송 오류:", error);
-            return false;
-        }
-    };
-
     async function fetchSettings() {
         if (!familyId) return;
 
@@ -118,8 +45,6 @@ export const SettingStoreContext = createContext({
             const resData = response.data;
             
             if (response.success && resData.message === "Settings retrieved successfully") {
-                console.log("✅ 서버에서 설정 값 불러오기 성공:", resData);
-
                 setSettings({
                     alertState: resData.result.is_alarm_enabled,
                     cameraState: resData.result.is_camera_enabled,
@@ -132,6 +57,46 @@ export const SettingStoreContext = createContext({
         }
     }
 
+    async function camcarToggle(featureKey) {
+        try {
+            const updates = {};
+
+            if (featureKey === "cameraState") {
+                updates.is_camera_enabled = !settings.cameraState;
+                updates.is_driving_enabled = settings.driveState;
+            } else if (featureKey === "driveState") {
+                updates.is_camera_enabled = settings.cameraState;
+                updates.is_driving_enabled = !settings.driveState;
+            }
+
+            // 변경된 내용이 없다면 요청 보내지 않음
+            if (Object.keys(updates).length === 0) {
+                console.log("⚠️ 변경된 사항이 없어 요청을 보내지 않습니다.");
+                return;
+            }
+            
+            const response = await request(`http://70.12.247.214:8001/SettingValue`, "POST", updates);
+            
+            if (response.success) {
+                console.log("카메라/자동차 상태 변경 성공:", response.data);
+            } else {
+                console.error("❌ 카메라/자동차 상태 변경 실패:", response.error);
+                setSettings((prev) => ({
+                    ...prev,                              
+                    cameraState: settings.cameraState,
+                    driveState: settings.driveState,
+                }));
+            }
+        } catch (error) {
+            console.error("❌ 네트워크 오류 발생:", error);
+            setSettings((prev) => ({
+                ...prev,
+                cameraState: settings.cameraState,
+                driveState: settings.driveState,
+            }));
+        }
+    }
+
     async function audioToggle() {
         try {
             const updatedMicState = !settings.micState;
@@ -141,8 +106,12 @@ export const SettingStoreContext = createContext({
 
             const resData = response.data;
 
-            if (response.success && resData.message === "Speaker and microphone settings updated") {
-                console.log("✅ 마이크 상태 변경 성공:", resData);
+            if (response.success && resData?.is_microphone_enabled !== undefined) {
+                setSettings((prev) => ({
+                    ...prev,
+                    micState: response.data.is_microphone_enabled,
+                }));
+                console.log("마이크 상태 변경 성공:", response.data.is_microphone_enabled);
             } else {
                 console.error("❌ 마이크 상태 변경 실패:", response.error);
                 setSettings((prev) => ({ ...prev, micState: !updatedMicState }));
@@ -170,17 +139,9 @@ export const SettingStoreContext = createContext({
                 { 
                     is_alarm_enabled: updatedSettings.alertState,
                     is_camera_enabled: updatedSettings.cameraState,
-                    is_microphone_enabled: updatedSettings.micState,
                     is_driving_enabled: updatedSettings.driveState,
                 }
             );
-            
-            sendWebSocket({ 
-                is_alarm_enabled: updatedSettings.alertState,
-                is_camera_enabled: updatedSettings.cameraState,
-                is_microphone_enabled: updatedSettings.micState,
-                is_driving_enabled: updatedSettings.driveState,
-            });
 
             console.log("📡 PATCH 요청 결과:", response);
 
@@ -188,7 +149,7 @@ export const SettingStoreContext = createContext({
                 setSettings(settings);
                 console.error(`❌ ${featureKey} 상태 변경 실패:`, response.error);
             } else {
-                console.log(`✅ ${featureKey} 상태 변경 성공:`, updatedSettings);
+                console.log(`${featureKey} 상태 변경 성공:`, updatedSettings);
             }
         } catch (error) {
             console.error(`❌ ${featureKey} 상태 변경 중 오류 발생:`, error);
@@ -235,11 +196,9 @@ export const SettingStoreContext = createContext({
                 alert("📸 이미지가 저장되었습니다!");
             } else {
                 console.error("❌ 배경 추가 실패:", response.error);
-                alert("❌ 이미지 저장에 실패했습니다.");
             }
         } catch (error) {
             console.error("❌ 네트워크 오류:", error);
-            alert("❌ 네트워크 오류로 인해 저장에 실패했습니다.");
         }
     }
 
@@ -256,6 +215,7 @@ export const SettingStoreContext = createContext({
         addBackground,
         toggleFeature,
         fetchSettings,
+        camcarToggle,
         audioToggle,
     };
   

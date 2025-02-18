@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { NewsStoreContext } from "../../store/newsStore";
 import NewsDetail from "./NewsDetail";
 import defaultImage from "../../assets/icons/hero.png";
@@ -18,19 +18,28 @@ const categoryMap = {
 export default function NewsBoxPage({ category, newsData, onBack }) {
   const { selectedNews, selectNews, clearSelectedNews } = useContext(NewsStoreContext);
   const newsListRef = useRef(null);
+  const isDragging = useRef(false);
+  const startY = useRef(0);
+  const scrollTop = useRef(0);
 
   if (selectedNews) {
     return <NewsDetail news={selectedNews} onBack={clearSelectedNews} />
   }
 
-  const handleTouchStart = (e) => {
-    newsListRef.current.startY = e.touches[0].clientY;
+  const handleMouseDown = (e) => {
+    isDragging.current = true;
+    startY.current = e.clientY;
+    scrollTop.current = newsListRef.current.scrollTop;
   };
 
-  const handleTouchMove = (e) => {
-    const diff = newsListRef.current.startY - e.touches[0].clientY;
-    newsListRef.current.scrollTop += diff;
-    newsListRef.current.startY = e.touches[0].clientY;
+  const handleMouseMove = (e) => {
+    if (!isDragging.current) return;
+    const deltaY = e.clientY - startY.current;
+    newsListRef.current.scrollTop = scrollTop.current - deltaY;
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
   };
 
   return (
@@ -43,8 +52,10 @@ export default function NewsBoxPage({ category, newsData, onBack }) {
       <div 
         className="news-list"
         ref={newsListRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         {newsData.length > 0 ? (
           newsData.map((news) => (

@@ -11,7 +11,7 @@ import micIcon from "../../assets/microphone.png";
 import Icon from "./Icon.jsx";
 
 export default function Dock() {
-  const { alertState, cameraState, driveState, micState, audioToggle, toggleFeature } = useSettingStore();
+  const { alertState, cameraState, driveState, micState, camcarToggle, audioToggle, toggleFeature } = useSettingStore();
   const [clickedIcon, setClickedIcon] = useState(null);
 
   // 클릭 시 애니메이션 추가
@@ -22,9 +22,13 @@ export default function Dock() {
     if (featureKey === "micState") {
       console.log("🎤 마이크 상태 변경, audioToggle() 실행!");
       audioToggle(); // ✅ featureKey가 micState일 때 실행
+    } else if (featureKey === "cameraState" || featureKey === "driveState") {
+      console.log("📷🚗 카메라/자동차 상태 변경, camcarToggle() 실행!");
+      toggleFeature(featureKey);
+      camcarToggle(featureKey); // 카메라 또는 자동차 상태 변경
+    } else{
+      toggleFeature(featureKey);
     }
-    
-    toggleFeature(featureKey);
   };
 
   return (

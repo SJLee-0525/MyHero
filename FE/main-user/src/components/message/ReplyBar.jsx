@@ -26,8 +26,6 @@ export default function ReplyBar({ onSend }) {
             sender: "me",
         };
 
-        // addMessage(selectedUser.user_id, newMessage);
-
         const response = await sendMessageToServer(newMessage);
 
         if (response.success) {
@@ -39,13 +37,11 @@ export default function ReplyBar({ onSend }) {
         }
 
         setMessage("");
-        setIsListening(false); // 전송 후 음성 인식 종료
     };
 
     // 다시 말하기 (음성 인식 재시작)
     const handleRetry = () => {
         setMessage(""); // 기존 메시지 초기화
-        setIsListening(true); // 음성 인식 다시 시작
         if (typeof onRetry === "function") {
             onRetry(); // 존재할 때만 실행
         }

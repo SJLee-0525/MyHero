@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Message from "./Message.jsx";
 import ReplyBar from "./ReplyBar.jsx";
 import { useMessageStore } from "../../store/messageStore.jsx";
@@ -9,9 +9,11 @@ import "./Message.css";
 export default function Chatting({ isOpen, onBack }) {
     const { selectedUser, clearSelectedUser, conversations } = useMessageStore();
     const { loginUserInfo } = useUserProgressStore();
-    const [isListening, setIsListening] = useState(false); // 음성 인식 상태
     const messageEndRef = useRef(null);
     const messageListRef = useRef(null);
+    const isDragging = useRef(false);
+    const startY = useRef(0);
+    const scrollTop = useRef(0);
 
     useEffect(() => {
         if (isOpen && selectedUser?.user_id) {
@@ -35,18 +37,23 @@ export default function Chatting({ isOpen, onBack }) {
         }
     }, [conversations[selectedUser.user_id]]);
 
-    const handleTouchStart = (e) => {
-        messageListRef.current.startY = e.touches[0].clientY;
+    const handleMouseDown = (e) => {
+        isDragging.current = true;
+        startY.current = e.clientY;
+        scrollTop.current = messageListRef.current.scrollTop;
     };
-
-    const handleTouchMove = (e) => {
-        const diff = messageListRef.current.startY - e.touches[0].clientY;
-        messageListRef.current.scrollTop += diff;
-        messageListRef.current.startY = e.touches[0].clientY;
+    
+    const handleMouseMove = (e) => {
+        if (!isDragging.current) return;
+        const deltaY = e.clientY - startY.current;
+        messageListRef.current.scrollTop = scrollTop.current - deltaY;
+    };
+    
+    const handleMouseUp = () => {
+        isDragging.current = false;
     };
 
     const handleBack = () => {
-        console.log("🔙 뒤로 가기 버튼 클릭됨");
         clearSelectedUser(); // ✅ 선택된 사용자 해제
         if (typeof onBack === "function") {
             onBack(); // ✅ 부모(`MessageModal`)에서 `setIsChatting(false)` 실행
@@ -86,8 +93,8 @@ export default function Chatting({ isOpen, onBack }) {
 
     const handleSendMessage = async (newMessage) => {
         const newMsgObject = {
-            index: Date.now() + 9 * 60 * 60 * 1000,  // 임시 ID (서버와 동기화되면 변경 가능)
-            from_id: loginUserInfo.userInfo.id, // 내가 보낸 메시지
+            index: Date.now() + 9 * 60 * 60 * 1000,
+            from_id: loginUserInfo.userInfo.id,
             to_id: selectedUser.user_id,
             created_at: new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString(),
             content: newMessage,
@@ -101,13 +108,6 @@ export default function Chatting({ isOpen, onBack }) {
         } else {
         console.error("❌ 메시지 전송 실패:", response.error);
         }
-
-        setIsListening(false); // 메시지 전송 후 음성 인식 종료
-    };
-
-    const handleStartListening = () => {
-        setIsListening(true);
-        // STT (Speech-to-Text) API 호출 로직
     };
 
     return (
@@ -116,13 +116,14 @@ export default function Chatting({ isOpen, onBack }) {
                 <button className="back-button" onClick={handleBack}>←</button>
                 <h2 className="chat-title">{selectedUser.name}</h2>
             </div>
-            <div 
-                className="message-content"
-                ref={messageListRef}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-            >
-                <div className="message-list">
+            <div className="message-content" ref={messageListRef}>
+                <div 
+                    className="message-list"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                >
                     {(conversations[selectedUser.user_id] && conversations[selectedUser.user_id].length === 0) ? (
                         <p className="no-messages">대화 내역이 없습니다.</p>
                     ) : (
@@ -151,7 +152,7 @@ export default function Chatting({ isOpen, onBack }) {
                     )}
                     <div ref={messageEndRef} />
                 </div>
-                <ReplyBar onSend={handleSendMessage} onRetry={handleStartListening} />
+                <ReplyBar onSend={handleSendMessage} />
             </div>
         </div>
     );

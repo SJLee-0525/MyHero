@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-content: center; */
     width: auto;
     background-color: #D9D9D9;
     padding: 10px;
@@ -138,6 +137,7 @@
     border: none;
     border-radius: 5px;
     font-weight: bold;
+    cursor: none;
 }
 
 .message-title {
@@ -156,7 +156,6 @@
     width: 100%;
     max-width: 100%;
     padding-bottom: 10px;
-    overflow: hidden;
     cursor: none;
 }
 
@@ -171,9 +170,24 @@
     background: #D9D9D9;
     border-radius: 8px;
     transition: all 0.3s ease-in-out;
-    cursor: none;
+    cursor: pointer;
+    user-select: none;
     touch-action: pan-y;
+    overflow-y: auto !important;
     overscroll-behavior: contain;
+}
+
+.message-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.message-list::-webkit-scrollbar-thumb {
+    background-color: #54736D;
+    border-radius: 10px;
+}
+
+.message-list::-webkit-scrollbar-track {
+    background: #ccc;
 }
 
 .message-group {
@@ -194,7 +208,6 @@
 .divider {
     width: 2px;
     background-color: #ECECEC;
-    /* height: 100%; */
     min-height: 100%;
     height: auto;
     margin: 0 10px;
@@ -234,6 +247,7 @@
     border-top: 1px solid #ddd;
     border-radius: 8px;
     position: relative;
+    cursor: none;
 }
 
 .reply-bar input {
@@ -241,6 +255,7 @@
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    cursor: none;
 }
 
 /* 전송 버튼 (활성화 상태) */
@@ -379,15 +394,6 @@
 }
 
 .user-button {
-    /* --w: 10em;
-    --bg: rgb(var(--rgb));
-    --bga: rgba(var(--rgb), 0.4);
-
-    width: var(--w);
-    height: var(--w);
-    background: var(--bg);
-    box-shadow: 0 3px 12px 2px var(--bga); */
-
     transition: 0.1s transform, 0.3s box-shadow;
     will-change: transform, box-shadow;
     backface-visibility: hidden;

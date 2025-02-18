@@ -145,7 +145,6 @@ async def get_new_notification(
             "result": jsonable_encoder(notification_data)
         }
     else:
-        logger.warning("No new notifications found.")
         return {
             "message": "No new notifications found",
             "result": jsonable_encoder(notification_data)
@@ -190,7 +189,6 @@ async def get_all_notification(
             "result": jsonable_encoder(notification_data)
         }
     else:
-        logger.warning("No new notifications found.")
         return {
             "message": "No new notifications found",
             "result": jsonable_encoder(notification_data)

@@ -227,7 +227,6 @@ async def get_new_received_messages(
             "result": jsonable_encoder(message_data)
         }
     else:
-        logger.warning("No new received messages")
         return {
             "message": "No new received messages",
             "result": jsonable_encoder(message_data)
@@ -267,7 +266,6 @@ async def get_all_received_messages(
             "result": jsonable_encoder(message_data)
         }
     else:
-        logger.warning("No received messages")
         return {
             "message": "No received messages",
             "result": jsonable_encoder(message_data)

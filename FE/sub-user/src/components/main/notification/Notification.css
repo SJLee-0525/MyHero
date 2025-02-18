@@ -68,7 +68,7 @@
 
   border-radius: 8px;
 
-  overflow-y: auto;
+  overflow-y: scroll;
   box-sizing: border-box;
 }
 
@@ -585,7 +585,7 @@ p {
     flex-direction: column;
 
     margin-top: 10px;
-    gap: 0px;
+    gap: 10px;
   }
 
   #notification-elem-left {
@@ -594,5 +594,19 @@ p {
 
   #notification-elem-right {
     width: 100%;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  #home-notifications {
+    height: 50vh;
+  }
+
+  #public-emergency-notifications {
+    height: 50vh;
+  }
+
+  #emergency-alert {
+    height: 50vh;
   }
 }

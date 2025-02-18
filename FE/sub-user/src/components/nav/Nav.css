@@ -149,7 +149,12 @@ h5 {
   border-radius: 12px;
 
   /* 기존 radial-gradient 제거 후 투명한 배경과 블러 효과 추가 */
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(163, 163, 163, 0.2) 97.65%), rgba(163, 163, 163, 0.2);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(163, 163, 163, 0.2) 97.65%
+    ),
+    rgba(163, 163, 163, 0.2);
   backdrop-filter: blur(30px); /* 블러 효과 */
   -webkit-backdrop-filter: blur(30px); /* Safari 지원 */
   box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
@@ -412,14 +417,18 @@ h5 {
   align-items: center;
 
   margin: 4px 0px;
-  padding: 4px 4px;
+  padding: 10px;
   width: 288px;
 
   border: 0;
   border-radius: 12px;
 
-  background: linear-gradient(55deg, rgba(44, 44, 44, 0.19) 2.82%, rgba(227, 227, 227, 0.2) 97.65%), rgba(255, 255, 255, 0.2);
-  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(
+      55deg,
+      rgba(44, 44, 44, 0.19) 2.82%,
+      rgba(227, 227, 227, 0.2) 97.65%
+    ),
+    rgba(255, 255, 255, 0.2);
 }
 
 #mobile-bar .top-side-bar-nav-elem {
@@ -429,7 +438,7 @@ h5 {
 
   width: 288px;
   margin: 4px 0px;
-  padding: 4px 4px;
+  padding: 10px;
   gap: 10px;
 
   border: 0;
@@ -447,12 +456,11 @@ h5 {
 
   width: 288px;
   margin: 4px 0px;
-  padding: 4px 4px;
+  padding: 10px;
   gap: 10px;
 
   border-radius: 12px;
   background: #ff9500;
-  box-shadow: 2px 2px 3px 1px rgba(0, 0, 0, 0.25);
 
   font-weight: bold;
 }

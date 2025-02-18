@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { useEffect } from "react";
 import { useMainHttp } from "../hooks/useMainHttp";
 import { UserProgressContext } from "./userProgressStore";
+import { StoreContext } from "./store";
 
 export const EnvironmentDataContext = createContext({
     environmentData: {
@@ -22,6 +23,7 @@ export const EnvironmentDataContext = createContext({
 export default function EnvironmentDataContextProvider({ children }) {
     const { request, loading, error } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
+    const store = useContext(StoreContext);
 
     const [environmentData, setEnvironmentData] = useState({
         result: {
@@ -54,16 +56,33 @@ export default function EnvironmentDataContextProvider({ children }) {
 
             if (response.success) {
                 if (resData.message === "Home status retrieved successfully") {
-                setEnvironmentData({
-                    result: {
-                        family_id: resData.result.family_id,
-                        reported_at: resData.result.reported_at,
-                        temperature: resData.result.temperature,
-                        humidity: resData.result.humidity,
-                        dust_level: resData.result.dust_level.toFixed(2),
-                        ethanol: resData.result.ethanol.toFixed(2),
-                    } 
-                });
+                // setEnvironmentData({
+                //     result: {
+                //         family_id: resData.result.family_id,
+                //         reported_at: resData.result.reported_at,
+                //         temperature: resData.result.temperature,
+                //         humidity: resData.result.humidity,
+                //         dust_level: resData.result.dust_level.toFixed(2),
+                //         ethanol: resData.result.ethanol.toFixed(2),
+                //     } 
+                // });
+                    const newData = {
+                        result: {
+                            family_id: resData.result.family_id,
+                            reported_at: resData.result.reported_at,
+                            temperature: resData.result.temperature,
+                            humidity: resData.result.humidity,
+                            dust_level: resData.result.dust_level.toFixed(2),
+                            ethanol: resData.result.ethanol.toFixed(2),
+                        }
+                    };
+
+                    setEnvironmentData(newData);
+
+                    // 🔥 에탄올 수치 확인 후 긴급 모달 열기
+                    if (parseFloat(newData.result.ethanol) > 1.5) {
+                        store.handleEmergencyState();
+                    }
                 }
             } else {
                 console.error("최신 집 내부 정보 조회 실패:", response.error)
@@ -113,5 +132,7 @@ export default function EnvironmentDataContextProvider({ children }) {
         handleGetLatestEnvironmentData,
     }
 
-    return <EnvironmentDataContext.Provider value={ctxValue}>{children}</EnvironmentDataContext.Provider>
+    return <EnvironmentDataContext.Provider value={ctxValue}>
+        {children}
+    </EnvironmentDataContext.Provider>
 }

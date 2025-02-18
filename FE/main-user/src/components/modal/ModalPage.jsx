@@ -27,8 +27,8 @@ export default function ModalPage() {
       <Modal open={store.openEmergencyState} onClose={store.handleModalClose}>
         {store.openEmergencyState && (
           <EmergencyModal
-            title="긴급"
-            onCloseConfirm={store.handleModalClose}>
+              title="긴급"
+              onCloseConfirm={store.handleModalClose}>
               <Emergency />
           `</EmergencyModal>
         )}

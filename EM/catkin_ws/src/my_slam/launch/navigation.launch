@@ -29,7 +29,7 @@
         <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
 
         <!-- Move Base 파라미터 추가! -->
-        <param name="planner_frequency" value="0.05" />  <!-- global planner 주기 -->
+        <!-- <param name="planner_frequency" value="0.01" />  global planner 주기 -->
     </node>
 
     <!-- 조이스틱 노드 -->

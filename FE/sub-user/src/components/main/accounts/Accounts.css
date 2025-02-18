@@ -1280,6 +1280,10 @@ hr {
     margin-top: 10px;
   }
 
+  #signup-form {
+    height: 80vh;
+  }
+
   .login-user-info-header {
     flex-direction: column;
   }

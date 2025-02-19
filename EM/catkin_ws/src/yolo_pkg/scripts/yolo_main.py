@@ -18,7 +18,7 @@ async def main():
     # 현재 스크립트의 절대 경로를 사용해 test_video 폴더의 파일 절대 경로 생성
     script_dir = os.path.dirname(os.path.realpath(__file__))
     pkg_root = os.path.abspath(os.path.join(script_dir, ".."))
-    video_path = os.path.join(pkg_root, "test_video", "test4.mp4")
+    video_path = os.path.join(pkg_root, "test_video", "test2.mp4")
     video_path = 0  # 웹캠 사용
 
     cap = cv2.VideoCapture(video_path)
@@ -30,7 +30,7 @@ async def main():
 
     # 창 크기를 조정할 수 있도록 창 생성
     cv2.namedWindow("Fall Detection", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Fall Detection", 640, 360)
+    cv2.resizeWindow("Fall Detection", 1280, 720)
 
     while True:
         ret, frame = cap.read()

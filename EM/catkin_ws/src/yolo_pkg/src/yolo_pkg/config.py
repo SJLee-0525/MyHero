@@ -27,7 +27,7 @@ class Config:
         self.model_path = 'yolov8n-pose.pt'
         self.confidence_threshold = 0.4
         self.save_dir = 'fall_detection_logs'
-        self.display_size = (960, 540)
+        self.display_size = (1280, 720)
         self.skeleton_connections = [
             (0,1), (0,2), (1,3), (2,4),  # 얼굴
             (5,6), (5,7), (7,9), (6,8), (8,10),  # 팔

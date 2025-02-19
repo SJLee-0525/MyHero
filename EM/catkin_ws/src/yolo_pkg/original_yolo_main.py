@@ -469,8 +469,8 @@ async def main():
     
     try:
         # 비디오 캡처 초기화
-        # video_path = "test_video/test2.mp4"
-        video_path = 0 # 웹캠 사용
+        video_path = "test_video/test2.mp4"
+        # video_path = 0 # 웹캠 사용
         cap = cv2.VideoCapture(video_path)  
         if not cap.isOpened():
             raise IOError("Cannot open video source")

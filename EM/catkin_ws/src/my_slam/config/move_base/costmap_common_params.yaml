@@ -12,6 +12,7 @@ footprint: [[-0.2, -0.15], [-0.2, 0.15], [0.2, 0.15], [0.2, -0.15]]  # 로봇 �
 footprint_padding: 0.01             # 장애물과의 최소 여유(패딩)
 #obstacle_range: 3.0                 # 장애물로 인식할 최대거리 (LiDAR 12m라도 실제 2.5m까지만 costmap 처리)
 #raytrace_range: 12.0                 # 레이 트레이싱으로 free space로 인식할 범위
+shutdown_costmaps: false             # 로봇이 멈출 때 코스트맵을 끌지 여부
 
 # 센서 업데이트 관련 (라이다만 사용)
 observation_sources: "laser_scan"

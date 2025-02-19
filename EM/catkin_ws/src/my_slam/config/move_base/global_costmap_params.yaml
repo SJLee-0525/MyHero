@@ -10,9 +10,9 @@ global_costmap:
   # SLAM 동적 맵 업데이트를 위한 설정
   static_map: false
   rolling_window: true
-  width: 50.0
-  height: 50.0
-  resolution: 0.2
+  width: 30.0
+  height: 30.0
+  resolution: 0.1
   
   # 알 수 없는 영역 처리 설정
   track_unknown_space: false       # unknown space를 free로 취급

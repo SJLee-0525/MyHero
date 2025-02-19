@@ -21,7 +21,7 @@ backoff_slow:                      # 첫 번째 후진 파라미터
   vel: 0.4
 
 backoff_fast:                      # 두 번째 후진 파라미터
-  backoff_distance: 0.3    
+  backoff_distance: 0.25    
   vel: 0.4
 
 aggressive_reset:

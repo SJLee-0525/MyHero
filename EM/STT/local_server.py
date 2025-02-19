@@ -6,6 +6,7 @@ import os
 import logging
 import signal
 import sys
+import time
 
 logging.basicConfig(
     level=logging.INFO,
@@ -44,20 +45,49 @@ async def connect_bluetooth_speaker():
    
 @app.post("/bluetooth/speaker/volume")
 async def set_bluetooth_speaker_volume(volume: int):
-   try:
-       result = subprocess.run(['pactl', 'set-sink-volume', 'bluez_output.5C_FB_7C_34_59_29.1', f'{volume}%'], 
-                               capture_output=True, text=True)
-       if result.returncode == 0:
-           return {"status": "success", "message": f" bluetooth speaker volume set to {volume}%"}
-       else:
-           return {"status": "error", "message": result.stderr}
-   except Exception as e:
-       return {"status": "error", "message": str(e)}
+    try:
+        sinks = subprocess.run(['pactl', 'list', 'sinks'], capture_output=True, text=True)
+        
+        bluetooth_sink = None
+        for line in sinks.stdout.split('\n'):
+            if '5C:FB:7C:34:59:29' in line:  
+                sink_lines = [l for l in sinks.stdout.split('\n') if 'Name:' in l]
+                for sink_line in sink_lines:
+                    if 'bluez' in sink_line:
+                        bluetooth_sink = sink_line.split(':')[1].strip()
+                        break
+        
+        if not bluetooth_sink:
+            return {"status": "error", "message": "Bluetooth speaker sink not found"}
+            
+        if not 0 <= volume <= 100:
+            return {"status": "error", "message": "Volume must be between 0 and 100"}
+            
+        result = subprocess.run(
+            ['pactl', 'set-sink-volume', bluetooth_sink, f'{volume}%'], 
+            capture_output=True, 
+            text=True
+        )
+        
+        if result.returncode == 0:
+            return {
+                "status": "success", 
+                "message": f"Bluetooth speaker volume set to {volume}%",
+                "sink": bluetooth_sink
+            }
+        else:
+            return {"status": "error", "message": result.stderr}
+            
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 def start_processes(user_id: str):
     try:
         stop_processes()
-        
+
+        if os.path.exists('user_id.txt'):
+            os.remove('user_id.txt')
+
         with open('user_id.txt', 'w') as f:
             f.write(user_id)
         
@@ -80,10 +110,13 @@ def stop_processes():
         if process:
             try:
                 process.terminate()
-                process.wait(timeout=5)  
+                process.wait(timeout=10)
                 logger.info(f"Terminated {name} process")
             except subprocess.TimeoutExpired:
-                process.kill()  
+                process.terminate()
+                time.sleep(2)
+                if process.poll() is None:
+                    process.kill()
                 logger.info(f"Killed {name} process")
             except Exception as e:
                 logger.error(f"Error stopping {name} process: {e}")

@@ -9,6 +9,7 @@ from geometry_msgs.msg import PoseStamped, Quaternion, Point
 from std_msgs.msg import Bool
 from nav_msgs.msg import OccupancyGrid
 import actionlib
+from actionlib_msgs.msg import GoalStatusArray  # 이 줄 추가
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from visualization_msgs.msg import Marker
 import tf.transformations
@@ -17,8 +18,12 @@ class AutonomousExplorer:
     def __init__(self):
         rospy.init_node('autonomous_explorer', anonymous=True)
         
-        # 맵 데이터 구독
+        # 상태 변수들 초기화
         self.map_data = None
+        self.exploration_enabled = False
+        self.is_moving = False  # 여기로 이동
+        
+        # 맵 데이터 구독
         self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
 
         # autonomous 모드 활성화 여부 구독
@@ -30,11 +35,12 @@ class AutonomousExplorer:
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
-        
-        self.exploration_enabled = False
 
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.client.wait_for_server()
+
+        # move_base 상태 구독 추가
+        self.status_sub = rospy.Subscriber('/move_base/status', GoalStatusArray, self.status_callback)
 
         # 노드 시작 시 한 번 목표 생성 시도
         rospy.sleep(1.0)
@@ -51,12 +57,18 @@ class AutonomousExplorer:
         self.exploration_enabled = msg.data
         rospy.loginfo("exploration_callback - exploration_enabled: %s", self.exploration_enabled)
 
+    def status_callback(self, msg):
+        """move_base의 상태를 확인하여 로봇이 이동 중인지 체크"""
+        if len(msg.status_list) > 0:
+            # status가 1이면 ACTIVE (실행 중)
+            self.is_moving = msg.status_list[-1].status == 1
+
     def publish_random_goal(self, event):
-        rospy.loginfo("publish_random_goal 호출: exploration_enabled: %s, map_data: %s",
-                      self.exploration_enabled, self.map_data is not None)
+        rospy.loginfo("publish_random_goal 호출: exploration_enabled: %s, map_data: %s, is_moving: %s",
+                      self.exploration_enabled, self.map_data is not None, self.is_moving)
         
-        # 탐색 비활성 또는 map 데이터가 없으면 목표 발행하지 않음.
-        if not self.exploration_enabled or self.map_data is None:
+        # 탐색 비활성 또는 map 데이터가 없거나 현재 이동 중이면 목표 발행하지 않음
+        if not self.exploration_enabled or self.map_data is None or self.is_moving:
             rospy.loginfo("publish_random_goal 조건 미충족, goal 발행 안함")
             return
 

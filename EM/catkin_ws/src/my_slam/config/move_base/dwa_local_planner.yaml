@@ -1,10 +1,10 @@
 DWAPlannerROS:
   # === Robot Configuration Parameters ===
-  max_vel_trans: 0.6         # 기본값: 0.55 | 최대 선형 속도 (m/s)
-  min_vel_trans: 0.1         # 기본값: 0.1  | 최소 선형 속도 (m/s)
+  max_vel_trans: 0.7         # 기본값: 0.55 | 최대 선형 속도 (m/s)
+  min_vel_trans: 0.4         # 기본값: 0.1  | 최소 선형 속도 (m/s)
   
-  max_vel_x: 0.65             # 기본값: 0.55 | 최대 x축 속도 (m/s)
-  min_vel_x: 0.40            # 기본값: 0.0  | 최소 x축 속도 (m/s, 전진만 고려)
+  max_vel_x: 0.70             # 기본값: 0.55 | 최대 x축 속도 (m/s)
+  min_vel_x: 0.45            # 기본값: 0.0  | 최소 x축 속도 (m/s, 전진만 고려)
   max_vel_y: 0.0             # 기본값: 0.1  | 최대 y축 속도 (m/s, 차동구동 아님)
   min_vel_y: 0.0             # 기본값: -0.1 | 최소 y축 속도 (m/s, 차동구동 아님)
   

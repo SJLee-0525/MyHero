@@ -5,12 +5,13 @@ import rospy
 import random
 import math
 import tf2_ros
-import tf2_geometry_msgs
-from geometry_msgs.msg import PoseStamped, TransformStamped, Pose, Quaternion
+from geometry_msgs.msg import PoseStamped, Quaternion, Point
 from std_msgs.msg import Bool
 from nav_msgs.msg import OccupancyGrid
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+from visualization_msgs.msg import Marker
+import tf.transformations
 
 class AutonomousExplorer:
     def __init__(self):
@@ -18,77 +19,105 @@ class AutonomousExplorer:
         
         # 맵 데이터 구독
         self.map_data = None
-        # self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
-        self.map_sub = rospy.Subscriber('/move_base/local_costmap/costmap', OccupancyGrid, self.map_callback)
+        self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
 
-        # autonomous 모드 활성화 여부를 subscribe
+        # autonomous 모드 활성화 여부 구독
         self.exploration_sub = rospy.Subscriber('/exploration_enable', Bool, self.exploration_callback)
         
-        # 2D Nav Goal 퍼블리셔 (move_base_simple/goal 예시)
+        # 2D Nav Goal 퍼블리셔
         self.goal_pub = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=1)
+        self.marker_pub = rospy.Publisher('visualization_marker', Marker, queue_size=1, latch=False)
 
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
         
         self.exploration_enabled = False
-        self.recovery_active = False  # recovery 상태 플래그 추가
-        self.timer = rospy.Timer(rospy.Duration(5.0), self.publish_random_goal)
 
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
         self.client.wait_for_server()
+
+        # 노드 시작 시 한 번 목표 생성 시도
+        rospy.sleep(1.0)
+        self.publish_random_goal(None)
+        rospy.Timer(rospy.Duration(5.0), self.publish_random_goal)
+        
+        # 선택 영역 마커도 한번 발행해봅니다.
+        self.publish_selection_region_marker()
 
     def map_callback(self, msg):
         self.map_data = msg
 
     def exploration_callback(self, msg):
         self.exploration_enabled = msg.data
+        rospy.loginfo("exploration_callback - exploration_enabled: %s", self.exploration_enabled)
 
     def publish_random_goal(self, event):
-        if not self.exploration_enabled or self.map_data is None or self.recovery_active:
-            return
+        rospy.loginfo("publish_random_goal 호출: exploration_enabled: %s, map_data: %s",
+                      self.exploration_enabled, self.map_data is not None)
         
-        # 현재 로봇 위치 추정(base_link -> map)
+        # 탐색 비활성 또는 map 데이터가 없으면 목표 발행하지 않음.
+        if not self.exploration_enabled or self.map_data is None:
+            rospy.loginfo("publish_random_goal 조건 미충족, goal 발행 안함")
+            return
+
+        # 현재 로봇 위치 추정 (base_link -> map)
         try:
             trans = self.tf_buffer.lookup_transform("map", "base_link", rospy.Time(0), rospy.Duration(1.0))
+            # 로봇의 현재 방향(yaw) 계산
+            q = trans.transform.rotation
+            yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0 - 2.0*(q.y*q.y + q.z*q.z))
+            self.publish_selection_region_marker()
         except Exception:
             rospy.logwarn("TF 변환 실패")
             return
-        
-        # 무작위 위치 생성 + 장애물 체크 반복
+
+        # 무작위 위치 생성 및 장애물 체크
         for _ in range(10):  # 최대 10회 시도
-            dist = random.uniform(1.0, 12.0)
-            theta = random.uniform(0, 1 * math.pi)
+            dist = random.uniform(2.0, 6.0)
+            # 로봇의 현재 방향을 기준으로 -90도~+90도 범위에서 랜덤 각도 생성
+            relative_theta = random.uniform(-0.5 * math.pi, 0.5 * math.pi)
+            theta = yaw + relative_theta  # 로봇 방향 + 상대 각도
+            
             goal_x = trans.transform.translation.x + dist * math.cos(theta)
             goal_y = trans.transform.translation.y + dist * math.sin(theta)
             
-            # 목표 지점 근처 0.1m 반경 내 장애물 여부 확인
-            if self.is_location_free(goal_x, goal_y, 0.05):
+            # 목표 지점 근처 0.02m 반경 내 빈 공간 확인
+            if self.is_location_free(goal_x, goal_y, 0.02):
                 # goal 메시지 설정
                 goal_msg = PoseStamped()
                 goal_msg.header.frame_id = "map"
                 goal_msg.header.stamp = rospy.Time.now()
                 goal_msg.pose.position.x = goal_x
                 goal_msg.pose.position.y = goal_y
-                goal_msg.pose.orientation.w = 1.0
+
+                # goal 방향을 목표점을 향하도록 설정
+                goal_orientation = math.atan2(goal_y - trans.transform.translation.y,
+                                              goal_x - trans.transform.translation.x)
+                q = tf.transformations.quaternion_from_euler(0, 0, goal_orientation)
+
+                goal_msg.pose.orientation.x = q[0]
+                goal_msg.pose.orientation.y = q[1]
+                goal_msg.pose.orientation.z = q[2]
+                goal_msg.pose.orientation.w = q[3]
 
                 # 퍼블리시
                 self.goal_pub.publish(goal_msg)
-                rospy.loginfo("무작위 목표 지점: (%.2f, %.2f)" % (goal_x, goal_y))
+                rospy.loginfo("발행된 무작위 목표 지점: (%.2f, %.2f)" % (goal_x, goal_y))
 
                 # MoveBaseGoal 설정 및 전송
                 move_base_goal = MoveBaseGoal()
                 move_base_goal.target_pose.header.frame_id = "map"
                 move_base_goal.target_pose.pose.position.x = goal_x
                 move_base_goal.target_pose.pose.position.y = goal_y
-                move_base_goal.target_pose.pose.orientation = Quaternion(0, 0, 0, 1)
+                move_base_goal.target_pose.pose.orientation = Quaternion(q[0], q[1], q[2], q[3])
                 self.client.send_goal(move_base_goal, done_cb=self.goal_done_cb)
                 return
 
         rospy.logwarn("장애물을 피한 무작위 위치를 찾지 못했습니다.")
 
-    def is_location_free(self, x, y, radius):
+    def is_location_free(self, x, y, dummy_radius=0.02):
         """
-        OccupancyGrid를 이용해 (x, y) 근처 radius 내 장애물이 있는지 확인
+        OccupancyGrid를 이용해 (x, y) 셀과 인접 8칸(3x3 grid)이 모두 0인지 확인.
         """
         if not self.map_data:
             return False
@@ -100,42 +129,86 @@ class AutonomousExplorer:
         width = map_info.width
         height = map_info.height
         data = self.map_data.data
-        
-        # 중심 좌표에 해당하는 map의 cell index
-        center_col = int((x - origin_x) / resolution)
-        center_row = int((y - origin_y) / resolution)
-        cell_radius = int(radius / resolution)
 
-        # 범위를 넘어가면 out of map
-        if not (0 <= center_col < width and 0 <= center_row < height):
-            return False
-        
-        # radius 내 모든 cell을 검사
-        for r in range(center_row - cell_radius, center_row + cell_radius + 1):
-            for c in range(center_col - cell_radius, center_col + cell_radius + 1):
-                dist_sq = (r - center_row)**2 + (c - center_col)**2
-                # 원 형태로 검사(반경 이내일 때만 확인)
-                if dist_sq <= cell_radius**2:
-                    if 0 <= r < height and 0 <= c < width:
-                        idx = r * width + c
-                        # 0이 아닌 경우: -1(미탐색) 또는 100(장애물) 등
-                        if data[idx] != 0:
-                            return False
-                    else:
-                        return False
+        col = int((x - origin_x) / resolution)
+        row = int((y - origin_y) / resolution)
+
+        # 3x3 grid 범위를 확인 (중심 셀과 인접 8칸)
+        for r in range(row - 1, row + 2):
+            for c in range(col - 1, col + 2):
+                if not (0 <= c < width and 0 <= r < height):
+                    return False
+                idx = r * width + c
+                if data[idx] != 0:
+                    return False
         return True
 
     def goal_done_cb(self, state, result):
-        # 상태 코드: 3 = SUCCEEDED; 2 = ABORTED; 4 = REJECTED; 5 = PREEMPTED 등
+        rospy.loginfo("goal_done_cb 호출: 상태=%s", state)
+        # 상태 코드: 3 = SUCCEEDED, 2 = ABORTED (예시)
         if state == 3:
             rospy.loginfo("골 도착, 다음 목표를 설정합니다.")
-            self.recovery_active = False  # recovery 종료
-            self.publish_random_goal(None)
-        elif state in [2, 4, 5]:
-            rospy.logwarn("골 실패 혹은 취소 (state: {}) - recovery 행동 진행 중입니다.".format(state))
-            self.recovery_active = True  # recovery중으로 설정
+        elif state == 2:
+            rospy.logwarn("골 ABORT, 다음 목표를 설정합니다.")
         else:
-            rospy.logwarn("알 수 없는 목표 상태 (state: {})입니다.".format(state))
+            rospy.logwarn("골 실패 혹은 취소 (state: {})입니다. 목표 재발행하지 않음".format(state))
+            return
+        self.publish_random_goal(None)
+
+    def publish_selection_region_marker(self):
+        try:
+            # 현재 로봇 위치와 방향 가져오기
+            trans = self.tf_buffer.lookup_transform("map", "base_link", rospy.Time(0), rospy.Duration(1.0))
+            current_x = trans.transform.translation.x
+            current_y = trans.transform.translation.y
+            
+            # 현재 로봇의 방향(yaw) 계산
+            q = trans.transform.rotation
+            current_yaw = math.atan2(2.0*(q.w*q.z + q.x*q.y), 1.0 - 2.0*(q.y*q.y + q.z*q.z))
+
+            marker = Marker()
+            marker.header.frame_id = "map"
+            marker.header.stamp = rospy.Time.now()
+            marker.ns = "selection_region"
+            marker.id = 0
+            marker.type = Marker.LINE_STRIP
+            marker.action = Marker.ADD
+            marker.scale.x = 0.05
+            marker.color.r = 1.0
+            marker.color.g = 0.0
+            marker.color.b = 0.0
+            marker.color.a = 1.0
+
+            points = []
+            # 내측 호: 현재 위치 기준으로 반지름 1.0m (-90도 ~ +90도)
+            for angle in range(-90, 91, 5):  # 5도 간격
+                rad = math.radians(angle) + current_yaw  # 로봇 방향 기준
+                pt = Point()
+                pt.x = current_x + 1.0 * math.cos(rad)
+                pt.y = current_y + 1.0 * math.sin(rad)
+                pt.z = 0.0
+                points.append(pt)
+            
+            # 외측 호: 현재 위치 기준으로 반지름 6.0m (-90도 ~ +90도)
+            outer_points = []
+            for angle in range(-90, 91, 5):
+                rad = math.radians(angle) + current_yaw  # 로봇 방향 기준
+                pt = Point()
+                pt.x = current_x + 6.0 * math.cos(rad)
+                pt.y = current_y + 6.0 * math.sin(rad)
+                pt.z = 0.0
+                outer_points.append(pt)
+            outer_points.reverse()
+
+            # 두 호를 연결하여 닫힌 영역 생성
+            points.extend(outer_points)
+            points.append(points[0])  # 시작점으로 연결
+            
+            marker.points = points
+            self.marker_pub.publish(marker)
+
+        except Exception as e:
+            rospy.logwarn("마커 발행 실패: %s", str(e))
 
 if __name__ == '__main__':
     try:

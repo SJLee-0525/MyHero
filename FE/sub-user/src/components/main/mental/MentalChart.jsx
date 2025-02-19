@@ -1,6 +1,6 @@
-import "./Mental.css"
+import "./Mental.css";
 
-import { useContext } from "react"
+import { useContext } from "react";
 
 import {
   LineChart,
@@ -11,11 +11,15 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from "recharts"
+} from "recharts";
 
-import { CalendarStoreContext } from "../../../store/calendarStore.jsx"
+import { CalendarStoreContext } from "../../../store/calendarStore.jsx";
 
 function CustomTooltip({ payload, label, active }) {
+  if (payload.length === 0) {
+    return;
+  }
+
   if (active) {
     return (
       <div className="custom-tooltip">
@@ -23,31 +27,35 @@ function CustomTooltip({ payload, label, active }) {
         <p className="mental">{`mental : ${payload[0].value}`}</p>
         <p className="desc">건강함</p>
       </div>
-    )
+    );
   }
 
-  return null
+  return null;
 }
 
 export default function ActivityChart() {
-  const calendarStore = useContext(CalendarStoreContext)
+  const calendarStore = useContext(CalendarStoreContext);
 
   let mentalStatus = Object.entries(calendarStore.schedules.schedules.mental)
     .slice()
     .map(([date, details]) => ({
       date,
       averageScore: details.averageScore,
-    }))
+    }));
 
-  mentalStatus = mentalStatus.reverse()
+  mentalStatus = mentalStatus.reverse();
 
   if (mentalStatus.length > 7) {
-    mentalStatus = activityStatus.slice(0, 7)
+    mentalStatus = activityStatus.slice(0, 7);
   }
 
   return (
     <div id="mental-chart">
-      <ResponsiveContainer width="100%" height="100%" Style={{ width: 100, backgroundColor: "#ccc" }}>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        Style={{ width: 100, backgroundColor: "#ccc" }}
+      >
         <LineChart
           width={300}
           height={100}
@@ -62,9 +70,14 @@ export default function ActivityChart() {
           <YAxis />
           <Tooltip content={<CustomTooltip />} />
           <Legend />
-          <Line type="monotone" dataKey="averageScore" stroke="#FF5A33" strokeWidth={2} />
+          <Line
+            type="monotone"
+            dataKey="averageScore"
+            stroke="#FF5A33"
+            strokeWidth={2}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
-  )
+  );
 }

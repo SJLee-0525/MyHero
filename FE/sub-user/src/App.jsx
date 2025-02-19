@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -17,20 +17,14 @@ import LoadingSpinner from "./components/spinner/LoadingSpinner.jsx";
 import Home from "./components/main/home/Home.jsx";
 import Notification from "./components/main/notification/Notification.jsx";
 import Message from "./components/main/message/Message.jsx";
-import Emergency from "./components/main/emergency/Emergency.jsx";
 import Calendar from "./components/main/calendar/Calendar.jsx";
 import Activity from "./components/main/activity/Activity.jsx";
-import Mental from "./components/main/mental/Mental.jsx";
 
 import Accounts from "./components/main/accounts/Accounts.jsx";
-import Settings from "./components/main/settings/Settings.jsx";
 import RegisterMemberQr from "./components/main/accounts/RegisterMemberQr.jsx";
 
 import NewNotiModal from "./components/main/notification/NewNotiModal.jsx";
 import NewEmergencyModal from "./components/main/emergency/NewEmergencyModal.jsx";
-// import Router from "./router/router";
-
-import Advertisement from "./components/main/advertisement/Advertisement.jsx";
 
 function App() {
   const userProgressStore = useContext(UserProgressContext);
@@ -43,7 +37,6 @@ function App() {
     userProgressStore.loading ||
     homeStatusStore.loading ||
     healthStore.loading ||
-    emergencyStore.loading ||
     calendarStore.loading ||
     false;
 
@@ -72,12 +65,9 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/notification" element={<Notification />} />
             <Route path="/message" element={<Message />} />
-            {/* <Route path="/emergency" element={<Emergency />} /> */}
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/activity" element={<Activity />} />
-            {/* <Route path="/mental" element={<Mental />} /> */}
             <Route path="/accounts/*" element={<Accounts />} />
-            {/* <Route path="/settings" element={<Settings />} /> */}
           </Routes>
           <NewNotiModal />
           <NewEmergencyModal />

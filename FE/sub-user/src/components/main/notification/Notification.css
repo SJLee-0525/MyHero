@@ -373,6 +373,7 @@ p {
   display: flex;
 
   width: 100%;
+  min-width: 280px;
   height: 100%;
 
   gap: 10px;
@@ -454,6 +455,8 @@ p {
   border: none;
 
   cursor: pointer;
+
+  font-family: Pretendard;
 }
 
 #public-emergency-notifications .public-emergency-notification {
@@ -493,6 +496,25 @@ p {
   background-color: #d9d9d9;
   color: black;
   filter: opacity(60%);
+}
+
+#public-emergency-notifications .public-emergency-notification-notification {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: start;
+  align-items: start;
+
+  border-radius: 8px;
+  padding: 10px;
+
+  width: 100%;
+  gap: 15px;
+
+  font-family: Pretendard;
+
+  background-color: #d9d9d9;
+  color: black;
 }
 
 #public-emergency-notifications .public-emergency-notification-header {
@@ -540,6 +562,8 @@ p {
   .public-emergency-notification-footer
   .public-emergency-notification-date {
   margin: 0;
+
+  font-weight: normal;
 }
 
 #public-emergency-notifications-container .public-emergency-notification-btn {

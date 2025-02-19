@@ -631,9 +631,13 @@ export default function UserProgressContextProvider({ children }) {
             userInfo: undefined,
           });
 
-          // 세션션 스토리지에서 로그인 정보 삭제
+          // 세션 스토리지에서 로그인 정보 삭제
           sessionStorage.removeItem("loginUserInfo");
           sessionStorage.removeItem("session_id");
+
+          // 로컬 스토리지에서 로그인 정보 삭제
+          localStorage.removeItem("loginUserInfo");
+          localStorage.removeItem("session_id");
 
           // 사이드바 관리
           setIsActiveSideBarElem("accounts");

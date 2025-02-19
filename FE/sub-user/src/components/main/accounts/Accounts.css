@@ -793,7 +793,7 @@ hr {
   justify-content: space-between;
   align-items: start;
 
-  height: 40%;
+  /* height: 40%; */
 }
 
 #login-user-info .login-user-info-header h3 {

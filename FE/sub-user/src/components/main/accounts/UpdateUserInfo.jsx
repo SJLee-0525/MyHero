@@ -648,9 +648,6 @@ export default function UpdateUserInfo() {
         <button type="submit" className="signup-btn">
           회원 정보 수정
         </button>
-        <button type="reset" className="reset-btn">
-          초기화
-        </button>
       </form>
     </Modal>
   );

@@ -1,15 +1,19 @@
-import "./Calendar.css"
+import "./Calendar.css";
 
-// import CalendarStoreContextProvider from "../../../store/calendarStore.jsx";
+import { useContext } from "react";
 
-import PageContainer from "../container/PageContainer"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import CalendarHeader from "./CalendarHeader.jsx"
-import CalendarBody from "./CalendarBody.jsx"
-// import SelectedDate from "./SelectedDate.jsx";
-import CalendarSchedules from "./CalendarSchedules.jsx"
+import CalendarHeader from "./CalendarHeader.jsx";
+import CalendarBody from "./CalendarBody.jsx";
+import CalendarSchedules from "./CalendarSchedules.jsx";
 
 export default function Calendar() {
+  const userProgressStore = useContext(UserProgressContext);
+
+  if (!userProgressStore.loginUserInfo.login) {
+    return;
+  }
   return (
     <div id="calendar-main">
       <h2 id="main-container-title">캘린더</h2>
@@ -24,5 +28,5 @@ export default function Calendar() {
       </div>
       {/* </CalendarStoreContextProvider> */}
     </div>
-  )
+  );
 }

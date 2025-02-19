@@ -4,6 +4,7 @@ import { useRef, useState, useContext } from "react";
 import { MessageContext } from "../../../store/messageStore";
 
 import fileIcon from "../../../assets/feature/inbox-2-line.png";
+import { set } from "date-fns";
 
 export default function MessageInput() {
   const messageStore = useContext(MessageContext);
@@ -73,6 +74,7 @@ export default function MessageInput() {
 
       // 성공 시 초기화
       setImage(null);
+      setPreview(null);
       inputMessage.current.value = "";
     } catch (error) {
       console.error("handleSubmit에서 오류 발생:", error);
@@ -90,7 +92,16 @@ export default function MessageInput() {
         <div id="message-file-group">
           <label htmlFor="message-file">
             {preview ? (
-              <img src={preview} alt="파일 첨부" width="90%" />
+              <img
+                src={preview}
+                alt="파일 첨부"
+                style={{
+                  maxWidth: "90%",
+                  maxHeight: "90%",
+                  width: "auto",
+                  height: "auto",
+                }}
+              />
             ) : (
               <img src={fileIcon} alt="파일 첨부" width="30" />
             )}

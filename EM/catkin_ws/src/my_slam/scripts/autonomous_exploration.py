@@ -18,7 +18,8 @@ class AutonomousExplorer:
         
         # 맵 데이터 구독
         self.map_data = None
-        self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
+        # self.map_sub = rospy.Subscriber('/map', OccupancyGrid, self.map_callback)
+        self.map_sub = rospy.Subscriber('/move_base/local_costmap/costmap', OccupancyGrid, self.map_callback)
 
         # autonomous 모드 활성화 여부를 subscribe
         self.exploration_sub = rospy.Subscriber('/exploration_enable', Bool, self.exploration_callback)
@@ -30,6 +31,7 @@ class AutonomousExplorer:
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
         
         self.exploration_enabled = False
+        self.recovery_active = False  # recovery 상태 플래그 추가
         self.timer = rospy.Timer(rospy.Duration(5.0), self.publish_random_goal)
 
         self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
@@ -42,7 +44,7 @@ class AutonomousExplorer:
         self.exploration_enabled = msg.data
 
     def publish_random_goal(self, event):
-        if not self.exploration_enabled or self.map_data is None:
+        if not self.exploration_enabled or self.map_data is None or self.recovery_active:
             return
         
         # 현재 로봇 위치 추정(base_link -> map)
@@ -54,13 +56,13 @@ class AutonomousExplorer:
         
         # 무작위 위치 생성 + 장애물 체크 반복
         for _ in range(10):  # 최대 10회 시도
-            dist = random.uniform(3.0, 12.0)
-            theta = random.uniform(0, 2 * math.pi)
+            dist = random.uniform(1.0, 12.0)
+            theta = random.uniform(0, 1 * math.pi)
             goal_x = trans.transform.translation.x + dist * math.cos(theta)
             goal_y = trans.transform.translation.y + dist * math.sin(theta)
             
             # 목표 지점 근처 0.1m 반경 내 장애물 여부 확인
-            if self.is_location_free(goal_x, goal_y, 0.1):
+            if self.is_location_free(goal_x, goal_y, 0.05):
                 # goal 메시지 설정
                 goal_msg = PoseStamped()
                 goal_msg.header.frame_id = "map"
@@ -124,11 +126,16 @@ class AutonomousExplorer:
         return True
 
     def goal_done_cb(self, state, result):
-        if state == 3:  # 3 = Goal reached
+        # 상태 코드: 3 = SUCCEEDED; 2 = ABORTED; 4 = REJECTED; 5 = PREEMPTED 등
+        if state == 3:
             rospy.loginfo("골 도착, 다음 목표를 설정합니다.")
+            self.recovery_active = False  # recovery 종료
             self.publish_random_goal(None)
+        elif state in [2, 4, 5]:
+            rospy.logwarn("골 실패 혹은 취소 (state: {}) - recovery 행동 진행 중입니다.".format(state))
+            self.recovery_active = True  # recovery중으로 설정
         else:
-            rospy.logwarn("골 실패 혹은 취소")
+            rospy.logwarn("알 수 없는 목표 상태 (state: {})입니다.".format(state))
 
 if __name__ == '__main__':
     try:

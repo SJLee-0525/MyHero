@@ -217,9 +217,9 @@ class STTManager:
 
             credentials = service_account.Credentials.from_service_account_file(credentials_path)
             self.client = speech.SpeechClient(credentials=credentials)
-            self.session_id = None
+            self.session_id_for_openai = None
             self.user_id = None
-            self.base_url = "http://70.12.246.26:8000"
+            self.base_url = " https://dev-api.itdice.net"
             self.current_mode = STTMode.KEYWORD_DETECTION
             self.message_state = None
             self.temp_recipient = None
@@ -231,6 +231,15 @@ class STTManager:
             except FileExistsError:
                 logger.error('user_id.txt 파일을 찾을 수 없습니다.')
                 raise
+
+            try:
+                with open('session_id.txt', 'r') as f:
+                    self.session_id = f.read().strip()
+                    logger.info(f"User ID loaded: {self.session_id}")
+            except FileExistsError:
+                logger.error('user_id.txt 파일을 찾을 수 없습니다.')
+                raise
+
 
             # TTS 출력 디렉토리 설정
             self.tts_output_dir = "tts_output"
@@ -393,7 +402,7 @@ class STTManager:
                         
                         if result.is_final:
                             logger.info(f"최종 텍스트 감지: {transcript}")
-                            await self._send_message(transcript)
+                            await self._send_emergency_message(transcript)
                             self.current_mode = STTMode.KEYWORD_DETECTION
                             break
 
@@ -408,22 +417,28 @@ class STTManager:
         try:
             timeout = aiohttp.ClientTimeout(total=30)
             async with aiohttp.ClientSession(timeout=timeout) as session:
-                url = f"{self.base_url}/chat"
+                url = f"{self.base_url}/chats"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                }
                 payload = {
                     "user_id": self.user_id,
-                    "user_message": transcript,
-                    "session_id": self.session_id
+                    "message": transcript,
+                    "session_id": self.session_id_for_openai
                 }
-                async with session.post(url, json=payload) as response:
+                async with session.post(url, json=payload, headers=headers) as response:
                     if response.status == 200:
                         result = await response.json()
-                        self.session_id = result.get('session_id')
+                        self.session_id_for_openai = result.get('result', {}).get('session_id')
                         logger.info(f"API 응답: {result}")
                         
-                        bot_message = result.get('bot_message')
+                        bot_message = result.get('result', {}).get('bot_message')
                         if bot_message:
+                            logger.info(f"TTS 생성 시작: {bot_message}")
                             tts_path = self.generate_speech(bot_message)
+                            logger.info(f"TTS 파일 생성됨: {tts_path}")
                             self.play_audio(tts_path)
+                            logger.info("오디오 재생 완료")
                     else:
                         logger.error(f"API 오류: {response.status}")
         except Exception as e:
@@ -463,26 +478,47 @@ class STTManager:
             # await asyncio.sleep(1)
             return None
 
-    async def _send_message(self, content: str):
+    async def _send_emergency_message(self, content: str):
+        """긴급 메시지를 가족 구성원 전체에게 전송"""
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.base_url}/chat/message"
-                payload = {
-                    "from_id": self.user_id,
-                    "content": content
+                # messages/receivable API를 사용하여 수신 가능한 멤버 목록 조회
+                url = f"{self.base_url}/messages/receivable/{self.user_id}"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
                 }
-                async with session.post(url, json=payload) as response:
-                    if response.status == 200:
-                        result = await response.json()
-                        tts_path = self.generate_speech(result["message"])
-                        self.play_audio(tts_path)
+                
+                async with session.get(url, headers=headers) as response:
+                    if response.status != 200:
+                        raise Exception("가족 구성원 조회 실패")
+                        
+                    data = await response.json()
+                    members = data.get('result', [])
+                    
+                    if not members:
+                        raise Exception("메시지를 전송할 수 있는 가족 구성원이 없습니다.")
+
+                    # 각 가족 구성원에게 메시지 전송
+                    sent_count = 0
+                    for member in members:
+                        try:
+                            await self._send_single_message(member['user_id'], f"[긴급] {content}")
+                            sent_count += 1
+                        except Exception as e:
+                            logger.error(f"{member['name']}님에게 긴급 메시지 전송 실패: {e}")
+
+                    # 전송 결과 음성 안내
+                    if sent_count > 0:
+                        tts_text = f"긴급 메시지가 {sent_count}명의 가족 구성원에게 전송되었습니다."
                     else:
-                        error_msg = "메시지 전송에 실패했습니다."
-                        tts_path = self.generate_speech(error_msg)
-                        self.play_audio(tts_path)
+                        tts_text = "긴급 메시지 전송에 실패했습니다."
+                        
+                    tts_path = self.generate_speech(tts_text)
+                    self.play_audio(tts_path)
+
         except Exception as e:
-            logger.error(f"메시지 전송 중 오류: {e}")
-            error_msg = "메시지 전송 중 오류가 발생했습니다."
+            logger.error(f"긴급 메시지 전송 중 오류: {e}")
+            error_msg = "긴급 메시지 전송 중 오류가 발생했습니다."
             tts_path = self.generate_speech(error_msg)
             self.play_audio(tts_path)
 
@@ -527,14 +563,17 @@ class STTManager:
         """특정 사용자에게 메시지 전송"""
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.base_url}/chat/message/single"
+                url = f"{self.base_url}/messages/send"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                }
                 payload = {
                     "from_id": self.user_id,
                     "to_id": to_id,
                     "content": content
                 }
-                async with session.post(url, json=payload) as response:
-                    if response.status == 200:
+                async with session.post(url, json=payload, headers=headers) as response:
+                    if response.status == 201:
                         result = await response.json()
                         tts_path = self.generate_speech(result["message"])
                         self.play_audio(tts_path)
@@ -591,29 +630,40 @@ class STTManager:
         async with aiohttp.ClientSession(timeout=timeout) as session:
             try:
                 # 메시지 조회
-                url = f"{self.base_url}/chat/messages/{self.user_id}"
-                async with session.get(url) as response:
+                url = f"{self.base_url}/messages/new"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                }
+                async with session.get(url, headers=headers) as response:
                     if response.status == 200:
-                        messages = await response.json()
+                        result = await response.json()
+                        messages = result.get("result", [])
+                        
                         for message in messages:
                             if not message["is_read"]:
-                                # TTS 먼저 실행
-                                tts_text = f"{message['sender_nickname']}님이 보낸 메시지입니다. {message['content']}"
+                                # TTS 실행
+                                tts_text = f"{message['from_id']}님이 보낸 메시지입니다. {message['content']}"
                                 tts_path = self.generate_speech(tts_text)
                                 self.play_audio(tts_path)
                                 
+                                # 읽음 처리
                                 await self._mark_message_as_read(message['index'])
-                                
+                    else:
+                        logger.error(f"메시지 조회 실패: {response.status}")
+                        
             except Exception as e:
                 logger.error(f"메시지 체크 중 오류: {e}")
 
     async def _mark_message_as_read(self, message_index: int):
-        """메시지 읽음 처리를 위한 별도 메서드"""
+        """메시지 읽음 처리"""
         timeout = aiohttp.ClientTimeout(total=10)
-        async with aiohttp.ClientSession(timeout=timeout) as new_session:
+        async with aiohttp.ClientSession(timeout=timeout) as session:
             try:
-                read_url = f"{self.base_url}/chat/messages/read/{message_index}"
-                async with new_session.post(read_url) as response:
+                url = f"{self.base_url}/messages/read/{message_index}"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                }
+                async with session.post(url, headers=headers) as response:
                     if response.status == 200:
                         logger.info(f"메시지 {message_index} 읽음 처리 성공")
                         return True
@@ -628,29 +678,29 @@ class STTManager:
         """입력된 텍스트와 가장 유사한 닉네임을 가진 가족 구성원 찾기"""
         try:
             async with aiohttp.ClientSession() as session:
-                url = f"{self.base_url}/family/main/{self.user_id}"
-                async with session.get(url) as response:
+                url = f"{self.base_url}/messages/receivable/{self.user_id}"
+                headers = {
+                    'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+                }
+                async with session.get(url, headers=headers) as response:
                     if response.status != 200:
                         return None
-                    family = await response.json()
-                    family_id = family['id']
-
-                url = f"{self.base_url}/family/{family_id}/members"
-                async with session.get(url) as response:
-                    if response.status != 200:
-                        return None
-                    members = await response.json()
-                    
-                    
-                    for member in members:
-                        if transcript.lower() == member['nickname'].lower():
-                            return member['user_id']
-                    
-                    for member in members:
-                        if transcript.lower() in member['nickname'].lower() or \
-                        member['nickname'].lower() in transcript.lower():
-                            return member['user_id']
                         
+                    data = await response.json()
+                    members = data.get('result', [])
+                    
+                    # 정확히 일치하는 경우
+                    for member in members:
+                        if transcript.lower() == member['name'].lower():
+                            return member['user_id']
+                    
+                    # 부분 문자열 포함 관계 확인
+                    for member in members:
+                        if transcript.lower() in member['name'].lower() or \
+                        member['name'].lower() in transcript.lower():
+                            return member['user_id']
+                    
+                    # 초성 매칭
                     consonants = {
                         'ㄱ': ['가','깋'], 'ㄲ': ['까','낗'], 'ㄴ': ['나','닣'],
                         'ㄷ': ['다','딯'], 'ㄸ': ['따','띻'], 'ㄹ': ['라','맇'],
@@ -670,13 +720,12 @@ class STTManager:
                     transcript_cons = ''.join(get_consonant(c) for c in transcript if c.isalpha())
                     
                     for member in members:
-                        member_cons = ''.join(get_consonant(c) for c in member['nickname'] if c.isalpha())
+                        member_cons = ''.join(get_consonant(c) for c in member['name'] if c.isalpha())
                         if transcript_cons == member_cons:
                             return member['user_id']
                     
                     return None
-                    
-                return None
+                        
         except Exception as e:
             logger.error(f"가족 구성원 조회 중 오류: {e}")
             return None

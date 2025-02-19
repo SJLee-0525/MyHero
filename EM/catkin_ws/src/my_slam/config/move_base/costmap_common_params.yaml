@@ -33,6 +33,6 @@ laser_scan:
 # Inflation 설정
 inflation_layer:
   enabled: true
-  cost_scaling_factor: 3.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
-  inflation_radius: 0.15      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
+  cost_scaling_factor: 2.0  # 장애물에서 멀어질수록 비용이 급격히 감소 (높을수록 급격히 감소)
+  inflation_radius: 0.1      # 30cm 반경으로 장애물 영향 설정 (로봇 크기의 약 2배)
   inflation_unknown: false   # unknown 영역도 장애물 취급할지말지

@@ -4,7 +4,7 @@ global_costmap:
   global_frame: "map"
   robot_base_frame: "base_footprint"
   update_frequency: 1.0
-  publish_frequency: 0.5
+  publish_frequency: 1.0
   transform_tolerance: 0.5
   
   # SLAM 동적 맵 업데이트를 위한 설정
@@ -12,7 +12,7 @@ global_costmap:
   rolling_window: true
   width: 50.0
   height: 50.0
-  resolution: 0.1
+  resolution: 0.2
   
   # 알 수 없는 영역 처리 설정
   track_unknown_space: false       # unknown space를 free로 취급

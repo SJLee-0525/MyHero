@@ -25,14 +25,17 @@ export default function Advertisement() {
   const memberTextRef = useRef("");
   const memberRef = useRef("");
   const boxRefs = useRef([]); // 여러 개의 요소를 참조할 배열 생성
+  const beRef = useRef("");
+  const emRef = useRef("");
+  const feRef = useRef("");
 
   const names = [
-    ["김도형", "BE/AI"],
-    ["박  진", "BE/INFRA"],
-    ["엄도윤", "EM/BG"],
-    ["노규헌", "EM/AI"],
-    ["형서희", "FE"],
-    ["이성준", "FE"],
+    ["김도형", "BE | AI"],
+    ["박  진", "BE | INFRA"],
+    ["엄도윤", "EM | BG"],
+    ["노규헌", "EM | AI"],
+    ["형서희", "FE | MAIN"],
+    ["이성준", "FE | SUB"],
   ];
 
   useEffect(() => {
@@ -116,7 +119,7 @@ export default function Advertisement() {
         boxRef.current, //
         { scale: 1, transformOrigin: "center center" }, // 기본 크기 유지
         {
-          scale: 1.5,
+          scale: 1.3,
           opacity: 1,
           y: 0,
           duration: 2.5,
@@ -130,6 +133,63 @@ export default function Advertisement() {
         }
       );
     }
+
+    if (beRef.current) {
+      gsap.fromTo(
+        beRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: beRef.current,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          },
+        }
+      );
+    }
+
+    if (emRef.current) {
+      gsap.fromTo(
+        emRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: emRef.current,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          },
+        }
+      );
+    }
+
+    if (feRef.current) {
+      gsap.fromTo(
+        feRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: feRef.current,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          },
+        }
+      );
+    }
   }, []);
 
   return (
@@ -137,7 +197,6 @@ export default function Advertisement() {
       <div className="top-box">
         <div className="title-box">
           <img src={logo} alt="" />
-          <h2>영웅이네 오신 것을 환영합니다.</h2>
         </div>
         <div className="login-box">
           <AdverLogin />
@@ -150,9 +209,12 @@ export default function Advertisement() {
       <br />
       <br />
       <br />
+      <br />
+      <br />
 
       <div id="video-group">
         <div className="video-box" ref={boxRef}>
+          <h1>영웅이를 소개합니다!</h1>
           <iframe
             width={window.innerWidth * 0.6}
             height={window.innerWidth * 0.6 * (405 / 720)}
@@ -167,14 +229,28 @@ export default function Advertisement() {
       </div>
 
       <h1 className="sub-title-h1">프로젝트 개요</h1>
+      <div className="project-info">
+        <h3>SSAFY 12기 공통 프로젝트 (AIoT)</h3>
+        <p>2025. 01. 06. ~ 2025. 02. 21.</p>
+      </div>
+
+      <br />
       <div id="summary">
         <h3>
-          영웅이네는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
-          제공 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.
+          영웅이는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
+          제공, 자율 주행 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.
         </h3>
-        <p>SSAFY 12기 공통 프로젝트</p>
-        <p>서울 1반 A102</p>
-        <p>2025. 01. 06. ~ 2025. 02. 21.</p>
+        <p>
+          단순한 대화 상대를 넘어 일상 속 동반자 역할을 하며, 긴급한 상황에서는
+          신속한 도움을 제공합니다.
+          <br />
+          또한, 영웅이는 가족 및 요양 보호사가 독거노인의 생활 상태를 원격으로
+          모니터링할 수 있도록 지원합니다.
+          <br />
+          대화 내역을 바탕으로 감정 및 심리 상태를 분석하고, 환경 및 활동
+          데이터를 수집하여 위험 요소를 감지함으로써 보다 안전한 생활을
+          돕습니다.
+        </p>
       </div>
 
       <br />
@@ -182,9 +258,10 @@ export default function Advertisement() {
       <br />
       <br />
       <br />
-      <br />
 
       <h1 className="sub-title-h1">영웅이를 만든 사람들</h1>
+
+      <h3 className="sub-title-h3">서울 1반 A102</h3>
       <div id="image-group-box">
         <div className="image-group">
           {[dh, jin, dy, gyu, sh, sj].map((imgSrc, index) => (
@@ -208,10 +285,9 @@ export default function Advertisement() {
       <br />
       <br />
       <br />
-      <br />
 
       <h1 className="sub-title-h1">기술 스택</h1>
-      <div id="stacks">
+      <div id="stacks" ref={beRef}>
         <div className="stack">
           <h1>BACKEND</h1>
           <div className="backend">
@@ -250,7 +326,7 @@ export default function Advertisement() {
           </div>
         </div>
 
-        <div className="stack">
+        <div className="stack" ref={emRef}>
           <h1>EMBEDDED</h1>
           <div className="embedded">
             <div className="embedded-stack">
@@ -259,7 +335,7 @@ export default function Advertisement() {
               <p>Global Planner: Hybrid A*</p>
               <p>Local Planner: DWA</p>
               <p>Recovery Behavior: Backoff, Clear map</p>
-              <p>etcL Autonomous exploration</p>
+              <p>etc: Autonomous exploration</p>
             </div>
 
             <div className="embedded-stack">
@@ -278,26 +354,30 @@ export default function Advertisement() {
           </div>
         </div>
 
-        <div className="stack">
+        <div className="stack" ref={feRef}>
           <h1>FRONTEND</h1>
           <div className="frontend">
             <div className="frontend-stack">
-              <h3>웹 페이지</h3>
-              <p>React</p>
+              <h3>주 사용자 페이지</h3>
+              <p>React (18.3.1)</p>
+              <p>Vite (6.0.5)</p>
+              <p>date-fns (4.1.0)</p>
+            </div>
+
+            <div className="frontend-stack">
+              <h3>보조 사용자 페이지</h3>
+              <p>React (18.3.1)</p>
+              <p>Vite (6.0.5)</p>
+              <p>Recharts (2.15.0)</p>
+              <p>qrcode.react (4.2.0)</p>
+              <p>date-fns (4.1.0)</p>
               <p>GSAP</p>
-              <p>Recharts</p>
-              <p>qrcode.react</p>
             </div>
           </div>
         </div>
       </div>
 
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
+      <footer id="footer"></footer>
     </div>
   );
 }

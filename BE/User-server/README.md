@@ -12,6 +12,10 @@ User API Server는 사용자 정보와 가족 관리, 상태 정보 보고 및 �
 
 ### 기술
 
+<img src="/uploads/cca32fa6cf2f85bb54b812c60262d92f/Python-Dark.svg" width="100" height="100" alt="Python"/>
+<img src="/uploads/3e55daa5ca0afaebcaec2f9777f4bb23/FastAPI.svg" width="100" height="100" alt="FastAPI"/>
+<img src="/uploads/9e181b0d15199ae7d5b8ad673644b30b/MySQL-Dark.svg" width="100" height="100" alt="MySQL"/>
+
 | **분야** | **사용한 기술** |
 | --- | --- |
 | Program Language | **Python** 3.11.9 |
@@ -24,9 +28,11 @@ User API Server는 사용자 정보와 가족 관리, 상태 정보 보고 및 �
 
 ### 프로젝트 구조
 
+![최종서비스](/uploads/c224e30672147ae64917ff9bf1bd0ab6/최종서비스.png)
+
 이 Repository는 Backend Server 구조 중에서 **API Server** 부분에 해당합니다.
 
-```json
+```
 │  docker-compose-dev.yml
 │  Dockerfile
 │  main.py

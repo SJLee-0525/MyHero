@@ -70,9 +70,12 @@ export default function NewEmergencyModal() {
               <p className="date">{createdAtKST}</p>
 
               {/* 이미지 출력단 */}
-              <div>
-                <img src={emergencyAlert.image_url} alt="temp" />
-              </div>
+
+              {emergencyAlert.image_url && (
+                <div>
+                  <img src={emergencyAlert.image_url} alt="temp" />
+                </div>
+              )}
               <div className="widget-button-container">
                 {!emergencyAlert.is_read && (
                   <div className="widget-button-container">

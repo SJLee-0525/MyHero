@@ -1,33 +1,33 @@
-import "./Advertisement.css"
+import "./Advertisement.css";
 
-import { useRef, useState, useContext, useEffect } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef, useState, useContext, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import AdverLogin from "../accounts/AdverLogin.jsx"
+import AdverLogin from "../accounts/AdverLogin.jsx";
 
-import logo from "../../../assets/advertisement/blue-logo.png"
-import dh from "../../../assets/advertisement/dh.png"
-import jin from "../../../assets/advertisement/jin.png"
-import gyu from "../../../assets/advertisement/gyu.png"
-import dy from "../../../assets/advertisement/dy.png"
-import sh from "../../../assets/advertisement/sh.jpg"
-import sj from "../../../assets/advertisement/sj.jpg"
+import logo from "../../../assets/advertisement/blue-logo.png";
+import dh from "../../../assets/advertisement/dh.png";
+import jin from "../../../assets/advertisement/jin.png";
+import gyu from "../../../assets/advertisement/gyu.png";
+import dy from "../../../assets/advertisement/dy.png";
+import sh from "../../../assets/advertisement/sh.jpg";
+import sj from "../../../assets/advertisement/sj.jpg";
 
 export default function Advertisement() {
-  const userProgressStore = useContext(UserProgressContext)
+  const userProgressStore = useContext(UserProgressContext);
 
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720)
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720);
 
-  const boxRef = useRef("")
-  const memberTextRef = useRef("")
-  const memberRef = useRef("")
-  const boxRefs = useRef([]) // 여러 개의 요소를 참조할 배열 생성
-  const beRef = useRef("")
-  const emRef = useRef("")
-  const feRef = useRef("")
+  const boxRef = useRef("");
+  const memberTextRef = useRef("");
+  const memberRef = useRef("");
+  const boxRefs = useRef([]); // 여러 개의 요소를 참조할 배열 생성
+  const beRef = useRef("");
+  const emRef = useRef("");
+  const feRef = useRef("");
 
   const names = [
     ["김도형", "BE | AI"],
@@ -36,28 +36,28 @@ export default function Advertisement() {
     ["노규헌", "EM | AI"],
     ["형서희", "FE | MAIN"],
     ["이성준", "FE | SUB"],
-  ]
+  ];
 
   useEffect(() => {
     const handleResize = () => {
-      setIsDesktop(window.innerWidth > 720)
-    }
+      setIsDesktop(window.innerWidth > 720);
+    };
 
     // 이벤트 리스너 등록
-    window.addEventListener("resize", handleResize)
+    window.addEventListener("resize", handleResize);
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
     return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // gsap.fromTo()의 첫 번째 인자는 애니메이션을 적용할 요소, 두 번째와 세 번째 인자는 각각 초기 상태, 애니메이션 대상 상태를 넣어야 함.
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
+    gsap.registerPlugin(ScrollTrigger);
 
     if (memberRef.current) {
-      gsap.registerPlugin(ScrollTrigger)
+      gsap.registerPlugin(ScrollTrigger);
 
       gsap.to(memberRef.current, {
         scale: 1.5,
@@ -74,11 +74,11 @@ export default function Advertisement() {
           //   gsap.set(memberRef.current, { scale: scaleValue })
           // },
         },
-      })
+      });
     }
 
     if (memberTextRef.current) {
-      gsap.registerPlugin(ScrollTrigger)
+      gsap.registerPlugin(ScrollTrigger);
 
       gsap.to(memberTextRef.current, {
         scale: 1.5,
@@ -90,7 +90,7 @@ export default function Advertisement() {
           scrub: true,
           pin: false,
         },
-      })
+      });
     }
 
     // 여러 개의 이미지 박스 애니메이션 적용
@@ -110,8 +110,8 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      )
-    })
+      );
+    });
 
     // 비디오 박스 애니메이션 추가
     if (boxRef.current) {
@@ -131,7 +131,7 @@ export default function Advertisement() {
             scrub: true, // 스크롤과 함께 애니메이션 진행
           },
         }
-      )
+      );
     }
 
     if (beRef.current) {
@@ -150,7 +150,7 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      )
+      );
     }
 
     if (emRef.current) {
@@ -169,7 +169,7 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      )
+      );
     }
 
     if (feRef.current) {
@@ -188,9 +188,9 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      )
+      );
     }
-  }, [])
+  }, []);
 
   return (
     <div id="advertisement">
@@ -236,13 +236,20 @@ export default function Advertisement() {
 
       <br />
       <div id="summary">
-        <h3>영웅이는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보 제공, 자율 주행 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.</h3>
+        <h3>
+          영웅이는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
+          제공, 자율 주행 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.
+        </h3>
         <p>
-          단순한 대화 상대를 넘어 일상 속 동반자 역할을 하며, 긴급한 상황에서는 신속한 도움을 제공합니다.
+          단순한 대화 상대를 넘어 일상 속 동반자 역할을 하며, 긴급한 상황에서는
+          신속한 도움을 제공합니다.
           <br />
-          또한, 영웅이는 가족 및 요양 보호사가 독거노인의 생활 상태를 원격으로 모니터링할 수 있도록 지원합니다.
+          또한, 영웅이는 가족 및 요양 보호사가 독거노인의 생활 상태를 원격으로
+          모니터링할 수 있도록 지원합니다.
           <br />
-          대화 내역을 바탕으로 감정 및 심리 상태를 분석하고, 환경 및 활동 데이터를 수집하여 위험 요소를 감지함으로써 보다 안전한 생활을 돕습니다.
+          대화 내역을 바탕으로 감정 및 심리 상태를 분석하고, 환경 및 활동
+          데이터를 수집하여 위험 요소를 감지함으로써 보다 안전한 생활을
+          돕습니다.
         </p>
       </div>
 
@@ -337,7 +344,10 @@ export default function Advertisement() {
               <p>Build System: GN + Ninja, cross compile(x86 - arm64), cmake</p>
               <p>Matter Configuration: ZAP</p>
               <p>Board: Raspberry Pi 5, Jetson Orin Nano</p>
-              <p>Hardware: DHT-11, GP2Y1014AUF, MQ-3, PulseSensor, mcp3008, pca9685, DC_motor, Servo_motor</p>
+              <p>
+                Hardware: DHT-11, GP2Y1014AUF, MQ-3, PulseSensor, mcp3008,
+                pca9685, DC_motor, Servo_motor
+              </p>
               <p>Interface: wiringPi, SPI, i2c</p>
               <p>Use custom device drivers</p>
             </div>
@@ -351,10 +361,7 @@ export default function Advertisement() {
               <h3>주 사용자 페이지</h3>
               <p>React (18.3.1)</p>
               <p>Vite (6.0.5)</p>
-              <p>Recharts (2.15.0)</p>
-              <p>qrcode.react (4.2.0)</p>
               <p>date-fns (4.1.0)</p>
-              <p>GSAP</p>
             </div>
 
             <div className="frontend-stack">
@@ -372,5 +379,5 @@ export default function Advertisement() {
 
       <footer id="footer"></footer>
     </div>
-  )
+  );
 }

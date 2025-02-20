@@ -1,4 +1,4 @@
-# 프로젝트 이름
+# AI 실버케어 로봇 플랫폼 서비스 영웅이 (Carebot) - 보조 사용자 페이지
 
 ![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)
 ![Vite](https://img.shields.io/badge/Vite-6.0.5-purple?logo=vite)
@@ -80,38 +80,38 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 🏠 홈 화면
 
-![HOME]()
+![HOME](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/home.png)
 
 - 전체 알림 확인 가능
 - 캘린더 위젯을 통해 대략적인 활동 확인 가능
 - 토글을 통해 영웅이의 작동 상태 및 집 내부 모니터링 정보 확인 가능
 
-![MOBILE_HOME]()
+![MOBILE_HOME](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/home-mb.png)
 
 - 반응형 디자인을 통해 모바일 환경에서도 편리하게 이용 가능
 
 ### 🔔 알림 페이지
 
-![NOTIFICATIONS]()
+![NOTIFICATIONS](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/noti.png)
 
 - 모든 알림을 한 곳에서 확인 가능
 - 좌측 부터 일반 알림, 재난 문자 알림, 긴급 알림 순으로 구분
 - 읽지 않은 알림의 경우 클릭함으로써 읽음 처리 가능
 - 하단의 버튼을 통해 지난 기록 확인이 가능
 
-![PAST_NOTIFICATIONS]()
+![PAST_NOTIFICATIONS](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/noti-period.png)
 
 - 지난 알림 기록 확인 가능
 - 기간을 설정하여 특정 기간 동안의 알림 확인 가능
 
-![EMERGENCY_NOTIFICATIONS]()
+![EMERGENCY_NOTIFICATIONS](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/emergency-noti.png)
 
 - 긴급한 알림(낙상, 화재 등)이 발생할 시, 모달을 통해 정보 제공
 - 읽음 표시하기 전까지 계속해서 알림을 띄움
 - 전화하기 버튼을 눌러서 전화 어플로 연결 가능
 - 메시지 보내기 버튼을 눌러서 메시지 페이지로 이동 가능
 
-![NORMAL_NOTIFICATIONS]()
+![NORMAL_NOTIFICATIONS](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/normal-noti.png)
 
 - 긴급한 알림이 아닌 경우 (일반 알림, 재난 알림 등)에는 우측 하단에, 알림을 띄워주는 모달 생성
 - 읽음 표시하기 전까지 계속해서 알림을 띄움
@@ -119,7 +119,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 💬 메시지 페이지
 
-![MESSAGES]()
+![MESSAGES](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/message.png)
 
 - 등록된 가족들과 채팅이 가능
 - 메시지를 보내면 영웅이가 TTS로 메시지를 읽어 줌
@@ -127,7 +127,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 📅 캘린더 페이지
 
-![CALENDAR]()
+![CALENDAR](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/calendar.png)
 
 - 지난 날짜의 정보들을 확인 가능
 - 해당 날짜에 측정된 온도, 습도, 미세먼지, 일산화탄소 농도의 평균 값을 확인 가능
@@ -136,18 +136,18 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 🏃 건강 페이지
 
-![HEALTH]()
+![HEALTH](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/health.png)
 
 - 활동 및 정신 건강 상태를 모니터링하고 기록
 - 지난 7일 간 활동량과 감정 변화 추이 확인 가능
 - 대화 기반 감정 분석 결과 확인 가능
 - 특정 기간 동안의 정신 건강 분석 리포트 제공
 
-![EMOTION_REPORT]()
+![EMOTION_REPORT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/emotion-report.png)
 
 - 대화 기반 감정 분석 결과 확인 가능
 
-![MENTAL_REPORT]()
+![MENTAL_REPORT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/mental-report.png)
 
 - 정신 건강 분석 리포트 확인 가능
 - DB에 따로 저장되지 않음
@@ -160,20 +160,20 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 - 계정 탈퇴 가능
 - 로그아웃 가능
 
-![USER_ACCOUNT]()
+![USER_ACCOUNT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/sub-info.png)
 
 - 자신이 가입된 가족 모임 정보 확인 가능
 - 가족 모임에 등록된 닉네임 변경 가능
 - 가족 모임에서 탈퇴 가능
 
-![FAMILY_ACCOUNT]()
+![FAMILY_ACCOUNT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/family-infp.png)
 
 - 가족 모임에 등록된 가족들의 정보 확인 가능
 - 해당 가족 모임에 가입하는데 필요한 QR 코드 확인 가능
 - 가족 모임 삭제 가능
 - 가족 모임에 등록된 보조 사용자 추방 가능
 
-![QR_REGISTER]()
+![QR_REGISTER](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/qr-register.gif)
 
 - QR 코드를 스캔하여 가족 모임에 가입 가능
 

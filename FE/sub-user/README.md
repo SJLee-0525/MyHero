@@ -166,7 +166,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 - 가족 모임에 등록된 닉네임 변경 가능
 - 가족 모임에서 탈퇴 가능
 
-![FAMILY_ACCOUNT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/family-infp.png)
+![FAMILY_ACCOUNT](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/family-info.png)
 
 - 가족 모임에 등록된 가족들의 정보 확인 가능
 - 해당 가족 모임에 가입하는데 필요한 QR 코드 확인 가능

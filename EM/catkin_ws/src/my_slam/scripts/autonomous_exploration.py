@@ -57,13 +57,13 @@ class AutonomousExplorer:
             self.is_moving = msg.status_list[-1].status == 1
 
     def publish_random_goal(self, event):
-        rospy.loginfo("publish_random_goal 호출: exploration_enabled: %s, map_data: %s, is_moving: %s",
-                      self.exploration_enabled, self.map_data is not None, self.is_moving)
+        # rospy.loginfo("publish_random_goal 호출: exploration_enabled: %s, map_data: %s, is_moving: %s",
+        #               self.exploration_enabled, self.map_data is not None, self.is_moving)
         
         # 탐색 비활성 또는 map 데이터가 없거나 현재 이동 중이면 목표 발행하지 않음
         if not self.exploration_enabled or self.map_data is None or self.is_moving:
         # if not self.exploration_enabled or self.map_data is None:
-            rospy.loginfo("publish_random_goal 조건 미충족, goal 발행 안함")
+            # rospy.loginfo("publish_random_goal 조건 미충족, goal 발행 안함")
             return
 
         # 현재 로봇 위치 추정 (base_link -> map)

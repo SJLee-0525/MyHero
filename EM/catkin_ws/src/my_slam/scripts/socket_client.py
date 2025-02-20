@@ -17,9 +17,9 @@ class SocketClient:
         # ROS 퍼블리셔 설정
         self.camera_pub = rospy.Publisher('camera_status', Bool, queue_size=10)
         self.driving_pub = rospy.Publisher('driving_mode', String, queue_size=10)
-        self.session_pub = rospy.Publisher('session_id', String, queue_size=10)
-        self.user_id_pub = rospy.Publisher('user_id', String, queue_size=10)
-        self.family_id_pub = rospy.Publisher('family_id', String, queue_size=10)
+        self.session_pub = rospy.Publisher('session_id', String, queue_size=1, latch=True)
+        self.user_id_pub = rospy.Publisher('user_id', String, queue_size=1, latch=True)
+        self.family_id_pub = rospy.Publisher('family_id', String, queue_size=1, latch=True)
         
         # 현재 상태 저장
         self.current_session_id = None
@@ -30,6 +30,17 @@ class SocketClient:
         # 소켓 연결
         self.socket = None
         self.connect_to_server()
+        
+        # 주기적 publish를 위한 타이머 설정 (5초마다)
+        self.publish_timer = rospy.Timer(rospy.Duration(5), self.publish_current_status)
+
+    def publish_current_status(self, event):
+        """현재 상태를 주기적으로 발행하는 콜백 함수"""
+        if self.current_session_id is not None:
+            self.session_pub.publish(self.current_session_id)
+        
+        if self.current_family_id is not None:
+            self.family_id_pub.publish(self.current_family_id)
 
     def connect_to_server(self):
         while not rospy.is_shutdown() and not self.is_connected:
@@ -47,44 +58,30 @@ class SocketClient:
     def process_message(self, message):
         try:
             data = json.loads(message)
-            # 전체 JSON 데이터 출력 추가
-            rospy.loginfo("Received JSON data:")
-            rospy.loginfo(json.dumps(data, indent=2, ensure_ascii=False))
             
-            # user_id 처리
+            # user_id 처리 - 항상 publish
             if 'user_id' in data:
-                new_user_id = data['user_id']
-                if new_user_id != self.current_user_id:
-                    self.current_user_id = new_user_id
-                    self.user_id_pub.publish(new_user_id)
-                    rospy.loginfo(f"New user ID: {new_user_id}")
+                self.current_user_id = data['user_id']
+                self.user_id_pub.publish(self.current_user_id)
             
-            # session_id 처리
+            # session_id 처리 - 항상 publish
             if 'session_id' in data:
-                new_session_id = data['session_id']
-                if new_session_id != self.current_session_id:
-                    self.current_session_id = new_session_id
-                    self.session_pub.publish(new_session_id)
-                    rospy.loginfo(f"New session ID: {new_session_id}")
+                self.current_session_id = data['session_id']
+                self.session_pub.publish(self.current_session_id)
             
-            # family_id 처리
+            # family_id 처리 - 항상 publish
             if 'family_id' in data:
-                new_family_id = data['family_id']
-                if new_family_id != self.current_family_id:
-                    self.current_family_id = new_family_id
-                    self.family_id_pub.publish(new_family_id)
-                    rospy.loginfo(f"New family ID: {new_family_id}")
+                self.current_family_id = data['family_id']
+                self.family_id_pub.publish(self.current_family_id)
             
             # 카메라 상태 처리
             if 'is_camera_enabled' in data:
                 self.camera_pub.publish(data['is_camera_enabled'])
-                rospy.loginfo(f"Camera status: {data['is_camera_enabled']}")
             
             # 주행 상태 처리
             if 'is_driving_enabled' in data:
                 driving_status = 'autonomous' if data['is_driving_enabled'] else 'stop'
                 self.driving_pub.publish(driving_status)
-                rospy.loginfo(f"Driving status: {driving_status}")
                     
         except json.JSONDecodeError as e:
             rospy.logerr(f"JSON decode error: {e}")
@@ -115,6 +112,11 @@ class SocketClient:
 
         if self.socket:
             self.socket.close()
+
+    def __del__(self):
+        """소멸자: 타이머 정리"""
+        if hasattr(self, 'publish_timer'):
+            self.publish_timer.shutdown()
 
 if __name__ == '__main__':
     try:

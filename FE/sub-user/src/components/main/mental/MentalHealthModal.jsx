@@ -1,4 +1,5 @@
 import "./Mental.css";
+import "../../spinner/Spinner.css";
 
 import { useRef, useContext } from "react";
 
@@ -221,6 +222,12 @@ export default function MentalHealthModal() {
           하루치 분석 의뢰
         </button>
       </div>
+
+      {healthStore.loading && (
+        <div className="loading-overlay">
+          <div class="loader"></div>
+        </div>
+      )}
 
       {Object.keys(healthStore.mentalHealthStatus).length === 0 ? (
         <div className="order-report">

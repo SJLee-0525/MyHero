@@ -98,7 +98,15 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems imgSrc={smsIcon} altSrc="message" identifier="메시지" activeIdentifier={userProgressStore.isActiveSideBarElem} onClickElem={userProgressStore.handleActiveSideBarElem} />
+          {userProgressStore.loginUserInfo.userInfo.role === "sub" && (
+            <TopNavSideNavElems
+              imgSrc={smsIcon}
+              altSrc="message"
+              identifier="메시지"
+              activeIdentifier={userProgressStore.isActiveSideBarElem}
+              onClickElem={userProgressStore.handleActiveSideBarElem}
+            />
+          )}
           {/* <TopNavSideNavElems
             imgSrc={sirenIcon}
             altSrc="emergency"
@@ -113,13 +121,15 @@ export default function TopNav() {
             activeIdentifier={userProgressStore.isActiveSideBarElem}
             onClickElem={userProgressStore.handleActiveSideBarElem}
           />
-          <TopNavSideNavElems
-            imgSrc={activityIcon}
-            altSrc="activity"
-            identifier="건강"
-            activeIdentifier={userProgressStore.isActiveSideBarElem}
-            onClickElem={userProgressStore.handleActiveSideBarElem}
-          />
+          {userProgressStore.loginUserInfo.userInfo.role === "sub" && (
+            <TopNavSideNavElems
+              imgSrc={activityIcon}
+              altSrc="activity"
+              identifier="건강"
+              activeIdentifier={userProgressStore.isActiveSideBarElem}
+              onClickElem={userProgressStore.handleActiveSideBarElem}
+            />
+          )}
           {/* <TopNavSideNavElems
             imgSrc={vitalSignIcon}
             altSrc="mental"

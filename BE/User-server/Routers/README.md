@@ -12,6 +12,8 @@ Carebot과 User Platform에 정보와 기능을 제공하기 위해 API Server�
 
 ### 기술
 
+<img src="/uploads/3e55daa5ca0afaebcaec2f9777f4bb23/FastAPI.svg" width="100" height="100" alt="FastAPI"/>
+
 | **분야** | **사용한 기술** |
 | --- | --- |
 | Program Language | **Python** 3.11.9 |

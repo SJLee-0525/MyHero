@@ -66,7 +66,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     | **`python-multipart`**  | Streaming Multipart Parser | `0.0.20` |
 6. **`main.py`**
     
-    Image Provider에 대한 **모든 기능(Verify, Upload, Provide, Delete)**이 포함되어 있습니다. 
+    Image Provider에 대한 **모든 기능** (Verify, Upload, Provide, Delete)이 포함되어 있습니다. 
     
     파일의 크기와 파일 종류에 대한 제한, Cache 기간에 대한 설정이 되어 있습니다.
     

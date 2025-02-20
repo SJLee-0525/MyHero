@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import subprocess
@@ -7,6 +7,9 @@ import logging
 import signal
 import sys
 import time
+import httpx
+import json
+from socketServer import get_raspberry_instance
 
 logging.basicConfig(
     level=logging.INFO,
@@ -18,19 +21,28 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "http://70.12.246.28:3000", "https://dev-main.itdice.net"],  
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "Accept", "Cookie"],
 )
 
-class UserID(BaseModel):
-    user_id: str
+class LoginCredentials(BaseModel):
+    email: str
+    password: str
+
+class SettingValue(BaseModel):
+    is_camera_enabled: bool
+    is_driving_enabled: bool
 
 processes = {
     'stt': None,
-    'rsvp': None
+    'rsvp': None,
+    'socketServer': None
 }
+
+
+raspberry = get_raspberry_instance()
 
 @app.post("/bluetooth/speaker/connect")
 async def connect_bluetooth_speaker():
@@ -43,60 +55,137 @@ async def connect_bluetooth_speaker():
    except Exception as e:
        return {"status": "error", "message": str(e)}
    
+@app.post("/bluetooth/speaker/toggle")
+async def toggle_speaker():
+    try:
+        with open('user_data.json', 'r') as f:
+            user_data = json.load(f)
+        family_id = user_data['family_id']
+        session_id = user_data['session_id']
+
+        headers = {
+            'Cookie': f"session_id={session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
+        }
+        async with httpx.AsyncClient() as client:
+            settings_response = await client.get(
+                f"https://dev-api.itdice.net/tools/settings/{family_id}",
+                headers=headers
+            )
+            
+            if settings_response.status_code != 200:
+                return {"status": "error", "message": "Failed to retrieve settings"}
+            
+            settings_data = settings_response.json()
+            is_microphone_enabled = settings_data['result']['is_microphone_enabled']
+
+            new_microphone_state = not is_microphone_enabled
+
+            toggle_response = await client.patch(
+                f"https://dev-api.itdice.net/tools/settings/{family_id}",
+                headers=headers,
+                json={"is_microphone_enabled": new_microphone_state}
+            )
+            
+            if toggle_response.status_code != 200:
+                return {"status": "error", "message": "Failed to update microphone settings"}
+
+            volume = 70 if new_microphone_state else 0
+            volume_result = await set_bluetooth_speaker_volume(volume)
+            
+            return {
+                "status": "success", 
+                "message": "Speaker and microphone settings updated",
+                "volume": volume,
+                "is_microphone_enabled": new_microphone_state
+            }
+    
+    except Exception as e:
+        logger.error(f"Speaker toggle error: {e}")
+        return {"status": "error", "message": str(e)}
+
 @app.post("/bluetooth/speaker/volume")
 async def set_bluetooth_speaker_volume(volume: int):
     try:
-        sinks = subprocess.run(['pactl', 'list', 'sinks'], capture_output=True, text=True)
+        if not 0 <= volume <= 100:
+            return {"status": "error", "message": "Volume must be between 0 and 100"}
+        
+        sinks_result = subprocess.run(
+            ['pactl', 'list', 'short', 'sinks'], 
+            capture_output=True, 
+            text=True, 
+            encoding='utf-8', 
+            errors='ignore'
+        )
         
         bluetooth_sink = None
-        for line in sinks.stdout.split('\n'):
-            if '5C:FB:7C:34:59:29' in line:  
-                sink_lines = [l for l in sinks.stdout.split('\n') if 'Name:' in l]
-                for sink_line in sink_lines:
-                    if 'bluez' in sink_line:
-                        bluetooth_sink = sink_line.split(':')[1].strip()
-                        break
+        for line in sinks_result.stdout.split('\n'):
+            if 'bluez_output.5C_FB_7C_34_59_29.1' in line:
+                bluetooth_sink = line.split()[1]
+                break
         
         if not bluetooth_sink:
             return {"status": "error", "message": "Bluetooth speaker sink not found"}
-            
-        if not 0 <= volume <= 100:
-            return {"status": "error", "message": "Volume must be between 0 and 100"}
-            
-        result = subprocess.run(
+        
+        volume_result = subprocess.run(
             ['pactl', 'set-sink-volume', bluetooth_sink, f'{volume}%'], 
             capture_output=True, 
-            text=True
+            text=True,
+            encoding='utf-8', 
+            errors='ignore'
         )
         
-        if result.returncode == 0:
+        if volume_result.returncode == 0:
             return {
                 "status": "success", 
                 "message": f"Bluetooth speaker volume set to {volume}%",
                 "sink": bluetooth_sink
             }
         else:
-            return {"status": "error", "message": result.stderr}
+            return {
+                "status": "error", 
+                "message": volume_result.stderr or "Failed to set volume"
+            }
             
     except Exception as e:
+        logger.error(f"Volume setting error: {e}")
         return {"status": "error", "message": str(e)}
 
-def start_processes(user_id: str):
+@app.post("/SettingValue")
+async def SendToJetson(settings : SettingValue):
+    print(f"Received settings: {settings}") 
+    try:
+        data = {
+            "is_camera_enabled": settings.is_camera_enabled,
+            "is_driving_enabled": settings.is_driving_enabled
+        }
+        try:
+            with open('user_data.json', 'r', encoding='utf-8') as file:
+                user_data = json.load(file)
+            data = {
+                **user_data,
+                "is_camera_enabled": settings.is_camera_enabled,
+                "is_driving_enabled": settings.is_driving_enabled
+            }
+        except:
+            pass
+        raspberry.send_message(data)
+        return {"status": "success", "message": "succsess"}
+    except Exception as e:
+        return {"status": "error", "message": e}
+
+def start_processes(user_id: str, session_id: str):
     try:
         stop_processes()
-
-        if os.path.exists('user_id.txt'):
-            os.remove('user_id.txt')
-
-        with open('user_id.txt', 'w') as f:
-            f.write(user_id)
         
         logger.info("Starting STT process...")
         processes['stt'] = subprocess.Popen(['python', 'main.py'])
         
         logger.info("Starting RSVP process...")
         processes['rsvp'] = subprocess.Popen(['./rsvp_project'], 
-                                           cwd=os.path.expanduser('~/project/rsvp/build'))
+                                           cwd=os.path.expanduser('/home/ssafy/project/rsvp/build'))
+        
+#        logger.info("Starting SocketServer process...")
+#        processes['socketServer'] = subprocess.Popen(['python', 'socketServer.py'])
         
         logger.info("All processes started successfully")
         return True
@@ -122,10 +211,58 @@ def stop_processes():
                 logger.error(f"Error stopping {name} process: {e}")
             processes[name] = None
 
-@app.post("/api/userid")
-async def set_userid(data: UserID):
-    success = start_processes(data.user_id)
-    return {"success": success, "user_id": data.user_id}
+@app.post("/api/login")
+async def login(credentials: LoginCredentials):
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://dev-api.itdice.net/auth/login", 
+                json={
+                    "email": credentials.email,
+                    "password": credentials.password
+                }
+            )
+            
+            if response.status_code != 200:
+                raise HTTPException(status_code=response.status_code, detail="Login failed")
+            
+            login_data = response.json()
+            
+            user_id = login_data['result']['user_data']['id']
+            session_id = login_data['result']['session_id']
+            
+            family_check_response = await client.post(
+                "https://dev-api.itdice.net/families/check-exist",
+                json={"id": user_id}
+            )
+            
+            if family_check_response.status_code != 200:
+                raise HTTPException(status_code=family_check_response.status_code, detail="Family check failed")
+            
+            family_data = family_check_response.json()
+            family_id = family_data['result']['family_id']
+            
+            user_data = {
+                "user_id": user_id,
+                "session_id": session_id,
+                "family_id": family_id
+            }
+            
+            with open('user_data.json', 'w') as f:
+                json.dump(user_data, f, indent=4)
+            
+            success = start_processes(user_id, session_id)
+            
+            return {
+                "success": success,
+                "user_id": user_id,
+                "session_id": session_id,
+                "family_id": family_id
+            }
+    
+    except Exception as e:
+        logger.error(f"Login error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.on_event("shutdown")
 async def shutdown_event():

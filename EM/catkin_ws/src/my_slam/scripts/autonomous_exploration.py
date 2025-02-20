@@ -42,7 +42,7 @@ class AutonomousExplorer:
         # move_base 상태 구독 추가
         self.status_sub = rospy.Subscriber('/move_base/status', GoalStatusArray, self.status_callback)
 
-        rospy.Timer(rospy.Duration(5.0), self.publish_random_goal)
+        rospy.Timer(rospy.Duration(3.0), self.publish_random_goal)
 
     def map_callback(self, msg):
         self.map_data = msg
@@ -62,6 +62,7 @@ class AutonomousExplorer:
         
         # 탐색 비활성 또는 map 데이터가 없거나 현재 이동 중이면 목표 발행하지 않음
         if not self.exploration_enabled or self.map_data is None or self.is_moving:
+        # if not self.exploration_enabled or self.map_data is None:
             rospy.loginfo("publish_random_goal 조건 미충족, goal 발행 안함")
             return
 

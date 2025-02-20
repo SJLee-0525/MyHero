@@ -14,7 +14,7 @@ export default function Toggle({
         <div className={status}>
           <button
             className="toggle-button"
-            onClick={() => onClickToggle(identifier)}
+            // onClick={() => onClickToggle(identifier)}
           >
             <img src={imgSrc} alt={altSrc} />
           </button>

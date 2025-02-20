@@ -66,7 +66,7 @@ export default function MessageContextProvider({ children }) {
         if (
           resData.message === "New received messages retrieved successfully"
         ) {
-          console.log("메시지 수신 성공");
+          // console.log("메시지 수신 성공");
         }
         return { success: true, data: resData.result };
       } else {
@@ -114,12 +114,12 @@ export default function MessageContextProvider({ children }) {
       );
 
       const resData = response.data;
-      console.log(resData, "sec");
+      // console.log(resData, "sec");
       if (response.success) {
         if (resData.message === "All sent messages retrieved successfully") {
-          console.log("보낸 메시지 정보 수신신");
+          // console.log("보낸 메시지 정보 수신");
         } else if (resData.message === "No sent messages") {
-          console.log("보낸 메시지 없음");
+          // console.log("보낸 메시지 없음");
         }
         return {
           success: true,
@@ -152,9 +152,9 @@ export default function MessageContextProvider({ children }) {
     try {
       const firstResponse = await handleGetAllReceivedMessages();
       const secondResponse = await handleGetAllSentMessage();
-      console.log(firstResponse, secondResponse, 123);
+      // console.log(firstResponse, secondResponse, 123);
       if (firstResponse.success && secondResponse.success) {
-        console.log("메시지 기록 수신 성공");
+        // console.log("메시지 기록 수신 성공");
 
         const receivedMessages = firstResponse.data;
         const sentMessages = secondResponse.data;
@@ -206,7 +206,7 @@ export default function MessageContextProvider({ children }) {
         if (
           resData.message === "New received messages retrieved successfully"
         ) {
-          console.log("새 메시지 수신!", resData.result);
+          // console.log("새 메시지 수신!", resData.result);
           await handleGetAllMessages();
           return {
             success: true,
@@ -214,7 +214,7 @@ export default function MessageContextProvider({ children }) {
           };
         }
       } else {
-        console.log(`새 메시지 없음`, resData.error);
+        // console.log(`새 메시지 없음`, resData.error);
         return {
           success: false,
           error: {
@@ -294,7 +294,7 @@ export default function MessageContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Message sent successfully") {
-          console.log("메시지 전송 성공");
+          // console.log("메시지 전송 성공");
           await handleGetAllMessages();
           return {
             success: true,

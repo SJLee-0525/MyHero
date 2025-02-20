@@ -186,7 +186,7 @@ export default function UserProgressContextProvider({ children }) {
 
   // 모달 열기
   function handleOpenModal(identifier, id) {
-    console.log("모달 열기:", identifier, id);
+    // console.log("모달 열기:", identifier, id);
     setModalProgress(identifier);
     setSelectedModalId(id);
   }
@@ -216,7 +216,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Login successful") {
-          console.log("로그인 성공", resData);
+          // console.log("로그인 성공", resData);
 
           // 자동 로그인 설정
           const autoLoginConfirm =
@@ -278,7 +278,7 @@ export default function UserProgressContextProvider({ children }) {
       const resData = response.data;
       if (response.success) {
         if (resData.message === "Permission check successful") {
-          console.log("세션 확인 성공", resData);
+          // console.log("세션 확인 성공", resData);
           setLoginUserInfo({
             login: true,
             userInfo: resData.result.user_data,
@@ -315,7 +315,7 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Auto login set successfully") {
-          console.log("자동 로그인 설정 성공", resData);
+          // console.log("자동 로그인 설정 성공", resData);
 
           setAutoLogin(true);
 
@@ -345,7 +345,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Account retrieved successfully") {
-          console.log("회원 정보 조회 성공", resData);
+          // console.log("회원 정보 조회 성공", resData);
 
           await handleUpdateSessionLoginInfo({
             login: true,
@@ -386,7 +386,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Logout successful") {
-          console.log("로그아웃 성공");
+          // console.log("로그아웃 성공");
 
           setLoginUserInfo({
             login: false,
@@ -450,13 +450,13 @@ export default function UserProgressContextProvider({ children }) {
         { email: email }
       );
 
-      console.log(response);
+      // console.log(response);
 
       if (response.success) {
         const resData = response.data;
 
         if (resData.message === "Email is available") {
-          console.log("이메일 사용 가능:", email);
+          // console.log("이메일 사용 가능:", email);
           return true;
         }
       } else {
@@ -490,7 +490,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "New account created successfully") {
-          console.log("회원 가입 성공", resData.result.id);
+          // console.log("회원 가입 성공", resData.result.id);
 
           handleLogin(payload.email, payload.password); // 회원 가입 후 자동 로그인
 
@@ -530,7 +530,7 @@ export default function UserProgressContextProvider({ children }) {
       '정말 회원 정보를 수정하시겠습니까?\n"확인"을 누르면 수정이 완료됩니다.'
     );
     if (!isConfirmed) {
-      console.log("회원 수정 취소");
+      // console.log("회원 수정 취소");
       return {
         success: false,
         error: { type: "canceled", message: "사용자가 취소했습니다." },
@@ -548,13 +548,13 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Account updated successfully") {
-          console.log("회원 정보 수정 성공");
+          // console.log("회원 정보 수정 성공");
 
           // 최신 회원 정보 가져오기
           const updatedUser = await handleGetUserInfo(
             loginUserInfo.userInfo.id
           );
-          console.log("최신 회원 정보 응답:", updatedUser);
+          // console.log("최신 회원 정보 응답:", updatedUser);
 
           if (!updatedUser || !updatedUser.success) {
             console.error("회원 정보 갱신 실패:", updatedUser);
@@ -576,7 +576,7 @@ export default function UserProgressContextProvider({ children }) {
           return { success: true, data: resData };
         }
       } else {
-        console.log("회원 정보 수정 실패:", response.error);
+        // console.log("회원 정보 수정 실패:", response.error);
         if (response.error.type === "invalid value") {
           alert("회원 정보 수정 실패:\n입력값이 올바르지 않습니다.");
         }
@@ -606,7 +606,7 @@ export default function UserProgressContextProvider({ children }) {
       `정말 회원 탈퇴하시겠습니까?\n탈퇴 시 복구가 불가능합니다.`
     );
     if (!isConfirmed) {
-      console.log("회원 탈퇴 취소");
+      // console.log("회원 탈퇴 취소");
       return {
         success: false,
         error: { type: "canceled", message: "사용자가 취소했습니다." },
@@ -624,7 +624,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Account deleted successfully") {
-          console.log("회원 탈퇴 성공");
+          // console.log("회원 탈퇴 성공");
 
           setLoginUserInfo({
             login: false,
@@ -657,7 +657,7 @@ export default function UserProgressContextProvider({ children }) {
           return { success: true, data: resData };
         }
       } else {
-        console.log("회원 탈퇴 실패:", response.error);
+        // console.log("회원 탈퇴 실패:", response.error);
 
         if (response.error.type === "unauthorized") {
           alert("회원 탈퇴 실패:\n잘못된 비밀번호 입력");
@@ -698,7 +698,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Family exists") {
-          console.log("가족 존재함");
+          // console.log("가족 존재함");
 
           // 가족 정보 조회
           await handleGetFamilyInfo(resData.result.family_id);
@@ -706,7 +706,7 @@ export default function UserProgressContextProvider({ children }) {
           return { success: true, data: resData };
         }
       } else {
-        console.log("가족 모임 존재하지 않음");
+        // console.log("가족 모임 존재하지 않음");
         return { success: false, data: response.error };
       }
     } catch (error) {
@@ -721,7 +721,7 @@ export default function UserProgressContextProvider({ children }) {
       `${payload.family_name}으로 가족 모임 생성을 하시겠습니까?\n확인을 누르면 가족이 생성됩니다.`
     );
     if (!isConfirmed) {
-      console.log("가족 모임 생성 취소");
+      // console.log("가족 모임 생성 취소");
       return {
         success: false,
         error: { type: "canceled", message: "사용자가 취소했습니다." },
@@ -739,7 +739,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "New family created successfully") {
-          console.log("가족 모임 생성 성공");
+          // console.log("가족 모임 생성 성공");
 
           // 가족 생성 후 가족 정보 조회
           await handleGetFamilyInfo(resData.result.id);
@@ -781,7 +781,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Family retrieved successfully") {
-          console.log("가족 모임 정보 조회 성공");
+          // console.log("가족 모임 정보 조회 성공");
 
           // 정보 갱신
           setFamilyInfo({
@@ -819,7 +819,7 @@ export default function UserProgressContextProvider({ children }) {
       "정말 가족 모임 정보를 변경하시겠습니까?\n확인을 누르면 변경됩니다."
     );
     if (!isConfirmed) {
-      console.log("가족 정보 변경 취소");
+      // console.log("가족 정보 변경 취소");
       return {
         success: false,
         error: { type: "canceled", message: "사용자가 취소했습니다." },
@@ -837,7 +837,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Family updated successfully") {
-          console.log("가족 모임 정보 수정 성공");
+          // console.log("가족 모임 정보 수정 성공");
 
           // 가족 정보 다시 조회
           await handleGetFamilyInfo(familyInfo.familyInfo.id);
@@ -883,7 +883,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Member kicked successfully") {
-          console.log("구성원 추방 성공");
+          // console.log("구성원 추방 성공");
 
           // 가족 구성원 정보 다시 조회
           await handleGetFamilyMemberInfo(familyInfo.familyInfo.id);
@@ -925,7 +925,7 @@ export default function UserProgressContextProvider({ children }) {
       "정말 가족 모임을 삭제하시겠습니까?\n삭제 시 복구가 불가능합니다."
     );
     if (!isConfirmed) {
-      console.log("가족 정보 삭제 취소");
+      // console.log("가족 정보 삭제 취소");
       return {
         success: false,
         error: { type: "canceled", message: "삭제 취소." },
@@ -943,7 +943,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Family deleted successfully") {
-          console.log("가족 모임 삭제 성공");
+          // console.log("가족 모임 삭제 성공");
 
           // 가족 정보 상태 초기화
           setFamilyInfo({
@@ -996,7 +996,7 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "All members retrieved successfully") {
-          console.log("가족 목록 조회 성공");
+          // console.log("가족 목록 조회 성공");
 
           // 가족 이름 검색 및 저장
           const familyIds = resData.result;
@@ -1019,7 +1019,7 @@ export default function UserProgressContextProvider({ children }) {
 
           return { success: true, data: resData };
         } else if (resData.message === "No members found") {
-          console.log("조회된 가족 목록 없음");
+          // console.log("조회된 가족 목록 없음");
 
           // 정보 갱신
           setMemberInfo({
@@ -1109,7 +1109,7 @@ export default function UserProgressContextProvider({ children }) {
           resData.message === "Families found successfully" &&
           resData.result.length > 0
         ) {
-          console.log("가족 모임 찾기 성공");
+          // console.log("가족 모임 찾기 성공");
           return { success: true, data: resData.result[0] };
         }
       } else {
@@ -1146,7 +1146,7 @@ export default function UserProgressContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "All members retrieved successfully") {
-          console.log("가족 모임 구성원 조회 성공");
+          // console.log("가족 모임 구성원 조회 성공");
           console.log(resData.result);
 
           // 정보 갱신
@@ -1157,7 +1157,7 @@ export default function UserProgressContextProvider({ children }) {
             };
           });
         } else if (resData.message === "No members found") {
-          console.log("가족 모임 구성원 없음");
+          // console.log("가족 모임 구성원 없음");
 
           // 정보 갱신
           setFamilyInfo((prev) => {
@@ -1205,7 +1205,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "New member created successfully") {
-          console.log("가족 구성원 추가 성공");
+          // console.log("가족 구성원 추가 성공");
 
           // 정보 갱신
           await handleCheckFamilyList();
@@ -1254,7 +1254,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Member updated successfully") {
-          console.log("구성원 정보 수정 성공");
+          // console.log("구성원 정보 수정 성공");
 
           // 정보 갱신
           await handleCheckFamilyList();
@@ -1301,7 +1301,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Member deleted successfully") {
-          console.log("구성원 삭제 성공");
+          // console.log("구성원 삭제 성공");
 
           // 정보 갱신
           await handleCheckFamilyList();
@@ -1342,7 +1342,7 @@ export default function UserProgressContextProvider({ children }) {
       "정말 비밀번호를 변경하시겠습니까?\n변경 시 로그아웃됩니다."
     );
     if (!isConfirmed) {
-      console.log("비밀번호 변경 취소");
+      // console.log("비밀번호 변경 취소");
       return {
         success: false,
         error: { type: "canceled", message: "사용자가 취소했습니다." },
@@ -1364,7 +1364,7 @@ export default function UserProgressContextProvider({ children }) {
         const resData = response.data;
 
         if (resData.message === "Password changed successfully") {
-          console.log("비밀번호 변경 성공");
+          // console.log("비밀번호 변경 성공");
 
           // 로그아웃
           await handleLogout();

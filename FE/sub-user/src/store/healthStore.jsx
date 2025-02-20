@@ -540,7 +540,7 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (true) {
-          console.log("handleGetOneDayMentalReport response", resData);
+          // console.log("handleGetOneDayMentalReport response", resData);
           await handleGetMentalReports();
           await handleGetMentalStatus();
         }
@@ -622,12 +622,12 @@ export default function HealthContextProvider({ children }) {
         `${userProgressStore.DEV_API_URL}/status/psychology/${familyId}`
       );
 
-      console.log("handleGetMentalHealthDailyStatus response", response);
+      // console.log("handleGetMentalHealthDailyStatus response", response);
       const resData = response.data;
 
       if (response.success) {
         if (resData.message === "Psychology report created successfully") {
-          console.log("정신 건강 상태 불러오기 성공:", resData.result);
+          // console.log("정신 건강 상태 불러오기 성공:", resData.result);
           setMentalHealthStatus({ ...resData.result });
           return {
             success: true,
@@ -678,7 +678,7 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Psychology report created successfully") {
-          console.log("정신 건강 상태 불러오기 성공:", resData.result);
+          // console.log("정신 건강 상태 불러오기 성공:", resData.result);
           setMentalHealthStatus({ ...resData.result });
           return {
             success: true,
@@ -738,7 +738,7 @@ export default function HealthContextProvider({ children }) {
 
       if (response.success) {
         if (resData.message === "Conversation keywords created successfully") {
-          console.log("대화 키워드 불러오기 성공:", resData.result);
+          // console.log("대화 키워드 불러오기 성공:", resData.result);
           setKeywords([...resData.result.keywords]);
         }
       } else {

@@ -42,20 +42,13 @@ class AutonomousExplorer:
         # move_base 상태 구독 추가
         self.status_sub = rospy.Subscriber('/move_base/status', GoalStatusArray, self.status_callback)
 
-        # 노드 시작 시 한 번 목표 생성 시도
-        rospy.sleep(1.0)
-        self.publish_random_goal(None)
         rospy.Timer(rospy.Duration(5.0), self.publish_random_goal)
-        
-        # 선택 영역 마커도 한번 발행해봅니다.
-        self.publish_selection_region_marker()
 
     def map_callback(self, msg):
         self.map_data = msg
 
     def exploration_callback(self, msg):
         self.exploration_enabled = msg.data
-        rospy.loginfo("exploration_callback - exploration_enabled: %s", self.exploration_enabled)
 
     def status_callback(self, msg):
         """move_base의 상태를 확인하여 로봇이 이동 중인지 체크"""
@@ -94,7 +87,7 @@ class AutonomousExplorer:
             goal_y = trans.transform.translation.y + dist * math.sin(theta)
             
             # 목표 지점 근처 0.02m 반경 내 빈 공간 확인
-            if self.is_location_free(goal_x, goal_y, 0.02):
+            if self.is_location_free(goal_x, goal_y):
                 # goal 메시지 설정
                 goal_msg = PoseStamped()
                 goal_msg.header.frame_id = "map"
@@ -127,7 +120,7 @@ class AutonomousExplorer:
 
         rospy.logwarn("장애물을 피한 무작위 위치를 찾지 못했습니다.")
 
-    def is_location_free(self, x, y, dummy_radius=0.02):
+    def is_location_free(self, x, y):
         """
         OccupancyGrid를 이용해 (x, y) 셀과 인접 8칸(3x3 grid)이 모두 0인지 확인.
         """

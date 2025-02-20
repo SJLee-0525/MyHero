@@ -10,6 +10,10 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 기술
 
+<img src="/uploads/cca32fa6cf2f85bb54b812c60262d92f/Python-Dark.svg" width="100" height="100" alt="Python"/>
+<img src="/uploads/3e55daa5ca0afaebcaec2f9777f4bb23/FastAPI.svg" width="100" height="100" alt="FastAPI"/>
+<img src="/uploads/9e181b0d15199ae7d5b8ad673644b30b/MySQL-Dark.svg" width="100" height="100" alt="MySQL"/>
+
 | **분야** | **사용한 기술** |
 | --- | --- |
 | Database | **MariaDB** 10.3.23 |
@@ -242,83 +246,3 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 | 9 | `get_backgrond(family_id, uploader)` | 배경화면 불러오기 | `list[dict]` |
 | 10 | `delete_background(image_id)` | 배경화면 삭제하기 | `bool` |
 
-### 변경 기록
-
-- **[Release] `0.1.0`**
-    - 기본적인 Database Connector 기능 완성
-- **[Release] `0.2.0`**
-    - Accounts 기능 완성
-- **[Add] `0.2.1`**
-    - 배포를 위한 Docker 및 Docker compose 생성
-    - Develop mode와 Release mode 구별 기능 완성
-- **[Fix]** **`0.2.2`**
-    - 환경 변수가 적용되지 않는 문제 해결
-    - DB Session이 계속 만료되는 문제 해결
-- **[Add] `0.2.3`**
-    - Families 기능 완성
-    - Database 기능 코드 분리 완료
-- **[Add] `0.2.4`**
-    - Members 기능 완성
-- **[Release] `0.3.0`**
-    - Authentication 기능 완성
-    - 사용자 정보를 이용한 검증 기능 추가
-- **[Fix] `0.3.1`**
-    - 사용자 정보 검증을 위한 Cookie 정책을 현재 서비스에 맞게 수정
-    - 사용자 정보 검증을 위한 Cookie 정책을 현재 서비스에 맞게 수정
-- **[Fix] `0.3.2`**
-    - 사용자의 활동이 있을 때 만료 시간이 연장되지 않는 문제 해결
-    - Accounts 접근에 권한 검증 추가
-- **[Release] `0.4.0`**
-    - Status 기능 완성
-- **[Add] `0.4.1`**
-    - AI Process 연동 기능 완성
-- **[Fix] `0.4.2`**
-    - 서버 시간을 사용하지 않아 발생하는 문제를 해결
-    - AI Process의 처리 시간을 기다리기 위해 Timeout 시간 연장
-- **[Fix] `0.4.3`**
-    - 회원 가입 처리 시 주소가 같이 저장되지 않는 문제 해결
-- **[Add] `0.4.4`**
-    - 대한민국의 광역과 기초 자치단체 데이터를 받아올 수 있는 기능 추가
-    - Client에서 받은 날짜 정보를 검증하는 방식 개선
-- **[Release] `0.5.0`**
-    - 주 사용자의 정보를 이용해 가족을 찾는 기능 추가
-- **[Fix] `0.5.1`**
-    - Log 기능을 `Print()` 대신 `Logger()`로 변경
-- **[Release] `0.6.0`**
-    - Notifications 기능 완성
-- **[Add] `0.6.1`**
-    - AI Process의 News, Weather 기능 연동
-- **[Release] `0.7.0`**
-    - Messages 기능 완성
-- **[Add] `0.7.1`**
-    - Notifications를 불러오는 부분에 시간으로 필터링하는 기능 추가
-    - Database Connection overflow를 방지하기 위한 기능 추가
-- **[Fix] `0.7.2`**
-    - Message의 Accounts Table 외래키 관계 문제 해결
-    - Database Connector가 여러 군데에서 호출되는 문제 해결
-- **[Release] `0.8.0`**
-    - Active Status에 Image를 추가할 수 있도록 변경
-    - Message를 불러올 때 없으면 404 Not Found 대신 200 OK + 빈 리스트를 보내도록 변경
-- **[Add] `0.8.1`**
-    - 주 사용자가 가족에 등록된 Member를 추방할 수 있는 기능 추가
-    - Notifications에 이미지를 포함할 수 있는 기능 추가
-- **[Release] `0.9.0`**
-    - 자동 로그인 및 Session 검증하는 기능 완성
-- **[Add] `0.9.1`**
-    - Family, Member 부분 권한 검증 추가
-    - Status의 반환 값을 “data” → “result”가 되도록 변경
-- **[Add] `0.9.2`**
-    - News를 Cache된 News를 불러오도록 수정
-    - Carebot의 Settings를 불러오고 변경할 수 있는 기능 완성
-- **[Release] `1.0.0`**
-    - 최종 버전 배포
-- **[Fix] `1.0.1`**
-    - Family를 생성하기 전에 Settings를 생성하려는 문제 해결
-- **[Add] `1.0.2`**
-    - Family를 등록하기 위해 ID 검증과 이름을 확인하는 기능 추가
-    - 가족 단위 별 Background를 추가, 삭제, 불러오는 기능 추가
-- **[Add] `1.0.3`**
-    - Main User의 활동이 3일 이상  없는 경우에 Session을 삭제하도록 기능 추가
-- **[Add] `1.0.4`**
-    - Session 권한 점검할 때 Cookie 점검 대신 Body에 Session ID를 담게 하고 브라우저에 Cookie가 저장되도록 변경
-    - 여러 개의 메시지와 알림을 읽음 처리할 수 있는 기능 추가

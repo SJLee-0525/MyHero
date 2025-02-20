@@ -21,7 +21,6 @@ export const SettingStoreContext = createContext({
   export default function SettingStoreContextProvider({ children }) {
     const { request } = useMainHttp();
     const userProgressStore = useContext(UserProgressContext);
-    const [socket, setSocket] = useState(null);
     const [backgrounds, setBackgrounds] = useState([]);
 
     const [settings, setSettings] = useState({
@@ -185,6 +184,14 @@ export const SettingStoreContext = createContext({
         if (!imageUrl || !familyId) return;
 
         try {
+            await fetchBackgrounds(); // 🔄 최신 배경 목록 가져오기
+
+            // const isDuplicate = backgrounds.some(bg => bg.imageUrl === imageUrl);
+            // if (isDuplicate) {
+            //     handleMiniModal("⚠️ 이미 다운로드된 배경화면입니다.");
+            //     return;
+            // }
+
             const response = await request(`${userProgressStore.DEV_API_URL}/tools/background`, "POST", {
                 family_id: familyId,
                 image_url: imageUrl,

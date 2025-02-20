@@ -7,12 +7,14 @@ export const StoreContext = createContext({
   openNotificationState: "",
   openCalendarState: "",
   openSettingState: "",
+  miniModalMessage: "",
   setOpenNewsState: () => {},
   setOpenMessageState: () => {},
   setOpenEmergencyState: () => {},
   setOpenNotificationState: () => {},
   setOpenCalendarState: () => {},
   setOpenSettingState: () => {},
+  setMiniModalMessage: () => {},
   handleNewsState: () => {},
   handleMessageState: () => {},
   handleMessageChange: () => {},
@@ -21,6 +23,7 @@ export const StoreContext = createContext({
   handleNotificationState: () => {},
   handleCalendarState: () => {},
   handleModalClose: () => {},
+  handleMiniModal: () => {},
 });
 
 export default function StoreContextProvider({ children }) {
@@ -30,6 +33,7 @@ export default function StoreContextProvider({ children }) {
   const [openNewsState, setOpenNewsState] = useState(false);
   const [openCalendarState, setOpenCalendarState] = useState(false);
   const [openSettingState, setOpenSettingState] = useState(false);
+  const [miniModalMessage, setMiniModalMessage] = useState("");
 
   function handleMessageState() {
     setOpenMessageState(true);
@@ -71,6 +75,13 @@ export default function StoreContextProvider({ children }) {
     console.log("Setting: ", !openSettingState);
   }
 
+  function handleMiniModal(message) {
+    setMiniModalMessage(message);
+    setTimeout(() => {
+      setMiniModalMessage("");
+    }, 2000); // 2초 후 자동 닫힘
+  }
+
   function handleModalClose() {
     setOpenMessageState(false);
     setOpenEmergencyState(false);
@@ -87,12 +98,14 @@ export default function StoreContextProvider({ children }) {
     openNewsState,
     openCalendarState,
     openSettingState,
+    miniModalMessage,
     setOpenMessageState,
     setOpenEmergencyState,
     setOpenNotificationState,
     setOpenNewsState,
     setOpenCalendarState,
     setOpenSettingState,
+    setMiniModalMessage,
     handleMessageState,
     handleMessageChange,
     handleSendMessage,
@@ -101,6 +114,7 @@ export default function StoreContextProvider({ children }) {
     handleNewsState,
     handleCalendarState,
     handleSettingState,
+    handleMiniModal,
     handleModalClose,
   };
 

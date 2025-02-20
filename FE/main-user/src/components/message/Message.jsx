@@ -1,16 +1,30 @@
 import React from "react";
-import { useContext } from "react";
+import { useEffect, useContext } from "react";
+import { StoreContext } from "../../store/store";
 import { useSettingStore } from "../../store/settingStore";
 import { useUserProgressStore } from "../../store/userProgressStore";
 import "./Message.css";
 
 export default function Message({ text, sender, time, imageUrl }) {
     const { familyInfo } = useUserProgressStore();
-    const { addBackground } = useSettingStore();
+    const { backgrounds, fetchBackgrounds, addBackground } = useSettingStore();
+    const { handleMiniModal } = useContext(StoreContext);
+
+    // useEffect(() => {
+    //     fetchBackgrounds();
+    // }, []);
 
     const handleAddToBackground = () => {
-        if (!familyInfo.familyId || !imageUrl) return;
+        // if (!familyInfo.familyId || !imageUrl) return;
+        
+        // const isDuplicate = backgrounds.some(bg => bg.imageUrl === imageUrl);
+        // if (isDuplicate) {
+        //     handleMiniModal("⚠️ 이미 다운로드된 배경화면입니다.");
+        //     return;
+        // }
+
         addBackground(imageUrl);
+        handleMiniModal("✅ 배경화면이 성공적으로 다운로드되었습니다!");
     }
 
     return (

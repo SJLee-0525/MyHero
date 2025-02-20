@@ -40,6 +40,10 @@ function App() {
     calendarStore.loading ||
     false;
 
+  // if (!userProgressStore.loginUserInfo.login) {
+  //   userProgressStore.handleOpenModal("login");
+  // }
+
   return (
     <BrowserRouter>
       {loading && <LoadingSpinner />}

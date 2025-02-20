@@ -10,7 +10,7 @@ export default function LoadingSpinner() {
   return createPortal(
     <div className="loading-overlay">
       {/* <img src={nana} alt="Loading..." className="spinner-img" /> */}
-      <div class="loader"></div>
+      <div className="loader"></div>
     </div>,
     spinnerRoot
   );

@@ -1,55 +1,60 @@
-import "./Advertisement.css"
+import "./Advertisement.css";
 
-import { useRef, useState, useContext, useEffect } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef, useState, useContext, useEffect } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { UserProgressContext } from "../../../store/userProgressStore.jsx"
+import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 
-import LoginModal from "./LoginModal.jsx"
+import AdverLogin from "../accounts/AdverLogin.jsx";
 
-import ad1 from "../../../assets/advertisement/ad1.png"
-
-import mobileAd1 from "../../../assets/advertisement/mobile-ad1.png"
-
-// test
-import ls from "../../../assets/advertisement/ls.webp"
-import ms from "../../../assets/advertisement/ms.webp"
-import nana from "../../../assets/advertisement/nana.webp"
-import sora from "../../../assets/advertisement/sora.webp"
-import yw from "../../../assets/advertisement/yw.webp"
-import member from "../../../assets/advertisement/member.webp"
+import logo from "../../../assets/advertisement/blue-logo.png";
+import dh from "../../../assets/advertisement/dh.png";
+import jin from "../../../assets/advertisement/jin.png";
+import gyu from "../../../assets/advertisement/gyu.png";
+import dy from "../../../assets/advertisement/dy.png";
+import sh from "../../../assets/advertisement/sh.jpg";
+import sj from "../../../assets/advertisement/sj.jpg";
 
 export default function Advertisement() {
-  const userProgressStore = useContext(UserProgressContext)
+  const userProgressStore = useContext(UserProgressContext);
 
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720)
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 720);
 
-  const boxRef = useRef("")
-  const memberTextRef = useRef("")
-  const memberRef = useRef("")
-  const boxRefs = useRef([]) // 여러 개의 요소를 참조할 배열 생성
+  const boxRef = useRef("");
+  const memberTextRef = useRef("");
+  const memberRef = useRef("");
+  const boxRefs = useRef([]); // 여러 개의 요소를 참조할 배열 생성
+
+  const names = [
+    ["김도형", "BE/AI"],
+    ["박  진", "BE/INFRA"],
+    ["엄도윤", "EM/BG"],
+    ["노규헌", "EM/AI"],
+    ["형서희", "FE"],
+    ["이성준", "FE"],
+  ];
 
   useEffect(() => {
     const handleResize = () => {
-      setIsDesktop(window.innerWidth > 720)
-    }
+      setIsDesktop(window.innerWidth > 720);
+    };
 
     // 이벤트 리스너 등록
-    window.addEventListener("resize", handleResize)
+    window.addEventListener("resize", handleResize);
 
     // 컴포넌트가 언마운트될 때 이벤트 리스너 제거
     return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // gsap.fromTo()의 첫 번째 인자는 애니메이션을 적용할 요소, 두 번째와 세 번째 인자는 각각 초기 상태, 애니메이션 대상 상태를 넣어야 함.
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
+    gsap.registerPlugin(ScrollTrigger);
 
     if (memberRef.current) {
-      gsap.registerPlugin(ScrollTrigger)
+      gsap.registerPlugin(ScrollTrigger);
 
       gsap.to(memberRef.current, {
         scale: 1.5,
@@ -66,11 +71,11 @@ export default function Advertisement() {
           //   gsap.set(memberRef.current, { scale: scaleValue })
           // },
         },
-      })
+      });
     }
 
     if (memberTextRef.current) {
-      gsap.registerPlugin(ScrollTrigger)
+      gsap.registerPlugin(ScrollTrigger);
 
       gsap.to(memberTextRef.current, {
         scale: 1.5,
@@ -82,7 +87,7 @@ export default function Advertisement() {
           scrub: true,
           pin: false,
         },
-      })
+      });
     }
 
     // 여러 개의 이미지 박스 애니메이션 적용
@@ -102,8 +107,8 @@ export default function Advertisement() {
             scrub: true,
           },
         }
-      )
-    })
+      );
+    });
 
     // 비디오 박스 애니메이션 추가
     if (boxRef.current) {
@@ -123,64 +128,35 @@ export default function Advertisement() {
             scrub: true, // 스크롤과 함께 애니메이션 진행
           },
         }
-      )
+      );
     }
-  }, [])
+  }, []);
 
   return (
     <div id="advertisement">
-      {isDesktop && (
-        <div id="ad-main-header">
-          <img src={ad1} alt="ad-main-img" />
-          <div className="ad-main-header-text">
-            <h1>
-              실버 케어 로봇 서비스<br></br>영웅이네 오신 것을 환영합니다.
-            </h1>
-            <button onClick={() => userProgressStore.handleOpenModal("login")}>로그인하고 시작하기</button>
-          </div>
+      <div className="top-box">
+        <div className="title-box">
+          <img src={logo} alt="" />
+          <h2>영웅이네 오신 것을 환영합니다.</h2>
         </div>
-      )}
-      {!isDesktop && (
-        <div id="ad-main-header">
-          <div className="ad-main-header-text">
-            <h1>
-              실버 케어 로봇 서비스<br></br>영웅이네 오신 것을 환영합니다.
-            </h1>
-            <button onClick={() => userProgressStore.handleOpenModal("login")}>로그인하고 시작하기</button>
-          </div>
-          <img src={mobileAd1} alt="mobile-ad-main-img" />
-        </div>
-      )}
-
-      {/* <div id="big-container">
-        <div className="image-box" ref={memberRef}>
-          <h2>영웅이를 소개합니다!!</h2>
-          <img src={member} alt="" />
+        <div className="login-box">
+          <AdverLogin />
         </div>
       </div>
 
-      <h2>영웅이 이래서 특별합니다!</h2>
-      <p>블ㄹ라블라..</p>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
 
-      <div id="image-group">
-        <h2 ref={memberTextRef}>영웅이를 만든 사람들</h2>
-        {[ls, ms, yw, nana, sora].map((imgSrc, index) => (
-          <div
-            key={index}
-            className="image-box"
-            ref={(el) => (boxRefs.current[index] = el)} // 개별 요소를 배열에 저장
-          >
-            <img src={imgSrc} alt={`image-${index}`} />
-          </div>
-        ))}
-      </div>
       <div id="video-group">
         <div className="video-box" ref={boxRef}>
-          <h2>영웅이 시연 영상</h2>
           <iframe
-            width="720"
-            height="405"
-            src="https://www.youtube.com/embed/Lakekl1Ruig?si=kAgIWZEA251GJys0"
+            width={window.innerWidth * 0.6}
+            height={window.innerWidth * 0.6 * (405 / 720)}
+            src="https://www.youtube.com/embed/nEaJDWWXm5o?si=Albz6q2v2zitLmI5"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -190,12 +166,124 @@ export default function Advertisement() {
         </div>
       </div>
 
-      <h2>생생한 영웅이 사용 후기!</h2>
-      <p>- 정말 너무 좋아요 별 다섯개</p>
-      <p>- 너무 안심ㅁ돼요!!! 짱ㅈ</p>
-      <h2>상세 스펙</h2> */}
-      {/* 모달 관련 */}
-      <LoginModal />
+      <h1 className="sub-title-h1">프로젝트 개요</h1>
+      <div id="summary">
+        <h3>
+          영웅이네는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
+          제공 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.
+        </h3>
+        <p>SSAFY 12기 공통 프로젝트</p>
+        <p>서울 1반 A102</p>
+        <p>2025. 01. 06. ~ 2025. 02. 21.</p>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <h1 className="sub-title-h1">영웅이를 만든 사람들</h1>
+      <div id="image-group-box">
+        <div className="image-group">
+          {[dh, jin, dy, gyu, sh, sj].map((imgSrc, index) => (
+            <div
+              key={index}
+              className="image-box"
+              ref={(elem) => (boxRefs.current[index] = elem)} // 개별 요소를 배열에 저장
+            >
+              <img src={imgSrc} alt={`image-${index}`} />
+              <div className="member-info">
+                <h3>{names[index][0]}</h3>
+                <p>{names[index][1]}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <h1 className="sub-title-h1">기술 스택</h1>
+      <div id="stacks">
+        <div className="stack">
+          <h1>BACKEND</h1>
+          <div className="backend">
+            <div className="backend-stack">
+              <h3>음성 대화</h3>
+              <p>Google Cloud Speech</p>
+              <p>Gtts</p>
+              <p>OpenAI API</p>
+            </div>
+
+            <div className="backend-stack">
+              <h3>낙상 감지</h3>
+              <p>YOLOv8</p>
+            </div>
+
+            <div className="backend-stack">
+              <h3>정보 제공</h3>
+              <p>공공 API</p>
+              <p>(날씨, 재난, 뉴스)</p>
+            </div>
+
+            <div className="backend-stack">
+              <h3>API SERVER</h3>
+              <p>FastAPI</p>
+              <p>SQL-Alchemy</p>
+              <p>bcrypt</p>
+            </div>
+
+            <div className="backend-stack">
+              <h3>Infra</h3>
+              <p>Nginx</p>
+              <p>Docker</p>
+              <p>Portainer</p>
+              <p>Jenkins</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="stack">
+          <h1>EMBEDDED</h1>
+          <div className="embedded">
+            <div className="embedded-stack">
+              <h3>자율주행</h3>
+              <p>ROS1 noetic, Hector SLAM, ROS Navigation</p>
+              <p>Global Planner: Hybrid A*</p>
+              <p>Local Planner: DWA</p>
+              <p>Recovery Behavior: Backoff, Clear map</p>
+              <p>etcL Autonomous exploration</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="stack">
+          <h1>FRONTEND</h1>
+          <div className="frontend">
+            <div className="frontend-stack">
+              <h3>웹 페이지</h3>
+              <p>React</p>
+              <p>GSAP</p>
+              <p>Recharts</p>
+              <p>qrcode.react</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
-  )
+  );
 }

@@ -6,9 +6,19 @@ import cv2
 import rospy
 import asyncio
 from yolo_pkg.fall_detector import EnhancedFallDetector
-from geometry_msgs.msg import Point  # 추가
+from geometry_msgs.msg import Point
+from std_msgs.msg import String  # String 메시지 타입 추가
 
 FRAME_STEP = 1
+
+# 콜백 함수들
+def session_callback(msg, detector):
+    detector.set_session_id(msg.data)
+    rospy.loginfo(f"세션 ID 설정됨: {msg.data}")
+
+def family_callback(msg, detector):
+    detector.set_family_id(msg.data)
+    rospy.loginfo(f"패밀리 ID 설정됨: {msg.data}")
 
 async def main():
     rospy.init_node('yolo_detection', anonymous=True)
@@ -16,6 +26,10 @@ async def main():
     
     # 바운딩 박스 중심점 퍼블리셔 생성
     bbox_center_pub = rospy.Publisher('bbox_center', Point, queue_size=1, latch=True)
+
+    # 세션 ID와 패밀리 ID 구독자 생성
+    rospy.Subscriber('session_id', String, session_callback, callback_args=detector)
+    rospy.Subscriber('family_id', String, family_callback, callback_args=detector)
 
     # 현재 스크립트의 절대 경로를 사용해 test_video 폴더의 파일 절대 경로 생성
     script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -32,7 +46,7 @@ async def main():
 
     # 창 크기를 조정할 수 있도록 창 생성
     cv2.namedWindow("Fall Detection", cv2.WINDOW_NORMAL)
-    cv2.resizeWindow("Fall Detection", 1280, 720)
+    cv2.resizeWindow("Fall Detection", 640, 360)
 
     while True:
         ret, frame = cap.read()

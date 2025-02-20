@@ -16,7 +16,7 @@ export default function MessageInput() {
 
   async function handleImageChange(event) {
     const file = event.target.files[0]; // 선택한 파일 가져오기
-    console.log(file);
+    // console.log(file);
     if (!file) return;
 
     setImage(file); // file 객체만 저장
@@ -51,7 +51,7 @@ export default function MessageInput() {
         }
 
         imageUrl = response.data.file_path;
-        console.log("이미지 업로드 성공:", imageUrl);
+        // console.log("이미지 업로드 성공:", imageUrl);
       }
 
       const content = inputMessage.current.value.trim(); // 공백만 있는 메시지 방지
@@ -65,7 +65,7 @@ export default function MessageInput() {
         content,
         imageUrl
       );
-      console.log(sendResponse);
+      // console.log(sendResponse);
 
       if (!sendResponse.success) {
         console.error("메시지 전송 실패:", sendResponse.error);

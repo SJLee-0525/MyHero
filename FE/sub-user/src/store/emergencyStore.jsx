@@ -293,12 +293,12 @@ export default function EmergencyContextProvider({ children }) {
           const resData = response.data;
 
           if (resData.message === "Notification check read successfully") {
-            console.log(`${notification.index} 읽음 처리 완료`);
+            // console.log(`${notification.index} 읽음 처리 완료`);
           }
         }
       }
 
-      console.log("모든 알림 읽음 처리 완료");
+      // console.log("모든 알림 읽음 처리 완료");
       await getAllNotifications();
     } catch (error) {
       console.error(error);

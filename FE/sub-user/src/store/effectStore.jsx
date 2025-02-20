@@ -83,9 +83,9 @@ export default function EffectContextProvider({ children }) {
         userProgressStore.loginUserInfo.login &&
         userProgressStore.loginUserInfo.userInfo.id
       ) {
-        console.log(
-          `${userProgressStore.loginUserInfo.userInfo.role}유저 가족 정보 요청`
-        );
+        // console.log(
+        //   `${userProgressStore.loginUserInfo.userInfo.role}유저 가족 정보 요청`
+        // );
         if (userProgressStore.loginUserInfo.userInfo.role === "main") {
           await userProgressStore.handleCheckFamilyExist(
             userProgressStore.loginUserInfo.userInfo.id
@@ -116,11 +116,11 @@ export default function EffectContextProvider({ children }) {
         (userProgressStore.familyInfo.familyInfo &&
           userProgressStore.familyInfo.familyInfo.id)
       ) {
-        console.log("API 요청 시작!", {
-          member: userProgressStore.memberInfo,
-          family: userProgressStore.familyInfo,
-          login: userProgressStore.loginUserInfo,
-        });
+        // console.log("API 요청 시작!", {
+        //   member: userProgressStore.memberInfo,
+        //   family: userProgressStore.familyInfo,
+        //   login: userProgressStore.loginUserInfo,
+        // });
         await homeStatusStore.handleGetHomeStatus();
         await homeStatusStore.handleGetDeviceStatus();
         await healthStore.handleGetHealthData();
@@ -133,7 +133,7 @@ export default function EffectContextProvider({ children }) {
         if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
           await messageStore.handleGetAllMessages();
         }
-        console.log("API 요청 끝!");
+        // console.log("API 요청 끝!");
       }
     };
 
@@ -142,11 +142,11 @@ export default function EffectContextProvider({ children }) {
         userProgressStore.memberInfo.selectedFamilyId ||
         userProgressStore.familyInfo.familyInfo.id
       ) {
-        console.log("Refresh 요청 시작!", {
-          member: userProgressStore.memberInfo,
-          family: userProgressStore.familyInfo,
-          login: userProgressStore.loginUserInfo,
-        });
+        // console.log("Refresh 요청 시작!", {
+        //   member: userProgressStore.memberInfo,
+        //   family: userProgressStore.familyInfo,
+        //   login: userProgressStore.loginUserInfo,
+        // });
         await homeStatusStore.handleGetHomeStatus();
         await homeStatusStore.handleGetDeviceStatus();
         await healthStore.handleGetHealthData();
@@ -154,7 +154,7 @@ export default function EffectContextProvider({ children }) {
         if (userProgressStore.loginUserInfo.userInfo.role === "sub") {
           await messageStore.handleGetAllMessages();
         }
-        console.log("Refresh 요청 끝!");
+        // console.log("Refresh 요청 끝!");
       }
     };
 
@@ -176,7 +176,7 @@ export default function EffectContextProvider({ children }) {
       return;
     }
 
-    console.log("집 상태 정보 요일 별 객체화");
+    // console.log("집 상태 정보 요일 별 객체화");
     const fetchData = async () => {
       if (homeStatusStore.homeStatus.length > 0) {
         await calendarStore.groupHomeStatusDataByKSTWithAvgScore(
@@ -195,7 +195,7 @@ export default function EffectContextProvider({ children }) {
       return;
     }
 
-    console.log("활동 정보 요일 별 객체화");
+    // console.log("활동 정보 요일 별 객체화");
     const fetchData = async () => {
       if (healthStore.activityStatus.length > 0) {
         await calendarStore.groupDataByKSTWithAvgScore(
@@ -215,7 +215,7 @@ export default function EffectContextProvider({ children }) {
       return;
     }
 
-    console.log("정신 상태 정보 요일 별 객체화");
+    // console.log("정신 상태 정보 요일 별 객체화");
     const fetchData = async () => {
       if (healthStore.mentalStatus.length > 0) {
         await calendarStore.groupDataByKSTWithAvgScore(

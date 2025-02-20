@@ -225,7 +225,7 @@ export default function MentalHealthModal() {
 
       {healthStore.loading && (
         <div className="loading-overlay">
-          <div class="loader"></div>
+          <div className="loader"></div>
         </div>
       )}
 

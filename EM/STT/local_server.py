@@ -267,10 +267,14 @@ async def login(credentials: LoginCredentials):
 @app.on_event("shutdown")
 async def shutdown_event():
     stop_processes()
+    if raspberry:
+        raspberry.stop() 
 
 def signal_handler(signum, frame):
     logger.info("Shutdown signal received")
     stop_processes()
+    if raspberry:
+        raspberry.stop()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)

@@ -5,6 +5,10 @@
   src: url("./fonts/PretendardVariable.ttf") format("truetype");
 }
 
+:root {
+  background: radial-gradient(154.26% 86.77% at 100% 56.34%, rgba(255, 236, 92, 0.58) 0%, rgba(180, 207, 102, 0.58) 29.73%, rgba(20, 97, 82, 0.58) 100%), #000;
+}
+
 * {
   box-sizing: border-box;
   user-select: none;  /* 텍스트 선택 방지 */
@@ -27,7 +31,7 @@ html {
 }
 
 body {
-  background: url("./assets/wallpaper1.png");
+  /* background: url("./assets/wallpaper1.png"); */
   background-size: 100% 100%, 30% 30%, 100% 100%;
   background-position: center;
   min-height: 100vh;

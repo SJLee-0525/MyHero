@@ -116,11 +116,11 @@ export default function EnvironmentDataContextProvider({ children }) {
         }
     }
 
-    // 5분마다 데이터 업데이트
+    // 1분마다 데이터 업데이트
     useEffect(() => {
         if (familyId) {
             handleGetLatestEnvironmentData();
-            const interval = setInterval(handleGetLatestEnvironmentData, 5 * 60 * 1000);
+            const interval = setInterval(handleGetLatestEnvironmentData, 1 * 60 * 1000);
             return () => clearInterval(interval);
         }
     }, [familyId]);

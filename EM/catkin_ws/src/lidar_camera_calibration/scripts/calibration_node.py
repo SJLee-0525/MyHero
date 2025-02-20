@@ -12,16 +12,22 @@ class LidarCameraCalibrator:
     def __init__(self):
         rospy.init_node('lidar_camera_calibrator')
         
+        # 카메라 intrinsic 파라미터
+        self.fx = rospy.get_param('~fx')
+        self.cx = rospy.get_param('~cx')
+        
+        # LiDAR-카메라 extrinsic 파라미터
+        self.x_offset = rospy.get_param('~x_offset')
+        self.y_offset = rospy.get_param('~y_offset')
+        self.yaw = rospy.get_param('~yaw')
+        
         # tf 관련 설정
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
         self.broadcaster = tf2_ros.TransformBroadcaster()
         
         # 현재 캘리브레이션 파라미터
-        self.x_offset = rospy.get_param('~x_offset', 0.0)
-        self.y_offset = rospy.get_param('~y_offset', 0.0)
         self.z_offset = rospy.get_param('~z_offset', 0.0)
-        self.yaw = rospy.get_param('~yaw', 0.0)
         
         # 카메라 파라미터
         self.image_width = rospy.get_param('~image_width', 640)

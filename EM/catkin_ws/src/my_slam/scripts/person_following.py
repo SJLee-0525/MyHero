@@ -13,11 +13,11 @@ class PersonFollower:
         # 카메라 관련 파라미터
         self.image_width = rospy.get_param('~image_width', 640)
         self.camera_center = self.image_width / 2
-        self.deadzone = self.image_width * 0.1  # 중앙 10% 영역은 데드존으로 설정
+        self.deadzone = self.image_width * 0.05  # 중앙 10% 영역은 데드존으로 설정
         
         # 제어 속도 제한
         self.max_angular_speed = rospy.get_param('~max_angular_speed', 1.0)
-        self.base_speed = 0.40  # 기본 선속도
+        self.base_speed = 0.50  # 기본 선속도
         
         # Subscriber와 Publisher 설정
         self.bbox_sub = rospy.Subscriber('/bbox_center', Point, self.bbox_callback)

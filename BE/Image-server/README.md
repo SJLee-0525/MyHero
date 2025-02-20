@@ -20,6 +20,12 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 | Cached Point | **Nginx** 1.18.0 |
 | DB Library | **SQL-Alchemy** 2.0.37 |
 
+### 프로젝트 구조
+
+![최종서비스](/uploads/c224e30672147ae64917ff9bf1bd0ab6/최종서비스.png)
+
+이 Repository는 Backend Server 구조 중에서 **Image Server** 부분에 해당합니다.
+
 ### 시스템 구조
 
 1. **`Database`**

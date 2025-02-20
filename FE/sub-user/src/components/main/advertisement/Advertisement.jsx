@@ -261,6 +261,20 @@ export default function Advertisement() {
               <p>Recovery Behavior: Backoff, Clear map</p>
               <p>etcL Autonomous exploration</p>
             </div>
+
+            <div className="embedded-stack">
+              <h3>하드웨어</h3>
+              <p>Matter Framework: Matter SDK</p>
+              <p>Build System: GN + Ninja, cross compile(x86 - arm64), cmake</p>
+              <p>Matter Configuration: ZAP</p>
+              <p>Board: Raspberry Pi 5, Jetson Orin Nano</p>
+              <p>
+                Hardware: DHT-11, GP2Y1014AUF, MQ-3, PulseSensor, mcp3008,
+                pca9685, DC_motor, Servo_motor
+              </p>
+              <p>Interface: wiringPi, SPI, i2c</p>
+              <p>Use custom device drivers</p>
+            </div>
           </div>
         </div>
 

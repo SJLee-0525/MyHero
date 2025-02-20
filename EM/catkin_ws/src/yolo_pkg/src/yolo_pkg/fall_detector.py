@@ -22,6 +22,8 @@ class EnhancedFallDetector:
         self.camera_enabled = True
         self.family_id = None
         self.session_id = None
+        # self.family_id = "FlcuDLxVC9SolW70"
+        # self.session_id = "bb0784c526204448cfac5b5603e3e5f4"
         try:
             self.model = YOLO(self.config.model_path)
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -180,13 +182,13 @@ class EnhancedFallDetector:
                         headers = {
                             'Cookie': f"session_id={self.session_id}; Path=/; Domain=itdice.net; Secure; HttpOnly;"
                         }
-                        
                         # 1. 이미지 업로드
                         data = aiohttp.FormData()
                         data.add_field('file',
                                     open(image_path, 'rb'),
                                     filename=f'fall_{timestamp}.jpg',
                                     content_type='image/jpeg')
+                        
                         
                         async with session.post(
                             'https://image.itdice.net/upload',
@@ -214,7 +216,7 @@ class EnhancedFallDetector:
                 "notification_grade": "CRIT",
                 "descriptions": "낙상감지"
             }
-            
+
             # 이미지 URL이 있는 경우에만 추가
             if image_url:
                 notification_data["image_url"] = image_url

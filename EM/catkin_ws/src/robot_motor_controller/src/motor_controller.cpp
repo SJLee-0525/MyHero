@@ -82,7 +82,7 @@ void MotorController::controlTimerCallback(const ros::TimerEvent &event)
     current_angular_vel_ = smoothControl(target_angular_vel_, current_angular_vel_, ACCEL_LIMIT);
 
     // 급격한 회전시 속도 제한
-    if (fabs(current_angular_vel_) >= 0.8)
+    if (fabs(current_angular_vel_) >= 0.7 && fabs(current_linear_vel_) >= 0.3)
     {
         if (current_angular_vel_ < 0)
         {                                                                  // 우회전일 경우

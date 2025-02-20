@@ -14,7 +14,7 @@ class PersonFollower:
         self.image_width = rospy.get_param('~image_width', 640)
         self.image_height = rospy.get_param('~image_height', 480)
         self.camera_center = self.image_width / 2
-        self.deadzone = self.image_width * 0.05  # 중앙 10% 영역은 데드존으로 설정
+        self.deadzone = self.image_width * 0.05  # 중앙 5% 영역은 데드존으로 설정
         
         # 제어 속도 제한
         self.max_angular_speed = rospy.get_param('~max_angular_speed', 1.0)

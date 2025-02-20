@@ -73,7 +73,15 @@ class SocketServer:
                receive_thread = threading.Thread(target=self._receive_messages)
                receive_thread.daemon = True
                receive_thread.start()
-
+               try: 
+                    with open('user_data.json', 'r', encoding='utf-8') as file:
+                        user_data = json.load(file)
+                
+                    socketServer.send_message(user_data)
+               except Exception as e:
+                    print("Error in sending user_data: ", e)
+                    pass 
+            
            except Exception as e:
                if isinstance(e, socket.timeout):
                    continue
@@ -200,3 +208,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Shutting down...")
         socketServer.stop()  
+

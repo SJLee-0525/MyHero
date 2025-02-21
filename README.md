@@ -13,7 +13,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 ### 프로젝트 기여자
 
 <div style="display: flex; justify-content: space-around; align-items: center; padding: 20px;">
-  <div style="text-align: center;">
+  <p style="text-align: center;">
     <img src="/uploads/3ed09fe82f5382dc7e0654bcc745fa01/그림1.png" alt="Contributor 1" width="60" height="100">
     <h3>김도형</h3>
     <div style="font-weight: bold">BE/AI</div>
@@ -21,43 +21,43 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
     <div>음성 관련 기능</div>
     <div>낙상 감지 기능</div>
     <div>발표</div>
-  </div>
-  <div style="text-align: center;">
+  </p>
+  <p style="text-align: center;">
     <img src="/uploads/e5a547cb7f8efc450e2da375424f8d2e/그림2.png" alt="Contributor 2" width="60" height="100">
     <h3>노규헌</h3>
     <div style="font-weight: bold">EM/AI</div>
     <div>HW</div>
     <div>자율주행</div>
-  </div>
-  <div style="text-align: center;">
+  </p>
+  <p style="text-align: center;">
     <img src="/uploads/8ddcad9346921c7edbc83b74a1b88b5e/그림3.png" alt="Contributor 3" width="60" height="100">
     <h3>박진</h3>
     <div style="font-weight: bold">BE/Infra</div>
     <div>API</div>
     <div>CI/CD</div>
-  </div>
-  <div style="text-align: center;">
+  </p>
+  <p style="text-align: center;">
     <img src="/uploads/9936835c63009545cdfbb1f77201ce37/그림4.png" alt="Contributor 4" width="60" height="100">
     <h3>엄도윤</h3>
     <div style="font-weight: bold">EM</div>
     <div>HW</div>
     <div>Middleware</div>
     <div>Matter</div>
-  </div>
-  <div style="text-align: center;">
+  </p>
+  <p style="text-align: center;">
     <img src="/uploads/f2af3bd03b4dea415b4d3cd80613bb90/그림5.jpg" alt="Contributor 5" width="60" height="100">
     <h3>이성준</h3>
     <div style="font-weight: bold">FE</div>
     <div>보호자 페이지</div>
     <div>영상</div>
-  </div>
-  <div style="text-align: center;">
+  </p>
+  <p style="text-align: center;">
     <img src="/uploads/9b67fca9b68be5105c6179e3e34b7e28/그림6.png" alt="Contributor 6" width="60" height="100">
     <h3>형서희</h3>
     <div style="font-weight: bold">FE</div>
     <div>독거노인 페이지</div>
     <div>발표 자료</div>
-  </div>
+  </p>
 </div>
 
 ### 최종 산출물

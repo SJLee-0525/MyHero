@@ -27,7 +27,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 > **[보호자 페이지]** <br/>
 > ![sub-user-page](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/home.png)
 
-> **[AI 실버케이로봇 영웅이]** <br/>
+> **[AI 실버케어 로봇 영웅이]** <br/>
 > ![TalkMedia_i_088223da14d8.jpeg](/uploads/45b6a3b8ddcedc7399f3123e9b293215/TalkMedia_i_088223da14d8.jpeg.jpeg)
 
 ### 프로젝트 일정

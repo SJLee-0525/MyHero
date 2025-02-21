@@ -51,7 +51,8 @@
 
   padding: 10px 5px;
 
-  background: linear-gradient(55deg, #3e5c762f 2.82%, #3e5c7636 97.65%), rgba(255, 255, 255, 0.2);
+  background: linear-gradient(55deg, #3e5c762f 2.82%, #3e5c7636 97.65%),
+    rgba(255, 255, 255, 0.2);
 }
 
 #advertisement #video-group {
@@ -81,7 +82,25 @@
 }
 
 #summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+
   width: 100%;
+
+  gap: 40px;
+}
+
+#summary .summary-text {
+  width: 70%;
+}
+
+#summary .summary-image {
+  width: 30%;
+}
+
+#summary .summary-image img {
+  max-width: 100%;
 }
 
 #summary h3 {
@@ -307,6 +326,23 @@
 
   #advertisement .title-box {
     margin-bottom: 20px;
+  }
+
+  #summary {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #summary .summary-text {
+    width: 100%;
+  }
+
+  #summary .summary-image {
+    width: 100%;
+  }
+
+  #summary .summary-image img {
+    max-width: 100%;
   }
 }
 

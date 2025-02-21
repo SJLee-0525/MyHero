@@ -9,6 +9,7 @@ import { UserProgressContext } from "../../../store/userProgressStore.jsx";
 import AdverLogin from "../accounts/AdverLogin.jsx";
 
 import logo from "../../../assets/advertisement/blue-logo.png";
+import hero from "../../../assets/advertisement/hero.jpg";
 import dh from "../../../assets/advertisement/dh.png";
 import jin from "../../../assets/advertisement/jin.png";
 import gyu from "../../../assets/advertisement/gyu.png";
@@ -229,28 +230,37 @@ export default function Advertisement() {
       </div>
 
       <h1 className="sub-title-h1">프로젝트 개요</h1>
-      <div className="project-info">
-        <h3>SSAFY 12기 공통 프로젝트 (AIoT)</h3>
-        <p>2025. 01. 06. ~ 2025. 02. 21.</p>
-      </div>
 
       <br />
+
       <div id="summary">
-        <h3>
-          영웅이는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
-          제공, 자율 주행 등의 기능을 제공하는 AI 실버 케어 로봇 플랫폼입니다.
-        </h3>
-        <p>
-          단순한 대화 상대를 넘어 일상 속 동반자 역할을 하며, 긴급한 상황에서는
-          신속한 도움을 제공합니다.
-          <br />
-          또한, 영웅이는 가족 및 요양 보호사가 독거노인의 생활 상태를 원격으로
-          모니터링할 수 있도록 지원합니다.
-          <br />
-          대화 내역을 바탕으로 감정 및 심리 상태를 분석하고, 환경 및 활동
-          데이터를 수집하여 위험 요소를 감지함으로써 보다 안전한 생활을
-          돕습니다.
-        </p>
+        <div className="summary-text">
+          <div className="project-info">
+            <h3>SSAFY 12기 공통 프로젝트 (AIoT)</h3>
+            <p>2025. 01. 06. ~ 2025. 02. 21.</p>
+          </div>
+          <div>
+            <h3>
+              영웅이는 노인분들의 안전과 편의를 위해 음성 대화, 낙상 감지, 정보
+              제공, 자율 주행 등의 기능을 제공하는 AI 실버 케어 로봇
+              플랫폼입니다.
+            </h3>
+            <p>
+              단순한 대화 상대를 넘어 일상 속 동반자 역할을 하며, 긴급한
+              상황에서는 신속한 도움을 제공합니다.
+              <br />
+              또한, 영웅이는 가족 및 요양 보호사가 독거노인의 생활 상태를
+              원격으로 모니터링할 수 있도록 지원합니다.
+              <br />
+              대화 내역을 바탕으로 감정 및 심리 상태를 분석하고, 환경 및 활동
+              데이터를 수집하여 위험 요소를 감지함으로써 보다 안전한 생활을
+              돕습니다.
+            </p>
+          </div>
+        </div>
+        <div className="summary-image">
+          <img src={hero} alt="hero" />
+        </div>
       </div>
 
       <br />

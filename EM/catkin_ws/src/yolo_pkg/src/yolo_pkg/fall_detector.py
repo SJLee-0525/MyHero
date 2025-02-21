@@ -18,12 +18,10 @@ class EnhancedFallDetector:
         self.config = Config()
         self.pose_analyzer = EnhancedPoseAnalyzer()
         self.last_fall_notification_time = None
-        self.notification_colldown = 60
+        self.notification_cooldown = 60
         self.camera_enabled = True
         self.family_id = None
         self.session_id = None
-        # self.family_id = "FlcuDLxVC9SolW70"
-        # self.session_id = "bb0784c526204448cfac5b5603e3e5f4"
         try:
             self.model = YOLO(self.config.model_path)
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'

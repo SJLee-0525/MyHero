@@ -24,6 +24,7 @@ export default function Advertisement() {
 
   const boxRef = useRef("");
   const memberTextRef = useRef("");
+  const smRef = useRef("");
   const memberRef = useRef("");
   const boxRefs = useRef([]); // 여러 개의 요소를 참조할 배열 생성
   const beRef = useRef("");
@@ -135,6 +136,25 @@ export default function Advertisement() {
       );
     }
 
+    if (smRef.current) {
+      gsap.fromTo(
+        smRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: smRef.current,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          },
+        }
+      );
+    }
+
     if (beRef.current) {
       gsap.fromTo(
         beRef.current,
@@ -233,7 +253,7 @@ export default function Advertisement() {
 
       <br />
 
-      <div id="summary">
+      <div id="summary" ref={smRef}>
         <div className="summary-text">
           <div className="project-info">
             <h3>SSAFY 12기 공통 프로젝트 (AIoT)</h3>

@@ -12,12 +12,12 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 프로젝트 기여자
 
-<a href="https://github.com/ehgud937"><img src="/uploads/4a63b7699ec175cac0a615af677c207c/최종1.png" width="200" height="300" alt="Contributor 1"/></a>
-<a href="https://github.com/knowgyu"><img src="/uploads/3638726557747a533af920d9599f75a9/최종2.png" width="200" height="300" alt="Contributor 2"/></a>
-<a href="https://github.com/itdice"><img src="/uploads/2c0799da7c65c014e06c0c7a94d108c0/최종3.png" width="200" height="300" alt="Contributor 3"/></a>
-<a href="https://github.com/umdoyuun"><img src="/uploads/3379abd1745c37e08177db325f06db85/최종4.png" width="200" height="300" alt="Contributor 4"/></a>
-<a href="https://github.com/SJLee-0525"><img src="/uploads/ae6d83f15add3b4005f933f8aab2141f/최종5.png" width="200" height="300" alt="Contributor 5"/></a>
-<a href="https://github.com/Seohui-Hyung"><img src="/uploads/007742440f21fafb160cc2378852376d/최종6.png" width="200" height="300" alt="Contributor 6"/></a>
+<a href="https://github.com/ehgud937"><img src="/uploads/4a63b7699ec175cac0a615af677c207c/최종1.png" width="100" height="200" alt="Contributor 1"/></a>
+<a href="https://github.com/knowgyu"><img src="/uploads/3638726557747a533af920d9599f75a9/최종2.png" width="100" height="200" alt="Contributor 2"/></a>
+<a href="https://github.com/itdice"><img src="/uploads/2c0799da7c65c014e06c0c7a94d108c0/최종3.png" width="100" height="200" alt="Contributor 3"/></a>
+<a href="https://github.com/umdoyuun"><img src="/uploads/3379abd1745c37e08177db325f06db85/최종4.png" width="100" height="200" alt="Contributor 4"/></a>
+<a href="https://github.com/SJLee-0525"><img src="/uploads/ae6d83f15add3b4005f933f8aab2141f/최종5.png" width="100" height="200" alt="Contributor 5"/></a>
+<a href="https://github.com/Seohui-Hyung"><img src="/uploads/007742440f21fafb160cc2378852376d/최종6.png" width="100" height="200" alt="Contributor 6"/></a>
 
 ### 최종 산출물
 

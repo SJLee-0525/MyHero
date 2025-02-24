@@ -125,7 +125,7 @@
     margin-left: 0px;
     margin-right: 10px;
     max-height: 40px;
-    background-color: #44803f;
+    background-color: #5285b1;
     color: white;
     font-size: 20px;
     font-weight: bold;
@@ -182,7 +182,7 @@
 }
 
 .message-list::-webkit-scrollbar-thumb {
-    background-color: #54736D;
+    background-color: #3e5c76;
     border-radius: 10px;
 }
 
@@ -248,7 +248,7 @@
 .send-button {
     padding: 10px 15px;
     background: #FFEC5C;
-    color: #54736D;
+    color: #3e5c76;
     border: none;
     border-radius: 4px;
     cursor: none;
@@ -310,7 +310,7 @@
     border-radius: 4px;
     background-color: #FFEC5C;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    color: #54736D;
+    color: #3e5c76;
     cursor: none;
 }
 
@@ -346,7 +346,7 @@
     border-radius: 4px;
     background-color: #B1B1B1;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
-    color: #54736D;
+    color: #3e5c76;
     cursor: none;
 }
 
@@ -362,7 +362,7 @@
     margin-top: 20px;
     border: none;
     border-radius: 4px;
-    background-color: #44803F;
+    background-color: #5285b1;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
     color: #FFFFFF;
     cursor: none;
@@ -389,7 +389,7 @@
     font-weight: bold;
     height: 130px;
     color: white;
-    background-color: #4f814b;
+    background-color: #3e5c76;
     border: none;
     border-radius: 10px;
     text-align: center;
@@ -400,7 +400,7 @@
 }
 
 .user-button:hover {
-    background-color: #54736D;
+    background-color: #5285b1;
     transform: scale(1.05);
 }
 

@@ -36,7 +36,7 @@ export default function Backgrounds() {
                     key={index}
                     className="background-item"
                     onClick={() => changeBackground(imageUrl)}
-                    style={{ border: selectedBackground === imageUrl ? "3px solid green" : "none" }}
+                    style={{ border: selectedBackground === imageUrl ? "3px solid navy" : "none" }}
                 >
                     <img src={imageUrl} alt="배경" />
                 </div>

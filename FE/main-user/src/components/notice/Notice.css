@@ -168,7 +168,7 @@
 }
 
 .notice-scroll::-webkit-scrollbar-thumb {
-  background-color: #54736D;
+  background-color: #3e5c76;
   border-radius: 10px;
 }
 
@@ -183,7 +183,7 @@
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #44803F;
+  background: #3e5c76;
   color: white;
   border: none;
   padding: 8px 20px;
@@ -192,5 +192,5 @@
 }
 
 .reply-button:hover {
-  background: #54736D;
+  background: #5285b1;
 }

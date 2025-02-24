@@ -33,7 +33,7 @@
 }
 
 .news-category-button:hover {
-  background-color: #44803f;
+  background-color: #5285b1;
   color: white;
 }
 
@@ -50,7 +50,7 @@
   padding: 10px;
   padding-top: 5px;
   max-height: 40px;
-  background-color: #44803f;
+  background-color: #5285b1;
   color: white;
   font-size: 30px;
   font-weight: bold;
@@ -88,7 +88,7 @@
 }
 
 .news-list::-webkit-scrollbar-thumb {
-  background-color: #54736D;
+  background-color: #3e5c76;
   border-radius: 10px;
 }
 
@@ -177,7 +177,7 @@
   padding: 10px;
   padding-top: 5px;
   max-height: 40px;
-  background-color: #44803f;
+  background-color: #5285b1;
   color: white;
   border: none;
   border-radius: 5px;

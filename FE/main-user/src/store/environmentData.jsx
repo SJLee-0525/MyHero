@@ -80,7 +80,7 @@ export default function EnvironmentDataContextProvider({ children }) {
                     setEnvironmentData(newData);
 
                     // 🔥 에탄올 수치 확인 후 긴급 모달 열기
-                    if (parseFloat(newData.result.ethanol) > 1.5) {
+                    if (parseFloat(newData.result.ethanol) > 30) {
                         store.handleEmergencyState();
                     }
                 }

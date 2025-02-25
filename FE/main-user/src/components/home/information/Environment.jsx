@@ -23,7 +23,7 @@ export default function Environment() {
     const dustIcon = dustStatus === "bad" ? AirwaveEm : Airwave;
 
     // 일산화탄소 상태 판단 (1.5 이상이면 나쁨)
-    const ethanolStatus = ethanolLevel > 0 && ethanolLevel < 30 ? "good" : "bad";
+    const ethanolStatus = ethanolLevel > 0 && ethanolLevel < 15 ? "good" : "bad";
     const ethanolIcon = environmentDataStore.environmentData.result.ethanol === null || environmentDataStore.environmentData.result.ethanol === undefined ? Gas : (ethanolStatus === "bad" ? GasEm : Gas);
 
     return (

@@ -205,7 +205,7 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 | 22  | 단일 정신 건강 정보 불러오기               | GET    | /status/mental/:family-id?start&end&order         |
 | 23  | 장기 정신 건강 보고서 불러오기             | GET    | /status/mental-reports/:family-id?start&end&order |
 | 24  | 주 사용자의 정보로 가족을 검색하는 기능    | POST   | /families/find                                    |
-| 25  | 이미지를 업로드하는 기능                   | POST   | https://image.itdice.net/upload                   |
+| 25  | 이미지를 업로드하는 기능                   | POST   | {img_url}/upload                                  |
 | 26  | 메시지를 보낼 수 있는 대상을 확인하는 기능 | GET    | /messages/receivable/:user-id                     |
 | 27  | 메시지를 보내는 기능                       | POST   | /messages/send                                    |
 | 28  | 받은 모든 메시지를 확인하는 기능           | GET    | /messages/all?start&end&order                     |

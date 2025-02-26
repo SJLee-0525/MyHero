@@ -66,7 +66,7 @@
 
     margin-bottom: 0.2rem;
 
-    color: white;
+    color: #1d2d44;
     text-transform: uppercase;
     font-weight: bold;
     font-size: 1.2rem;
@@ -121,7 +121,7 @@
     border: 0;
     border-radius: 8px;
 
-    background-color: #44803f;
+    background-color: #3e5c76;
 
     color: white;
     font-size: 1.5rem;
@@ -146,7 +146,7 @@
     transform: translate(-50%, -50%);
     font-size: 1.7rem;
     margin: 5px;
-    color: white;
+    color: #1d2d44;
     text-align: center;
     transition: all 1.2s ease-in-out;
 }

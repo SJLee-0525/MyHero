@@ -29,9 +29,10 @@ function DetailReport() {
     day: "2-digit",
   });
 
-  const endDate = new Date(
-    detailReport.analysis_period.end + "Z"
-  ).toLocaleString("ko-KR", {
+  const endDate = new Date(detailReport.analysis_period.end + "Z");
+  endDate.setDate(endDate.getDate() - 1); // 하루 빼기
+
+  const formattedDate = endDate.toLocaleString("ko-KR", {
     timeZone: "Asia/Seoul",
     year: "numeric",
     month: "2-digit",
@@ -42,7 +43,7 @@ function DetailReport() {
     <div id="detail-report">
       <div className="detail-report-header">
         <h2>
-          {startDate}부터 {endDate}까지의 정신 건강 분석 결과
+          {startDate}부터 {formattedDate}까지의 정신 건강 분석 결과
         </h2>
         <h2 className={detailReport.overall_assessment.risk_level}>
           {detailReport.overall_assessment.total_score}

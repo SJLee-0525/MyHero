@@ -80,7 +80,7 @@ export default function EnvironmentDataContextProvider({ children }) {
                     setEnvironmentData(newData);
 
                     // 🔥 에탄올 수치 확인 후 긴급 모달 열기
-                    if (parseFloat(newData.result.ethanol) > 1.5) {
+                    if (parseFloat(newData.result.ethanol) > 15) {
                         store.handleEmergencyState();
                     }
                 }
@@ -116,11 +116,11 @@ export default function EnvironmentDataContextProvider({ children }) {
         }
     }
 
-    // 1분마다 데이터 업데이트
+    // 6초마다 데이터 업데이트
     useEffect(() => {
         if (familyId) {
             handleGetLatestEnvironmentData();
-            const interval = setInterval(handleGetLatestEnvironmentData, 1 * 60 * 1000);
+            const interval = setInterval(handleGetLatestEnvironmentData, 0.1 * 60 * 1000);
             return () => clearInterval(interval);
         }
     }, [familyId]);

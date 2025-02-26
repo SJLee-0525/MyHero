@@ -34,10 +34,10 @@ export default function Advertisement() {
   const names = [
     ["김도형", "BE | AI"],
     ["박  진", "BE | INFRA"],
-    ["엄도윤", "EM | BG"],
+    ["엄도윤", "EM"],
     ["노규헌", "EM | AI"],
-    ["형서희", "FE | MAIN"],
-    ["이성준", "FE | SUB"],
+    ["형서희", "FE"],
+    ["이성준", "FE"],
   ];
 
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function Advertisement() {
           <iframe
             width={window.innerWidth * 0.6}
             height={window.innerWidth * 0.6 * (405 / 720)}
-            src="https://www.youtube.com/embed/nEaJDWWXm5o?si=Albz6q2v2zitLmI5"
+            src="https://www.youtube.com/embed/LQlEIiO-5KE?si=gHtFviSHLrH6ckwt"
             title="YouTube video player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

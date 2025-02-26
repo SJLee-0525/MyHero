@@ -106,7 +106,7 @@
   
   .calendar-day:hover {
     border-radius: 10px;
-    background-color: rgba(68, 128, 63, 0.562);
+    background-color: rgba(82, 133, 177, 0.562);
   
     transition: all 0.3s ease;
   }
@@ -121,7 +121,7 @@
   
   .calendar-day.selected-date {
     color: white;
-    background-color: #44803F;
+    background-color: #3e5c76;
     border-radius: 12px;
   
     font-weight: bold;
@@ -130,7 +130,7 @@
   }
 
   .calendar-day.today {
-    background-color: #A0D468;
+    background-color: #5285b1;
     color: white;
     border-radius: 12px;
     font-weight: bold;
@@ -138,7 +138,7 @@
   }
 
   .calendar-day.selected-date.today {
-    background-color: #44803F; /* 선택된 날짜가 오늘이라면 진한 초록색 유지 */
+    background-color: #5285b1; /* 선택된 날짜가 오늘이라면 진한 초록색 유지 */
   }
   
   .calendar-day-schedules {
@@ -187,7 +187,7 @@
     margin: 0px;
     padding: 8px;
   
-    background-color: #44803F;
+    background-color: #3e5c76;
     border-radius: 10px;
   
     font-size: small;
@@ -235,14 +235,14 @@
   }
   
   .calendar-form input:focus {
-    outline: 1px #44803F solid;
+    outline: 1px #3e5c76 solid;
   }
   
   .calendar-form button {
     width: 10%;
     height: 50px;
   
-    background-color: #44803F;
+    background-color: #3e5c76;
   
     border: 0;
     border-radius: 0px 8px 8px 0px;

@@ -8,27 +8,27 @@ Carebot Project는 독거노인을 위한 스마트 생활 도우미 서비스�
 
 ### 서비스 설계
 
-![서비스_아키텍처.drawio](/uploads/71ece4c155f019811abc16a1efbf0104/4차_서비스_아키텍처.drawio.png)
+![서비스_아키텍처.drawio](./readmeData/archi.png)
 
 ### 프로젝트 기여자
 
-<a href="https://github.com/ehgud937"><img src="/uploads/4a63b7699ec175cac0a615af677c207c/최종1.png" width="110" height="200" alt="Contributor 1"/></a>
-<a href="https://github.com/knowgyu"><img src="/uploads/3638726557747a533af920d9599f75a9/최종2.png" width="100" height="200" alt="Contributor 2"/></a>
-<a href="https://github.com/itdice"><img src="/uploads/2c0799da7c65c014e06c0c7a94d108c0/최종3.png" width="100" height="200" alt="Contributor 3"/></a>
-<a href="https://github.com/umdoyuun"><img src="/uploads/3379abd1745c37e08177db325f06db85/최종4.png" width="100" height="200" alt="Contributor 4"/></a>
-<a href="https://github.com/SJLee-0525"><img src="/uploads/ae6d83f15add3b4005f933f8aab2141f/최종5.png" width="100" height="200" alt="Contributor 5"/></a>
-<a href="https://github.com/Seohui-Hyung"><img src="/uploads/007742440f21fafb160cc2378852376d/최종6.png" width="110" height="200" alt="Contributor 6"/></a>
+<a href="https://github.com/ehgud937"><img src="./readmeData/dh.png" width="110" height="200" alt="Contributor 1"/></a>
+<a href="https://github.com/knowgyu"><img src="./readmeData/no.png" width="100" height="200" alt="Contributor 2"/></a>
+<a href="https://github.com/itdice"><img src="./readmeData/jin.png" width="100" height="200" alt="Contributor 3"/></a>
+<a href="https://github.com/umdoyuun"><img src="./readmeData/um.png" width="100" height="200" alt="Contributor 4"/></a>
+<a href="https://github.com/SJLee-0525"><img src="./readmeData/sj.png" width="100" height="200" alt="Contributor 5"/></a>
+<a href="https://github.com/Seohui-Hyung"><img src="./readmeData/bro.png" width="110" height="200" alt="Contributor 6"/></a>
 
 ### 최종 산출물
 
 > **[독거노인 페이지]** <br/>
-> ![main-user-page](/uploads/2ccec764b2c872ee3be581fa660d2137/image.png)
+> ![main-user-page](./readmeData/main-device.png)
 
 > **[보호자 페이지]** <br/>
-> ![sub-user-page](https://raw.githubusercontent.com/SJLee-0525/imgSource/master/carbot_readme/home.png)
+> ![sub-user-page](./readmeData/main-pc.png)
 
 > **[AI 실버케어 로봇 영웅이]** <br/>
-> ![TalkMedia_i_088223da14d8.jpeg](/uploads/45b6a3b8ddcedc7399f3123e9b293215/TalkMedia_i_088223da14d8.jpeg.jpeg)
+> ![TalkMedia_i_088223da14d8.jpeg](./readmeData/yy.jpeg)
 
 ### 프로젝트 일정
 
